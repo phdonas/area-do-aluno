@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local temp
+/tmp
+/scratch
+/check_*.js
+/check_*.ts
+/tmp_*
+ts_errors.txt

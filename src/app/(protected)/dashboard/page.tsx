@@ -1,0 +1,307 @@
+import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { 
+  PlayCircle, Lock, CheckCircle2, ArrowRight, Clock, Award, Sparkles, 
+  MonitorPlay, Activity, Zap, Star, Calendar, Rocket, Target, Flame, Brain
+} from 'lucide-react'
+import { cleanTitle } from '@/lib/formatter'
+import { getPrefixosLimpeza } from '@/lib/prefixes'
+import { RadarChart } from '@/components/RadarChart'
+import { StudyHeatmap } from '@/components/StudyHeatmap'
+import { format } from 'date-fns'
+
+export const dynamic = 'force-dynamic'
+
+export default async function DashboardPage() {
+  const supabase = await createClient()
+  const supabaseAdmin = createAdminClient()
+  const prefixes = await getPrefixosLimpeza()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return null
+
+   const results = await Promise.all([
+    supabaseAdmin.from('assinaturas').select('curso_id, created_at, cursos(*), planos!left(is_global)').eq('usuario_id', user.id).in('status', ['ativa', 'ativo', 'Ativa', 'Ativo']),
+    supabaseAdmin.from('progresso_aulas').select('aula_id, concluida, ultima_visualizacao, curso_id').eq('usuario_id', user.id),
+    supabaseAdmin.from('cursos').select('*').eq('status', 'publicado'),
+    supabaseAdmin.from('progresso_aulas')
+      .select('ultima_visualizacao, curso_id')
+      .eq('usuario_id', user.id)
+      .eq('concluida', true)
+      .gt('ultima_visualizacao', new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString())
+  ])
+
+  const res_assinaturas = results[0]
+  const res_progresso = results[1]
+  const res_cursos = results[2]
+  const res_atividade = results[3]
+
+  if (res_assinaturas.error) console.error('Erro assinaturas:', res_assinaturas.error)
+  if (res_progresso.error) console.error('Erro progresso:', res_progresso.error)
+
+  const assinaturas = res_assinaturas.data || []
+  const progressoTotal = res_progresso.data || []
+  const cursosBase = res_cursos.data || []
+  const rawActivityLogs = res_atividade.data || []
+
+  const processedActivityData: Record<string, number> = {}
+  if (Array.isArray(rawActivityLogs)) {
+    rawActivityLogs.forEach((log: any) => {
+      const dateKey = format(new Date(log.ultima_visualizacao), 'yyyy-MM-dd')
+      processedActivityData[dateKey] = (processedActivityData[dateKey] || 0) + 1
+    })
+  }
+
+  // 1.5 Mapeamento de Acessos (Suporte a Plano Global)
+  const hasGlobalPlan = assinaturas.some(a => (a.planos as any)?.is_global)
+  
+  const idsCursosComprados = [
+    ...(assinaturas?.map(a => a.curso_id) || []),
+    ...(cursosBase?.filter(c => (c as any).is_free).map(c => c.id) || []),
+    ...(hasGlobalPlan ? (cursosBase?.map(c => c.id) || []) : [])
+  ].filter(Boolean).reduce((acc: string[], cur: string) => {
+    if (!acc.includes(cur)) acc.push(cur)
+    return acc
+  }, [])
+
+  // 1.6 Resolução Hierárquica da Grade (Idêntico ao Player)
+  const gradesCursos = await Promise.all(
+    idsCursosComprados.map(async (cursoId) => {
+      const { data: modulosData } = await supabaseAdmin.rpc('get_modulos_curso', { p_curso_id: cursoId })
+      const modulosIds = modulosData?.map((m: any) => m.id) || []
+      
+      // Busca direta e via pivot
+      const [{ data: a_dir }, { data: a_piv }] = await Promise.all([
+        supabaseAdmin.from('aulas').select('id, modulo_id, titulo, ordem').in('modulo_id', modulosIds),
+        supabaseAdmin.from('modulos_aulas').select('modulo_id, aula_id, ordem, aulas(id, titulo)').in('modulo_id', modulosIds)
+      ])
+
+      const aulasMapeadas = [
+        ...(a_dir || []),
+        ...(a_piv?.map((p: any) => ({ 
+          id: p.aula_id, 
+          modulo_id: p.modulo_id, 
+          titulo: (p.aulas as any)?.titulo || 'Aula',
+          ordem: p.ordem 
+        })) || [])
+      ]
+
+      // Garantir unicidade por ID de aula dentro do curso
+      const unique = new Map()
+      aulasMapeadas.forEach(a => {
+        if (!unique.has(a.id)) {
+          unique.set(a.id, { ...a, curso_id: cursoId })
+        }
+      })
+
+      return Array.from(unique.values())
+    })
+  )
+
+  const todasAulas = gradesCursos.flat()
+  const progressoMap = new Map(progressoTotal?.map(p => {
+    const key = p.curso_id ? `${p.curso_id}-${p.aula_id}` : p.aula_id;
+    return [key, p];
+  }) || [])
+  
+  const idsAulasConcluidas = new Set(progressoTotal?.filter(p => p.concluida).map(p => {
+    return p.curso_id ? `${p.curso_id}-${p.aula_id}` : p.aula_id;
+  }) || [])
+
+  // 2. Cálculo de Progresso Robusto (Varredura Unificada)
+  const getStatsCurso = (cursoId: string) => {
+    const uniqueAulasIds = new Set()
+    const aulasDoCurso = todasAulas.filter((a: any) => {
+      if (a.curso_id === cursoId && !uniqueAulasIds.has(a.id)) {
+        uniqueAulasIds.add(a.id)
+        return true
+      }
+      return false
+    })
+
+    if (aulasDoCurso.length === 0) return { percent: 0, lastId: null }
+
+    const concluidas = aulasDoCurso.filter(a => idsAulasConcluidas.has(`${cursoId}-${a.id}`) || idsAulasConcluidas.has(a.id)).length
+    const percent = Math.round((concluidas / aulasDoCurso.length) * 100)
+
+    // Achar a aula com visualização mais recente NESTE curso
+    const aulasComData = aulasDoCurso
+      .map(a => ({ id: a.id, data: progressoMap.get(`${cursoId}-${a.id}`)?.ultima_visualizacao || progressoMap.get(a.id)?.ultima_visualizacao }))
+      .filter(a => a.data)
+      .sort((a, b) => new Date(b.data!).getTime() - new Date(a.data!).getTime())
+
+    const lastId = aulasComData.length > 0 
+      ? aulasComData[0].id 
+      : (aulasDoCurso.find(a => !idsAulasConcluidas.has(`${cursoId}-${a.id}`) && !idsAulasConcluidas.has(a.id))?.id || aulasDoCurso[0].id)
+
+    return { percent, lastId }
+  }
+
+  // 3. Processamento p/ UI (Radar e Recomendação) Dinâmico
+  const { data: dbPilares } = await supabaseAdmin.from('pilares').select('id, nome').order('ordem')
+  const { data: cursosComPilares } = await supabaseAdmin
+    .from('cursos_pilares')
+    .select('curso_id, pilares(nome)')
+    .in('curso_id', idsCursosComprados)
+
+  const radarData = (dbPilares || []).map(pilar => {
+    const aulasPilar = todasAulas.filter((a: any) => {
+        const link = cursosComPilares?.find(cp => cp.curso_id === a.curso_id && (cp.pilares as any)?.nome === pilar.nome)
+        return !!link
+    })
+    const done = aulasPilar.filter(a => idsAulasConcluidas.has(`${a.curso_id}-${a.id}`) || idsAulasConcluidas.has(a.id)).length
+    return { 
+      subject: pilar.nome, 
+      value: aulasPilar.length > 0 ? Math.round((done / aulasPilar.length) * 100) : 5, 
+      fullMark: 100 
+    }
+  })
+
+  // Fallback se não houver pilares no DB (caso segurança)
+  const radarDataFinal = radarData.length > 0 ? radarData : [
+    { subject: 'Negociação', value: 5, fullMark: 100 },
+    { subject: 'IA/Tech', value: 5, fullMark: 100 },
+    { subject: 'Liderança', value: 5, fullMark: 100 },
+    { subject: 'Performance', value: 5, fullMark: 100 }
+  ]
+
+  // 4. Acessos Atuais e Vitrine
+  const pacotesComprados = (assinaturas?.filter(a => a.plano_id).map(a => a.planos) || []).filter(Boolean)
+  const allActiveCourses = (cursosBase || []).filter(c => idsCursosComprados.includes(c.id))
+
+  const pilarMaisFraco = [...radarDataFinal].sort((a, b) => a.value - b.value)[0]
+  
+  // Busca a próxima aula ideal baseada no pilar mais fraco
+  let recomendacaoItem: any = null
+  let aulaRecomendadaObj: any = null
+
+  const cursosDoPilarFraco = allActiveCourses.filter(c => {
+    return cursosComPilares?.find(cp => cp.curso_id === c.id && (cp.pilares as any)?.nome === pilarMaisFraco.subject)
+  })
+
+  for (const curso of cursosDoPilarFraco) {
+    const stats = getStatsCurso(curso.id)
+    if (stats.percent < 100) {
+      recomendacaoItem = curso
+      aulaRecomendadaObj = todasAulas.find((a: any) => a.id === stats.lastId)
+      break
+    }
+  }
+
+  // Fallback se o pilar mais fraco estiver concluído (raro, mas possível logicamente)
+  if (!recomendacaoItem) {
+    for (const curso of allActiveCourses) {
+      const stats = getStatsCurso(curso.id)
+      if (stats.percent < 100) {
+        recomendacaoItem = curso
+        aulaRecomendadaObj = todasAulas.find((a: any) => a.id === stats.lastId)
+        break
+      }
+    }
+  }
+  const vitrineCursos = cursosBase?.filter(c => !idsCursosComprados.includes(c.id) && !(c as any).is_free) || []
+
+  // Cálculo de Progresso Geral Único (Média dos cursos cursados)
+  const totalPercent = allActiveCourses.reduce((acc: number, cur: any) => acc + getStatsCurso(cur.id).percent, 0)
+  const progressoTotalPlataforma = allActiveCourses.length > 0
+    ? Math.round(totalPercent / allActiveCourses.length)
+    : 0
+
+  return (
+    <div className="max-w-7xl mx-auto space-y-16 pb-20 animate-in fade-in slide-in-from-bottom-5 duration-1000">
+      
+      {/* SEÇÃO 1: HUB DE INTELIGÊNCIA */}
+      <section className="relative overflow-hidden bg-[#0A0F1E] rounded-[3.5rem] p-8 md:p-16 text-white shadow-3xl border border-white/5">
+         <div className="absolute top-[-30%] left-[-10%] w-[60%] h-[60%] bg-primary/20 blur-[130px] rounded-full" />
+         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12 relative z-10">
+            <div className="space-y-10 max-w-2xl">
+               <div className="flex flex-wrap gap-3">
+                  <div className="px-4 py-1.5 bg-primary/20 border border-primary/30 rounded-full flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-primary-light" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary-light text-white/80">Sincronização Ativa: {progressoTotalPlataforma}%</span>
+                  </div>
+               </div>
+               <h1 className="text-4xl md:text-7xl font-black tracking-tighter leading-[0.85]">
+                  Foque em <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light to-indigo-400 uppercase">{pilarMaisFraco.subject}.</span>
+               </h1>
+            </div>
+            <div className="w-full lg:w-[420px] p-10 bg-white/[0.04] backdrop-blur-3xl border border-white/10 rounded-[3rem] shadow-2xl">
+               {recomendacaoItem ? (
+                  <div className="space-y-4">
+                    <p className="text-[10px] font-black uppercase text-white/50 tracking-[0.2em]">Próximo Passo Estratégico</p>
+                        <div className="flex flex-col gap-1">
+                          <h3 className="text-2xl font-black text-white leading-tight">{cleanTitle(recomendacaoItem.titulo, prefixes)}</h3>
+                          {aulaRecomendadaObj && (
+                            <p className="text-xs font-bold text-primary-light/80 italic">Aula: {cleanTitle(aulaRecomendadaObj.titulo, prefixes)}</p>
+                          )}
+                        </div>
+                    <Link 
+                      href={aulaRecomendadaObj ? `/player/${recomendacaoItem.id}/${aulaRecomendadaObj.id}` : `/catalogo/${recomendacaoItem.id}`} 
+                      className="mt-8 w-full flex items-center justify-center gap-4 py-5 bg-white text-black rounded-2xl font-black text-xs hover:bg-primary hover:text-white transition-all shadow-[0_20px_40px_rgba(255,255,255,0.1)] active:scale-95"
+                    > 
+                      {aulaRecomendadaObj ? 'Continuar de Onde Parou' : 'Ver Grade do Curso'} <ArrowRight className="w-4 h-4" /> 
+                    </Link>
+                  </div>
+               ) : <h3 className="text-2xl font-black text-white tracking-tighter">Missão Cumprida! Você dominou todos os pilares.</h3>}
+            </div>
+         </div>
+      </section>
+
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+         <RadarChart data={radarDataFinal} />
+         <StudyHeatmap activityData={processedActivityData} />
+      </section>
+
+      {/* SEÇÃO 3: MEUS CURSOS / MATERIAIS */}
+      <section className="space-y-12">
+         <div className="flex items-center justify-between border-l-4 border-primary pl-8"><h2 className="text-base font-black text-text-primary/40 uppercase tracking-[0.3em]">Meus Cursos / Materiais</h2></div>
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {[...pacotesComprados.map(p => ({...p, type: 'pacote'})), ...allActiveCourses.map(c => ({...c, type: 'curso'}))].map((item: any) => {
+               const stats = item.type === 'curso' ? getStatsCurso(item.id) : { percent: 0, lastId: null }
+               const progresso = stats.percent
+               
+               // Determinar link dinâmico: se for curso, vai pro player na última assistida (ou próxima)
+               let linkDestino = `/catalogo/${item.id}`
+               if (item.type === 'curso') {
+                 linkDestino = stats.lastId ? `/player/${item.id}/${stats.lastId}` : `/catalogo/${item.id}`
+               } else if (item.type === 'pacote') {
+                 linkDestino = `/catalogo/pacote/${item.id}`
+               }
+
+               return (
+                 <Link key={item.id} href={linkDestino} className="group bg-surface border border-border-custom rounded-[3rem] overflow-hidden hover:shadow-2xl transition-all h-full flex flex-col">
+                    <div className="aspect-video relative overflow-hidden bg-white/5">
+                       {item.thumb_url && <img src={item.thumb_url} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt={item.titulo} />}
+                       <div className="absolute inset-x-0 bottom-0 p-6 z-20 bg-gradient-to-t from-black/90 to-transparent">
+                          <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mb-3"><div className="h-full bg-primary-light transition-all duration-1000" style={{ width: `${progresso}%` }} /></div>
+                          <span className="text-[9px] font-black text-white uppercase tracking-widest">{progresso}% Concluído</span>
+                       </div>
+                    </div>
+                    <div className="p-8"><h3 className="text-xl font-black text-text-primary leading-tight group-hover:text-primary transition-colors line-clamp-2">{cleanTitle(item.titulo || item.nome, prefixes)}</h3></div>
+                 </Link>
+               )
+            })}
+         </div>
+      </section>
+
+      {/* SEÇÃO 4: VITRINE ACADEMY */}
+      <section id="complete-seu-treinamento" className="space-y-12 pt-20 border-t border-border-custom border-dashed scroll-mt-20">
+         <div className="flex items-center justify-between"><h2 className="text-2xl font-black text-text-primary tracking-tighter flex items-center gap-3"><Award className="w-6 h-6 text-amber-500 fill-amber-500" /> Especializações Recomendadas</h2></div>
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Link href="/catalogo" className="relative group overflow-hidden rounded-[3rem] bg-[#0A0F1E] border border-white/5 p-10">
+               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[80px] rounded-full" />
+               <div className="relative z-10 space-y-6"><div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center"><Target className="w-7 h-7 text-primary-light" /></div><h3 className="text-2xl font-black text-white">Explorar Todos os Pilares</h3></div>
+            </Link>
+            {vitrineCursos.slice(0, 2).map((item: any) => (
+               <Link key={item.id} href={`/loja/curso/${item.id}`} className="group bg-surface border border-border-custom rounded-[3rem] overflow-hidden hover:shadow-2xl transition-all h-full flex flex-col">
+                  <div className="aspect-video relative overflow-hidden bg-white/5">{item.thumb_url && <img src={item.thumb_url} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt={item.titulo} />}</div>
+                  <div className="p-8"><h4 className="font-extrabold text-lg text-text-primary leading-tight line-clamp-2 group-hover:text-primary transition-colors">{cleanTitle(item.titulo, prefixes)}</h4></div>
+               </Link>
+            ))}
+         </div>
+      </section>
+    </div>
+  )
+}
