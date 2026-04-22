@@ -43,7 +43,7 @@ export default async function MeusCertificadosPage() {
               Suas <span className="text-emerald-400">Conquistas</span>
             </h1>
             <p className="text-slate-400 mt-4 text-lg font-medium">
-              Gerencie e compartilhe suas certificações emitidas pela PH Academy.
+              Gerencie e compartilhe suas certificações emitidas pela PHDonassolo Academy.
             </p>
           </div>
           <div className="hidden lg:block">
@@ -123,7 +123,7 @@ export default async function MeusCertificadosPage() {
          </div>
          <div className="space-y-1">
             <h4 className="text-lg font-black text-text-primary tracking-tight">Certificação Vitalícia e Verificável</h4>
-            <p className="text-sm text-text-muted font-medium">Todos os certificados emitidos pela PH Academy possuem um código QR e uma hash de verificação única, garantindo sua validade em qualquer processo seletivo ou auditoria.</p>
+            <p className="text-sm text-text-muted font-medium">Todos os certificados emitidos pela PHDonassolo Academy possuem um código QR e uma hash de verificação única, garantindo sua validade em qualquer processo seletivo ou auditoria.</p>
          </div>
       </div>
 

@@ -1,6 +1,16 @@
-import { redirect } from 'next/navigation'
+'use client'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
-export default function LojaIndexPage() {
-  // Redireciona para o dashboard onde a vitrine (upsell) já está implementada
-  redirect('/dashboard#complete-seu-treinamento')
+export default function LojaRedirect() {
+  const router = useRouter()
+  useEffect(() => {
+    router.replace('/catalogo')
+  }, [router])
+
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+       <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+    </div>
+  )
 }

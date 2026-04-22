@@ -1,15 +1,17 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { 
   associarMultiplosModulosCurso, 
   desassociarModuloCurso, 
   reordenarModuloCurso, 
   criarModuloExclusivo, 
   reordenarAulaModulo, 
-  toggleAulaGratis 
+  toggleAulaGratis,
+  separarModuloCurso
 } from './actions'
-import { Plus, Trash2, ArrowUp, ArrowDown, ExternalLink, Video, ChevronDown, ChevronRight, GripVertical, Search, X, CheckSquare, Square, Lock, Unlock, SortAsc } from 'lucide-react'
+import { Plus, Trash2, ArrowUp, ArrowDown, ExternalLink, Video, ChevronDown, ChevronRight, GripVertical, Search, X, CheckSquare, Square, Lock, Unlock, SortAsc, Split } from 'lucide-react'
 import Link from 'next/link'
 
 type Modulo = {
@@ -34,6 +36,7 @@ export function ModuloAssociator({
   modulosDoCurso: CursoModulo[]
   aulasPorModulo?: Record<string, any[]>
 }) {
+  const router = useRouter()
   const [loading, setLoading] = useState(false);
   const [newOrdem, setNewOrdem] = useState(modulosDoCurso.length + 1);
   const [novoModuloExclusivo, setNovoModuloExclusivo] = useState('');
@@ -44,6 +47,11 @@ export function ModuloAssociator({
   const [modalFilter, setModalFilter] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
+  // Separate Modal State
+  const [isSeparateModalOpen, setIsSeparateModalOpen] = useState(false);
+  const [separateModuloId, setSeparateModuloId] = useState('');
+  const [separateModuloName, setSeparateModuloName] = useState('');
+
   const [expandedStats, setExpandedStats] = useState<Record<string, boolean>>({});
 
   // Refs for Drag & Drop Modulos
@@ -53,6 +61,7 @@ export function ModuloAssociator({
   // Refs for Drag & Drop Aulas
   const dragAulaItem = useRef<{ moduloId: string, index: number } | null>(null);
   const dragAulaOverItem = useRef<{ moduloId: string, index: number } | null>(null);
+  const [dragOverAulaKey, setDragOverAulaKey] = useState<string | null>(null);
 
   const toggleExpand = (id: string) => {
     setExpandedStats(prev => ({ ...prev, [id]: !prev[id] }));
@@ -74,6 +83,26 @@ export function ModuloAssociator({
 
   const toggleSelection = (id: string) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  }
+
+  const handleOpenSeparate = (moduloId: string, currentName: string) => {
+    setSeparateModuloId(moduloId);
+    setSeparateModuloName(currentName);
+    setIsSeparateModalOpen(true);
+  }
+
+  const handleConfirmSeparate = async () => {
+    if (!separateModuloName.trim()) return;
+    setLoading(true);
+    try {
+      await separarModuloCurso(cursoId, separateModuloId, separateModuloName);
+      setIsSeparateModalOpen(false);
+    } catch (err: any) {
+      console.error(err);
+      alert('Erro ao separar módulo: ' + (err?.message || String(err)));
+    } finally {
+      setLoading(false);
+    }
   }
 
   const handleAddMultiple = async () => {
@@ -188,9 +217,10 @@ export function ModuloAssociator({
     setLoading(true);
     try {
       await reordenarAulaModulo(cursoId, fromModulo, orderedIds);
-    } catch(err) {
+      router.refresh();
+    } catch(err: any) {
       console.error(err);
-      alert('Erro ao reordenar aula.');
+      alert('Erro ao reordenar aula: ' + (err?.message || String(err)));
     } finally {
       dragAulaItem.current = null;
       dragAulaOverItem.current = null;
@@ -345,7 +375,7 @@ export function ModuloAssociator({
                       <ArrowUp className="w-4 h-4" />
                     </button>
                     <button 
-                      onClick={() => handleReorderModulo(index, 'down')}
+                      onClick={(e) => { e.stopPropagation(); handleReorderModulo(index, 'down'); }}
                       disabled={loading || index === modulosDoCursoFiltrados.length - 1}
                       className="p-1.5 text-text-muted hover:text-primary transition-colors disabled:opacity-50"
                       title="Descer na listagem"
@@ -353,7 +383,15 @@ export function ModuloAssociator({
                       <ArrowDown className="w-4 h-4" />
                     </button>
                     <button 
-                      onClick={() => handleRemove(cm.modulo_id)}
+                      onClick={(e) => { e.stopPropagation(); handleOpenSeparate(cm.modulo_id, cm.modulo.titulo); }}
+                      disabled={loading}
+                      className="p-1.5 text-text-muted hover:text-indigo-500 transition-colors disabled:opacity-50 border-l border-border-custom pl-2"
+                      title="Tornar Independente (Separar do Original)"
+                    >
+                      <Split className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleRemove(cm.modulo_id); }}
                       disabled={loading}
                       className="p-1.5 text-text-muted hover:text-red-500 transition-colors disabled:opacity-50 border-l border-border-custom pl-2"
                       title="Desconectar do Curso"
@@ -375,17 +413,23 @@ export function ModuloAssociator({
                         {aulas.map((aula, idx) => (
                           <li 
                             key={aula.id} 
-                            className="flex items-center justify-between p-3 bg-background border border-border-custom rounded-lg pl-3 relative pr-4"
+                            className={`flex items-center justify-between p-3 bg-background border rounded-lg pl-3 relative pr-2 transition-all ${
+                              dragOverAulaKey === `${cm.modulo_id}-${idx}`
+                                ? 'border-indigo-500 bg-indigo-500/5 shadow-sm shadow-indigo-500/20'
+                                : 'border-border-custom'
+                            }`}
                             draggable
-                            onDragStart={(e) => { e.stopPropagation(); dragAulaItem.current = { moduloId: cm.modulo_id, index: idx }; }}
-                            onDragEnter={(e) => { e.stopPropagation(); dragAulaOverItem.current = { moduloId: cm.modulo_id, index: idx }; }}
-                            onDragEnd={(e) => { e.stopPropagation(); handleDragSortAula(); }}
+                            onDragStart={(e) => { e.stopPropagation(); dragAulaItem.current = { moduloId: cm.modulo_id, index: idx }; setDragOverAulaKey(null); }}
+                            onDragEnter={(e) => { e.stopPropagation(); dragAulaOverItem.current = { moduloId: cm.modulo_id, index: idx }; setDragOverAulaKey(`${cm.modulo_id}-${idx}`); }}
+                            onDragEnd={(e) => { e.stopPropagation(); setDragOverAulaKey(null); handleDragSortAula(); }}
                             onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                            onDragLeave={(e) => { e.stopPropagation(); }}
                           >
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 min-w-0">
+                              <GripVertical className="w-3.5 h-3.5 text-text-muted/40 flex-shrink-0 cursor-grab active:cursor-grabbing" />
                               <button
                                 onClick={() => toggleAulaGratis(aula.id, !aula.is_gratis, cursoId)}
-                                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border ${aula.is_gratis ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-500' : 'bg-background border-border-custom text-text-muted hover:text-indigo-500 hover:border-indigo-500/30'}`}
+                                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border ${aula.is_gratis ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-500' : 'bg-background border-border-custom text-text-muted hover:text-indigo-500 hover:border-indigo-500/30'}`}
                                 title={aula.is_gratis ? 'Remover Degustação' : 'Tornar Aula de Degustação (Grátis)'}
                               >
                                 {aula.is_gratis ? <ExternalLink className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
@@ -393,12 +437,32 @@ export function ModuloAssociator({
                               </button>
                               <Link 
                                 href={`/admin/aulas/${aula.id}`}
-                                className="text-xs font-bold text-text-muted hover:text-primary transition-colors"
+                                className="text-xs font-bold text-text-muted hover:text-primary transition-colors truncate"
                                 target="_blank"
                               >
                                 {aula.titulo}
                               </Link>
                             </div>
+                            <button
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                if (!confirm('Remover esta aula deste módulo? A aula NÃO será excluída do sistema.')) return;
+                                setLoading(true);
+                                try {
+                                  const { desassociarAulaModulo } = await import('@/app/(protected)/admin/modulos/actions');
+                                  await desassociarAulaModulo(cm.modulo_id, aula.id);
+                                } catch(err: any) {
+                                  alert('Erro ao remover: ' + err?.message);
+                                } finally {
+                                  setLoading(false);
+                                }
+                              }}
+                              disabled={loading}
+                              className="flex-shrink-0 ml-2 p-1.5 text-text-muted hover:text-red-500 transition-colors disabled:opacity-50 rounded-lg hover:bg-red-500/10"
+                              title="Remover aula deste módulo (não exclui a aula do sistema)"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
                           </li>
                         ))}
                       </ul>
@@ -483,6 +547,58 @@ export function ModuloAssociator({
           </div>
         </div>
       )}
+
+      {/* Modal Separar/Clonar Módulo */}
+      {isSeparateModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-surface border border-border-custom rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-border-custom flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-text-primary">Separar Módulo de Origem</h3>
+                <p className="text-sm text-text-secondary mt-1">
+                  Isto criará uma cópia nova deste módulo apenas para este curso. Todas as aulas atuais serão vinculadas automaticamente.
+                </p>
+              </div>
+              <button onClick={() => setIsSeparateModalOpen(false)} className="p-2 text-text-muted hover:text-text-primary hover:bg-background rounded-lg transition-colors">
+                <X className="w-5 h-5"/>
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-4 bg-background">
+              <div>
+                <label className="block text-sm font-bold text-text-primary mb-1">
+                  Qual será o nome deste NOVO módulo?
+                </label>
+                <input
+                  type="text"
+                  value={separateModuloName}
+                  onChange={(e) => setSeparateModuloName(e.target.value)}
+                  placeholder="Nome do módulo independente..."
+                  className="w-full bg-surface border border-border-custom px-4 py-3 rounded-xl text-text-primary focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all outline-none"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-border-custom bg-background flex items-center justify-end gap-3">
+               <button 
+                onClick={() => setIsSeparateModalOpen(false)}
+                className="px-4 py-2 border border-border-custom text-text-primary hover:bg-surface rounded-xl font-bold text-sm transition-colors"
+               >
+                 Cancelar
+               </button>
+               <button 
+                onClick={handleConfirmSeparate}
+                disabled={loading || !separateModuloName.trim()}
+                className="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold text-sm disabled:opacity-50 transition-colors shadow-sm flex items-center gap-2"
+               >
+                 {loading ? 'Separando...' : 'Confirmar Separação'}
+               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }

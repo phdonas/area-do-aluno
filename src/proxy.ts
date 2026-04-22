@@ -34,15 +34,28 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
+  
+  // 1.5 Redirecionamento de Redundância (Fused Loja -> Catalogo)
+  if (pathname === '/loja') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/catalogo'
+    return NextResponse.redirect(url)
+  }
 
-  // 2. LÓGICA DE PROTEÇÃO DE ROTAS (v6.0 Blindado)
-  const isProtectedRoute = pathname.startsWith('/dashboard') || 
+  // 2. LÓGICA DE PROTEÇÃO DE ROTAS (v6.1 - Catalogo e Loja Públicos)
+  const isProtectedRoute = (pathname.startsWith('/dashboard') || 
                            pathname.startsWith('/player') ||
                            pathname.startsWith('/admin') ||
+                           pathname.startsWith('/meu-perfil') ||
                            pathname.startsWith('/perfil') ||
                            pathname.startsWith('/insights') ||
                            pathname.startsWith('/simuladores') ||
-                           pathname.startsWith('/ferramentas')
+                           pathname.startsWith('/ferramentas') ||
+                           pathname.startsWith('/questionarios') ||
+                           pathname.startsWith('/definir-senha')) &&
+                           !pathname.startsWith('/vitrine') &&
+                           !pathname.startsWith('/catalogo') &&
+                           !pathname.startsWith('/loja'); 
 
   if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone()
@@ -53,19 +66,21 @@ export async function proxy(request: NextRequest) {
 
   // 3. Bloqueio por Status da Conta (Bloqueado) e Verificação de Papel
   let isAdmin = false;
-  if (user) {
-    // Usamos um cliente ADMIN aqui para evitar bloqueios de RLS no Proxy
-    const supabaseAdminCheck = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
+  let userData: any = null;
 
-    const { data: userData } = await supabaseAdminCheck
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
+  if (user) {
+    const { data } = await supabaseAdmin
       .from('usuarios')
-      .select('status, is_admin')
+      .select('status, is_admin, perfil_completo_momento2')
       .eq('id', user.id)
       .single()
     
+    userData = data;
     isAdmin = !!userData?.is_admin;
 
     if (userData?.status === 'bloqueado') {
@@ -74,16 +89,35 @@ export async function proxy(request: NextRequest) {
       url.searchParams.set('error', 'blocked')
       return NextResponse.redirect(url)
     }
+
+    // 3.5 Redirecionamento para Onboarding (Momento 2)
+    // Se o usuário já passou pelo cadastro inicial mas não completou o perfil estendido (e não é admin)
+    if (
+      userData && 
+      !userData?.perfil_completo_momento2 && 
+      !isAdmin && 
+      !pathname.startsWith('/onboarding') && 
+      !pathname.startsWith('/trocar-senha') &&
+      !pathname.startsWith('/definir-senha') &&
+      !pathname.startsWith('/api') &&
+      isProtectedRoute
+    ) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/onboarding/perfil-profissional'
+      return NextResponse.redirect(url)
+    }
   }
 
-  // 4. Bloqueio por Expiração de Acesso para Rotas Premium
-  const isPremiumRoute = pathname.startsWith('/player') ||
+  // 4. Bloqueio por Expiração de Acesso para Rotas de Aluno (Premium + Dashboard)
+  const isStudentRoute = pathname.startsWith('/dashboard') ||
+                         pathname.startsWith('/player') ||
                          pathname.startsWith('/insights') ||
                          pathname.startsWith('/simuladores') ||
-                         pathname.startsWith('/ferramentas')
+                         pathname.startsWith('/ferramentas') ||
+                         pathname.startsWith('/meus-certificados')
 
-  if (user && isPremiumRoute && !isAdmin) {
-    const { data: activeAccess } = await supabase
+  if (user && isStudentRoute && !isAdmin) {
+    const { data: activeAccess } = await supabaseAdmin
       .from('assinaturas')
       .select('id')
       .eq('usuario_id', user.id)
@@ -93,7 +127,7 @@ export async function proxy(request: NextRequest) {
 
     if (!activeAccess || activeAccess.length === 0) {
       const url = request.nextUrl.clone()
-      url.pathname = '/dashboard'
+      url.pathname = '/vitrine'
       url.searchParams.set('error', 'no_active_access')
       return NextResponse.redirect(url)
     }
@@ -111,10 +145,31 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // 4. Redirecionar se já logado (login -> dashboard)
-  if (user && (pathname === '/login' || pathname === '/')) {
+  // 6. Redirecionar se já logado (login/cadastro/registrar -> dinâmico)
+  if (user && (pathname === '/login' || pathname === '/cadastro' || pathname === '/registrar' || pathname === '/')) {
     const url = request.nextUrl.clone()
-    url.pathname = '/dashboard'
+    
+    // 1. Admin/Staff -> Painel do Gestor
+    if (isAdmin) {
+      url.pathname = '/admin'
+      return NextResponse.redirect(url)
+    }
+
+    // 2. Aluno com acesso -> Dashboard
+    const { data: assinaturas } = await supabaseAdmin
+      .from('assinaturas')
+      .select('id')
+      .eq('usuario_id', user.id)
+      .eq('status', 'ativa')
+      .limit(1)
+
+    if (assinaturas && assinaturas.length > 0) {
+      url.pathname = '/dashboard'
+    } else {
+      // 3. Visitante ou Sem Acesso -> Vitrine (Alta Conversão)
+      url.pathname = '/vitrine'
+    }
+    
     return NextResponse.redirect(url)
   }
 

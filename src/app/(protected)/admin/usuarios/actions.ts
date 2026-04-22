@@ -12,7 +12,8 @@ export async function listarUsuarios() {
     
     const { data, error } = await supabase
       .from('usuarios')
-      .select('*')
+      .select('*, assinaturas(count)')
+      .eq('assinaturas.status', 'ativa')
       .order('created_at', { ascending: false })
 
     if (error) throw error

@@ -63,7 +63,7 @@ export default async function PerfilPage() {
                 </div>
                 <h2 className="text-xl font-bold text-text-primary">{aluno?.nome || meta.full_name || user.email?.split('@')[0]}</h2>
                 <div className="flex items-center gap-1.5 mt-2">
-                   <p className="text-xs font-black uppercase tracking-[0.2em] text-primary opacity-60">Aluno Ph Academy</p>
+                   <p className="text-xs font-black uppercase tracking-[0.2em] text-primary opacity-60">Aluno PHDonassolo Academy</p>
                    {aluno?.pais && (
                      <span className="px-2 py-0.5 bg-primary/10 text-primary text-[8px] font-black rounded-full border border-primary/20">
                         {aluno.pais}
@@ -120,7 +120,7 @@ export default async function PerfilPage() {
                 </div>
                 <h3 className="text-lg font-black text-indigo-900 tracking-tight">Segurança de Dados</h3>
                 <p className="max-w-xs text-xs font-medium text-indigo-700/60 leading-relaxed mt-2 uppercase tracking-widest">
-                   Suas informações estão protegidas por criptografia ponta-a-ponta e em conformidade com as diretrizes da PH Academy.
+                   Suas informações estão protegidas por criptografia ponta-a-ponta e em conformidade com as diretrizes da PHDonassolo Academy.
                 </p>
             </div>
          </div>

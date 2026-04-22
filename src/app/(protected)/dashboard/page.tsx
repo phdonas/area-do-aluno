@@ -10,6 +10,8 @@ import { cleanTitle } from '@/lib/formatter'
 import { getPrefixosLimpeza } from '@/lib/prefixes'
 import { RadarChart } from '@/components/RadarChart'
 import { StudyHeatmap } from '@/components/StudyHeatmap'
+import { BadgesGroup } from '@/components/BadgesGroup'
+import { PDIWidget } from '@/components/PDIWidget'
 import { format } from 'date-fns'
 
 export const dynamic = 'force-dynamic'
@@ -30,21 +32,26 @@ export default async function DashboardPage() {
       .select('ultima_visualizacao, curso_id')
       .eq('usuario_id', user.id)
       .eq('concluida', true)
-      .gt('ultima_visualizacao', new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString())
+      .gt('ultima_visualizacao', new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString()),
+    supabaseAdmin.from('usuarios').select('phd_coins_total, phd_nivel, streak_dias').eq('id', user.id).single(),
+    supabaseAdmin.from('badges_aluno').select('*').eq('usuario_id', user.id).order('conquistado_em', { ascending: false }).limit(3),
+    supabaseAdmin.from('metas_aluno').select('*').eq('usuario_id', user.id).order('created_at', { ascending: false })
   ])
 
-  const res_assinaturas = results[0]
-  const res_progresso = results[1]
-  const res_cursos = results[2]
-  const res_atividade = results[3]
+  const [res_assinaturas, res_progresso, res_cursos, res_atividade, res_gamificacao, res_badges, res_metas] = results
 
   if (res_assinaturas.error) console.error('Erro assinaturas:', res_assinaturas.error)
   if (res_progresso.error) console.error('Erro progresso:', res_progresso.error)
+  if (res_gamificacao.error) console.error('Erro gamificação:', res_gamificacao.error)
+  if (res_metas.error) console.error('Erro metas:', res_metas.error)
 
   const assinaturas = res_assinaturas.data || []
   const progressoTotal = res_progresso.data || []
   const cursosBase = res_cursos.data || []
   const rawActivityLogs = res_atividade.data || []
+  const gamificacao = (res_gamificacao?.data as any) || { phd_coins_total: 0, phd_nivel: 1, streak_dias: 0 }
+  const badges = res_badges?.data || []
+  const metas = res_metas?.data || []
 
   const processedActivityData: Record<string, number> = {}
   if (Array.isArray(rawActivityLogs)) {
@@ -96,11 +103,15 @@ export default async function DashboardPage() {
         }
       })
 
-      return Array.from(unique.values())
+      return { 
+        aulas: Array.from(unique.values()), 
+        hasFluxo: (modulosData || []).some((m: any) => m.ui_layout === 'fluxo') 
+      }
     })
   )
 
-  const todasAulas = gradesCursos.flat()
+  const todasAulas = gradesCursos.flatMap(g => g.aulas)
+  const cursoFluxoMap = new Map(idsCursosComprados.map((id, idx) => [id, gradesCursos[idx].hasFluxo]))
   const progressoMap = new Map(progressoTotal?.map(p => {
     const key = p.curso_id ? `${p.curso_id}-${p.aula_id}` : p.aula_id;
     return [key, p];
@@ -136,7 +147,12 @@ export default async function DashboardPage() {
       ? aulasComData[0].id 
       : (aulasDoCurso.find(a => !idsAulasConcluidas.has(`${cursoId}-${a.id}`) && !idsAulasConcluidas.has(a.id))?.id || aulasDoCurso[0].id)
 
-    return { percent, lastId }
+    return { 
+      percent, 
+      lastId, 
+      hasActivity: aulasComData.length > 0,
+      hasFluxo: cursoFluxoMap.get(cursoId) || false
+    }
   }
 
   // 3. Processamento p/ UI (Radar e Recomendação) Dinâmico
@@ -159,7 +175,6 @@ export default async function DashboardPage() {
     }
   })
 
-  // Fallback se não houver pilares no DB (caso segurança)
   const radarDataFinal = radarData.length > 0 ? radarData : [
     { subject: 'Negociação', value: 5, fullMark: 100 },
     { subject: 'IA/Tech', value: 5, fullMark: 100 },
@@ -167,15 +182,14 @@ export default async function DashboardPage() {
     { subject: 'Performance', value: 5, fullMark: 100 }
   ]
 
-  // 4. Acessos Atuais e Vitrine
   const pacotesComprados = (assinaturas?.filter(a => a.plano_id).map(a => a.planos) || []).filter(Boolean)
   const allActiveCourses = (cursosBase || []).filter(c => idsCursosComprados.includes(c.id))
-
   const pilarMaisFraco = [...radarDataFinal].sort((a, b) => a.value - b.value)[0]
   
-  // Busca a próxima aula ideal baseada no pilar mais fraco
   let recomendacaoItem: any = null
   let aulaRecomendadaObj: any = null
+  let recomendacaoHasActivity = false
+  let recomendacaoHasFluxo = false
 
   const cursosDoPilarFraco = allActiveCourses.filter(c => {
     return cursosComPilares?.find(cp => cp.curso_id === c.id && (cp.pilares as any)?.nome === pilarMaisFraco.subject)
@@ -186,120 +200,185 @@ export default async function DashboardPage() {
     if (stats.percent < 100) {
       recomendacaoItem = curso
       aulaRecomendadaObj = todasAulas.find((a: any) => a.id === stats.lastId)
+      recomendacaoHasActivity = stats.hasActivity
+      recomendacaoHasFluxo = stats.hasFluxo
       break
     }
   }
 
-  // Fallback se o pilar mais fraco estiver concluído (raro, mas possível logicamente)
   if (!recomendacaoItem) {
     for (const curso of allActiveCourses) {
       const stats = getStatsCurso(curso.id)
       if (stats.percent < 100) {
         recomendacaoItem = curso
         aulaRecomendadaObj = todasAulas.find((a: any) => a.id === stats.lastId)
+        recomendacaoHasActivity = stats.hasActivity
+        recomendacaoHasFluxo = stats.hasFluxo
         break
       }
     }
   }
   const vitrineCursos = cursosBase?.filter(c => !idsCursosComprados.includes(c.id) && !(c as any).is_free) || []
 
-  // Cálculo de Progresso Geral Único (Média dos cursos cursados)
-  const totalPercent = allActiveCourses.reduce((acc: number, cur: any) => acc + getStatsCurso(cur.id).percent, 0)
-  const progressoTotalPlataforma = allActiveCourses.length > 0
-    ? Math.round(totalPercent / allActiveCourses.length)
-    : 0
-
   return (
-    <div className="max-w-7xl mx-auto space-y-16 pb-20 animate-in fade-in slide-in-from-bottom-5 duration-1000">
+    <div className="max-w-7xl mx-auto space-y-20 pb-20 animate-in fade-in slide-in-from-bottom-5 duration-1000">
       
       {/* SEÇÃO 1: HUB DE INTELIGÊNCIA */}
-      <section className="relative overflow-hidden bg-[#0A0F1E] rounded-[3.5rem] p-8 md:p-16 text-white shadow-3xl border border-white/5">
-         <div className="absolute top-[-30%] left-[-10%] w-[60%] h-[60%] bg-primary/20 blur-[130px] rounded-full" />
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-dark to-[#040814] rounded-xl p-8 md:p-16 text-white shadow-2xl border border-white/10">
+         <div className="absolute top-[-30%] left-[-10%] w-[60%] h-[60%] bg-white/5 blur-[130px] rounded-full" />
          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12 relative z-10">
             <div className="space-y-10 max-w-2xl">
-               <div className="flex flex-wrap gap-3">
-                  <div className="px-4 py-1.5 bg-primary/20 border border-primary/30 rounded-full flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-primary-light" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-primary-light text-white/80">Sincronização Ativa: {progressoTotalPlataforma}%</span>
-                  </div>
-               </div>
-               <h1 className="text-4xl md:text-7xl font-black tracking-tighter leading-[0.85]">
-                  Foque em <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light to-indigo-400 uppercase">{pilarMaisFraco.subject}.</span>
+               <h1 className="text-4xl md:text-7xl font-black tracking-tighter leading-[0.85] font-display">
+                  Foque em <br/><span className="text-secondary uppercase drop-shadow-sm">{pilarMaisFraco.subject}.</span>
                </h1>
+
+               <div className="flex flex-wrap gap-6 pt-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center">
+                      <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+                    </div>
+                     <div>
+                      <p className="text-[10px] font-bold text-white/60 uppercase tracking-widest">PHD Coins</p>
+                      <p className="text-lg font-black text-white">{gamificacao.phd_coins_total}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-md bg-primary-light/20 border border-primary-light/30 flex items-center justify-center">
+                      <Award className="w-5 h-5 text-primary-light" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-white/60 uppercase tracking-widest">Nível</p>
+                      <p className="text-lg font-black text-white">{gamificacao.phd_nivel}</p>
+                    </div>
+                  </div>
+
+                  {gamificacao.streak_dias > 0 && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center animate-pulse">
+                        <Flame className="w-5 h-5 text-orange-500 fill-orange-500" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Streak</p>
+                        <p className="text-lg font-black text-white">{gamificacao.streak_dias} dias</p>
+                      </div>
+                    </div>
+                  )}
+               </div>
             </div>
-            <div className="w-full lg:w-[420px] p-10 bg-white/[0.04] backdrop-blur-3xl border border-white/10 rounded-[3rem] shadow-2xl">
+            <div className="w-full lg:w-[420px] p-10 bg-white/5 backdrop-blur-3xl border border-white/20 rounded-xl shadow-2xl">
                {recomendacaoItem ? (
                   <div className="space-y-4">
-                    <p className="text-[10px] font-black uppercase text-white/50 tracking-[0.2em]">Próximo Passo Estratégico</p>
+                    <p className="text-[10px] font-black uppercase text-white/40 tracking-[0.2em] font-sans">Próximo Passo Estratégico</p>
                         <div className="flex flex-col gap-1">
-                          <h3 className="text-2xl font-black text-white leading-tight">{cleanTitle(recomendacaoItem.titulo, prefixes)}</h3>
+                          <h3 className="text-2xl font-black text-white leading-tight font-display">{cleanTitle(recomendacaoItem.titulo, prefixes)}</h3>
                           {aulaRecomendadaObj && (
-                            <p className="text-xs font-bold text-primary-light/80 italic">Aula: {cleanTitle(aulaRecomendadaObj.titulo, prefixes)}</p>
+                            <p className="text-xs font-bold text-secondary italic font-sans">Aula: {cleanTitle(aulaRecomendadaObj.titulo, prefixes)}</p>
                           )}
                         </div>
                     <Link 
-                      href={aulaRecomendadaObj ? `/player/${recomendacaoItem.id}/${aulaRecomendadaObj.id}` : `/catalogo/${recomendacaoItem.id}`} 
-                      className="mt-8 w-full flex items-center justify-center gap-4 py-5 bg-white text-black rounded-2xl font-black text-xs hover:bg-primary hover:text-white transition-all shadow-[0_20px_40px_rgba(255,255,255,0.1)] active:scale-95"
+                      href={(!recomendacaoHasFluxo && recomendacaoHasActivity && aulaRecomendadaObj) ? `/player/${recomendacaoItem.id}/${aulaRecomendadaObj.id}` : `/player/${recomendacaoItem.id}`} 
+                      className="mt-8 w-full flex items-center justify-center gap-4 py-5 bg-secondary text-white rounded-xl font-black text-xs hover:bg-secondary/80 transition-all shadow-lg active:scale-95 uppercase tracking-widest font-sans"
                     > 
                       {aulaRecomendadaObj ? 'Continuar de Onde Parou' : 'Ver Grade do Curso'} <ArrowRight className="w-4 h-4" /> 
                     </Link>
                   </div>
-               ) : <h3 className="text-2xl font-black text-white tracking-tighter">Missão Cumprida! Você dominou todos os pilares.</h3>}
+               ) : (
+                  <h3 className="text-2xl font-black text-white tracking-tighter">Missão Cumprida! Você dominou todos os pilares.</h3>
+               )}
             </div>
          </div>
       </section>
 
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-         <RadarChart data={radarDataFinal} />
-         <StudyHeatmap activityData={processedActivityData} />
-      </section>
-
-      {/* SEÇÃO 3: MEUS CURSOS / MATERIAIS */}
+      {/* SEÇÃO 2: MEUS CURSOS / MATERIAIS */}
       <section className="space-y-12">
          <div className="flex items-center justify-between border-l-4 border-primary pl-8"><h2 className="text-base font-black text-text-primary/40 uppercase tracking-[0.3em]">Meus Cursos / Materiais</h2></div>
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {[...pacotesComprados.map(p => ({...p, type: 'pacote'})), ...allActiveCourses.map(c => ({...c, type: 'curso'}))].map((item: any) => {
                const stats = item.type === 'curso' ? getStatsCurso(item.id) : { percent: 0, lastId: null }
                const progresso = stats.percent
-               
-               // Determinar link dinâmico: se for curso, vai pro player na última assistida (ou próxima)
                let linkDestino = `/catalogo/${item.id}`
                if (item.type === 'curso') {
-                 linkDestino = stats.lastId ? `/player/${item.id}/${stats.lastId}` : `/catalogo/${item.id}`
+                 const forceIndex = stats.hasFluxo
+                 linkDestino = (stats.hasActivity && !forceIndex) ? `/player/${item.id}/${stats.lastId}` : `/player/${item.id}`
                } else if (item.type === 'pacote') {
                  linkDestino = `/catalogo/pacote/${item.id}`
                }
 
                return (
-                 <Link key={item.id} href={linkDestino} className="group bg-surface border border-border-custom rounded-[3rem] overflow-hidden hover:shadow-2xl transition-all h-full flex flex-col">
+                 <Link key={item.id} href={linkDestino} className="group bg-card border border-border/50 rounded-xl overflow-hidden hover:shadow-2xl hover:border-primary/30 transition-all duration-500 h-full flex flex-col shadow-sm">
                     <div className="aspect-video relative overflow-hidden bg-white/5">
                        {item.thumb_url && <img src={item.thumb_url} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt={item.titulo} />}
-                       <div className="absolute inset-x-0 bottom-0 p-6 z-20 bg-gradient-to-t from-black/90 to-transparent">
-                          <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mb-3"><div className="h-full bg-primary-light transition-all duration-1000" style={{ width: `${progresso}%` }} /></div>
+                       <div className="absolute inset-x-0 bottom-0 p-6 z-20 bg-gradient-to-t from-primary/90 to-transparent">
+                          <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mb-3"><div className="h-full bg-secondary-light transition-all duration-1000 shadow-[0_0_10px_rgba(var(--secondary),0.3)]" style={{ width: `${progresso}%` }} /></div>
                           <span className="text-[9px] font-black text-white uppercase tracking-widest">{progresso}% Concluído</span>
                        </div>
                     </div>
-                    <div className="p-8"><h3 className="text-xl font-black text-text-primary leading-tight group-hover:text-primary transition-colors line-clamp-2">{cleanTitle(item.titulo || item.nome, prefixes)}</h3></div>
+                    <div className="p-8"><h3 className="text-xl font-bold font-display text-foreground leading-tight group-hover:text-primary transition-colors line-clamp-2">{cleanTitle(item.titulo || item.nome, prefixes)}</h3></div>
                  </Link>
                )
             })}
          </div>
       </section>
 
-      {/* SEÇÃO 4: VITRINE ACADEMY */}
-      <section id="complete-seu-treinamento" className="space-y-12 pt-20 border-t border-border-custom border-dashed scroll-mt-20">
-         <div className="flex items-center justify-between"><h2 className="text-2xl font-black text-text-primary tracking-tighter flex items-center gap-3"><Award className="w-6 h-6 text-amber-500 fill-amber-500" /> Especializações Recomendadas</h2></div>
+      {/* SEÇÃO 3: RECOMENDADO PARA VOCÊ */}
+      <section className="space-y-12">
+         <div className="flex items-center justify-between border-l-4 border-secondary pl-8"><h2 className="text-base font-black text-text-primary/40 uppercase tracking-[0.3em]">Recomendado para Você</h2></div>
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Link href="/catalogo" className="relative group overflow-hidden rounded-[3rem] bg-[#0A0F1E] border border-white/5 p-10">
+            <Link href="/catalogo" className="relative group overflow-hidden rounded-xl bg-primary border border-white/5 p-10 shadow-xl">
                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[80px] rounded-full" />
                <div className="relative z-10 space-y-6"><div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center"><Target className="w-7 h-7 text-primary-light" /></div><h3 className="text-2xl font-black text-white">Explorar Todos os Pilares</h3></div>
             </Link>
             {vitrineCursos.slice(0, 2).map((item: any) => (
-               <Link key={item.id} href={`/loja/curso/${item.id}`} className="group bg-surface border border-border-custom rounded-[3rem] overflow-hidden hover:shadow-2xl transition-all h-full flex flex-col">
+               <Link key={item.id} href={`/loja/curso/${item.id}`} className="group bg-card border border-border/50 rounded-xl overflow-hidden hover:shadow-2xl hover:border-primary/30 transition-all duration-500 h-full flex flex-col shadow-sm">
                   <div className="aspect-video relative overflow-hidden bg-white/5">{item.thumb_url && <img src={item.thumb_url} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt={item.titulo} />}</div>
                   <div className="p-8"><h4 className="font-extrabold text-lg text-text-primary leading-tight line-clamp-2 group-hover:text-primary transition-colors">{cleanTitle(item.titulo, prefixes)}</h4></div>
                </Link>
             ))}
+         </div>
+      </section>
+
+      {/* SEÇÃO 4: MEUS RESULTADOS */}
+      <section className="space-y-12">
+         <div className="flex items-center justify-between border-l-4 border-indigo-500 pl-8">
+            <h2 className="text-base font-black text-text-primary/40 dark:text-text-primary/60 uppercase tracking-[0.3em]">Meus Resultados</h2>
+         </div>
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <RadarChart data={radarDataFinal} />
+            <div className="bg-indigo-500/5 dark:bg-indigo-50/50 rounded-xl p-8 flex flex-col justify-center border border-indigo-500/10 dark:border-indigo-200 shadow-sm">
+               <h3 className="text-2xl font-black text-text-primary dark:text-indigo-950 uppercase tracking-tighter italic mb-4">Radar de Competências</h3>
+               <p className="text-sm text-text-muted dark:text-indigo-900/60 leading-relaxed font-medium">
+                  Esta visualização representa sua evolução técnica e comportamental nos pilares fundamentais da plataforma. Continue completando as aulas para expandir sua área de domínio.
+               </p>
+            </div>
+         </div>
+      </section>
+
+      {/* SEÇÃO 5: MEU PDI */}
+      <section className="space-y-12">
+         <div className="flex items-center justify-between border-l-4 border-emerald-500 pl-8">
+            <h2 className="text-base font-black text-text-primary/40 dark:text-text-primary/60 uppercase tracking-[0.3em]">Meu PDI</h2>
+         </div>
+         <div className="max-w-4xl">
+            <PDIWidget metas={metas as any} />
+         </div>
+      </section>
+
+      {/* SEÇÃO 6: CONQUISTAS RECENTES */}
+      <section className="space-y-12">
+         <div className="flex items-center justify-between border-l-4 border-amber-500 pl-8">
+            <h2 className="text-base font-black text-text-primary/40 dark:text-text-primary/60 uppercase tracking-[0.3em]">Conquistas Recentes</h2>
+         </div>
+         <BadgesGroup badges={badges} />
+      </section>
+
+      {/* SEÇÃO 7: CONSISTÊNCIA DE ACESSO */}
+      <section className="space-y-12">
+         <div className="flex items-center justify-between border-l-4 border-slate-500 pl-8">
+            <h2 className="text-base font-black text-text-primary/40 dark:text-text-primary/60 uppercase tracking-[0.3em]">Consistência de Acesso</h2>
+         </div>
+         <div className="max-w-5xl">
+            <StudyHeatmap activityData={processedActivityData} />
          </div>
       </section>
     </div>

@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { ensureAdmin } from '@/lib/auth-check'
 import { revalidatePath } from 'next/cache'
-import { enviarEmailComunicacao } from '@/lib/mail'
+import { enviarEmailComunicacao } from '@/lib/email-service'
 import { redirect } from 'next/navigation'
 
 /**

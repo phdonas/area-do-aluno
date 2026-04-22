@@ -12,12 +12,13 @@ interface PlayerLayoutProps {
   cursoId: string
   aulaTitulo: string
   prefixes: string[]
+  isFlowMode?: boolean
 }
 
-export function PlayerLayout({ children, sidebar, cursoId, aulaTitulo, prefixes }: PlayerLayoutProps) {
+export function PlayerLayout({ children, sidebar, cursoId, aulaTitulo, prefixes, isFlowMode = false }: PlayerLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isFocusMode, setIsFocusMode] = useState(false)
-  const [isGradeOpen, setIsGradeOpen] = useState(true)
+  const [isGradeOpen, setIsGradeOpen] = useState(!isFlowMode) // Por padrão, fechada se for fluxo por causa do dashboard logic ou se o usuário pediu
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col h-screen bg-background overflow-hidden selection:bg-primary/30">
@@ -34,7 +35,7 @@ export function PlayerLayout({ children, sidebar, cursoId, aulaTitulo, prefixes 
             <div className="flex items-center gap-6">
                 <Link 
                   href={`/dashboard`} 
-                  className="flex items-center gap-3 px-4 py-2 hover:bg-surface rounded-2xl transition-all text-text-muted hover:text-primary border border-transparent hover:border-border-custom group"
+                  className="flex items-center gap-3 px-4 py-2 hover:bg-surface rounded-xl transition-all text-text-muted hover:text-primary border border-transparent hover:border-border/50 group"
                 >
                   <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                   <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Painel</span>
@@ -44,21 +45,21 @@ export function PlayerLayout({ children, sidebar, cursoId, aulaTitulo, prefixes 
 
                 <div className="flex flex-col">
                   <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary leading-none mb-1.5 opacity-60">Conteúdo em Foco</span>
-                  <h2 className="text-sm md:text-base font-black uppercase tracking-widest text-text-primary truncate max-w-[180px] md:max-w-2xl italic leading-none">
+                  <h2 className="text-sm md:text-base font-black uppercase tracking-widest text-text-primary truncate max-w-[180px] md:max-w-2xl italic leading-none font-display">
                     {cleanTitle(aulaTitulo, prefixes)}
                   </h2>
                 </div>
             </div>
 
             <div className="flex items-center gap-4">
-                <div className="hidden lg:flex items-center gap-2 mr-4 bg-surface/50 px-4 py-2 rounded-xl border border-border-custom">
+                <div className="hidden lg:flex items-center gap-2 mr-4 bg-card/50 px-4 py-2 rounded-xl border border-border/50">
                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                    <span className="text-[9px] font-black text-text-muted uppercase tracking-widest">Sincronizado</span>
                 </div>
 
                 <button 
                   onClick={() => setIsFocusMode(true)}
-                  className="hidden sm:flex items-center gap-3 px-6 py-3 bg-indigo-600 border border-indigo-400/30 rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 group active:scale-95"
+                  className="hidden sm:flex items-center gap-3 px-6 py-3 bg-secondary border border-secondary-dark/30 rounded-xl hover:bg-secondary/80 transition-all shadow-sm group active:scale-95"
                 >
                   <Maximize2 className="w-4 h-4 text-white group-hover:scale-110 transition-transform" />
                   <span className="text-[10px] font-black text-white uppercase tracking-widest">Atenção Plena</span>
@@ -67,7 +68,7 @@ export function PlayerLayout({ children, sidebar, cursoId, aulaTitulo, prefixes 
                 {/* BOTÃO DESKTOP PARA COLLAPSE DA SIDEBAR */}
                 <button 
                   onClick={() => setIsGradeOpen(!isGradeOpen)}
-                  className="hidden lg:flex p-3 bg-background border border-border-custom text-text-primary rounded-2xl hover:border-primary transition-all shadow-sm"
+                  className={`hidden lg:flex p-3 rounded-xl transition-all shadow-sm border ${isFlowMode ? 'bg-orange-500/10 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white' : 'bg-background border-border-custom text-text-primary hover:border-primary'}`}
                   title={isGradeOpen ? "Fechar Grade" : "Abrir Grade"}
                 >
                   <Menu className="w-5 h-5" />
@@ -76,7 +77,7 @@ export function PlayerLayout({ children, sidebar, cursoId, aulaTitulo, prefixes 
                 {/* BOTÃO MOBILE (TOGGLE SIDEBAR) */}
                 <button 
                   onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                  className="lg:hidden p-3.5 bg-primary text-white rounded-2xl shadow-xl shadow-primary/20 active:scale-95 transition-all"
+                  className="lg:hidden p-3.5 bg-primary text-white rounded-xl shadow-lg active:scale-95 transition-all"
                 >
                   {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                 </button>
@@ -109,17 +110,17 @@ export function PlayerLayout({ children, sidebar, cursoId, aulaTitulo, prefixes 
         {/* SIDEBAR DESKTOP (GRADE DE AULAS) - COLLAPSABLE */}
         <AnimatePresence mode="popLayout">
           {isGradeOpen && !isFocusMode && (
-            <motion.aside 
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: "420px", opacity: 1 }}
-              exit={{ width: 0, opacity: 0 }}
-              transition={{ type: "spring", damping: 30, stiffness: 200 }}
-              className="hidden lg:block h-full border-l border-border-custom bg-surface/30 backdrop-blur-sm shadow-2xl relative z-10"
-            >
-              <div className="h-full overflow-hidden">
-                {sidebar}
-              </div>
-            </motion.aside>
+              <motion.aside 
+               initial={{ width: 0, opacity: 0 }}
+               animate={{ width: "420px", opacity: 1 }}
+               exit={{ width: 0, opacity: 0 }}
+               transition={{ type: "spring", damping: 30, stiffness: 200 }}
+               className="hidden lg:block h-full border-l border-border/50 bg-card/30 backdrop-blur-sm shadow-2xl relative z-10"
+             >
+               <div className="h-full overflow-hidden">
+                 {sidebar}
+               </div>
+             </motion.aside>
           )}
         </AnimatePresence>
 

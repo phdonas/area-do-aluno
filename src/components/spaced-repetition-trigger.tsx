@@ -18,7 +18,6 @@ export function SpacedRepetitionTrigger({ usuarioId, aulaId, onCompleted }: Spac
   const supabase = createClient()
 
   // Algoritmo SM-2 Simplificado
-  // Quality: 0-5
   const calculateSM2 = (quality: number, prevInterval: number, prevRepedition: number, prevEfactor: number) => {
     let interval = 0
     let repetition = 0
@@ -48,7 +47,6 @@ export function SpacedRepetitionTrigger({ usuarioId, aulaId, onCompleted }: Spac
     setRating(quality)
     setLoading(true)
 
-    // 1. Buscar estado atual da revisão se existir
     const { data: current } = await supabase
       .from('revisoes_aula')
       .select('*')
@@ -66,7 +64,6 @@ export function SpacedRepetitionTrigger({ usuarioId, aulaId, onCompleted }: Spac
     const proximaData = new Date()
     proximaData.setDate(proximaData.getDate() + interval)
 
-    // 2. Salvar novo estado
     const { error } = await supabase
       .from('revisoes_aula')
       .upsert({
@@ -91,37 +88,37 @@ export function SpacedRepetitionTrigger({ usuarioId, aulaId, onCompleted }: Spac
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="p-8 bg-emerald-500/10 border border-emerald-500/20 rounded-[32px] text-center space-y-4"
+        className="p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-[32px] text-center space-y-3"
       >
-         <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
-            <Calendar className="w-8 h-8 text-white" />
+         <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
+            <Calendar className="w-6 h-6 text-white" />
          </div>
-         <h4 className="text-xl font-black text-white uppercase tracking-tighter">Blindagem Ativada!</h4>
-         <p className="text-sm text-emerald-500 font-bold uppercase tracking-widest">Agendamos sua revisão para garantir que você não esqueça esse conteúdo.</p>
+         <h4 className="text-lg font-black text-text-primary uppercase tracking-tighter italic">Blindagem Ativada!</h4>
+         <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">Revisão agendada com sucesso.</p>
       </motion.div>
     )
   }
 
   return (
-    <div className="bg-[#0A0F1E] border border-white/5 rounded-[40px] p-8 md:p-12 relative overflow-hidden shadow-2xl">
-      <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
+    <div className="bg-indigo-500/10 dark:bg-indigo-50/90 border border-indigo-500/20 dark:border-indigo-200 rounded-[40px] p-8 md:p-10 relative overflow-hidden shadow-sm">
+      <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/5 dark:bg-indigo-200/20 blur-[100px] rounded-full pointer-events-none" />
       
-      <div className="relative z-10 text-center space-y-8">
-         <div className="space-y-4">
-            <div className="w-16 h-16 bg-indigo-500/10 rounded-3xl flex items-center justify-center border border-indigo-500/20 mx-auto shadow-lg shadow-indigo-500/5">
-               <Brain className="w-9 h-9 text-indigo-400" />
+      <div className="relative z-10 text-center space-y-6">
+         <div className="space-y-3">
+            <div className="w-14 h-14 bg-white/40 dark:bg-indigo-200/50 rounded-2xl flex items-center justify-center border border-indigo-500/20 mx-auto shadow-sm">
+               <Brain className="w-8 h-8 text-indigo-500 dark:text-indigo-900" />
             </div>
-            <h3 className="text-2xl font-black text-white tracking-tighter uppercase leading-tight">
+            <h3 className="text-xl font-black text-text-primary dark:text-indigo-950 tracking-tighter uppercase italic">
                Blindagem de Conhecimento
             </h3>
-            <p className="text-sm text-white/40 font-medium max-w-sm mx-auto">
-               Para fixar esta aula em sua mente, diga ao algoritmo o quão difícil foi absorver este conteúdo:
+            <p className="text-[11px] text-text-secondary dark:text-indigo-900/60 font-medium max-w-xs mx-auto">
+               Diga ao algoritmo o quão difícil foi absorver este conteúdo para agendar sua revisão:
             </p>
          </div>
 
-         <div className="flex flex-wrap items-center justify-center gap-4">
+         <div className="flex items-center justify-center gap-3">
             {[
-              { val: 1, label: 'Difícil', color: 'bg-red-500' },
+              { val: 1, label: 'Difícil', color: 'bg-rose-500' },
               { val: 3, label: 'Médio', color: 'bg-amber-500' },
               { val: 5, label: 'Fácil', color: 'bg-emerald-500' }
             ].map((btn) => (
@@ -129,21 +126,21 @@ export function SpacedRepetitionTrigger({ usuarioId, aulaId, onCompleted }: Spac
                 key={btn.val}
                 disabled={loading}
                 onClick={() => handleRate(btn.val)}
-                className="group relative flex flex-col items-center gap-3 p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 min-w-[120px]"
+                className="group relative flex flex-col items-center gap-2 px-4 py-4 bg-white/60 dark:bg-white/90 border border-indigo-500/10 dark:border-indigo-200 rounded-2xl hover:bg-white transition-all hover:scale-105 active:scale-95 disabled:opacity-50 min-w-[90px]"
               >
-                 <div className={`w-3 h-3 rounded-full ${btn.color} shadow-lg shadow-black/20`} />
-                 <span className="text-[10px] font-black text-white uppercase tracking-widest leading-none">{btn.label}</span>
+                 <div className={`w-2.5 h-2.5 rounded-full ${btn.color} shadow-sm`} />
+                 <span className="text-[9px] font-black text-text-primary dark:text-indigo-950 uppercase tracking-widest leading-none">{btn.label}</span>
                  {rating === btn.val && loading && (
-                   <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-3xl backdrop-blur-sm">
-                      <RefreshCw className="w-6 h-6 text-white animate-spin" />
+                   <div className="absolute inset-0 flex items-center justify-center bg-white/60 rounded-2xl backdrop-blur-sm">
+                      <RefreshCw className="w-4 h-4 text-indigo-500 animate-spin" />
                    </div>
                  )}
               </button>
             ))}
          </div>
 
-         <div className="pt-8 border-t border-white/5">
-            <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">Tecnologia de Memória Espaçada (SM-2)</p>
+         <div className="pt-6 border-t border-indigo-500/10">
+            <p className="text-[9px] font-black text-indigo-500/30 uppercase tracking-[0.2em]">Memória Espaçada SM-2</p>
          </div>
       </div>
     </div>

@@ -3,7 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { registrarLogSistema } from '@/lib/logs'
-import { enviarEmailComunicacao } from '@/lib/mail'
+import { enviarEmailComunicacao } from '@/lib/email-service'
 
 /**
  * Simula o fluxo de matrícula com senha temporária para novos alunos.

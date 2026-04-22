@@ -29,15 +29,15 @@ export function StudyHeatmap({ activityData }: StudyHeatmapProps) {
   });
 
   return (
-    <div className="bg-surface border border-border-custom rounded-[3rem] p-8 flex flex-col shadow-sm h-full overflow-hidden">
+    <div className="bg-slate-500/10 dark:bg-slate-50/90 border border-slate-500/20 dark:border-slate-200 rounded-xl p-8 flex flex-col shadow-sm backdrop-blur-sm h-full overflow-hidden">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 className="text-sm font-black uppercase tracking-[0.2em] text-text-primary">Consistência de Acesso</h3>
-          <p className="text-[10px] text-text-muted mt-1 font-bold uppercase tracking-widest">Atividade nos últimos meses</p>
+          <h3 className="text-sm font-black uppercase tracking-[0.2em] text-foreground dark:text-slate-950 font-display">Consistência de Acesso</h3>
+          <p className="text-[10px] text-text-muted dark:text-slate-800/60 mt-1 font-bold uppercase tracking-widest font-sans">Atividade nos últimos meses</p>
         </div>
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-primary/5 rounded-full border border-primary/10">
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-primary/5 dark:bg-primary/20 rounded-full border border-primary/10 dark:border-primary/30">
            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-           <span className="text-[9px] font-black text-primary uppercase tracking-widest">Sincronizado</span>
+           <span className="text-[9px] font-black text-primary dark:text-primary uppercase tracking-widest leading-none">Sincronizado</span>
         </div>
       </div>
 

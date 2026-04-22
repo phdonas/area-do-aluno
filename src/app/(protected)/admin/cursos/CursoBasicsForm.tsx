@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Save, LayoutTemplate, Plus, Trash2, Video, ShieldCheck, HelpCircle, ListChecks, Target, CreditCard } from 'lucide-react'
+import { Save, LayoutTemplate, Plus, Trash2, Video, ShieldCheck, HelpCircle, ListChecks, Target, CreditCard, Sparkles } from 'lucide-react'
 import { PrecoInternacional } from './PrecoInternacional'
 
 interface CursoBasicsFormProps {
@@ -12,6 +12,7 @@ interface CursoBasicsFormProps {
 
 export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormProps) {
   const [precoEur, setPrecoEur] = useState(curso.preco_eur || '')
+  const [destaque, setDestaque] = useState(curso.destaque_vitrine || false)
   const [faqs, setFaqs] = useState<{pergunta: string, resposta: string}[]>(
     Array.isArray(curso.faq) ? curso.faq : []
   )
@@ -29,21 +30,47 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
       {/* FAQ Hidden Input to send JSON via FormData */}
       <input type="hidden" name="faq" value={JSON.stringify(faqs)} />
 
-      {/* Dicas de Formatação */}
-      <div className="p-6 bg-primary/5 border border-primary/20 rounded-2xl space-y-4 mb-8">
-        <div className="flex items-center gap-2 text-primary">
-          <HelpCircle className="w-4 h-4" />
-          <span className="text-[10px] font-black uppercase tracking-widest italic">Guia de Formatação Rápida</span>
+      {/* Seção Superior: Destaque e Status */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <div 
+          onClick={() => setDestaque(!destaque)}
+          className={`p-6 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between group ${
+            destaque 
+              ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10' 
+              : 'border-border-custom bg-background opacity-60 hover:opacity-100'
+          }`}
+        >
+          <div className="flex items-center gap-4">
+             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${destaque ? 'bg-primary text-white scale-110' : 'bg-surface text-text-muted'}`}>
+                <Sparkles className="w-6 h-6" />
+             </div>
+             <div>
+                <p className="text-xs font-black uppercase tracking-widest italic text-text-primary">Destaque na Vitrine</p>
+                <p className="text-[10px] text-text-secondary font-medium">Exibir este curso no topo da Landing Page principal.</p>
+             </div>
+          </div>
+          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${destaque ? 'border-primary bg-primary' : 'border-border-custom'}`}>
+             {destaque && <div className="w-2 h-2 bg-white rounded-full" />}
+          </div>
+          <input type="checkbox" name="destaque_vitrine" checked={destaque} onChange={() => {}} className="hidden" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px] text-text-secondary leading-relaxed font-medium">
-          <div className="space-y-1">
-            <p><strong>Negrito:</strong> Use <code className="bg-white px-1.5 py-0.5 rounded border border-border-custom">**texto**</code></p>
-            <p><strong>Títulos:</strong> Use <code className="bg-white px-1.5 py-0.5 rounded border border-border-custom"># </code>, <code className="bg-white px-1.5 py-0.5 rounded border border-border-custom">## </code> ou <code className="bg-white px-1.5 py-0.5 rounded border border-border-custom">### </code></p>
-          </div>
-          <div className="space-y-1">
-            <p><strong>Listas:</strong> Comece a linha com <code className="bg-white px-1.5 py-0.5 rounded border border-border-custom"> - </code></p>
-            <p><strong>Quebras:</strong> O sistema respeita os seus "Enters".</p>
-          </div>
+
+        <div className="p-6 bg-surface border border-border-custom rounded-3xl flex items-center justify-between">
+           <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-background border border-border-custom flex items-center justify-center text-text-muted">
+                 <ShieldCheck className="w-6 h-6" />
+              </div>
+              <div>
+                 <p className="text-xs font-black uppercase tracking-widest italic text-text-primary">Status de Lançamento</p>
+                 <select 
+                    id="status" name="status" defaultValue={curso.status}
+                    className="bg-transparent text-sm font-bold text-primary focus:outline-none appearance-none cursor-pointer"
+                  >
+                    <option value="rascunho">⚠️ Rascunho / Interno</option>
+                    <option value="publicado">✅ Publicado / Venda Ativa</option>
+                  </select>
+              </div>
+           </div>
         </div>
       </div>
 
@@ -98,35 +125,6 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
             className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm resize-y"
           ></textarea>
         </div>
-
-        <div className="space-y-2">
-          <label htmlFor="pre_requisitos" className="block text-xs font-black text-text-primary uppercase tracking-widest">O que você precisa saber antes? (Pré-requisitos)</label>
-          <textarea 
-            id="pre_requisitos" name="pre_requisitos" rows={3} defaultValue={curso.pre_requisitos || ''}
-            placeholder="Algum conhecimento que você já deve ter?"
-            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm resize-y"
-          ></textarea>
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="ementa_resumida" className="block text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-2">
-            <ListChecks className="w-3 h-3 text-primary" /> Ementa Resumida (O que você vai aprender?)
-          </label>
-          <textarea 
-            id="ementa_resumida" name="ementa_resumida" rows={4} defaultValue={curso.ementa_resumida || ''}
-            placeholder="Ex: - Gatilhos Mentais\n- Fechamento de Vendas\n- Prospecção Ativa"
-            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm resize-y font-mono"
-          ></textarea>
-        </div>
-
-        <div className="space-y-2">
-          <label htmlFor="resultados_esperados" className="block text-xs font-black text-text-primary uppercase tracking-widest">O que você vai conquistar ao final (Transformação)</label>
-          <textarea 
-            id="resultados_esperados" name="resultados_esperados" rows={4} defaultValue={curso.resultados_esperados || ''}
-            placeholder="Qual a grande transformação na sua vida?"
-            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm resize-y"
-          ></textarea>
-        </div>
       </div>
 
       <div className="space-y-6 pt-6 border-t border-border-custom">
@@ -161,17 +159,7 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
           />
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="formas_pagamento" className="block text-xs font-black text-text-primary uppercase tracking-widest italic flex items-center gap-2">
-            <CreditCard className="w-3 h-3 text-primary" /> Formas de Pagamento
-          </label>
-          <input 
-            type="text" id="formas_pagamento" name="formas_pagamento" defaultValue={curso.formas_pagamento || ''} placeholder="Ex: 12x no Cartão, Pix, Multibanco"
-            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label htmlFor="garantia_dias" className="block text-xs font-black text-text-primary uppercase tracking-widest italic flex items-center gap-2">
               <ShieldCheck className="w-3 h-3 text-primary" /> Dias de Garantia
@@ -185,7 +173,6 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
           <div className="space-y-2">
             <label htmlFor="professor_id" className="block text-xs font-black text-text-primary uppercase tracking-widest italic">Instrutor / Professor</label>
             <select 
-              key={`prof-${curso.professor_id}`}
               id="professor_id" name="professor_id" defaultValue={curso.professor_id || ''}
               className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm appearance-none"
             >
@@ -193,18 +180,6 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
               {professores.map((p) => (
                 <option key={p.id} value={p.id}>{p.nome}</option>
               ))}
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="status" className="block text-xs font-black text-text-primary uppercase tracking-widest italic">Visibilidade</label>
-            <select 
-              key={`status-${curso.status}`}
-              id="status" name="status" defaultValue={curso.status}
-              className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm appearance-none"
-            >
-              <option value="rascunho">⚠️ Salvar como Rascunho</option>
-              <option value="publicado">✅ Publicar para você vender</option>
             </select>
           </div>
         </div>
@@ -252,20 +227,15 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
               </button>
             </div>
           ))}
-          {faqs.length === 0 && (
-            <div className="text-center py-4 text-[10px] uppercase font-bold text-text-muted tracking-widest border border-dashed border-border-custom rounded-xl">
-              Nenhuma pergunta cadastrada.
-            </div>
-          )}
         </div>
       </div>
 
-      <div className="flex justify-end pt-4">
+      <div className="flex justify-end pt-10 sticky bottom-0 bg-surface/80 backdrop-blur-md p-4 -mx-4 border-t border-primary/10 z-20">
         <button 
           type="submit"
-          className="px-8 py-3 rounded-xl bg-primary hover:bg-primary-dark text-white font-bold flex items-center justify-center gap-2 transition-colors shadow-sm text-sm"
+          className="px-12 py-4 rounded-2xl bg-primary hover:bg-primary-dark text-white font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 transition-all shadow-xl shadow-primary/20"
         >
-          Salvar Alterações Globais <Save className="w-4 h-4" />
+          Salvar Alterações Globais <Save className="w-5 h-5" />
         </button>
       </div>
     </form>

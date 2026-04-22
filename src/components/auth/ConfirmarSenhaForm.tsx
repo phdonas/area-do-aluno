@@ -14,7 +14,7 @@ export function ConfirmarSenhaForm() {
           Nova Senha
         </h1>
         <p className="text-text-secondary text-sm mt-2 font-medium">
-          Defina sua nova senha de acesso à PH Academy.
+          Defina sua nova senha de acesso à PHDonassolo Academy.
         </p>
       </div>
 

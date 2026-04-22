@@ -19,21 +19,25 @@ export default async function CadastroPage({ searchParams }: CadastroPageProps) 
   let initialEmail = ''
   let errorMsg = ''
 
-  // Validação de Token de Convite (v5.2)
+  // Validação de Token de Convite (v5.2 - Ajustado para convites_matricula)
   if (token) {
     const { data: convite, error } = await supabase
-      .from('convites')
+      .from('convites_matricula')
       .select('*')
       .eq('token', token)
-      .eq('status', 'pendente')
+      .eq('usado', false)
       .single()
 
     if (error || !convite) {
       errorMsg = 'Este link de convite é inválido ou já foi utilizado.'
     } else {
-      // Verifica se expirou
-      if (new Date(convite.expires_at) < new Date()) {
-        errorMsg = 'Este link de convite expirou.'
+      // Verifica se expirou (Padrão: 7 dias)
+      const dataCriacao = new Date(convite.created_at)
+      const dataExpiracao = new Date(dataCriacao)
+      dataExpiracao.setDate(dataExpiracao.getDate() + 7)
+
+      if (dataExpiracao < new Date()) {
+        errorMsg = 'Este link de convite expirou (validade de 7 dias).'
       } else {
         initialEmail = convite.email
       }

@@ -6,15 +6,37 @@ import { Video } from 'lucide-react'
 
 interface VideoPlayerProps {
   url: string;
+  aulaId?: string;
+  cursoId?: string;
+  userId?: string;
+  initialPosition?: number;
 }
 
-function VideoPlayerInternal({ url, provider, videoId, isPlaylist }: { url: string; provider: string; videoId: string; isPlaylist?: boolean }) {
+function VideoPlayerInternal({ 
+  url, 
+  provider, 
+  videoId, 
+  isPlaylist,
+  aulaId,
+  cursoId,
+  userId,
+  initialPosition = 0
+}: { 
+  url: string; 
+  provider: string; 
+  videoId: string; 
+  isPlaylist?: boolean;
+  aulaId?: string;
+  cursoId?: string;
+  userId?: string;
+  initialPosition?: number;
+}) {
   const videoRef = useRef<HTMLDivElement>(null)
   const playerInstance = useRef<any>(null)
 
   useEffect(() => {
     if (!videoRef.current) return
-    if (isPlaylist && provider === 'youtube') return // Playlists vão usar o iframe direto
+    if (isPlaylist && provider === 'youtube') return 
 
     const initPlayer = async () => {
       try {
@@ -35,7 +57,13 @@ function VideoPlayerInternal({ url, provider, videoId, isPlaylist }: { url: stri
         if (!playerInstance.current) {
           playerInstance.current = new Plyr(videoRef.current, options)
           
-          // Ao final do vídeo, reseta para o início e pausa
+          // 1. SEEK TO INITIAL POSITION (Retomada)
+          playerInstance.current.on('ready', () => {
+            if (initialPosition > 0) {
+              playerInstance.current.currentTime = initialPosition;
+            }
+          });
+
           playerInstance.current.on('ended', () => {
             playerInstance.current.stop();
           });
@@ -45,7 +73,7 @@ function VideoPlayerInternal({ url, provider, videoId, isPlaylist }: { url: stri
       }
     }
 
-    const timer = setTimeout(initPlayer, 150) // Aumentando um pouco o delay para estabilidade
+    const timer = setTimeout(initPlayer, 150)
 
     return () => {
       clearTimeout(timer)
@@ -54,7 +82,29 @@ function VideoPlayerInternal({ url, provider, videoId, isPlaylist }: { url: stri
         playerInstance.current = null
       }
     }
-  }, [provider, videoId, url, isPlaylist])
+  }, [provider, videoId, url, isPlaylist, initialPosition])
+
+  // 2. AUTO-SAVE PROGRESS (A cada 30 segundos)
+  useEffect(() => {
+    if (!userId || !aulaId || !cursoId) return;
+
+    const interval = setInterval(async () => {
+      if (playerInstance.current && playerInstance.current.playing) {
+        const currentTime = Math.floor(playerInstance.current.currentTime);
+        if (currentTime > 0) {
+          try {
+            // Importação dinâmica da action para evitar problemas de SSR/Client mismatch
+            const { updateAulaPosicao } = await import('@/app/(protected)/player/actions');
+            await updateAulaPosicao(aulaId, cursoId, currentTime);
+          } catch (err) {
+            console.error('Erro ao salvar progresso automático:', err);
+          }
+        }
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [userId, aulaId, cursoId]);
 
   return (
     <div className="w-full h-full aspect-video bg-black group relative overflow-hidden">
@@ -81,7 +131,7 @@ function VideoPlayerInternal({ url, provider, videoId, isPlaylist }: { url: stri
   )
 }
 
-export function VideoPlayer({ url }: VideoPlayerProps) {
+export function VideoPlayer({ url, aulaId, cursoId, userId, initialPosition }: VideoPlayerProps) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -91,7 +141,6 @@ export function VideoPlayer({ url }: VideoPlayerProps) {
   const mediaInfo = useMemo(() => {
     if (!url) return null
 
-    // YouTube regex robusto (pega videos padrão, shorts e outros)
     const ytRegex = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#\&\?]*).*/
     const match = url.match(ytRegex)
     const ytId = (match && match[2].length === 11) ? match[2] : null
@@ -100,20 +149,17 @@ export function VideoPlayer({ url }: VideoPlayerProps) {
       return { provider: 'youtube', id: ytId, isPlaylist: false }
     }
 
-    // YouTube Playlist fallback
     if (url.includes('list=')) {
       const listId = url.split('list=')[1]?.split('&')[0]
       if (listId) return { provider: 'youtube', id: listId, isPlaylist: true }
     }
 
-    // Vimeo regex fixo para IDs numéricos
     const vimeoRegex = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/
     const vimeoMatch = url.match(vimeoRegex)
     if (vimeoMatch) {
       return { provider: 'vimeo', id: vimeoMatch[1], isPlaylist: false }
     }
 
-    // HTML5 / Direct link
     return { provider: 'html5', id: url, isPlaylist: false }
   }, [url])
 
@@ -141,6 +187,10 @@ export function VideoPlayer({ url }: VideoPlayerProps) {
       provider={mediaInfo.provider} 
       videoId={mediaInfo.id} 
       isPlaylist={mediaInfo.isPlaylist}
+      aulaId={aulaId}
+      cursoId={cursoId}
+      userId={userId}
+      initialPosition={initialPosition}
     />
   )
 }

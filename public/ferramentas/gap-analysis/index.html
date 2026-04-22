@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análise da Equipe pelo Gestor e Gap Analysis — Recriar a Gestão Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-mid: #253564;
+  --teal: #1d9e8f;
+  --teal-light: #e8f7f5;
+  --coral: #e05c3a;
+  --coral-light: #fdf1ee;
+  --slate: #4a5568;
+  --gray-light: #f4f6f9;
+  --gray-mid: #e2e8f0;
+  --gray-dark: #718096;
+  --white: #ffffff;
+  --text: #1a2744;
+  --HS-color: #2563a8;
+  --HS-light: #eff6ff;
+  --SS-color: #1d9e8f;
+  --SS-light: #e8f7f5;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Source Sans 3', sans-serif;
+  --shadow: 0 2px 12px rgba(26,39,68,0.08);
+  --shadow-md: 0 4px 24px rgba(26,39,68,0.12);
+  --radius: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--gray-light);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.app-wrap { max-width: 920px; margin: 0 auto; padding: 32px 20px 80px; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* HEADER */
+.tool-header {
+  background: var(--navy);
+  color: white;
+  padding: 40px 48px;
+  border-radius: var(--radius);
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.tool-header::before {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 200px; height: 100%;
+  background: linear-gradient(135deg, transparent 40%, rgba(29,158,143,0.2));
+}
+.tool-header .badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--teal); border: 1px solid var(--teal);
+  padding: 3px 10px; border-radius: 2px; margin-bottom: 14px;
+}
+.tool-header h1 {
+  font-family: var(--font-display); font-size: 28px; font-weight: 700;
+  line-height: 1.2; margin-bottom: 10px;
+}
+.tool-header p { color: rgba(255,255,255,0.7); font-size: 14px; max-width: 540px; }
+
+/* CARDS */
+.card {
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 32px; margin-bottom: 20px;
+}
+.card-sm { padding: 24px; }
+
+/* SECTION LABEL */
+.section-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gray-dark); margin-bottom: 20px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--gray-mid); display: flex; align-items: center; gap: 10px;
+}
+.tag-HS { background: var(--HS-light); color: var(--HS-color); font-size: 9px; padding: 2px 6px; border-radius: 2px; font-weight: 700; }
+.tag-SS { background: var(--SS-light); color: var(--SS-color); font-size: 9px; padding: 2px 6px; border-radius: 2px; font-weight: 700; }
+
+/* FIELDS */
+.fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.fields-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.field-group { display: flex; flex-direction: column; gap: 6px; }
+.field-group label { font-size: 12px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: 0.5px; }
+.field-group input, .field-group select {
+  border: 1px solid var(--gray-mid); border-radius: var(--radius);
+  padding: 10px 14px; font-family: var(--font-body); font-size: 14px;
+  color: var(--text); transition: border-color 0.2s; background: white;
+}
+.field-group input:focus, .field-group select:focus { outline: none; border-color: var(--teal); }
+.field-group.full { grid-column: 1 / -1; }
+
+/* BUTTONS */
+.btn {
+  font-family: var(--font-body); font-size: 13px; font-weight: 600;
+  letter-spacing: 0.5px; padding: 12px 28px; border-radius: var(--radius);
+  border: none; cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase;
+}
+.btn-primary { background: var(--navy); color: white; }
+.btn-primary:hover { background: var(--navy-mid); }
+.btn-teal { background: var(--teal); color: white; }
+.btn-teal:hover { background: #178577; }
+.btn-outline { background: transparent; color: var(--navy); border: 1px solid var(--navy); }
+.btn-outline:hover { background: var(--gray-light); }
+.btn-coral { background: var(--coral); color: white; }
+.btn-coral:hover { background: #c94f30; }
+.btn-sm { padding: 8px 16px; font-size: 12px; }
+.btn-row { display: flex; gap: 12px; align-items: center; margin-top: 24px; flex-wrap: wrap; }
+.btn-row.between { justify-content: space-between; }
+
+/* PROGRESS */
+.progress-bar { background: var(--gray-mid); height: 4px; border-radius: 2px; margin-bottom: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--HS-color)); border-radius: 2px; transition: width 0.4s ease; }
+.progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.progress-info .section-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+.progress-info .step-count { font-size: 12px; color: var(--gray-dark); }
+
+/* SCALE */
+.scale-preview { display: flex; gap: 4px; flex-wrap: wrap; margin: 16px 0; }
+.sp-item { display: flex; align-items: center; gap: 8px; background: var(--gray-light); padding: 7px 12px; border-radius: var(--radius); font-size: 12px; }
+.sp-num { font-size: 20px; font-weight: 700; color: var(--navy); min-width: 24px; }
+.sp-bar { width: 60px; height: 6px; border-radius: 3px; }
+
+/* MEMBER MANAGEMENT */
+.member-add-box {
+  background: var(--gray-light); border-radius: var(--radius);
+  padding: 24px; margin-bottom: 24px;
+  border: 1px dashed var(--gray-mid);
+}
+.member-add-box h4 { font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--navy); margin-bottom: 16px; }
+.member-card {
+  background: white; border: 1px solid var(--gray-mid); border-radius: var(--radius);
+  margin-bottom: 12px; overflow: hidden; box-shadow: var(--shadow);
+}
+.member-card-header {
+  background: var(--navy); color: white; padding: 14px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer;
+}
+.member-card-header .mch-info { display: flex; flex-direction: column; gap: 2px; }
+.member-card-header .mch-name { font-size: 15px; font-weight: 600; }
+.member-card-header .mch-meta { font-size: 12px; opacity: 0.65; }
+.member-card-header .mch-actions { display: flex; gap: 8px; align-items: center; }
+.mch-toggle { font-size: 11px; color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 3px; border: none; cursor: pointer; font-family: var(--font-body); color: white; }
+.mch-del { background: var(--coral); border: none; color: white; padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; font-family: var(--font-body); }
+.member-card-body { padding: 20px; display: none; }
+.member-card-body.open { display: block; }
+.member-limit-note { font-size: 12px; color: var(--coral); font-weight: 600; margin-top: 8px; }
+
+/* SKILL RATING */
+.skill-section-title {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gray-dark); padding: 10px 0 8px;
+  border-bottom: 1px solid var(--gray-mid); margin-bottom: 12px; margin-top: 20px;
+  display: flex; align-items: center; gap: 8px;
+}
+.skill-row {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 12px; align-items: center; padding: 10px 0;
+  border-bottom: 1px solid var(--gray-light);
+}
+.skill-row:last-child { border-bottom: none; }
+.skill-info .skill-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.skill-info .skill-desc { font-size: 12px; color: var(--gray-dark); margin-top: 2px; }
+.rating-buttons { display: flex; gap: 4px; }
+.rating-btn {
+  width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--gray-mid);
+  background: white; cursor: pointer; font-size: 13px; font-weight: 700;
+  color: var(--gray-dark); transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+}
+.rating-btn:hover { border-color: var(--teal); color: var(--teal); }
+.rating-btn.sel-1 { background: #fee2e2; border-color: #ef4444; color: #ef4444; }
+.rating-btn.sel-2 { background: #fef3c7; border-color: #f59e0b; color: #f59e0b; }
+.rating-btn.sel-3 { background: #fef9c3; border-color: #eab308; color: #a16207; }
+.rating-btn.sel-4 { background: #dcfce7; border-color: #22c55e; color: #16a34a; }
+.rating-btn.sel-5 { background: #d1fae5; border-color: #10b981; color: #059669; }
+
+/* IDEAL PROFILE */
+.ideal-skill-row {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 12px; align-items: center; padding: 10px 0;
+  border-bottom: 1px solid var(--gray-light);
+}
+.ideal-skill-row:last-child { border-bottom: none; }
+.ideal-rating-btn {
+  width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--gray-mid);
+  background: white; cursor: pointer; font-size: 12px; font-weight: 700;
+  color: var(--gray-dark); transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+}
+.ideal-rating-btn.sel-ideal { background: var(--navy); border-color: var(--navy); color: white; }
+
+/* RESULT TABS */
+.res-nav {
+  background: var(--navy); border-radius: var(--radius);
+  padding: 16px; display: grid; grid-template-columns: repeat(4,1fr); gap: 8px;
+  margin-bottom: 20px;
+}
+.rtab-btn {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  padding: 12px 14px; border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.65);
+  cursor: pointer; font-family: var(--font-body); transition: all 0.2s;
+}
+.rtab-btn:hover { background: rgba(255,255,255,0.12); color: white; border-color: rgba(255,255,255,0.3); }
+.rtab-btn.active { background: var(--teal); border-color: var(--teal); color: white; }
+.rtab-num { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; opacity: 0.7; }
+.rtab-btn.active .rtab-num { opacity: 1; }
+.rtab-label { font-size: 13px; font-weight: 700; line-height: 1.2; }
+.rtab-sub { font-size: 11px; opacity: 0.7; line-height: 1.2; }
+.res-tab { display: none; }
+.res-tab.active { display: block; }
+
+/* CHART */
+.chart-wrap { position: relative; display: flex; justify-content: center; padding: 20px 0; }
+canvas { display: block; }
+
+/* MEMBER RESULT CARDS */
+.member-result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.member-res-card {
+  border: 1px solid var(--gray-mid); border-radius: var(--radius); padding: 16px; background: white;
+  cursor: pointer; transition: all 0.2s;
+}
+.member-res-card:hover { border-color: var(--teal); box-shadow: var(--shadow); }
+.mrc-name { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.mrc-role { font-size: 12px; color: var(--gray-dark); margin-bottom: 10px; }
+.mrc-scores { display: flex; gap: 8px; }
+.mrc-score-pill {
+  padding: 3px 10px; border-radius: 3px; font-size: 11px; font-weight: 700;
+}
+.pill-hs { background: var(--HS-light); color: var(--HS-color); }
+.pill-ss { background: var(--SS-light); color: var(--SS-color); }
+.pill-gap-ok { background: #dcfce7; color: #16a34a; }
+.pill-gap-warn { background: #fef3c7; color: #b45309; }
+.pill-gap-crit { background: #fee2e2; color: #dc2626; }
+.mrc-bar-wrap { margin-top: 10px; }
+.mrc-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--gray-dark); margin-bottom: 3px; }
+.mrc-bar { background: var(--gray-mid); height: 5px; border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+.mrc-bar-fill { height: 100%; border-radius: 3px; }
+
+/* GAP TABLE */
+.gap-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+.gap-table th {
+  background: var(--navy); color: white; font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase; padding: 10px 14px; text-align: left;
+}
+.gap-table th:first-child { border-radius: var(--radius) 0 0 0; }
+.gap-table th:last-child { border-radius: 0 var(--radius) 0 0; }
+.gap-table td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--gray-mid); vertical-align: middle; }
+.gap-table tr:last-child td { border-bottom: none; }
+.gap-table tr:nth-child(even) td { background: var(--gray-light); }
+.badge-crit { background: #fee2e2; color: #dc2626; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: 700; }
+.badge-aten { background: #fef3c7; color: #b45309; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: 700; }
+.badge-ok { background: #dcfce7; color: #16a34a; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: 700; }
+
+/* PDI PER PERSON */
+.pdi-person-block { margin-bottom: 24px; }
+.pdi-person-header {
+  background: var(--navy-mid); color: white; padding: 14px 20px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.pdi-person-header .ph-name { font-size: 15px; font-weight: 600; }
+.pdi-person-header .ph-meta { font-size: 12px; opacity: 0.65; }
+.pdi-person-body { border: 1px solid var(--gray-mid); border-top: none; border-radius: 0 0 var(--radius) var(--radius); padding: 20px; }
+.pdi-comp {
+  border: 1px solid var(--gray-mid); border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 14px;
+}
+.pdi-comp-header {
+  background: var(--gray-light); padding: 10px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--gray-mid);
+}
+.pdi-comp-header .comp-num { font-size: 10px; opacity: 0.6; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.pdi-comp-header .comp-name { font-size: 13px; font-weight: 700; color: var(--navy); }
+.pdi-comp-header .comp-type { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 2px; }
+.pdi-comp-body { padding: 16px; }
+.pdi-field-label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--slate); margin-bottom: 5px; display: block; }
+.pdi-comp-body textarea, .pdi-comp-body input[type="text"] {
+  width: 100%; border: 1px solid var(--gray-mid); border-radius: 4px; padding: 8px 10px;
+  font-family: var(--font-body); font-size: 13px; margin-bottom: 12px;
+  background: white; color: var(--text); line-height: 1.5;
+}
+.pdi-comp-body textarea { min-height: 60px; resize: vertical; }
+.pdi-comp-body textarea:focus, .pdi-comp-body input:focus { outline: none; border-color: var(--teal); }
+.pdi-scale-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+.pdi-scale-row .ps-label { font-size: 11px; color: var(--slate); min-width: 48px; }
+.pdi-scale-row input[type="number"] { width: 58px !important; text-align: center; padding: 6px 8px !important; }
+.pdi-scale-arrow { font-size: 16px; color: var(--gray-dark); }
+
+/* ACTION PLAN TABLE */
+.action-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+.action-table th {
+  background: var(--navy); color: white; font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase; padding: 10px 14px; text-align: left;
+}
+.action-table th:first-child { border-radius: var(--radius) 0 0 0; }
+.action-table th:last-child { border-radius: 0 var(--radius) 0 0; }
+.action-table td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--gray-mid); vertical-align: top; }
+.action-table tr:last-child td { border-bottom: none; }
+.action-table tr:nth-child(even) td { background: var(--gray-light); }
+.action-table td textarea {
+  width: 100%; border: 1px solid var(--gray-mid); border-radius: 4px;
+  padding: 7px 9px; font-family: var(--font-body); font-size: 13px;
+  resize: vertical; min-height: 60px; background: white; color: var(--text);
+}
+.action-table td textarea:focus { outline: none; border-color: var(--teal); }
+
+/* NARRATIVE */
+.narrative-box {
+  background: var(--gray-light); border-left: 3px solid var(--teal);
+  padding: 18px 22px; border-radius: 0 var(--radius) var(--radius) 0; margin: 16px 0;
+}
+.narrative-box .nb-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+.narrative-box p { font-size: 14px; line-height: 1.7; color: var(--slate); }
+.alert-box {
+  background: var(--coral-light); border-left: 3px solid var(--coral);
+  padding: 14px 18px; border-radius: 0 var(--radius) var(--radius) 0;
+  margin: 14px 0; font-size: 13px; color: #7c2d12;
+}
+.alert-box strong { display: block; margin-bottom: 3px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+
+/* EXPORT PANEL */
+.export-panel {
+  background: var(--navy); border-radius: var(--radius); padding: 22px 26px;
+  color: white; margin-top: 24px;
+}
+.export-panel h3 { font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; opacity: 0.8; }
+.export-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.exp-btn {
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  color: white; padding: 9px 14px; border-radius: var(--radius); font-size: 12px;
+  font-weight: 600; cursor: pointer; font-family: var(--font-body); transition: all 0.2s; letter-spacing: 0.5px;
+}
+.exp-btn:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
+.exp-btn.primary { background: var(--teal); border-color: var(--teal); }
+.exp-btn.primary:hover { background: #178577; }
+.print-note { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 8px; }
+
+/* WELCOME */
+.welcome-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+.info-card { background: white; border: 1px solid var(--gray-mid); border-radius: var(--radius); padding: 18px; }
+.info-card .ic-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+.info-card p, .info-card ul { font-size: 13px; line-height: 1.8; color: var(--slate); }
+.info-card ul { padding-left: 16px; }
+.important-note {
+  background: var(--coral-light); border-left: 3px solid var(--coral);
+  padding: 13px 16px; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 13px; color: #7c2d12; margin-top: 14px;
+}
+
+/* TOOL FOOTER */
+.tool-footer { text-align: center; padding: 24px; font-size: 12px; color: var(--gray-dark); margin-top: 20px; }
+
+/* TEAM SUMMARY HEADER */
+.team-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: white; padding: 28px 32px; border-radius: var(--radius); margin-bottom: 20px;
+}
+.team-hero h2 { font-family: var(--font-display); font-size: 20px; margin-bottom: 4px; }
+.team-hero .meta { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 16px; }
+.team-stat-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.team-stat {
+  background: rgba(255,255,255,0.08); padding: 14px 18px; border-radius: var(--radius); text-align: center; min-width: 90px;
+}
+.team-stat .ts-val { font-size: 28px; font-weight: 700; font-family: var(--font-display); }
+.team-stat .ts-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.7; margin-top: 2px; }
+.ts-hs { color: #7ab3f0; }
+.ts-ss { color: #5ecfc3; }
+.ts-gap { color: #fca5a5; }
+.ts-ok { color: #86efac; }
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+  .fields-grid, .fields-grid-3, .welcome-grid, .member-result-grid { grid-template-columns: 1fr; }
+  .res-nav { grid-template-columns: 1fr 1fr; }
+  .tool-header { padding: 28px 24px; }
+  .card { padding: 20px; }
+  .rating-btn { width: 30px; height: 30px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="app-wrap">
+
+<!-- HEADER -->
+<div class="tool-header">
+  <div class="badge">Ferramenta 0.3 · Análise de Equipe &amp; Gap Analysis</div>
+  <h1>Análise da Equipe pelo Gestor<br>e Gap Analysis</h1>
+  <p>Avalie individualmente cada membro da equipe, identifique lacunas de competências, visualize o mapa da equipe e gere planos de desenvolvimento personalizados.</p>
+</div>
+
+<!-- PAGE 1: WELCOME + IDENTIFICAÇÃO -->
+<div class="page active" id="page-welcome">
+  <div class="card">
+    <div class="section-label">Sobre esta ferramenta</div>
+    <div class="welcome-grid">
+      <div class="info-card">
+        <div class="ic-label">O que esta ferramenta faz</div>
+        <ul>
+          <li>Define o perfil ideal de competências para a função</li>
+          <li>Avalia Hard Skills e Soft Skills de até 10 pessoas</li>
+          <li>Calcula os gaps individuais e coletivos da equipe</li>
+          <li>Gera um mapa visual da equipe (Hard × Soft Skills)</li>
+          <li>Produz PDI individual pré-preenchido por pessoa</li>
+          <li>Gera plano de ação coletivo para o gestor</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Escala de avaliação</div>
+        <div class="scale-preview">
+          <div class="sp-item"><span class="sp-num" style="color:#ef4444;">1</span><div class="sp-bar" style="background:#ef4444;"></div><span>Não demonstra</span></div>
+          <div class="sp-item"><span class="sp-num" style="color:#f59e0b;">2</span><div class="sp-bar" style="background:#f59e0b;"></div><span>Abaixo do esperado</span></div>
+          <div class="sp-item"><span class="sp-num" style="color:#eab308;">3</span><div class="sp-bar" style="background:#eab308;"></div><span>Em desenvolvimento</span></div>
+          <div class="sp-item"><span class="sp-num" style="color:#22c55e;">4</span><div class="sp-bar" style="background:#22c55e;"></div><span>Atende o esperado</span></div>
+          <div class="sp-item"><span class="sp-num" style="color:#10b981;">5</span><div class="sp-bar" style="background:#10b981;"></div><span>Supera o esperado</span></div>
+        </div>
+        <div class="important-note">
+          O gap é calculado pela diferença entre o nível ideal definido para cada competência e o nível atual avaliado em cada membro.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Identificação do gestor</div>
+    <div class="fields-grid">
+      <div class="field-group">
+        <label>Nome do gestor</label>
+        <input type="text" id="gestor-nome" placeholder="Seu nome completo">
+      </div>
+      <div class="field-group">
+        <label>Empresa</label>
+        <input type="text" id="gestor-empresa" placeholder="Nome da empresa">
+      </div>
+      <div class="field-group">
+        <label>Cargo</label>
+        <input type="text" id="gestor-cargo" placeholder="Ex: Gerente Comercial, Diretor de Vendas">
+      </div>
+      <div class="field-group">
+        <label>Função avaliada</label>
+        <input type="text" id="funcao-avaliada" placeholder="Ex: Vendedor B2B, Executivo de Contas" value="Vendedor B2B">
+      </div>
+      <div class="field-group">
+        <label>Período de referência</label>
+        <input type="text" id="periodo-ref" placeholder="Ex: Q2/2025, Jan–Jun 2025">
+      </div>
+      <div class="field-group">
+        <label>Data da avaliação</label>
+        <input type="date" id="data-aval">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goPage('page-perfil')">Definir Perfil Ideal &rarr;</button>
+    </div>
+  </div>
+  <div class="tool-footer">Prof. Paulo H. Donassolo · Recriar a Gestão Comercial · Ferramenta 0.3</div>
+</div>
+
+<!-- PAGE 2: PERFIL IDEAL -->
+<div class="page" id="page-perfil">
+  <div class="card">
+    <div class="section-label">Passo 1 de 3 — Perfil ideal da função</div>
+    <p style="font-size:14px;color:var(--slate);margin-bottom:20px;">
+      Defina o nível mínimo esperado (1–5) para cada competência na função <strong id="funcao-label-perfil">Vendedor B2B</strong>. Estes valores servirão como referência para o cálculo dos gaps individuais.
+    </p>
+
+    <div class="skill-section-title"><span class="tag-HS">HS</span> Hard Skills — Habilidades Técnicas</div>
+    <div id="ideal-hs-container"></div>
+
+    <div class="skill-section-title" style="margin-top:24px;"><span class="tag-SS">SS</span> Soft Skills — Habilidades Comportamentais</div>
+    <div id="ideal-ss-container"></div>
+
+    <div class="btn-row between">
+      <button class="btn btn-outline" onclick="goPage('page-welcome')">&larr; Voltar</button>
+      <button class="btn btn-primary" onclick="goPage('page-equipe')">Avaliar a Equipe &rarr;</button>
+    </div>
+  </div>
+  <div class="tool-footer">Prof. Paulo H. Donassolo · Recriar a Gestão Comercial · Ferramenta 0.3</div>
+</div>
+
+<!-- PAGE 3: EQUIPE -->
+<div class="page" id="page-equipe">
+  <div class="card">
+    <div class="section-label">Passo 2 de 3 — Avaliação individual da equipe</div>
+    <p style="font-size:14px;color:var(--slate);margin-bottom:20px;">
+      Adicione cada pessoa da equipe (máximo 10) e avalie suas competências. Para cada competência, atribua um valor de 1 a 5 conforme a escala definida.
+    </p>
+
+    <div class="member-add-box" id="member-add-box">
+      <h4>Adicionar pessoa à equipe</h4>
+      <div class="fields-grid-3">
+        <div class="field-group">
+          <label>Nome</label>
+          <input type="text" id="new-nome" placeholder="Nome completo">
+        </div>
+        <div class="field-group">
+          <label>Cargo</label>
+          <input type="text" id="new-cargo" placeholder="Ex: Vendedor Sênior">
+        </div>
+        <div class="field-group">
+          <label>Tempo na função</label>
+          <select id="new-tempo">
+            <option value="ate6">Até 6 meses</option>
+            <option value="6a12">6 a 12 meses</option>
+            <option value="1a3" selected>1 a 3 anos</option>
+            <option value="3a5">3 a 5 anos</option>
+            <option value="mais5">Mais de 5 anos</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-teal" onclick="addMember()">+ Adicionar Pessoa</button>
+      <span class="member-limit-note" id="limit-note" style="display:none;">Limite de 10 pessoas atingido.</span>
+    </div>
+
+    <div id="members-list"></div>
+
+    <div class="btn-row between">
+      <button class="btn btn-outline" onclick="goPage('page-perfil')">&larr; Voltar</button>
+      <button class="btn btn-primary" onclick="buildResults()">Gerar Análise &rarr;</button>
+    </div>
+  </div>
+  <div class="tool-footer">Prof. Paulo H. Donassolo · Recriar a Gestão Comercial · Ferramenta 0.3</div>
+</div>
+
+<!-- PAGE 4: RESULTADOS -->
+<div class="page" id="page-results">
+
+  <div class="res-nav">
+    <button class="rtab-btn active" onclick="showTab('tab-mapa',this)">
+      <span class="rtab-num">01</span>
+      <span class="rtab-label">Mapa da Equipe</span>
+      <span class="rtab-sub">Hard × Soft Skills</span>
+    </button>
+    <button class="rtab-btn" onclick="showTab('tab-gaps',this)">
+      <span class="rtab-num">02</span>
+      <span class="rtab-label">Análise de Gaps</span>
+      <span class="rtab-sub">Lacunas prioritárias</span>
+    </button>
+    <button class="rtab-btn" onclick="showTab('tab-pdi',this)">
+      <span class="rtab-num">03</span>
+      <span class="rtab-label">PDI Individual</span>
+      <span class="rtab-sub">Por membro</span>
+    </button>
+    <button class="rtab-btn" onclick="showTab('tab-plano',this)">
+      <span class="rtab-num">04</span>
+      <span class="rtab-label">Plano de Ação</span>
+      <span class="rtab-sub">Coletivo</span>
+    </button>
+  </div>
+
+  <!-- ABA 01: MAPA -->
+  <div class="res-tab active" id="tab-mapa">
+    <div id="team-hero-container"></div>
+    <div class="card">
+      <div class="section-label">Mapa da equipe — Hard Skills × Soft Skills</div>
+      <p style="font-size:13px;color:var(--slate);margin-bottom:16px;">
+        Cada ponto representa um membro da equipe. O eixo horizontal indica a média de Hard Skills; o vertical, a média de Soft Skills. Os quatro quadrantes orientam a estratégia de desenvolvimento para cada perfil.
+      </p>
+      <div class="chart-wrap">
+        <canvas id="bubbleChart" width="700" height="500"></canvas>
+      </div>
+      <div id="quadrant-legend" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;"></div>
+    </div>
+    <div class="card">
+      <div class="section-label">Resumo individual</div>
+      <div class="member-result-grid" id="member-result-grid"></div>
+    </div>
+    <div class="export-panel">
+      <h3>Exportar</h3>
+      <div class="export-buttons">
+        <button class="exp-btn" onclick="exportSection('mapa')">Mapa da Equipe</button>
+        <button class="exp-btn primary" onclick="exportSection('todos')">Exportar Tudo</button>
+      </div>
+      <p class="print-note">Uma nova aba será aberta. Use Ctrl+P &rarr; Salvar como PDF &rarr; Margens: Nenhuma &rarr; Ativar Gráficos de fundo.</p>
+    </div>
+    <div class="btn-row between" style="margin-top:16px;">
+      <button class="btn btn-outline" onclick="goPage('page-equipe')">&larr; Voltar à Equipe</button>
+    </div>
+  </div>
+
+  <!-- ABA 02: GAPS -->
+  <div class="res-tab" id="tab-gaps">
+    <div class="card">
+      <div class="section-label">Competências com maior gap coletivo</div>
+      <p style="font-size:13px;color:var(--slate);margin-bottom:16px;">
+        Ranking das competências com maior lacuna média em toda a equipe. São as áreas que demandam ação estruturada e não apenas desenvolvimento individual.
+      </p>
+      <table class="gap-table" id="collective-gap-table">
+        <thead><tr>
+          <th>Competência</th><th>Tipo</th><th>Nível Ideal</th>
+          <th>Média Equipe</th><th>Gap Médio</th><th>Criticidade</th>
+        </tr></thead>
+        <tbody id="collective-gap-body"></tbody>
+      </table>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="section-label">Gap por membro</div>
+      <table class="gap-table" id="member-gap-table">
+        <thead><tr>
+          <th>Membro</th><th>Cargo</th><th>Gaps Críticos</th><th>Gaps de Atenção</th><th>Adequados</th><th>Score Geral</th>
+        </tr></thead>
+        <tbody id="member-gap-body"></tbody>
+      </table>
+    </div>
+    <div id="gaps-narrative"></div>
+    <div class="export-panel">
+      <h3>Exportar</h3>
+      <div class="export-buttons">
+        <button class="exp-btn" onclick="exportSection('gaps')">Análise de Gaps</button>
+        <button class="exp-btn primary" onclick="exportSection('todos')">Exportar Tudo</button>
+      </div>
+      <p class="print-note">Uma nova aba será aberta. Use Ctrl+P &rarr; Salvar como PDF.</p>
+    </div>
+  </div>
+
+  <!-- ABA 03: PDI -->
+  <div class="res-tab" id="tab-pdi">
+    <div class="card">
+      <div class="section-label">PDI — Plano de Desenvolvimento Individual</div>
+      <p style="font-size:13px;color:var(--slate);margin-bottom:16px;">
+        Para cada membro, as 3 competências com maior gap foram selecionadas como prioritárias. Todos os campos são editáveis — ajuste conforme o contexto de cada profissional.
+      </p>
+    </div>
+    <div id="pdi-container"></div>
+    <div class="export-panel">
+      <h3>Exportar</h3>
+      <div class="export-buttons">
+        <button class="exp-btn" onclick="exportSection('pdi')">PDI Individual</button>
+        <button class="exp-btn primary" onclick="exportSection('todos')">Exportar Tudo</button>
+      </div>
+      <p class="print-note">Uma nova aba será aberta. Use Ctrl+P &rarr; Salvar como PDF.</p>
+    </div>
+  </div>
+
+  <!-- ABA 04: PLANO DE AÇÃO COLETIVO -->
+  <div class="res-tab" id="tab-plano">
+    <div class="card">
+      <div class="section-label">Plano de ação coletivo da equipe</div>
+      <p style="font-size:13px;color:var(--slate);margin-bottom:16px;">
+        Ações derivadas das competências com maior gap coletivo. São iniciativas que o gestor deve conduzir com toda a equipe — capacitações, rituais, processos e mudanças de rotina. Todos os campos são editáveis.
+      </p>
+    </div>
+    <div class="card" style="margin-top:4px;">
+      <div class="section-label">Cabeçalho do plano</div>
+      <div class="fields-grid">
+        <div class="field-group">
+          <label>Gestor responsável</label>
+          <input type="text" id="plano-gestor">
+        </div>
+        <div class="field-group">
+          <label>Período de execução</label>
+          <input type="text" id="plano-periodo" placeholder="Ex: Q3/2025 — Julho a Setembro">
+        </div>
+        <div class="field-group full">
+          <label>Objetivo central do plano</label>
+          <input type="text" id="plano-objetivo" placeholder="Ex: Elevar a média das Hard Skills da equipe de 2,8 para 3,5 em 90 dias">
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:4px;">
+      <div class="section-label">Ações coletivas — o que fazer com toda a equipe</div>
+      <table class="action-table" id="collective-action-table">
+        <thead><tr>
+          <th style="width:30%;">Competência / Tema</th>
+          <th style="width:35%;">Ação Proposta</th>
+          <th style="width:20%;">Quando / Prazo</th>
+          <th style="width:15%;">Responsável</th>
+        </tr></thead>
+        <tbody id="collective-action-body"></tbody>
+      </table>
+    </div>
+    <div class="card" style="margin-top:4px;">
+      <div class="section-label">Individual vs. coletivo</div>
+      <div class="narrative-box">
+        <div class="nb-title">Orientação estratégica</div>
+        <p id="plano-narrative-text">Carregando...</p>
+      </div>
+    </div>
+    <div class="export-panel">
+      <h3>Exportar</h3>
+      <div class="export-buttons">
+        <button class="exp-btn" onclick="exportSection('plano')">Plano de Ação</button>
+        <button class="exp-btn primary" onclick="exportSection('todos')">Exportar Tudo</button>
+      </div>
+      <p class="print-note">Uma nova aba será aberta. Use Ctrl+P &rarr; Salvar como PDF.</p>
+    </div>
+  </div>
+
+  <div class="tool-footer">Prof. Paulo H. Donassolo · Recriar a Gestão Comercial · Ferramenta 0.3</div>
+</div>
+
+</div><!-- /app-wrap -->
+
+<script>
+// ─── DADOS DE COMPETÊNCIAS ───────────────────────────────────────────────────
+
+const HARD_SKILLS = [
+  { id:'hs1', nome:'Domínio de CRM',            desc:'Uso de ferramentas como Salesforce, Pipedrive, RD Station' },
+  { id:'hs2', nome:'Análise de Dados / Excel',   desc:'Análise de pipeline, relatórios, Power BI, Google Sheets' },
+  { id:'hs3', nome:'Técnicas de Vendas',         desc:'SPIN Selling, vendas consultivas, BANT, MEDDIC' },
+  { id:'hs4', nome:'Conhecimento do Produto',    desc:'Domínio técnico e aplicado do portfólio da empresa' },
+  { id:'hs5', nome:'Conhecimento do Mercado',    desc:'Concorrência, tendências, segmentos e perfil de cliente' },
+  { id:'hs6', nome:'Técnicas de Negociação',     desc:'Estratégias de fechamento, concessões, proposta de valor' },
+  { id:'hs7', nome:'Apresentações Comerciais',   desc:'Pitch, proposta, storytelling comercial, PowerPoint' },
+  { id:'hs8', nome:'Gestão de Pipeline',         desc:'Funil de vendas, estágios, previsibilidade de receita' },
+];
+
+const SOFT_SKILLS = [
+  { id:'ss1', nome:'Comunicação',                desc:'Verbal, escrita e escuta ativa com clientes e equipe' },
+  { id:'ss2', nome:'Relacionamento Interpessoal',desc:'Empatia, rapport e construção de relações de longo prazo' },
+  { id:'ss3', nome:'Resiliência',                desc:'Persistência diante de objeções, perdas e pressão por resultados' },
+  { id:'ss4', nome:'Adaptabilidade',             desc:'Flexibilidade diante de mudanças, novos processos e contextos' },
+  { id:'ss5', nome:'Organização / Gestão do Tempo', desc:'Priorização de atividades, agenda, planejamento semanal' },
+  { id:'ss6', nome:'Proatividade',               desc:'Iniciativa, autonomia, antecipação de problemas e oportunidades' },
+  { id:'ss7', nome:'Orientação para Resultados', desc:'Foco em metas, entregas, KPIs e geração de valor para o cliente' },
+  { id:'ss8', nome:'Inteligência Emocional',     desc:'Autocontrole, gestão do estado emocional em situações de pressão' },
+  { id:'ss9', nome:'Trabalho em Equipe',         desc:'Colaboração, compartilhamento de informações e boas práticas' },
+  { id:'ss10',nome:'Pensamento Crítico',         desc:'Análise de situações, resolução de problemas, tomada de decisão' },
+];
+
+const ALL_SKILLS = [...HARD_SKILLS, ...SOFT_SKILLS];
+
+// Base de recomendações de desenvolvimento
+const DEV_BASE = {
+  hs1: { acao:'Treinamento prático de CRM com acompanhamento semanal de uso e alimentação de dados', aferir:'% de oportunidades registradas no CRM; aderência ao processo de atualização', prazo:'30 dias' },
+  hs2: { acao:'Curso de análise de dados aplicado a vendas; criação de dashboard próprio de acompanhamento', aferir:'Apresentação de relatório mensal de pipeline estruturado', prazo:'60 dias' },
+  hs3: { acao:'Imersão em metodologia de vendas consultivas (SPIN); role-play semanal com gestor', aferir:'Taxa de conversão de proposta; qualidade das perguntas em visitas observadas', prazo:'60 dias' },
+  hs4: { acao:'Imersão técnica no produto: visita à operação, certificação interna, shadowing com especialista', aferir:'Pontuação em avaliação técnica de produto; segurança nas demos observadas', prazo:'45 dias' },
+  hs5: { acao:'Pesquisa de mercado orientada + participação em evento do setor + análise competitiva', aferir:'Apresentação de briefing de mercado ao gestor; identificação de oportunidades segmentadas', prazo:'60 dias' },
+  hs6: { acao:'Workshop de negociação; simulações de fechamento; revisão de propostas ao vivo com gestor', aferir:'Taxa de desconto médio nas negociações; % de negócios fechados sem concessão de preço', prazo:'60 dias' },
+  hs7: { acao:'Revisão da estrutura de proposta comercial; prática de pitch cronometrado; feedback gravado', aferir:'Score de qualidade da proposta em checklist; feedback de clientes pós-apresentação', prazo:'45 dias' },
+  hs8: { acao:'Revisão semanal de funil com gestor; definição de critérios de avanço por estágio; higienização mensal', aferir:'Acuracidade de forecast ±20%; distribuição equilibrada do pipeline por estágio', prazo:'30 dias' },
+  ss1: { acao:'Curso de comunicação assertiva; feedback estruturado após reuniões com clientes; escuta ativa em campo', aferir:'Avaliação qualitativa em visita conjunta; NPS de clientes acompanhados', prazo:'60 dias' },
+  ss2: { acao:'Técnicas de rapport e escuta empática; análise de perfil DISC aplicada ao cliente; acompanhamento de visitas', aferir:'Qualidade do relacionamento avaliada em visita conjunta; índice de retenção de carteira', prazo:'60 dias' },
+  ss3: { acao:'Coaching individual focado em gestão de perdas; estabelecimento de metas de processo (não apenas resultado)', aferir:'Consistência de atividades semanais mesmo em períodos de baixo resultado', prazo:'90 dias' },
+  ss4: { acao:'Exposição progressiva a novos contextos e processos; reflexão guiada sobre mudanças; projetos de inovação', aferir:'Adoção de novos processos no prazo; postura observada em momentos de mudança', prazo:'60 dias' },
+  ss5: { acao:'Implementação de planejamento semanal estruturado (PTG); revisão de agenda com gestor quinzenalmente', aferir:'% de atividades planejadas vs. executadas; entrega de relatórios e tarefas no prazo', prazo:'30 dias' },
+  ss6: { acao:'Atribuição de projetos com autonomia crescente; OKRs individuais claros; reconhecimento de iniciativas', aferir:'Número de iniciativas propostas por período; atividades realizadas sem provocação do gestor', prazo:'60 dias' },
+  ss7: { acao:'OKRs individuais visíveis; revisão semanal de metas; celebração de conquistas intermediárias', aferir:'% de atingimento de meta mensal; consistência ao longo do ciclo', prazo:'30 dias' },
+  ss8: { acao:'Coaching individual; técnicas de ancoragem emocional; simulações de situações de alta pressão', aferir:'Comportamento observado em situações de pressão; autoavaliação periódica', prazo:'90 dias' },
+  ss9: { acao:'Projetos colaborativos entre pares; compartilhamento de melhores práticas em reunião de equipe', aferir:'Frequência de contribuição em reuniões de equipe; feedback de pares', prazo:'60 dias' },
+  ss10:{ acao:'Cases práticos semanais; resolução estruturada de problemas (A3 ou PDCA simplificado); debates técnicos', aferir:'Qualidade das análises apresentadas; decisões autônomas bem fundamentadas', prazo:'60 dias' },
+};
+
+const COLLECTIVE_ACTIONS = {
+  hs1: 'Realizar treinamento coletivo de CRM com simulações práticas; definir processo padrão de uso e acompanhar aderência em reunião semanal.',
+  hs2: 'Workshop de análise de dados aplicada a vendas; definir template de dashboard de pipeline para toda a equipe.',
+  hs3: 'Imersão em metodologia de vendas consultivas; role-plays em grupo com análise coletiva de gravações.',
+  hs4: 'Ciclo de treinamento de produto com áreas técnicas; criar materiais de apoio à venda (FAQ, comparativo competitivo).',
+  hs5: 'Análise competitiva coletiva trimestral; compartilhamento de inteligência de mercado em reunião de equipe.',
+  hs6: 'Workshop de negociação em grupo; criar playbook de objeções e respostas; simulações em trio (cliente/vendedor/observador).',
+  hs7: 'Revisar template de proposta da equipe; sessão de pitch coletivo com feedback estruturado entre pares.',
+  hs8: 'Implementar pipeline review semanal estruturado; definir critérios claros de avanço por estágio do funil.',
+  ss1: 'Dinâmicas de comunicação assertiva em reuniões; feedback coletivo após apresentações internas; prática de escuta ativa.',
+  ss2: 'Compartilhamento de cases de relacionamento de longo prazo; workshop de perfis comportamentais (DISC ou similar).',
+  ss3: 'Ritual de revisão de perdas sem julgamento; célula de apoio mútuo entre vendedores; reconhecimento da persistência.',
+  ss4: 'Comunicação transparente de mudanças com antecedência; envolver a equipe no planejamento de novos processos.',
+  ss5: 'Implementar planejamento semanal coletivo (PTG da equipe); revisão de prioridades em reunião de segunda-feira.',
+  ss6: 'Criar programa de pequenos projetos autônomos; reconhecer publicamente iniciativas bem executadas.',
+  ss7: 'Painel de metas visível para toda a equipe; rituais de acompanhamento semanal; celebrações de marcos intermediários.',
+  ss8: 'Criar ambiente seguro para erros e aprendizado; sessões de gestão do estresse; coaching em grupo em períodos de pressão.',
+  ss9: 'Sessões de compartilhamento de melhores práticas; mentorias cruzadas entre vendedores sênior e júnior.',
+  ss10:'Cases semanais para análise coletiva; incentivar o questionamento de premissas em reuniões de equipe.',
+};
+
+// ─── ESTADO DA APLICAÇÃO ─────────────────────────────────────────────────────
+
+let state = {
+  perfil: { nome:'', empresa:'', cargo:'', funcao:'Vendedor B2B', periodo:'', data:'' },
+  idealProfile: {},   // skillId -> nivel 1-5
+  equipe: [],         // [ { id, nome, cargo, tempo, scores: {skillId: nivel} } ]
+  results: null
+};
+
+// Inicializar perfil ideal com defaults
+function initIdealDefaults() {
+  HARD_SKILLS.forEach(s => { if (!state.idealProfile[s.id]) state.idealProfile[s.id] = 4; });
+  SOFT_SKILLS.forEach(s => { if (!state.idealProfile[s.id]) state.idealProfile[s.id] = 3; });
+}
+
+// ─── NAVEGAÇÃO ───────────────────────────────────────────────────────────────
+
+function goPage(pid) {
+  // Capturar dados da página atual antes de sair
+  if (pid === 'page-perfil') {
+    captureWelcomeData();
+    document.getElementById('funcao-label-perfil').textContent = state.perfil.funcao || 'Vendedor B2B';
+  }
+  if (pid === 'page-equipe') {
+    captureWelcomeData();
+  }
+  if (pid === 'page-results') {
+    if (state.equipe.length === 0) {
+      alert('Adicione pelo menos um membro da equipe antes de gerar a análise.');
+      return;
+    }
+  }
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pid).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showTab(tid, btn) {
+  document.querySelectorAll('.res-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.rtab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(tid).classList.add('active');
+  btn.classList.add('active');
+}
+
+function captureWelcomeData() {
+  state.perfil.nome     = document.getElementById('gestor-nome').value;
+  state.perfil.empresa  = document.getElementById('gestor-empresa').value;
+  state.perfil.cargo    = document.getElementById('gestor-cargo').value;
+  state.perfil.funcao   = document.getElementById('funcao-avaliada').value || 'Vendedor B2B';
+  state.perfil.periodo  = document.getElementById('periodo-ref').value;
+  state.perfil.data     = document.getElementById('data-aval').value;
+}
+
+// ─── PERFIL IDEAL ────────────────────────────────────────────────────────────
+
+function renderIdealProfile() {
+  renderIdealGroup('ideal-hs-container', HARD_SKILLS, 'hs');
+  renderIdealGroup('ideal-ss-container', SOFT_SKILLS, 'ss');
+}
+
+function renderIdealGroup(containerId, skills, type) {
+  const c = document.getElementById(containerId);
+  let html = '';
+  skills.forEach(skill => {
+    const current = state.idealProfile[skill.id] || (type==='hs'?4:3);
+    html += `<div class="ideal-skill-row">
+      <div class="skill-info">
+        <div class="skill-name">${skill.nome}</div>
+        <div class="skill-desc">${skill.desc}</div>
+      </div>
+      <div class="rating-buttons" id="ideal-btns-${skill.id}">
+        ${[1,2,3,4,5].map(n=>`<button class="ideal-rating-btn ${n===current?'sel-ideal':''}" onclick="setIdeal('${skill.id}',${n})">${n}</button>`).join('')}
+      </div>
+    </div>`;
+  });
+  c.innerHTML = html;
+}
+
+function setIdeal(skillId, val) {
+  state.idealProfile[skillId] = val;
+  const btns = document.querySelectorAll(`#ideal-btns-${skillId} .ideal-rating-btn`);
+  btns.forEach((b,i) => {
+    b.classList.toggle('sel-ideal', i+1 === val);
+  });
+  saveState();
+}
+
+// ─── MEMBROS DA EQUIPE ────────────────────────────────────────────────────────
+
+function addMember() {
+  if (state.equipe.length >= 10) {
+    document.getElementById('limit-note').style.display = 'inline';
+    return;
+  }
+  const nome = document.getElementById('new-nome').value.trim();
+  const cargo = document.getElementById('new-cargo').value.trim();
+  const tempo = document.getElementById('new-tempo').value;
+  if (!nome) { alert('Informe o nome da pessoa.'); return; }
+
+  const member = {
+    id: Date.now(),
+    nome, cargo: cargo || 'Vendedor',
+    tempo,
+    scores: {}
+  };
+  // Inicializar scores ZERADOS (limpos) para cada nova pessoa
+  ALL_SKILLS.forEach(s => { member.scores[s.id] = 0; });
+
+  state.equipe.push(member);
+
+  // Limpar formulário
+  document.getElementById('new-nome').value = '';
+  document.getElementById('new-cargo').value = '';
+  document.getElementById('new-tempo').value = '1a3';
+
+  if (state.equipe.length >= 10) {
+    document.getElementById('limit-note').style.display = 'inline';
+    document.getElementById('member-add-box').style.opacity = '0.5';
+    document.getElementById('member-add-box').style.pointerEvents = 'none';
+  }
+
+  renderMembersList();
+  saveState();
+}
+
+function deleteMember(id) {
+  state.equipe = state.equipe.filter(m => m.id !== id);
+  if (state.equipe.length < 10) {
+    document.getElementById('limit-note').style.display = 'none';
+    document.getElementById('member-add-box').style.opacity = '1';
+    document.getElementById('member-add-box').style.pointerEvents = 'auto';
+  }
+  renderMembersList();
+  saveState();
+}
+
+function toggleMemberBody(id) {
+  const body = document.getElementById(`mbody-${id}`);
+  body.classList.toggle('open');
+}
+
+function setScore(memberId, skillId, val) {
+  const member = state.equipe.find(m => m.id === memberId);
+  if (!member) return;
+  member.scores[skillId] = val;
+
+  // Atualizar visual dos botões
+  const btns = document.querySelectorAll(`#score-btns-${memberId}-${skillId} .rating-btn`);
+  btns.forEach((b, i) => {
+    b.className = 'rating-btn';
+    if (i+1 === val) b.classList.add(`sel-${val}`);
+  });
+  saveState();
+}
+
+function renderMembersList() {
+  const c = document.getElementById('members-list');
+  if (state.equipe.length === 0) {
+    c.innerHTML = '<p style="font-size:13px;color:var(--gray-dark);padding:12px 0;">Nenhuma pessoa adicionada ainda.</p>';
+    return;
+  }
+  let html = '';
+  state.equipe.forEach(m => {
+    const tempoLabel = { ate6:'Até 6 meses', '6a12':'6 a 12 meses', '1a3':'1 a 3 anos', '3a5':'3 a 5 anos', mais5:'Mais de 5 anos' }[m.tempo] || m.tempo;
+    html += `<div class="member-card">
+      <div class="member-card-header" onclick="toggleMemberBody(${m.id})">
+        <div class="mch-info">
+          <span class="mch-name">${m.nome}</span>
+          <span class="mch-meta">${m.cargo} &middot; ${tempoLabel}</span>
+        </div>
+        <div class="mch-actions">
+          <button class="mch-toggle">Expandir / Recolher</button>
+          <button class="mch-del" onclick="event.stopPropagation();deleteMember(${m.id})">Remover</button>
+        </div>
+      </div>
+      <div class="member-card-body open" id="mbody-${m.id}">
+        <div class="skill-section-title"><span class="tag-HS">HS</span> Hard Skills — avalie de 1 a 5</div>
+        ${HARD_SKILLS.map(s => renderSkillRow(m, s)).join('')}
+        <div class="skill-section-title" style="margin-top:16px;"><span class="tag-SS">SS</span> Soft Skills — avalie de 1 a 5</div>
+        ${SOFT_SKILLS.map(s => renderSkillRow(m, s)).join('')}
+      </div>
+    </div>`;
+  });
+  c.innerHTML = html;
+}
+
+function renderSkillRow(member, skill) {
+  const current = member.scores[skill.id] || 0;
+  return `<div class="skill-row">
+    <div class="skill-info">
+      <div class="skill-name">${skill.nome}</div>
+      <div class="skill-desc">${skill.desc}</div>
+    </div>
+    <div class="rating-buttons" id="score-btns-${member.id}-${skill.id}">
+      ${[1,2,3,4,5].map(n=>`<button class="rating-btn ${n===current?'sel-'+n:''}" onclick="setScore(${member.id},'${skill.id}',${n})">${n}</button>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ─── CÁLCULO DE RESULTADOS ───────────────────────────────────────────────────
+
+function calcResults() {
+  const results = { members: [], collectiveGaps: {} };
+
+  // Por membro
+  state.equipe.forEach(m => {
+    const hsScores = HARD_SKILLS.map(s => m.scores[s.id] || 0).filter(v=>v>0);
+    const ssScores = SOFT_SKILLS.map(s => m.scores[s.id] || 0).filter(v=>v>0);
+    const hsAvg = hsScores.length ? hsScores.reduce((a,b)=>a+b,0)/hsScores.length : 0;
+    const ssAvg = ssScores.length ? ssScores.reduce((a,b)=>a+b,0)/ssScores.length : 0;
+    const allScores = ALL_SKILLS.map(s => m.scores[s.id] || 0).filter(v=>v>0);
+    const overallAvg = allScores.length ? allScores.reduce((a,b)=>a+b,0)/allScores.length : 0;
+
+    let criticos = 0, atencao = 0, adequados = 0;
+    const gapDetails = [];
+
+    ALL_SKILLS.forEach(s => {
+      const ideal = state.idealProfile[s.id] || 3;
+      const atual = m.scores[s.id] || 0;
+      if (atual === 0) return;
+      const gap = ideal - atual;
+      if (gap >= 2) { criticos++; }
+      else if (gap === 1) { atencao++; }
+      else { adequados++; }
+      gapDetails.push({ skill: s, ideal, atual, gap, type: HARD_SKILLS.find(h=>h.id===s.id)?'HS':'SS' });
+    });
+
+    gapDetails.sort((a,b) => b.gap - a.gap);
+
+    results.members.push({ ...m, hsAvg, ssAvg, overallAvg, criticos, atencao, adequados, gapDetails });
+  });
+
+  // Gap coletivo por competência
+  ALL_SKILLS.forEach(s => {
+    const ideal = state.idealProfile[s.id] || 3;
+    let totalGap = 0, count = 0;
+    state.equipe.forEach(m => {
+      const atual = m.scores[s.id] || 0;
+      if (atual > 0) { totalGap += Math.max(0, ideal - atual); count++; }
+    });
+    const avgGap = count ? totalGap / count : 0;
+    const avgScore = count ? state.equipe.reduce((sum,m) => sum + (m.scores[s.id]||0), 0) / state.equipe.filter(m=>m.scores[s.id]>0).length : 0;
+    results.collectiveGaps[s.id] = {
+      skill: s,
+      ideal,
+      avgScore: isNaN(avgScore) ? 0 : avgScore,
+      avgGap,
+      type: HARD_SKILLS.find(h=>h.id===s.id)?'HS':'SS',
+      criticidade: avgGap >= 1.5 ? 'critico' : avgGap >= 0.8 ? 'atencao' : 'ok'
+    };
+  });
+
+  state.results = results;
+  return results;
+}
+
+// ─── BUILD DE RESULTADOS ─────────────────────────────────────────────────────
+
+function buildResults() {
+  captureWelcomeData();
+  const results = calcResults();
+  goPage('page-results');
+
+  buildTeamHero(results);
+  buildBubbleChart(results);
+  buildMemberResCards(results);
+  buildCollectiveGapTable(results);
+  buildMemberGapTable(results);
+  buildGapsNarrative(results);
+  buildPDI(results);
+  buildColletiveAction(results);
+}
+
+function buildTeamHero(results) {
+  const avgHS = results.members.reduce((a,m)=>a+m.hsAvg,0)/results.members.length;
+  const avgSS = results.members.reduce((a,m)=>a+m.ssAvg,0)/results.members.length;
+  const totalCrit = results.members.reduce((a,m)=>a+m.criticos,0);
+  const totalOk = results.members.reduce((a,m)=>a+m.adequados,0);
+  const p = state.perfil;
+
+  document.getElementById('team-hero-container').innerHTML = `
+    <div class="team-hero">
+      <h2>Análise da Equipe — ${p.funcao || 'Equipe Comercial'}</h2>
+      <div class="meta">${p.nome ? p.nome + ' &middot; ' : ''}${p.empresa || ''} ${p.periodo ? '&middot; ' + p.periodo : ''}</div>
+      <div class="team-stat-row">
+        <div class="team-stat"><div class="ts-val ts-hs">${avgHS.toFixed(1)}</div><div class="ts-label">Média HS</div></div>
+        <div class="team-stat"><div class="ts-val ts-ss">${avgSS.toFixed(1)}</div><div class="ts-label">Média SS</div></div>
+        <div class="team-stat"><div class="ts-val" style="color:white;">${results.members.length}</div><div class="ts-label">Avaliados</div></div>
+        <div class="team-stat"><div class="ts-val ts-gap">${totalCrit}</div><div class="ts-label">Gaps Críticos</div></div>
+        <div class="team-stat"><div class="ts-val ts-ok">${totalOk}</div><div class="ts-label">Adequados</div></div>
+      </div>
+    </div>`;
+}
+
+// ─── GRÁFICO DE BOLHAS Hard × Soft ───────────────────────────────────────────
+
+function buildBubbleChart(results) {
+  const canvas = document.getElementById('bubbleChart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const PAD = { top:40, right:40, bottom:60, left:60 };
+  const CW = W - PAD.left - PAD.right;
+  const CH = H - PAD.top - PAD.bottom;
+
+  ctx.clearRect(0,0,W,H);
+
+  // Background dos quadrantes
+  const midX = PAD.left + CW/2, midY = PAD.top + CH/2;
+  const quadColors = [
+    { x:PAD.left, y:PAD.top,     w:CW/2, h:CH/2, bg:'rgba(254,243,199,0.4)', label:'Desenvolver HS', sub:'Alto SS, Baixo HS', lx:PAD.left+CW/4, ly:PAD.top+CH/4 },
+    { x:midX,     y:PAD.top,     w:CW/2, h:CH/2, bg:'rgba(220,252,231,0.4)', label:'Alta Performance', sub:'Alto HS e SS', lx:PAD.left+3*CW/4, ly:PAD.top+CH/4 },
+    { x:PAD.left, y:midY,        w:CW/2, h:CH/2, bg:'rgba(254,226,226,0.4)', label:'Prioridade de Desenvolvimento', sub:'Baixo HS e SS', lx:PAD.left+CW/4, ly:PAD.top+3*CH/4 },
+    { x:midX,     y:midY,        w:CW/2, h:CH/2, bg:'rgba(219,234,254,0.4)', label:'Desenvolver SS', sub:'Alto HS, Baixo SS', lx:PAD.left+3*CW/4, ly:PAD.top+3*CH/4 },
+  ];
+
+  quadColors.forEach(q => {
+    ctx.fillStyle = q.bg;
+    ctx.fillRect(q.x, q.y, q.w, q.h);
+    ctx.fillStyle = 'rgba(26,39,68,0.5)';
+    ctx.font = 'bold 11px "Source Sans 3", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(q.label, q.lx, q.ly - 8);
+    ctx.fillStyle = 'rgba(26,39,68,0.35)';
+    ctx.font = '10px "Source Sans 3", sans-serif';
+    ctx.fillText(q.sub, q.lx, q.ly + 8);
+  });
+
+  // Eixos
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 1;
+  // Eixo X
+  ctx.beginPath(); ctx.moveTo(PAD.left, H-PAD.bottom); ctx.lineTo(W-PAD.right, H-PAD.bottom); ctx.stroke();
+  // Eixo Y
+  ctx.beginPath(); ctx.moveTo(PAD.left, PAD.top); ctx.lineTo(PAD.left, H-PAD.bottom); ctx.stroke();
+  // Linha central X
+  ctx.strokeStyle = 'rgba(26,39,68,0.15)'; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(midX, PAD.top); ctx.lineTo(midX, H-PAD.bottom); ctx.stroke();
+  // Linha central Y
+  ctx.beginPath(); ctx.moveTo(PAD.left, midY); ctx.lineTo(W-PAD.right, midY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Ticks e labels eixo X
+  ctx.fillStyle = '#718096'; ctx.font = '11px "Source Sans 3", sans-serif'; ctx.textAlign = 'center';
+  for (let v=1;v<=5;v++) {
+    const x = PAD.left + ((v-1)/4)*CW;
+    ctx.fillText(v.toString(), x, H-PAD.bottom+18);
+    ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(x, H-PAD.bottom); ctx.lineTo(x, PAD.top); ctx.stroke();
+  }
+  ctx.fillStyle = '#4a5568'; ctx.font = 'bold 12px "Source Sans 3", sans-serif';
+  ctx.fillText('Hard Skills (média)', W/2, H-8);
+
+  // Ticks e labels eixo Y
+  ctx.textAlign = 'right';
+  for (let v=1;v<=5;v++) {
+    const y = H - PAD.bottom - ((v-1)/4)*CH;
+    ctx.fillStyle = '#718096'; ctx.font = '11px "Source Sans 3", sans-serif';
+    ctx.fillText(v.toString(), PAD.left-8, y+4);
+  }
+  ctx.save(); ctx.translate(16, H/2); ctx.rotate(-Math.PI/2);
+  ctx.fillStyle = '#4a5568'; ctx.font = 'bold 12px "Source Sans 3", sans-serif';
+  ctx.textAlign = 'center'; ctx.fillText('Soft Skills (média)', 0, 0); ctx.restore();
+
+  // Paleta de cores para os pontos
+  const PALETTE = ['#1d9e8f','#2563a8','#e05c3a','#8b5cf6','#f59e0b','#06b6d4','#ec4899','#84cc16','#f97316','#64748b'];
+
+  // Plotar membros
+  results.members.forEach((m, i) => {
+    const hs = m.hsAvg || 0;
+    const ss = m.ssAvg || 0;
+    const px = PAD.left + ((hs-1)/4)*CW;
+    const py = H - PAD.bottom - ((ss-1)/4)*CH;
+    const color = PALETTE[i % PALETTE.length];
+
+    // Círculo
+    ctx.beginPath();
+    ctx.arc(px, py, 18, 0, Math.PI*2);
+    ctx.fillStyle = color + 'cc';
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Iniciais ou número
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 11px "Source Sans 3", sans-serif';
+    ctx.textAlign = 'center';
+    const initials = m.nome.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+    ctx.fillText(initials, px, py+4);
+
+    // Label com nome (ajustar posição para não sair do canvas)
+    ctx.fillStyle = '#1a2744';
+    ctx.font = '10px "Source Sans 3", sans-serif';
+    ctx.textAlign = 'center';
+    let labelX = px, labelY = py - 24;
+    if (labelY < PAD.top + 12) labelY = py + 36;
+    if (labelX < PAD.left + 30) labelX = PAD.left + 30;
+    if (labelX > W - PAD.right - 30) labelX = W - PAD.right - 30;
+    // Background branco para legibilidade
+    const nameText = m.nome.split(' ')[0];
+    const tw = ctx.measureText(nameText).width;
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.fillRect(labelX - tw/2 - 3, labelY - 11, tw + 6, 14);
+    ctx.fillStyle = '#1a2744';
+    ctx.fillText(nameText, labelX, labelY);
+  });
+
+  // Legenda de cores
+  const legendContainer = document.getElementById('quadrant-legend');
+  const quadLegends = [
+    { bg:'rgba(220,252,231,0.6)', border:'#22c55e', label:'Alta Performance', desc:'Médias de HS e SS acima do ponto médio da escala. Potencial para referência e mentoria.' },
+    { bg:'rgba(254,243,199,0.6)', border:'#f59e0b', label:'Desenvolver Hard Skills', desc:'Boa base comportamental. Foco em capacitação técnica: ferramentas, metodologias, processos.' },
+    { bg:'rgba(219,234,254,0.6)', border:'#3b82f6', label:'Desenvolver Soft Skills', desc:'Boa base técnica. Foco em desenvolvimento comportamental: comunicação, resiliência, organização.' },
+    { bg:'rgba(254,226,226,0.6)', border:'#ef4444', label:'Prioridade de Desenvolvimento', desc:'Ambas as dimensões abaixo do ponto médio. Requer atenção imediata e plano estruturado.' },
+  ];
+  legendContainer.innerHTML = quadLegends.map(q=>`
+    <div style="background:${q.bg};border:1px solid ${q.border};border-radius:6px;padding:12px 14px;">
+      <div style="font-size:12px;font-weight:700;color:#1a2744;margin-bottom:4px;">${q.label}</div>
+      <div style="font-size:12px;color:#4a5568;line-height:1.5;">${q.desc}</div>
+    </div>`).join('');
+}
+
+function buildMemberResCards(results) {
+  const c = document.getElementById('member-result-grid');
+  c.innerHTML = results.members.map(m => {
+    const gapPill = m.criticos >= 3 ? `<span class="mrc-score-pill pill-gap-crit">${m.criticos} críticos</span>` :
+      m.criticos >= 1 ? `<span class="mrc-score-pill pill-gap-warn">${m.criticos} crítico(s)</span>` :
+      `<span class="mrc-score-pill pill-gap-ok">Sem gaps críticos</span>`;
+    return `<div class="member-res-card">
+      <div class="mrc-name">${m.nome}</div>
+      <div class="mrc-role">${m.cargo}</div>
+      <div class="mrc-scores">
+        <span class="mrc-score-pill pill-hs">HS ${m.hsAvg.toFixed(1)}</span>
+        <span class="mrc-score-pill pill-ss">SS ${m.ssAvg.toFixed(1)}</span>
+        ${gapPill}
+      </div>
+      <div class="mrc-bar-wrap">
+        <div class="mrc-bar-label"><span>Hard Skills</span><span>${m.hsAvg.toFixed(1)}/5</span></div>
+        <div class="mrc-bar"><div class="mrc-bar-fill" style="width:${(m.hsAvg/5)*100}%;background:#2563a8;"></div></div>
+        <div class="mrc-bar-label"><span>Soft Skills</span><span>${m.ssAvg.toFixed(1)}/5</span></div>
+        <div class="mrc-bar"><div class="mrc-bar-fill" style="width:${(m.ssAvg/5)*100}%;background:#1d9e8f;"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildCollectiveGapTable(results) {
+  // Ordenar por gap médio decrescente
+  const sorted = Object.values(results.collectiveGaps)
+    .filter(g => g.avgGap > 0)
+    .sort((a,b) => b.avgGap - a.avgGap)
+    .slice(0, 12);
+
+  const tbody = document.getElementById('collective-gap-body');
+  tbody.innerHTML = sorted.map(g => {
+    const typeTag = g.type==='HS'
+      ? `<span class="tag-HS">HS</span>`
+      : `<span class="tag-SS">SS</span>`;
+    const critBadge = g.criticidade==='critico'
+      ? `<span class="badge-crit">Crítico</span>`
+      : g.criticidade==='atencao'
+        ? `<span class="badge-aten">Atenção</span>`
+        : `<span class="badge-ok">Adequado</span>`;
+    const barW = Math.round((g.avgScore/5)*100);
+    return `<tr>
+      <td><strong>${g.skill.nome}</strong></td>
+      <td>${typeTag}</td>
+      <td style="text-align:center;font-weight:600;">${g.ideal}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;background:#e2e8f0;height:6px;border-radius:3px;"><div style="width:${barW}%;height:100%;background:${g.type==='HS'?'#2563a8':'#1d9e8f'};border-radius:3px;"></div></div>
+          <span style="font-size:12px;font-weight:600;min-width:28px;">${g.avgScore.toFixed(1)}</span>
+        </div>
+      </td>
+      <td style="text-align:center;font-weight:700;color:${g.avgGap>=1.5?'#dc2626':g.avgGap>=0.8?'#b45309':'#16a34a'};">${g.avgGap.toFixed(1)}</td>
+      <td>${critBadge}</td>
+    </tr>`;
+  }).join('');
+}
+
+function buildMemberGapTable(results) {
+  const tbody = document.getElementById('member-gap-body');
+  tbody.innerHTML = results.members.map(m => {
+    const score = m.overallAvg.toFixed(1);
+    const scoreColor = m.overallAvg >= 4 ? '#16a34a' : m.overallAvg >= 3 ? '#b45309' : '#dc2626';
+    return `<tr>
+      <td><strong>${m.nome}</strong></td>
+      <td>${m.cargo}</td>
+      <td style="text-align:center;"><span class="badge-crit">${m.criticos}</span></td>
+      <td style="text-align:center;"><span class="badge-aten">${m.atencao}</span></td>
+      <td style="text-align:center;"><span class="badge-ok">${m.adequados}</span></td>
+      <td style="text-align:center;font-size:16px;font-weight:700;color:${scoreColor};">${score}</td>
+    </tr>`;
+  }).join('');
+}
+
+function buildGapsNarrative(results) {
+  const topGap = Object.values(results.collectiveGaps).sort((a,b)=>b.avgGap-a.avgGap)[0];
+  const totalCrit = results.members.reduce((a,m)=>a+m.criticos,0);
+  const needsDev = results.members.filter(m=>m.hsAvg<3&&m.ssAvg<3).length;
+
+  let html = `<div class="narrative-box"><div class="nb-title">Análise da equipe</div>
+    <p>A equipe avaliada apresenta um total de <strong>${totalCrit} gap(s) crítico(s)</strong> entre todos os membros.
+    ${topGap ? `A competência com maior lacuna coletiva é <strong>${topGap.skill.nome}</strong> (gap médio de ${topGap.avgGap.toFixed(1)} ponto), 
+    que deve ser tratada com ação estruturada para toda a equipe.` : ''}
+    ${needsDev > 0 ? ` <strong>${needsDev} membro(s)</strong> apresentam médias abaixo de 3,0 tanto em Hard Skills quanto em Soft Skills — estes profissionais requerem acompanhamento próximo e plano de desenvolvimento imediato.` : ''}</p>
+  </div>`;
+  document.getElementById('gaps-narrative').innerHTML = html;
+}
+
+function buildPDI(results) {
+  const c = document.getElementById('pdi-container');
+  let html = '';
+  results.members.forEach(m => {
+    // Pegar as 3 competências com maior gap
+    const top3 = m.gapDetails.filter(g=>g.gap>0).slice(0,3);
+    const tempoLabel = { ate6:'Até 6 meses', '6a12':'6 a 12 meses', '1a3':'1 a 3 anos', '3a5':'3 a 5 anos', mais5:'Mais de 5 anos' }[m.tempo] || m.tempo;
+
+    html += `<div class="pdi-person-block">
+      <div class="pdi-person-header">
+        <div class="ph-name">${m.nome}</div>
+        <div class="ph-meta">${m.cargo} &middot; ${tempoLabel} na função</div>
+      </div>
+      <div class="pdi-person-body">`;
+
+    if (top3.length === 0) {
+      html += `<div class="narrative-box"><div class="nb-title">Sem gaps identificados</div><p>Todos os scores deste membro atendem ou superam o perfil ideal definido para a função.</p></div>`;
+    } else {
+      html += `<div class="fields-grid" style="margin-bottom:16px;">
+        <div class="field-group">
+          <label>Objetivo do PDI</label>
+          <input type="text" placeholder="Ex: Elevar desempenho técnico e comportamental ao nível ideal da função" value="Elevar desempenho técnico e comportamental ao nível ideal da função">
+        </div>
+        <div class="field-group">
+          <label>Período de execução</label>
+          <input type="text" placeholder="Ex: 90 dias — ${new Date().toLocaleDateString('pt-BR')}">
+        </div>
+      </div>`;
+
+      top3.forEach((g, idx) => {
+        const dev = DEV_BASE[g.skill.id] || { acao:'Treinamento específico com acompanhamento', aferir:'Avaliação prática pelo gestor', prazo:'60 dias' };
+        const typeTag = g.type==='HS'
+          ? `<span class="comp-type tag-HS">Hard Skill</span>`
+          : `<span class="comp-type tag-SS">Soft Skill</span>`;
+        html += `<div class="pdi-comp">
+          <div class="pdi-comp-header">
+            <div>
+              <div class="comp-num">Competência ${idx+1} de ${top3.length}</div>
+              <div class="comp-name">${g.skill.nome}</div>
+            </div>
+            ${typeTag}
+          </div>
+          <div class="pdi-comp-body">
+            <label class="pdi-field-label">O que desenvolver</label>
+            <textarea>${g.skill.desc} — Gap identificado de ${g.gap} ponto(s) em relação ao perfil ideal (atual: ${g.atual}/5, ideal: ${g.ideal}/5).</textarea>
+            <label class="pdi-field-label">Como será desenvolvido</label>
+            <textarea>${dev.acao}</textarea>
+            <label class="pdi-field-label">Como será aferido</label>
+            <input type="text" value="${dev.aferir}">
+            <div class="pdi-scale-row">
+              <span class="ps-label">Agora:</span>
+              <input type="number" min="1" max="5" value="${g.atual}">
+              <span class="pdi-scale-arrow">&#8594;</span>
+              <span class="ps-label">Alvo:</span>
+              <input type="number" min="1" max="5" value="${Math.min(5,g.atual+2)}">
+              <span style="font-size:12px;color:var(--gray-dark);margin-left:8px;">Prazo sugerido: ${dev.prazo}</span>
+            </div>
+          </div>
+        </div>`;
+      });
+    }
+    html += `</div></div>`;
+  });
+  c.innerHTML = html;
+}
+
+function buildColletiveAction(results) {
+  // Preencher cabeçalho com dados do gestor
+  document.getElementById('plano-gestor').value = state.perfil.nome || '';
+  document.getElementById('plano-periodo').value = state.perfil.periodo || '';
+  document.getElementById('plano-objetivo').value = `Elevar as competências críticas da equipe de ${state.perfil.funcao || 'vendas'} ao nível ideal definido no perfil da função.`;
+
+  // Top 5 gaps coletivos para ações
+  const top5 = Object.values(results.collectiveGaps)
+    .filter(g => g.avgGap > 0)
+    .sort((a,b) => b.avgGap - a.avgGap)
+    .slice(0,5);
+
+  const tbody = document.getElementById('collective-action-body');
+  tbody.innerHTML = top5.map((g,i) => {
+    const action = COLLECTIVE_ACTIONS[g.skill.id] || 'Treinamento coletivo e acompanhamento estruturado pelo gestor.';
+    const deadline = g.criticidade==='critico' ? '30 dias' : g.criticidade==='atencao' ? '60 dias' : '90 dias';
+    return `<tr>
+      <td><strong>${g.skill.nome}</strong><br><span style="font-size:11px;color:var(--gray-dark);">Gap médio: ${g.avgGap.toFixed(1)}</span></td>
+      <td><textarea rows="3">${action}</textarea></td>
+      <td><textarea rows="3">${deadline}</textarea></td>
+      <td><textarea rows="3">Gestor</textarea></td>
+    </tr>`;
+  }).join('');
+
+  // Narrativa do plano
+  const hasHSGap = top5.some(g=>g.type==='HS');
+  const hasSSGap = top5.some(g=>g.type==='SS');
+  let narr = '';
+  if (hasHSGap && hasSSGap) {
+    narr = 'A equipe apresenta lacunas tanto em Hard Skills quanto em Soft Skills. Recomenda-se equilibrar as iniciativas de desenvolvimento: treinamentos técnicos estruturados para endereçar as Hard Skills com maior gap, combinados com processos de coaching individual e grupal para as Soft Skills. Ações coletivas geram efeito multiplicador — competências como técnicas de vendas e pipeline ganham mais quando trabalhadas em grupo, com simulações e revisão de casos reais.';
+  } else if (hasHSGap) {
+    narr = 'O principal gap da equipe está concentrado nas Hard Skills. Priorize treinamentos técnicos estruturados, criação de materiais de apoio à venda e rituais de prática deliberada. Não negligencie as Soft Skills no plano de desenvolvimento individual — o equilíbrio entre dimensões técnicas e comportamentais é o que sustenta a performance no médio e longo prazo.';
+  } else {
+    narr = 'O principal gap da equipe está nas Soft Skills. Processos de coaching, feedback estruturado, e rituais de equipe são mais eficazes do que treinamentos formais para desenvolver competências comportamentais. Invista no relacionamento 1 a 1 com cada vendedor e crie um ambiente psicologicamente seguro para a troca de feedbacks.';
+  }
+  document.getElementById('plano-narrative-text').textContent = narr;
+}
+
+// ─── EXPORTAÇÃO ──────────────────────────────────────────────────────────────
+
+function buildA4Page(title, contentHTML, badge) {
+  const p = state.perfil;
+  const metaStr = [p.nome, p.empresa, p.periodo].filter(Boolean).join(' · ');
+  return `<div style="width:210mm;min-height:297mm;padding:18mm 18mm 22mm;position:relative;font-family:'Source Sans 3',sans-serif;background:white;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6mm;padding-bottom:4mm;border-bottom:2px solid #1a2744;">
+      <div>
+        <div style="font-size:7.5pt;letter-spacing:2px;text-transform:uppercase;color:#1d9e8f;margin-bottom:3px;">${badge || 'Análise de Equipe & Gap Analysis'}</div>
+        <div style="font-size:15pt;font-weight:700;color:#1a2744;">${title}</div>
+      </div>
+      <div style="text-align:right;font-size:8pt;color:#718096;line-height:1.6;">${metaStr}</div>
+    </div>
+    ${contentHTML}
+    <div style="position:absolute;bottom:8mm;left:18mm;right:18mm;display:flex;justify-content:space-between;font-size:7pt;color:#a0aec0;border-top:1px solid #e2e8f0;padding-top:4px;">
+      <span>Prof. Paulo H. Donassolo · Recriar a Gestão Comercial</span>
+      <span>Ferramenta 0.3 · Análise da Equipe e Gap Analysis</span>
+    </div>
+  </div>`;
+}
+
+function buildBar(val, max, color) {
+  const pct = Math.round((val/max)*100);
+  return `<div style="background:#e2e8f0;height:5px;border-radius:3px;overflow:hidden;"><div style="width:${pct}%;height:100%;background:${color};border-radius:3px;"></div></div>`;
+}
+
+function exportSection(type) {
+  if (!state.results) { alert('Gere a análise primeiro.'); return; }
+  const r = state.results;
+  let pages = '';
+
+  // ── MAPA DA EQUIPE ──
+  if (type === 'mapa' || type === 'todos') {
+    let memberRows = r.members.map(m => {
+      const gapColor = m.criticos>=3?'#dc2626':m.criticos>=1?'#d97706':'#16a34a';
+      return `<tr style="border-bottom:1px solid #f4f6f9;">
+        <td style="padding:8px 10px;font-size:9pt;font-weight:600;">${m.nome}</td>
+        <td style="padding:8px 10px;font-size:8.5pt;">${m.cargo}</td>
+        <td style="padding:8px 10px;">
+          <div style="font-size:8pt;margin-bottom:2px;color:#2563a8;">HS ${m.hsAvg.toFixed(1)}/5</div>
+          ${buildBar(m.hsAvg, 5, '#2563a8')}
+          <div style="font-size:8pt;margin-top:5px;margin-bottom:2px;color:#1d9e8f;">SS ${m.ssAvg.toFixed(1)}/5</div>
+          ${buildBar(m.ssAvg, 5, '#1d9e8f')}
+        </td>
+        <td style="padding:8px 10px;text-align:center;font-size:14pt;font-weight:700;color:${gapColor};">${m.criticos}</td>
+        <td style="padding:8px 10px;text-align:center;font-size:12pt;font-weight:600;">${m.overallAvg.toFixed(1)}</td>
+      </tr>`;
+    }).join('');
+
+    const avgHS = r.members.reduce((a,m)=>a+m.hsAvg,0)/r.members.length;
+    const avgSS = r.members.reduce((a,m)=>a+m.ssAvg,0)/r.members.length;
+    const totalCrit = r.members.reduce((a,m)=>a+m.criticos,0);
+
+    const mapaHTML = `
+      <div style="display:flex;gap:10px;margin-bottom:12px;">
+        <div style="flex:1;background:#1a2744;padding:12px;border-radius:4px;text-align:center;color:white;">
+          <div style="font-size:7pt;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;margin-bottom:4px;">Avaliados</div>
+          <div style="font-size:22pt;font-weight:700;">${r.members.length}</div>
+        </div>
+        <div style="flex:1;background:#1a2744;padding:12px;border-radius:4px;text-align:center;color:white;">
+          <div style="font-size:7pt;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;margin-bottom:4px;">Média Hard Skills</div>
+          <div style="font-size:22pt;font-weight:700;color:#7ab3f0;">${avgHS.toFixed(1)}</div>
+        </div>
+        <div style="flex:1;background:#1a2744;padding:12px;border-radius:4px;text-align:center;color:white;">
+          <div style="font-size:7pt;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;margin-bottom:4px;">Média Soft Skills</div>
+          <div style="font-size:22pt;font-weight:700;color:#5ecfc3;">${avgSS.toFixed(1)}</div>
+        </div>
+        <div style="flex:1;background:#1a2744;padding:12px;border-radius:4px;text-align:center;color:white;">
+          <div style="font-size:7pt;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;margin-bottom:4px;">Gaps Críticos</div>
+          <div style="font-size:22pt;font-weight:700;color:#fca5a5;">${totalCrit}</div>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:9pt;">
+        <thead><tr style="background:#1a2744;color:white;">
+          <th style="padding:7px 10px;text-align:left;">Membro</th>
+          <th style="padding:7px 10px;text-align:left;">Cargo</th>
+          <th style="padding:7px 10px;width:35%;">Hard Skills / Soft Skills</th>
+          <th style="padding:7px 10px;text-align:center;">Gaps Críticos</th>
+          <th style="padding:7px 10px;text-align:center;">Score Geral</th>
+        </tr></thead>
+        <tbody>${memberRows}</tbody>
+      </table>`;
+    pages += buildA4Page('Mapa da Equipe Comercial', mapaHTML, 'Aba 01 · Mapa da Equipe');
+  }
+
+  // ── GAPS ──
+  if (type === 'gaps' || type === 'todos') {
+    const topGaps = Object.values(r.collectiveGaps)
+      .filter(g=>g.avgGap>0)
+      .sort((a,b)=>b.avgGap-a.avgGap)
+      .slice(0,10);
+
+    const gapRows = topGaps.map(g => {
+      const tColor = g.type==='HS'?'#2563a8':'#1d9e8f';
+      const tBg = g.type==='HS'?'#eff6ff':'#e8f7f5';
+      const cLabel = g.criticidade==='critico'?'Crítico':g.criticidade==='atencao'?'Atenção':'Adequado';
+      const cColor = g.criticidade==='critico'?'#dc2626':g.criticidade==='atencao'?'#d97706':'#16a34a';
+      return `<tr style="border-bottom:1px solid #f4f6f9;">
+        <td style="padding:7px 10px;font-size:8.5pt;font-weight:600;">${g.skill.nome}</td>
+        <td style="padding:7px 10px;text-align:center;"><span style="background:${tBg};color:${tColor};font-size:7pt;font-weight:700;padding:2px 6px;border-radius:2px;">${g.type}</span></td>
+        <td style="padding:7px 10px;text-align:center;font-weight:600;">${g.ideal}</td>
+        <td style="padding:7px 10px;">${buildBar(g.avgScore,5,tColor)}<span style="font-size:8pt;">${g.avgScore.toFixed(1)}/5</span></td>
+        <td style="padding:7px 10px;text-align:center;font-weight:700;font-size:11pt;color:${cColor};">${g.avgGap.toFixed(1)}</td>
+        <td style="padding:7px 10px;text-align:center;"><span style="background:${cColor+'22'};color:${cColor};font-size:8pt;font-weight:700;padding:3px 8px;border-radius:3px;">${cLabel}</span></td>
+      </tr>`;
+    }).join('');
+
+    const gapsHTML = `
+      <table style="width:100%;border-collapse:collapse;font-size:8.5pt;">
+        <thead><tr style="background:#1a2744;color:white;">
+          <th style="padding:7px 10px;text-align:left;">Competência</th>
+          <th style="padding:7px 10px;text-align:center;">Tipo</th>
+          <th style="padding:7px 10px;text-align:center;">Ideal</th>
+          <th style="padding:7px 10px;">Média Equipe</th>
+          <th style="padding:7px 10px;text-align:center;">Gap Médio</th>
+          <th style="padding:7px 10px;text-align:center;">Criticidade</th>
+        </tr></thead>
+        <tbody>${gapRows}</tbody>
+      </table>`;
+    pages += buildA4Page('Análise de Gaps — Lacunas Coletivas', gapsHTML, 'Aba 02 · Análise de Gaps');
+  }
+
+  // ── PDI ──
+  if (type === 'pdi' || type === 'todos') {
+    r.members.forEach(m => {
+      const top3 = m.gapDetails.filter(g=>g.gap>0).slice(0,3);
+      if (top3.length === 0) return;
+
+      let compsHTML = top3.map((g,i) => {
+        const pdiComp = document.querySelectorAll('.pdi-comp')[
+          r.members.indexOf(m) * 3 + i  // pode não ser preciso mas funciona
+        ];
+        const dev = DEV_BASE[g.skill.id] || { acao:'', aferir:'', prazo:'60 dias' };
+        const tColor = g.type==='HS'?'#2563a8':'#1d9e8f';
+        const tBg = g.type==='HS'?'#eff6ff':'#e8f7f5';
+        const barW = Math.round((Math.min(5,g.atual+2)/5)*100);
+        return `<div style="border:1px solid #e2e8f0;border-radius:4px;margin-bottom:8px;overflow:hidden;">
+          <div style="background:#253564;color:white;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:9pt;font-weight:700;">${g.skill.nome}</span>
+            <span style="background:${tBg};color:${tColor};font-size:7pt;font-weight:700;padding:2px 6px;border-radius:2px;">${g.type}</span>
+          </div>
+          <div style="padding:10px 12px;font-size:8.5pt;line-height:1.6;">
+            <div style="margin-bottom:7px;"><strong style="font-size:7.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">O que desenvolver</strong><br>${g.skill.desc} — Gap de ${g.gap} ponto(s).</div>
+            <div style="margin-bottom:7px;"><strong style="font-size:7.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Como será desenvolvido</strong><br>${dev.acao}</div>
+            <div style="margin-bottom:7px;"><strong style="font-size:7.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Como será aferido</strong><br>${dev.aferir}</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+              <span style="font-size:8pt;">Agora: <strong>${g.atual}/5</strong></span>
+              <div style="flex:1;background:#e2e8f0;height:5px;border-radius:3px;"><div style="width:${barW}%;height:100%;background:#1d9e8f;border-radius:3px;"></div></div>
+              <span style="font-size:8pt;">Alvo: <strong>${Math.min(5,g.atual+2)}/5</strong></span>
+              <span style="font-size:8pt;color:#718096;">· ${dev.prazo}</span>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+
+      const pdiPage = `
+        <div style="background:#f4f6f9;padding:10px 12px;border-radius:4px;margin-bottom:12px;display:flex;gap:16px;font-size:8.5pt;">
+          <div><strong style="font-size:7.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Colaborador</strong><br><strong>${m.nome}</strong></div>
+          <div><strong style="font-size:7.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Cargo</strong><br>${m.cargo}</div>
+          <div><strong style="font-size:7.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Gaps Críticos</strong><br>${m.criticos}</div>
+          <div><strong style="font-size:7.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Score Geral</strong><br>${m.overallAvg.toFixed(1)}/5</div>
+        </div>
+        ${compsHTML}`;
+      pages += buildA4Page(`PDI — ${m.nome}`, pdiPage, 'Aba 03 · PDI Individual');
+    });
+  }
+
+  // ── PLANO DE AÇÃO COLETIVO ──
+  if (type === 'plano' || type === 'todos') {
+    const gestor = document.getElementById('plano-gestor').value;
+    const periodo = document.getElementById('plano-periodo').value;
+    const objetivo = document.getElementById('plano-objetivo').value;
+    const narrative = document.getElementById('plano-narrative-text').textContent;
+
+    const actionRows = Array.from(document.querySelectorAll('#collective-action-body tr')).map((row,i) => {
+      const tds = row.querySelectorAll('td');
+      const vals = Array.from(tds).map(td => {
+        const ta = td.querySelector('textarea');
+        return ta ? ta.value : td.textContent.trim();
+      });
+      return `<tr style="border-bottom:1px solid #f4f6f9;${i%2===1?'background:#f9fafc':''}">
+        <td style="padding:8px 10px;font-size:8.5pt;font-weight:600;">${vals[0]||''}</td>
+        <td style="padding:8px 10px;font-size:8.5pt;line-height:1.5;">${vals[1]||''}</td>
+        <td style="padding:8px 10px;font-size:8.5pt;">${vals[2]||''}</td>
+        <td style="padding:8px 10px;font-size:8.5pt;">${vals[3]||''}</td>
+      </tr>`;
+    }).join('');
+
+    const planoHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px;background:#f4f6f9;border-radius:4px;margin-bottom:12px;font-size:8.5pt;">
+        <div><span style="font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Gestor</span><br><strong>${gestor}</strong></div>
+        <div><span style="font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Período</span><br><strong>${periodo}</strong></div>
+        <div style="grid-column:1/-1;"><span style="font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Objetivo central</span><br>${objetivo}</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:8.5pt;margin-bottom:12px;">
+        <thead><tr style="background:#1a2744;color:white;">
+          <th style="padding:7px 10px;text-align:left;width:25%;">Competência</th>
+          <th style="padding:7px 10px;text-align:left;">Ação Proposta</th>
+          <th style="padding:7px 10px;text-align:left;width:18%;">Quando</th>
+          <th style="padding:7px 10px;text-align:left;width:15%;">Responsável</th>
+        </tr></thead>
+        <tbody>${actionRows}</tbody>
+      </table>
+      <div style="background:#f4f6f9;border-left:3px solid #1d9e8f;padding:10px 12px;border-radius:0 4px 4px 0;font-size:8.5pt;line-height:1.7;">
+        <strong style="display:block;font-size:7.5pt;letter-spacing:1px;text-transform:uppercase;color:#1d9e8f;margin-bottom:4px;">Orientação estratégica</strong>
+        ${narrative}
+      </div>`;
+    pages += buildA4Page('Plano de Ação Coletivo da Equipe', planoHTML, 'Aba 04 · Plano de Ação');
+  }
+
+  const fullHTML = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+    <title>Análise de Equipe · ${state.perfil.nome || 'Recriar a Gestão Comercial'}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0;}
+      body{background:white;font-family:'Source Sans 3',sans-serif;}
+      @media print{body{margin:0;}@page{margin:0;size:A4 portrait;}}
+      @media screen{body{background:#888;padding:20px;} div[style*="210mm"]{margin:0 auto 20px;box-shadow:0 4px 20px rgba(0,0,0,0.3);}}
+    </style>
+  </head><body>
+    <div style="display:none;background:#1a2744;color:white;padding:12px 20px;font-size:12px;text-align:center;position:fixed;top:0;left:0;right:0;z-index:999;" id="print-banner">
+      Para salvar como PDF: pressione <strong>Ctrl+P</strong> (Windows) ou <strong>Cmd+P</strong> (Mac) &rarr; Destino: <strong>Salvar como PDF</strong> &rarr; Margens: <strong>Nenhuma</strong> &rarr; Ativar <strong>Gráficos de fundo</strong>
+    </div>
+    <script>document.getElementById('print-banner').style.display='block';<\/script>
+    ${pages}
+  </body></html>`;
+
+  const win = window.open('', '_blank');
+  if (!win) {
+    alert('O navegador bloqueou a abertura da janela. Permita pop-ups para este site e tente novamente.');
+    return;
+  }
+  win.document.write(fullHTML);
+  win.document.close();
+}
+
+// ─── PERSISTÊNCIA ────────────────────────────────────────────────────────────
+
+function saveState() {
+  try {
+    const toSave = {
+      perfil: state.perfil,
+      idealProfile: state.idealProfile,
+      equipe: state.equipe
+    };
+    localStorage.setItem('gapAnalysis_v2', JSON.stringify(toSave));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('gapAnalysis_v2');
+    if (!saved) return false;
+    const parsed = JSON.parse(saved);
+
+    // Restaurar perfil do gestor
+    if (parsed.perfil) {
+      state.perfil = parsed.perfil;
+      if (parsed.perfil.nome)    document.getElementById('gestor-nome').value    = parsed.perfil.nome;
+      if (parsed.perfil.empresa) document.getElementById('gestor-empresa').value = parsed.perfil.empresa;
+      if (parsed.perfil.cargo)   document.getElementById('gestor-cargo').value   = parsed.perfil.cargo;
+      if (parsed.perfil.funcao)  document.getElementById('funcao-avaliada').value = parsed.perfil.funcao;
+      if (parsed.perfil.periodo) document.getElementById('periodo-ref').value    = parsed.perfil.periodo;
+      if (parsed.perfil.data)    document.getElementById('data-aval').value      = parsed.perfil.data;
+    }
+
+    // Restaurar perfil ideal
+    if (parsed.idealProfile && Object.keys(parsed.idealProfile).length > 0) {
+      state.idealProfile = parsed.idealProfile;
+    }
+
+    // Restaurar equipe
+    if (parsed.equipe && parsed.equipe.length > 0) {
+      state.equipe = parsed.equipe;
+      if (state.equipe.length >= 10) {
+        document.getElementById('limit-note').style.display = 'inline';
+        document.getElementById('member-add-box').style.opacity = '0.5';
+        document.getElementById('member-add-box').style.pointerEvents = 'none';
+      }
+    }
+
+    return true;
+  } catch(e) { return false; }
+}
+
+// Salvar perfil do gestor ao sair da página 1
+function captureAndSaveWelcome() {
+  captureWelcomeData();
+  saveState();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+
+window.onload = function() {
+  // Data padrão
+  document.getElementById('data-aval').value = new Date().toISOString().split('T')[0];
+
+  // Inicializar defaults do perfil ideal antes de tentar restaurar
+  initIdealDefaults();
+
+  // Restaurar estado salvo (sobrescreve defaults se houver dados)
+  loadState();
+
+  // Renderizar com valores restaurados (ou defaults)
+  renderIdealProfile();
+  renderMembersList();
+
+  // Salvar sempre que campos de identificação mudarem
+  ['gestor-nome','gestor-empresa','gestor-cargo','funcao-avaliada','periodo-ref','data-aval'].forEach(id => {
+    document.getElementById(id).addEventListener('change', () => {
+      captureWelcomeData();
+      saveState();
+      // Atualizar label do perfil ideal se a função mudou
+      const fl = document.getElementById('funcao-label-perfil');
+      if (fl) fl.textContent = state.perfil.funcao || 'Vendedor B2B';
+    });
+  });
+};
+</script>
+</body>
+</html>

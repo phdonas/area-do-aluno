@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F 1.1 — Metas / OKRs Comerciais · Recriar a Gestão Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-mid: #253564;
+  --teal: #1d9e8f;
+  --teal-light: #e8f7f5;
+  --coral: #e05c3a;
+  --coral-light: #fdf1ee;
+  --slate: #4a5568;
+  --gray-light: #f4f6f9;
+  --gray-mid: #e2e8f0;
+  --gray-dark: #718096;
+  --white: #ffffff;
+  --text: #1a2744;
+  --CL-color: #1d9e8f;
+  --CL-light: #e8f7f5;
+  --CO-color: #2563a8;
+  --CO-light: #eff6ff;
+  --CA-color: #7c3aed;
+  --CA-light: #f5f3ff;
+  --AC-color: #e05c3a;
+  --AC-light: #fdf1ee;
+  --AO-color: #059669;
+  --AO-light: #ecfdf5;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Source Sans 3', sans-serif;
+  --shadow: 0 2px 12px rgba(26,39,68,0.08);
+  --shadow-md: 0 4px 24px rgba(26,39,68,0.12);
+  --radius: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--gray-light);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.app-wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 80px; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* HEADER */
+.tool-header {
+  background: var(--navy);
+  color: white;
+  padding: 40px 48px;
+  border-radius: var(--radius);
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.tool-header::before {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 240px; height: 100%;
+  background: linear-gradient(135deg, transparent 40%, rgba(29,158,143,0.18));
+}
+.tool-header .badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--teal); border: 1px solid var(--teal);
+  padding: 3px 10px; border-radius: 2px; margin-bottom: 14px;
+}
+.tool-header h1 {
+  font-family: var(--font-display);
+  font-size: 28px; font-weight: 700; line-height: 1.2; margin-bottom: 10px;
+}
+.tool-header p { color: rgba(255,255,255,0.7); font-size: 14px; max-width: 540px; }
+
+/* CARDS */
+.card {
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 32px; margin-bottom: 20px;
+}
+.card-sm { padding: 24px; }
+
+.section-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gray-dark); margin-bottom: 20px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--gray-mid);
+  display: flex; align-items: center; gap: 10px;
+}
+
+/* INFO CARDS */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.info-card { background: var(--gray-light); border-radius: var(--radius); padding: 20px; }
+.info-card .ic-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gray-dark); margin-bottom: 10px;
+}
+.info-card p { font-size: 13px; color: var(--slate); line-height: 1.6; }
+.info-card ul { font-size: 13px; color: var(--slate); padding-left: 16px; }
+.info-card ul li { margin-bottom: 4px; }
+
+/* SCALE */
+.scale-grid {
+  display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-top: 10px;
+}
+.scale-item {
+  text-align: center; background: var(--gray-light);
+  border-radius: var(--radius); padding: 14px 8px;
+}
+.scale-num {
+  font-size: 24px; font-weight: 700; font-family: var(--font-display);
+}
+.scale-lbl { font-size: 11px; color: var(--slate); margin-top: 4px; font-weight: 500; }
+.scale-hint {
+  display: flex; justify-content: space-between;
+  padding: 6px 4px 0; font-size: 10px; color: var(--gray-dark);
+}
+
+.important-note {
+  background: var(--coral-light); border-left: 3px solid var(--coral);
+  border-radius: var(--radius); padding: 16px 20px;
+  font-size: 13px; color: var(--slate); margin-top: 20px;
+}
+
+/* FIELDS */
+.fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field-group { display: flex; flex-direction: column; gap: 6px; }
+.field-group.full { grid-column: 1 / -1; }
+.field-group label { font-size: 12px; font-weight: 600; color: var(--slate); }
+.field-group input, .field-group select, .field-group textarea {
+  border: 1px solid var(--gray-mid); border-radius: var(--radius);
+  padding: 10px 14px; font-family: var(--font-body); font-size: 14px;
+  color: var(--text); background: var(--white); transition: border-color .2s;
+}
+.field-group input:focus, .field-group select:focus, .field-group textarea:focus {
+  outline: none; border-color: var(--teal);
+}
+.field-group textarea { resize: vertical; min-height: 80px; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  padding: 11px 24px; border-radius: var(--radius); border: none;
+  cursor: pointer; transition: all .2s; text-decoration: none;
+}
+.btn-primary { background: var(--navy); color: white; }
+.btn-primary:hover { background: var(--navy-mid); }
+.btn-teal { background: var(--teal); color: white; }
+.btn-teal:hover { background: #178f81; }
+.btn-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--navy); }
+.btn-outline:hover { background: var(--gray-light); }
+.btn-sm { padding: 8px 16px; font-size: 13px; }
+.btn-row { display: flex; gap: 12px; margin-top: 24px; }
+.btn-row.right { justify-content: flex-end; }
+.btn-row.between { justify-content: space-between; }
+
+/* PROGRESS */
+.progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.section-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+.step-count { font-size: 12px; color: var(--gray-dark); }
+.progress-bar { height: 4px; background: var(--gray-mid); border-radius: 2px; margin-bottom: 24px; }
+.progress-fill { height: 100%; background: var(--teal); border-radius: 2px; transition: width .4s; }
+
+/* DIMENSION TAGS */
+.dim-tag {
+  display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 8px; border-radius: 2px; margin-bottom: 12px;
+}
+.tag-CL { background: var(--CL-light); color: var(--CL-color); }
+.tag-CO { background: var(--CO-light); color: var(--CO-color); }
+.tag-CA { background: var(--CA-light); color: var(--CA-color); }
+.tag-AC { background: var(--AC-light); color: var(--AC-color); }
+.tag-AO { background: var(--AO-light); color: var(--AO-color); }
+
+/* QUESTION BLOCK */
+.question-block { padding: 20px 0; border-bottom: 1px solid var(--gray-mid); }
+.question-block:last-child { border-bottom: none; }
+.question-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.question-num { font-size: 11px; color: var(--gray-dark); }
+.perspective-tag {
+  font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 2px; letter-spacing: 0.5px;
+}
+.pt-gestor { background: #eff6ff; color: #2563a8; }
+.pt-equipe { background: #f5f3ff; color: #7c3aed; }
+.question-text { font-size: 14px; color: var(--text); margin-bottom: 14px; line-height: 1.5; }
+.scale-row {
+  display: grid; grid-template-columns: repeat(5,1fr); gap: 6px;
+}
+.scale-opt {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 10px 4px; border: 1.5px solid var(--gray-mid);
+  border-radius: var(--radius); cursor: pointer;
+  transition: all .15s; background: white;
+}
+.scale-opt:hover { border-color: var(--teal); background: var(--teal-light); }
+.scale-opt.selected { border-color: var(--navy); background: var(--navy); }
+.scale-opt.selected .so-num { color: white; }
+.scale-opt.selected .so-lbl { color: rgba(255,255,255,0.8); }
+.so-num { font-size: 18px; font-weight: 700; font-family: var(--font-display); color: var(--navy); }
+.so-lbl { font-size: 10px; color: var(--gray-dark); text-align: center; line-height: 1.3; }
+
+/* RESULTS TABS NAV */
+.tabs-nav {
+  background: var(--navy); border-radius: var(--radius);
+  padding: 20px 24px; margin-bottom: 24px;
+}
+.tabs-nav-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.5); margin-bottom: 14px;
+}
+.tabs-nav-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+.main-tab-btn {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  padding: 12px 14px; background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius);
+  cursor: pointer; transition: all .2s; color: rgba(255,255,255,0.6);
+  font-family: var(--font-body); text-align: left;
+}
+.main-tab-btn:hover { background: rgba(255,255,255,0.12); color: white; }
+.main-tab-btn.active { background: var(--teal); border-color: var(--teal); color: white; }
+.mtab-num { font-size: 18px; font-weight: 700; font-family: var(--font-display); line-height: 1; }
+.mtab-label { font-size: 12px; font-weight: 600; line-height: 1.2; }
+.mtab-sub { font-size: 10px; opacity: 0.7; line-height: 1.2; }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* DIAG HERO */
+.diag-hero {
+  background: var(--navy); border-radius: var(--radius);
+  padding: 32px 40px; color: white; margin-bottom: 20px;
+}
+.hero-profile-badge {
+  display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--teal); border: 1px solid var(--teal);
+  padding: 3px 10px; border-radius: 2px; margin-bottom: 12px;
+}
+.hero-profile-name {
+  font-family: var(--font-display); font-size: 24px; font-weight: 700;
+  margin-bottom: 10px; line-height: 1.2;
+}
+.hero-scores-row {
+  display: flex; gap: 24px; margin-top: 20px; flex-wrap: wrap;
+}
+.hero-score-item { display: flex; flex-direction: column; gap: 2px; }
+.hsi-label { font-size: 10px; opacity: 0.6; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+.hsi-value { font-size: 26px; font-weight: 700; font-family: var(--font-display); color: var(--teal); }
+.hsi-sub { font-size: 10px; opacity: 0.5; }
+
+/* RADAR */
+.radar-wrap { display: flex; justify-content: center; padding: 10px 0; }
+
+/* DIM CARDS */
+.dim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.dim-card { border-radius: var(--radius); padding: 18px; background: var(--gray-light); }
+.dc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.dc-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+.dc-score { font-size: 20px; font-weight: 700; font-family: var(--font-display); }
+.dc-bar-bg { height: 6px; background: var(--gray-mid); border-radius: 3px; margin-bottom: 8px; }
+.dc-bar-fill { height: 100%; border-radius: 3px; transition: width .6s; }
+.dc-level { font-size: 11px; font-weight: 600; letter-spacing: 0.5px; }
+.level-excellent { color: #059669; }
+.level-good { color: var(--teal); }
+.level-regular { color: #f59e0b; }
+.level-attention { color: var(--coral); }
+
+.dc-sub { font-size: 11px; color: var(--gray-dark); margin-top: 4px; }
+
+/* ALERT */
+.alert-coral {
+  background: var(--coral-light); border-left: 3px solid var(--coral);
+  border-radius: var(--radius); padding: 14px 18px;
+  font-size: 13px; color: var(--slate); margin-bottom: 20px;
+}
+
+/* NARRATIVE */
+.narrative-block { font-size: 14px; color: var(--slate); line-height: 1.7; }
+.narrative-block p { margin-bottom: 12px; }
+.narrative-block strong { color: var(--navy); }
+.orientation-box {
+  background: var(--teal-light); border-left: 3px solid var(--teal);
+  border-radius: var(--radius); padding: 16px 20px; margin-top: 16px;
+}
+.orientation-box .ob-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 8px;
+}
+.orientation-box p { font-size: 13px; color: var(--slate); line-height: 1.6; }
+
+/* FHFD TABLE */
+.fhfd-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+.fhfd-table th {
+  background: var(--navy); color: white; padding: 12px 14px;
+  font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+  text-align: left;
+}
+.fhfd-table td { padding: 8px 8px; border-bottom: 1px solid var(--gray-mid); vertical-align: top; }
+.fhfd-table tr:last-child td { border-bottom: none; }
+.fhfd-table td textarea {
+  width: 100%; border: 1px solid var(--gray-mid); border-radius: 4px;
+  padding: 8px 10px; font-family: var(--font-body); font-size: 13px;
+  color: var(--text); resize: vertical; min-height: 70px; background: white;
+}
+.fhfd-table td textarea:focus { outline: none; border-color: var(--teal); }
+.col-dim { width: 15%; }
+.col-hoje { width: 28%; }
+.col-dif { width: 32%; }
+.col-imp { width: 25%; }
+.fhfd-dim-label { font-size: 11px; font-weight: 600; color: var(--gray-dark); }
+
+/* PDI */
+.pdi-header { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+.pdi-header-item { display: flex; flex-direction: column; gap: 4px; }
+.pdi-header-item.full { grid-column: 1/-1; }
+.pdi-header-item .ph-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-dark);
+}
+.pdi-header-item input, .pdi-header-item textarea {
+  border: 1px solid var(--gray-mid); border-radius: var(--radius);
+  padding: 9px 12px; font-family: var(--font-body); font-size: 14px; color: var(--text);
+}
+.pdi-header-item input:focus, .pdi-header-item textarea:focus { outline: none; border-color: var(--teal); }
+.pdi-header-item textarea { resize: vertical; min-height: 60px; }
+
+.pdi-comp-card {
+  border: 1px solid var(--gray-mid); border-radius: var(--radius);
+  padding: 22px; margin-bottom: 16px;
+}
+.pdi-comp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.pdi-comp-num {
+  width: 28px; height: 28px; background: var(--navy); color: white;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+.pdi-comp-name-input {
+  flex: 1; border: 1px solid var(--gray-mid); border-radius: 4px;
+  padding: 8px 12px; font-family: var(--font-body); font-size: 14px;
+  font-weight: 600; color: var(--navy);
+}
+.pdi-comp-name-input:focus { outline: none; border-color: var(--teal); }
+
+.pdi-fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pdi-field { display: flex; flex-direction: column; gap: 5px; }
+.pdi-field.full { grid-column: 1/-1; }
+.pdi-field label {
+  font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray-dark);
+}
+.pdi-field textarea, .pdi-field input, .pdi-field select {
+  border: 1px solid var(--gray-mid); border-radius: 4px;
+  padding: 8px 10px; font-family: var(--font-body); font-size: 13px;
+  color: var(--text); resize: vertical;
+}
+.pdi-field textarea { min-height: 64px; }
+.pdi-field textarea:focus, .pdi-field input:focus, .pdi-field select:focus { outline: none; border-color: var(--teal); }
+
+.scale-alvo-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+.scale-alvo-item {
+  flex: 1; text-align: center; padding: 8px 4px;
+  border: 1.5px solid var(--gray-mid); border-radius: 4px; cursor: pointer;
+  font-size: 13px; font-weight: 600; color: var(--gray-dark); transition: all .15s;
+}
+.scale-alvo-item.sel-agora { background: var(--coral-light); border-color: var(--coral); color: var(--coral); }
+.scale-alvo-item.sel-alvo { background: var(--teal-light); border-color: var(--teal); color: var(--teal); }
+.scale-alvo-label { font-size: 10px; color: var(--gray-dark); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+/* ABA 04 — RITUAIS + PLANO */
+.rituais-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.ritual-card {
+  border: 1px solid var(--gray-mid); border-radius: var(--radius); padding: 20px;
+}
+.ritual-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.ritual-freq-badge {
+  font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 2px;
+}
+.rf-semanal { background: var(--teal-light); color: var(--teal); }
+.rf-mensal { background: var(--CO-light); color: var(--CO-color); }
+.rf-trimestral { background: var(--CA-light); color: var(--CA-color); }
+.ritual-name { font-size: 14px; font-weight: 600; color: var(--navy); }
+
+.ritual-fields { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.ritual-field { display: flex; flex-direction: column; gap: 4px; }
+.ritual-field.full { grid-column: 1/-1; }
+.ritual-field label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); }
+.ritual-field input, .ritual-field select, .ritual-field textarea {
+  border: 1px solid var(--gray-mid); border-radius: 4px;
+  padding: 8px 10px; font-family: var(--font-body); font-size: 13px; color: var(--text);
+}
+.ritual-field input:focus, .ritual-field select:focus, .ritual-field textarea:focus { outline: none; border-color: var(--teal); }
+.ritual-field textarea { min-height: 60px; resize: vertical; }
+
+.plano-section { margin-top: 32px; }
+.plano-period-card {
+  border-radius: var(--radius); padding: 22px; margin-bottom: 14px;
+}
+.pp-30 { background: var(--teal-light); border-left: 3px solid var(--teal); }
+.pp-60 { background: var(--CO-light); border-left: 3px solid var(--CO-color); }
+.pp-90 { background: var(--CA-light); border-left: 3px solid var(--CA-color); }
+.pp-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.pp-num { font-family: var(--font-display); font-size: 28px; font-weight: 700; }
+.pp-num-30 { color: var(--teal); }
+.pp-num-60 { color: var(--CO-color); }
+.pp-num-90 { color: var(--CA-color); }
+.pp-label { font-size: 13px; font-weight: 600; color: var(--navy); }
+.pp-sub { font-size: 11px; color: var(--gray-dark); }
+.pp-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pp-field { display: flex; flex-direction: column; gap: 4px; }
+.pp-field.full { grid-column: 1/-1; }
+.pp-field label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); }
+.pp-field input, .pp-field textarea {
+  border: 1px solid rgba(26,39,68,0.15); border-radius: 4px;
+  padding: 8px 10px; font-family: var(--font-body); font-size: 13px; color: var(--text); background: white;
+}
+.pp-field input:focus, .pp-field textarea:focus { outline: none; border-color: var(--teal); }
+.pp-field textarea { min-height: 64px; resize: vertical; }
+
+/* EXPORT PANEL */
+.export-panel {
+  background: var(--navy); border-radius: var(--radius); padding: 24px 28px; margin-top: 24px;
+}
+.ep-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.5); margin-bottom: 16px;
+}
+.ep-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-export {
+  background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius); padding: 10px 20px; font-family: var(--font-body);
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
+}
+.btn-export:hover { background: rgba(255,255,255,0.2); }
+.btn-export-all {
+  background: var(--teal); color: white; border: none;
+  border-radius: var(--radius); padding: 10px 24px; font-family: var(--font-body);
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
+}
+.btn-export-all:hover { background: #178f81; }
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+  .tool-header { padding: 28px 24px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .fields-grid { grid-template-columns: 1fr; }
+  .tabs-nav-grid { grid-template-columns: repeat(2,1fr); }
+  .dim-grid { grid-template-columns: 1fr; }
+  .pdi-header { grid-template-columns: 1fr; }
+  .pdi-fields-grid { grid-template-columns: 1fr; }
+  .ritual-fields { grid-template-columns: 1fr; }
+  .pp-fields { grid-template-columns: 1fr; }
+  .hero-scores-row { gap: 16px; }
+  .scale-row { grid-template-columns: repeat(5,1fr); }
+}
+</style>
+</head>
+<body>
+<div class="app-wrap">
+
+<!-- ====== PAGE 1: APRESENTAÇÃO ====== -->
+<div class="page active" id="page-intro">
+  <div class="tool-header">
+    <div class="badge">Ferramenta F 1.1 · Recriar a Gestão Comercial</div>
+    <h1>Metas / OKRs Comerciais</h1>
+    <p>Avaliação da maturidade do gestor e da equipe no processo de definição, comunicação e acompanhamento de metas comerciais.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Sobre esta ferramenta</div>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="ic-label">Para que serve</div>
+        <p>Diagnosticar o nível de maturidade do gestor e da equipe em cinco dimensões críticas do processo de Metas / OKRs — identificando gaps entre Managing (controle e acompanhamento) e Coaching (desenvolvimento e compreensão).</p>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Como funciona</div>
+        <ul>
+          <li>30 questões em 5 seções temáticas</li>
+          <li>Dupla perspectiva: gestor e equipe</li>
+          <li>Diagnóstico com perfil e radar visual</li>
+          <li>4 saídas pré-preenchidas e editáveis</li>
+        </ul>
+      </div>
+      <div class="info-card" style="grid-column:1/-1;">
+        <div class="ic-label">Escala de avaliação utilizada nas questões</div>
+        <div class="scale-grid">
+          <div class="scale-item" style="border-top:3px solid #cbd5e1;">
+            <div class="scale-num" style="color:#94a3b8;">1</div>
+            <div class="scale-lbl">Nunca faço</div>
+          </div>
+          <div class="scale-item" style="border-top:3px solid #f59e0b;">
+            <div class="scale-num" style="color:#f59e0b;">2</div>
+            <div class="scale-lbl">Raramente</div>
+          </div>
+          <div class="scale-item" style="border-top:3px solid #fb923c;">
+            <div class="scale-num" style="color:#fb923c;">3</div>
+            <div class="scale-lbl">Às vezes</div>
+          </div>
+          <div class="scale-item" style="border-top:3px solid var(--teal);">
+            <div class="scale-num" style="color:var(--teal);">4</div>
+            <div class="scale-lbl">Com frequência</div>
+          </div>
+          <div class="scale-item" style="border-top:3px solid var(--navy);background:var(--teal-light);">
+            <div class="scale-num" style="color:var(--navy);">5</div>
+            <div class="scale-lbl">Sempre faço</div>
+          </div>
+        </div>
+        <div class="scale-hint">
+          <span>← Necessita desenvolvimento</span>
+          <span>Comportamento consolidado →</span>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Dimensões avaliadas</div>
+        <ul>
+          <li><strong>CL</strong> — Clareza das metas</li>
+          <li><strong>CO</strong> — Construção das metas</li>
+          <li><strong>CA</strong> — Cascateamento</li>
+          <li><strong>AC</strong> — Acompanhamento</li>
+          <li><strong>AO</strong> — Ação sobre as metas</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Resultado esperado</div>
+        <p>Perfil Managing × Coaching com diagnóstico narrativo, plano Faz Hoje/Fazer Diferente, PDI e Calendário de Rituais com Plano 30/60/90 prontos para uso imediato.</p>
+      </div>
+    </div>
+    <div class="important-note">
+      <strong>Orientação importante:</strong> Responda com base no que você <em>efetivamente faz</em>, não no que considera ideal. As questões sobre a equipe devem refletir o que você observa no comportamento real dos vendedores. A ferramenta só gera valor quando as respostas são honestas.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Identificação</div>
+    <div class="fields-grid">
+      <div class="field-group">
+        <label>Nome completo *</label>
+        <input type="text" id="f-nome" placeholder="Seu nome">
+      </div>
+      <div class="field-group">
+        <label>Empresa *</label>
+        <input type="text" id="f-empresa" placeholder="Nome da empresa">
+      </div>
+      <div class="field-group">
+        <label>Cargo / Função</label>
+        <input type="text" id="f-cargo" placeholder="Ex: Gerente Comercial">
+      </div>
+      <div class="field-group">
+        <label>Tamanho da equipe</label>
+        <select id="f-equipe">
+          <option value="">Selecione</option>
+          <option value="1-3">1 a 3 pessoas</option>
+          <option value="4-7">4 a 7 pessoas</option>
+          <option value="8-15">8 a 15 pessoas</option>
+          <option value="16+">16 ou mais pessoas</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Tempo na função</label>
+        <select id="f-tempo">
+          <option value="">Selecione</option>
+          <option value="menos1">Menos de 1 ano</option>
+          <option value="1-3">1 a 3 anos</option>
+          <option value="mais3">Mais de 3 anos</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Período de referência</label>
+        <input type="text" id="f-periodo" placeholder="Ex: Abril – Junho 2025">
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row right">
+    <button class="btn btn-primary" onclick="startAssessment()">Iniciar Avaliação →</button>
+  </div>
+</div>
+
+<!-- ====== PAGE 2: QUESTIONÁRIO ====== -->
+<div class="page" id="page-quest">
+  <div class="card">
+    <div class="progress-info">
+      <span class="section-name" id="prog-section-name">Seção 1 de 5</span>
+      <span class="step-count" id="prog-step">Questões 1–6</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+    <div id="section-header" class="section-label"></div>
+    <div id="questions-container"></div>
+    <div class="btn-row between" style="margin-top:28px;">
+      <button class="btn btn-outline btn-sm" id="btn-prev" onclick="prevSection()">← Anterior</button>
+      <button class="btn btn-teal" id="btn-next" onclick="nextSection()">Próxima Seção →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PAGE 3: RESULTADOS ====== -->
+<div class="page" id="page-results">
+
+  <div class="tabs-nav">
+    <div class="tabs-nav-label">Navegue pelas saídas da avaliação</div>
+    <div class="tabs-nav-grid">
+      <button class="main-tab-btn active" onclick="switchTab('diagnostico')" id="mtab-diagnostico">
+        <span class="mtab-num">01</span>
+        <span class="mtab-label">Diagnóstico</span>
+        <span class="mtab-sub">Perfil M×C + Radar</span>
+      </button>
+      <button class="main-tab-btn" onclick="switchTab('fazdiferente')" id="mtab-fazdiferente">
+        <span class="mtab-num">02</span>
+        <span class="mtab-label">Faz Hoje</span>
+        <span class="mtab-sub">Fazer Diferente</span>
+      </button>
+      <button class="main-tab-btn" onclick="switchTab('pdi')" id="mtab-pdi">
+        <span class="mtab-num">03</span>
+        <span class="mtab-label">PDI</span>
+        <span class="mtab-sub">Plano de Desenvolvimento</span>
+      </button>
+      <button class="main-tab-btn" onclick="switchTab('rituais')" id="mtab-rituais">
+        <span class="mtab-num">04</span>
+        <span class="mtab-label">Rituais + Plano</span>
+        <span class="mtab-sub">30 / 60 / 90 dias</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ABA 01: DIAGNÓSTICO -->
+  <div class="tab-content active" id="tab-diagnostico">
+    <div class="diag-hero" id="diag-hero"></div>
+    <div class="card">
+      <div class="section-label">Radar de Maturidade — Metas / OKRs Comerciais</div>
+      <div class="radar-wrap"><canvas id="radar-chart" width="460" height="400"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="section-label">Desempenho por Dimensão</div>
+      <div class="dim-grid" id="dim-grid"></div>
+    </div>
+    <div class="card">
+      <div class="section-label">Análise e Recomendações</div>
+      <div id="narrative-content" class="narrative-block"></div>
+    </div>
+    <div class="export-panel">
+      <div class="ep-label">Exportar resultados</div>
+      <div class="ep-btns">
+        <button class="btn-export" onclick="exportSection('diagnostico')">Exportar Diagnóstico</button>
+        <button class="btn-export" onclick="exportSection('fazdiferente')">Exportar Faz Hoje</button>
+        <button class="btn-export" onclick="exportSection('pdi')">Exportar PDI</button>
+        <button class="btn-export" onclick="exportSection('rituais')">Exportar Rituais + Plano</button>
+        <button class="btn-export-all" onclick="exportAll()">Exportar Tudo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA 02: FAZ HOJE / FAZER DIFERENTE -->
+  <div class="tab-content" id="tab-fazdiferente">
+    <div class="card">
+      <div class="section-label">Faz Hoje / Fazer Diferente</div>
+      <p style="font-size:13px;color:var(--slate);margin-bottom:16px;">Com base nas dimensões de menor desempenho, identifique o que você faz hoje, o que pode fazer de diferente e o impacto esperado. Edite conforme sua realidade.</p>
+      <div style="margin-bottom:14px;">
+        <span style="font-size:12px;font-weight:600;color:var(--slate);">Gestor: </span>
+        <span id="fhfd-nome" style="font-size:14px;font-weight:600;color:var(--navy);"></span>
+        <span style="font-size:12px;font-weight:600;color:var(--slate);margin-left:20px;">Empresa: </span>
+        <span id="fhfd-empresa" style="font-size:14px;font-weight:600;color:var(--navy);"></span>
+      </div>
+      <table class="fhfd-table">
+        <thead>
+          <tr>
+            <th class="col-dim">Dimensão</th>
+            <th class="col-hoje">Faz Hoje</th>
+            <th class="col-dif">Fazer Diferente</th>
+            <th class="col-imp">Impacto Esperado</th>
+          </tr>
+        </thead>
+        <tbody id="fhfd-body"></tbody>
+      </table>
+    </div>
+    <div class="export-panel">
+      <div class="ep-label">Exportar</div>
+      <div class="ep-btns">
+        <button class="btn-export-all" onclick="exportSection('fazdiferente')">Exportar esta aba</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA 03: PDI -->
+  <div class="tab-content" id="tab-pdi">
+    <div class="card">
+      <div class="section-label">PDI — Plano de Desenvolvimento Individual do Gestor</div>
+      <div class="pdi-header">
+        <div class="pdi-header-item">
+          <div class="ph-label">Gestor</div>
+          <input type="text" id="pdi-nome">
+        </div>
+        <div class="pdi-header-item">
+          <div class="ph-label">Período</div>
+          <input type="text" id="pdi-periodo">
+        </div>
+        <div class="pdi-header-item full">
+          <div class="ph-label">Objetivo geral do PDI</div>
+          <textarea id="pdi-objetivo"></textarea>
+        </div>
+        <div class="pdi-header-item full">
+          <div class="ph-label">Ações gerais de desenvolvimento</div>
+          <textarea id="pdi-acoes-gerais"></textarea>
+        </div>
+      </div>
+      <div id="pdi-comps-container"></div>
+    </div>
+    <div class="export-panel">
+      <div class="ep-label">Exportar</div>
+      <div class="ep-btns">
+        <button class="btn-export-all" onclick="exportSection('pdi')">Exportar PDI</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA 04: RITUAIS + PLANO 30/60/90 -->
+  <div class="tab-content" id="tab-rituais">
+    <div class="card">
+      <div class="section-label">Calendário de Rituais — Metas / OKRs Comerciais</div>
+      <p style="font-size:13px;color:var(--slate);margin-bottom:20px;">Defina os rituais de gestão que garantem que as metas e OKRs sejam acompanhados, revisados e ajustados com consistência ao longo do trimestre. Edite conforme a realidade da sua equipe.</p>
+      <div class="rituais-grid" id="rituais-container"></div>
+    </div>
+    <div class="card" style="margin-top:0;">
+      <div class="section-label">Plano de Ação — 30 / 60 / 90 Dias</div>
+      <p style="font-size:13px;color:var(--slate);margin-bottom:20px;">Distribua as ações prioritárias para estruturar ou melhorar o processo de Metas / OKRs na sua equipe. Os campos estão pré-preenchidos com base nas dimensões de menor desempenho.</p>
+      <div class="plano-section" id="plano-container"></div>
+    </div>
+    <div class="export-panel">
+      <div class="ep-label">Exportar</div>
+      <div class="ep-btns">
+        <button class="btn-export-all" onclick="exportSection('rituais')">Exportar Rituais + Plano</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-results -->
+</div><!-- /app-wrap -->
+
+<script>
+// ============================================================
+// DADOS — QUESTÕES
+// ============================================================
+const SECTIONS = [
+  {
+    id: 'CL',
+    nome: 'Clareza das Metas',
+    tag: 'tag-CL',
+    cor: '#1d9e8f',
+    eixo: 'Coaching',
+    questoes: [
+      { id:'cl1', persp:'gestor', texto:'Eu sei com precisão quais são as metas individuais de cada membro da equipe e o que cada meta representa em termos de resultado para a empresa.' },
+      { id:'cl2', persp:'equipe', texto:'Os vendedores sabem de cor as metas individuais deles — número, prazo e o que significa bater ou não bater.' },
+      { id:'cl3', persp:'gestor', texto:'Eu comunico o "por que" de cada meta — a lógica de negócio que justifica o número estabelecido para o período.' },
+      { id:'cl4', persp:'equipe', texto:'Os vendedores compreendem a função de cada meta: o que ela mede, por que existe e como se conecta com os resultados da empresa.' },
+      { id:'cl5', persp:'gestor', texto:'Quando uma meta é alterada, eu comunico a mudança, explico o motivo e alinho as expectativas da equipe antes da entrada em vigor.' },
+      { id:'cl6', persp:'equipe', texto:'Os vendedores conseguem responder, sem consultar planilhas, qual é o percentual de realização da meta deles no momento.' }
+    ]
+  },
+  {
+    id: 'CO',
+    nome: 'Construção das Metas',
+    tag: 'tag-CO',
+    cor: '#2563a8',
+    eixo: 'Coaching',
+    questoes: [
+      { id:'co1', persp:'gestor', texto:'As metas que defino são baseadas em dados históricos de conversão, pipeline e capacidade real da equipe — não apenas no número que a empresa precisa bater.' },
+      { id:'co2', persp:'gestor', texto:'Eu adoto um processo de construção participativo: consulto os vendedores sobre o que é viável antes de fechar os números do período.' },
+      { id:'co3', persp:'equipe', texto:'Os vendedores entendem como as metas deles foram construídas e quais critérios foram usados para definir os números.' },
+      { id:'co4', persp:'gestor', texto:'As metas comerciais que gerencio são desdobradas a partir dos OKRs ou metas estratégicas da empresa de forma estruturada e rastreável.' },
+      { id:'co5', persp:'gestor', texto:'Eu diferencio claramente o que é meta de resultado (o que se espera alcançar) do que é meta de atividade (o que se deve fazer para chegar lá).' },
+      { id:'co6', persp:'equipe', texto:'Os vendedores percebem as metas como desafiadoras, porém alcançáveis — não como números arbitrários impostos de cima para baixo.' }
+    ]
+  },
+  {
+    id: 'CA',
+    nome: 'Cascateamento das Metas',
+    tag: 'tag-CA',
+    cor: '#7c3aed',
+    eixo: 'Coaching',
+    questoes: [
+      { id:'ca1', persp:'gestor', texto:'Eu faço o desdobramento das metas da área comercial para cada vendedor de forma individualizada, considerando perfil, carteira e histórico de cada profissional.' },
+      { id:'ca2', persp:'equipe', texto:'Cada vendedor sabe como a meta dele se conecta com a meta da equipe e, por extensão, com os objetivos estratégicos da empresa.' },
+      { id:'ca3', persp:'gestor', texto:'As metas de atividade (visitas, ligações, propostas, follow-ups) estão definidas e conectadas às metas de resultado para cada vendedor.' },
+      { id:'ca4', persp:'gestor', texto:'Eu reviso o cascateamento das metas ao longo do período — ajustando quando há mudanças no cenário, na carteira ou no desempenho individual.' },
+      { id:'ca5', persp:'equipe', texto:'Os vendedores conseguem visualizar, em um único lugar, todas as suas metas — de atividade, de resultado e de desenvolvimento — e o progresso em cada uma.' },
+      { id:'ca6', persp:'gestor', texto:'Quando há metas coletivas de equipe, eu faço a distribuição justa entre os membros e todos compreendem sua parcela de responsabilidade.' }
+    ]
+  },
+  {
+    id: 'AC',
+    nome: 'Acompanhamento das Metas',
+    tag: 'tag-AC',
+    cor: '#e05c3a',
+    eixo: 'Managing',
+    questoes: [
+      { id:'ac1', persp:'gestor', texto:'Eu conduzo reuniões de acompanhamento de metas com frequência definida — com pauta estruturada, dados atualizados e foco em resultados e desvios.' },
+      { id:'ac2', persp:'gestor', texto:'Quando identifico que um vendedor está abaixo da meta, eu ajo antes que o mês feche — não espero o resultado final para intervir.' },
+      { id:'ac3', persp:'equipe', texto:'Os vendedores recebem feedback sobre o desempenho em relação às metas de forma regular e construtiva, não apenas no fechamento do período.' },
+      { id:'ac4', persp:'gestor', texto:'Eu utilizo indicadores de processo (atividades, pipeline, taxa de conversão) para antecipar se a meta será alcançada ou não — antes do resultado se concretizar.' },
+      { id:'ac5', persp:'gestor', texto:'Mantenho um painel ou dashboard atualizado com os indicadores de metas que uso ativamente nas conversas com a equipe.' },
+      { id:'ac6', persp:'equipe', texto:'Os vendedores são protagonistas no acompanhamento das próprias metas — trazem atualizações e propostas de ajuste, não apenas respondem ao que o gestor pergunta.' }
+    ]
+  },
+  {
+    id: 'AO',
+    nome: 'Ação sobre as Metas',
+    tag: 'tag-AO',
+    cor: '#059669',
+    eixo: 'Managing',
+    questoes: [
+      { id:'ao1', persp:'gestor', texto:'Cada meta da equipe tem um plano de ação correspondente — com atividades definidas, responsáveis e prazos claros para execução.' },
+      { id:'ao2', persp:'gestor', texto:'Quando a meta está em risco, eu atuo rapidamente para identificar o obstáculo, propor alternativas e ajustar o plano de ação com o vendedor.' },
+      { id:'ao3', persp:'equipe', texto:'Os vendedores têm planos de ação individuais ativos que orientam o que fazer no dia a dia para alcançar as metas — não apenas os números como alvo abstrato.' },
+      { id:'ao4', persp:'gestor', texto:'Eu uso as conversas de coaching para conectar o desempenho nas atividades com os resultados nas metas — desenvolvendo a compreensão de que resultado é consequência do desempenho.' },
+      { id:'ao5', persp:'gestor', texto:'Ao encerrar um período, eu conduzo uma revisão estruturada das metas: o que foi alcançado, por que funcionou, o que não funcionou e o que muda no próximo ciclo.' },
+      { id:'ao6', persp:'equipe', texto:'Os vendedores aprendem com os ciclos de metas — conseguem identificar o que fizeram de diferente quando superaram ou quando ficaram abaixo do esperado.' }
+    ]
+  }
+];
+
+// ============================================================
+// RECOMENDAÇÕES POR DIMENSÃO
+// ============================================================
+const RECOM = {
+  CL: {
+    fazHoje: 'As metas existem, mas são comunicadas como números — sem contexto, sem o "por que" e sem conexão com a estratégia da empresa. A equipe conhece o alvo, mas não compreende o significado do que está perseguindo.',
+    fazerDif: 'Criar um ritual de comunicação de metas: apresentar cada número com o raciocínio por trás dele, a função da meta no negócio e o que muda para o vendedor quando a meta é batida. Repetir esse alinhamento no início de cada período e sempre que houver mudança.',
+    impacto: 'Equipe que compreende o "por que" da meta tem mais comprometimento e autonomia para ajustar as atividades. Menos resistência, mais protagonismo — e menos dependência do gestor para cada decisão.',
+    pdiComp: 'Comunicação de Metas com Propósito',
+    pdiAcao: 'Preparar um roteiro padrão para apresentação de metas: número, critério de construção, função no negócio, impacto individual e coletivo. Aplicar em todas as reuniões de início de período.',
+    pdiAferir: 'Ao final de cada ciclo, perguntar aleatoriamente a 3 vendedores: "Por que essa meta existe?" e "O que muda para você quando a bate?". Nível satisfatório: 80% de respostas coerentes.',
+    pdiPrazo: '30 dias',
+    aba4Acao: 'Criar roteiro padronizado de comunicação de metas e aplicar na próxima reunião de início de período',
+    aba4Quando: '30 dias'
+  },
+  CO: {
+    fazHoje: 'As metas são definidas predominantemente de cima para baixo — o número chega pronto e cabe à equipe executar. Pouco ou nenhum dado histórico é usado para fundamentar o número; o critério principal é o que a empresa precisa, não o que é viável.',
+    fazerDif: 'Adotar um processo híbrido de construção de metas: começar com os dados históricos da equipe (conversão, produtividade, sazonalidade), incluir os vendedores na discussão sobre viabilidade e só então fechar os números. Documentar os critérios usados e compartilhar com a equipe.',
+    impacto: 'Metas construídas com dados e participação geram mais comprometimento e são mais realistas. Reduz o efeito "meta impossível" que desmotiva a equipe e distorce o pipeline.',
+    pdiComp: 'Construção Baseada em Dados de Desempenho',
+    pdiAcao: 'Levantar os dados históricos dos últimos dois trimestres (conversão, ticket médio, ciclo de vendas) e usar como base para a próxima definição de metas. Apresentar os critérios para a equipe.',
+    pdiAferir: 'Na próxima reunião de definição de metas: pelo menos 70% dos números devem ser justificados por dados históricos. Os vendedores devem conseguir reproduzir o raciocínio da meta.',
+    pdiPrazo: '45 dias',
+    aba4Acao: 'Levantar dados históricos de desempenho da equipe e usar como base para o próximo ciclo de metas',
+    aba4Quando: '45 dias'
+  },
+  CA: {
+    fazHoje: 'O cascateamento das metas existe de forma parcial: cada vendedor tem seu número, mas os elos de conexão entre as metas individuais, a meta da equipe e os objetivos da empresa não estão claros. As metas de atividade raramente estão definidas junto com as metas de resultado.',
+    fazerDif: 'Estruturar o cascateamento em três camadas: meta da empresa → meta da equipe → meta individual. Para cada vendedor, definir as metas de resultado e as metas de atividade que as suportam. Registrar tudo em um documento acessível e revisado periodicamente.',
+    impacto: 'Vendedor que enxerga sua meta conectada ao objetivo maior sente mais propósito. Metas de atividade associadas às de resultado criam o roteiro diário de trabalho — e reduzem a sensação de "não saber o que fazer" para bater a meta.',
+    pdiComp: 'Desdobramento e Cascateamento de Metas',
+    pdiAcao: 'Criar um mapa visual de cascateamento para a equipe: objetivo da empresa → meta da área → meta individual → metas de atividade. Revisar com cada vendedor em reunião 1:1.',
+    pdiAferir: 'Todos os vendedores devem conseguir mostrar, em até 2 minutos, como a meta deles se conecta com o resultado da empresa. Verificar em reunião de equipe no prazo definido.',
+    pdiPrazo: '45 dias',
+    aba4Acao: 'Construir mapa de cascateamento de metas (empresa → equipe → individual → atividades) e revisar com cada vendedor',
+    aba4Quando: '45 dias'
+  },
+  AC: {
+    fazHoje: 'O acompanhamento das metas acontece principalmente no fechamento do mês — quando os resultados já estão definidos e as oportunidades de intervenção passaram. As reuniões de acompanhamento são irregulares ou reativas.',
+    fazerDif: 'Implantar uma cadência fixa de acompanhamento: reunião semanal de indicadores (curta, baseada em dados) e conversa individual mensal de revisão com cada vendedor. Usar indicadores de processo para antecipar desvios antes do fechamento.',
+    impacto: 'Acompanhamento precoce permite correção de rota enquanto ainda é possível. Reduz surpresas no fechamento e aumenta a previsibilidade dos resultados. Gestor que acompanha bem tem equipe mais responsável pelo próprio desempenho.',
+    pdiComp: 'Gestão Antecipada de Resultados',
+    pdiAcao: 'Criar agenda fixa de reunião semanal de indicadores (30 min) com pauta padrão: posição na meta, pipeline ativo, obstáculos, próximas ações. Implementar na semana seguinte à leitura deste PDI.',
+    pdiAferir: 'Em 60 dias: zero surpresas no fechamento de mês que não tenham sido identificadas antes da última semana. Medir quantas vezes o desvio foi previsto vs. descoberto no fechamento.',
+    pdiPrazo: '30 dias',
+    aba4Acao: 'Criar e implementar cadência fixa de reuniões de acompanhamento de metas (semanal + individual mensal)',
+    aba4Quando: '30 dias'
+  },
+  AO: {
+    fazHoje: 'As metas existem como alvos, mas raramente têm planos de ação estruturados que orientem o que fazer no dia a dia para alcançá-las. Quando o resultado está ruim, a intervenção é tardia. A revisão de ciclo, quando acontece, não gera aprendizado sistematizado.',
+    fazerDif: 'Para cada meta relevante, construir um plano de ação com o vendedor: o que fazer, quando fazer, como medir o progresso. Conduzir conversas de coaching que conectem o desempenho nas atividades com o resultado na meta. Encerrar cada ciclo com uma revisão estruturada de aprendizados.',
+    impacto: 'Vendedor que tem plano de ação sabe o que fazer quando a meta está em risco — não espera o gestor dizer o que fazer. O aprendizado de ciclo evita que os mesmos erros se repitam. A equipe evolui junto com os resultados.',
+    pdiComp: 'Ação Planejada e Revisão de Ciclo',
+    pdiAcao: 'Criar template de plano de ação individual para metas: objetivo, atividades-chave, responsável, prazo, indicador de acompanhamento. Usar na próxima conversa 1:1 com cada vendedor.',
+    pdiAferir: 'Em 60 dias: todos os vendedores com meta abaixo de 80% de realização devem ter plano de ação ativo e atualizado. Verificar na reunião mensal de resultados.',
+    pdiPrazo: '30 dias',
+    aba4Acao: 'Criar template de plano de ação individual por meta e aplicar com os vendedores com menor aderência',
+    aba4Quando: '30 dias'
+  }
+};
+
+// ============================================================
+// ESTADO
+// ============================================================
+let state = {
+  perfil: { nome:'', empresa:'', cargo:'', equipe:'', tempo:'', periodo:'' },
+  answers: {},
+  currentSection: 0
+};
+
+const STORAGE_KEY = 'rgc_f11';
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+}
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    if (s) state = JSON.parse(s);
+  } catch(e){}
+}
+
+// ============================================================
+// NAVEGAÇÃO
+// ============================================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startAssessment() {
+  const nome = document.getElementById('f-nome').value.trim();
+  const empresa = document.getElementById('f-empresa').value.trim();
+  if (!nome || !empresa) { alert('Preencha pelo menos nome e empresa para continuar.'); return; }
+  state.perfil = {
+    nome, empresa,
+    cargo: document.getElementById('f-cargo').value.trim(),
+    equipe: document.getElementById('f-equipe').value,
+    tempo: document.getElementById('f-tempo').value,
+    periodo: document.getElementById('f-periodo').value.trim()
+  };
+  saveState();
+  state.currentSection = 0;
+  renderSection(0);
+  showPage('page-quest');
+}
+
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  document.getElementById('mtab-' + id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ============================================================
+// QUESTIONÁRIO
+// ============================================================
+function renderSection(idx) {
+  const sec = SECTIONS[idx];
+  const pct = Math.round(((idx + 1) / SECTIONS.length) * 100);
+  document.getElementById('prog-section-name').textContent = `Seção ${idx + 1} de ${SECTIONS.length} — ${sec.nome}`;
+  document.getElementById('prog-step').textContent = `${sec.questoes.length} questões`;
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  const hdr = document.getElementById('section-header');
+  hdr.innerHTML = `<span class="dim-tag ${sec.tag}">${sec.id}</span> ${sec.nome} <span style="font-size:10px;color:var(--gray-dark);margin-left:auto;">Eixo: ${sec.eixo}</span>`;
+
+  const cont = document.getElementById('questions-container');
+  cont.innerHTML = '';
+  sec.questoes.forEach((q, qi) => {
+    const globalNum = SECTIONS.slice(0, idx).reduce((a, s) => a + s.questoes.length, 0) + qi + 1;
+    const perspLabel = q.persp === 'gestor' ? 'Perspectiva: Gestor' : 'Perspectiva: Equipe';
+    const perspClass = q.persp === 'gestor' ? 'pt-gestor' : 'pt-equipe';
+    const saved = state.answers[q.id] || 0;
+    let optsHTML = '';
+    const lbls = ['Nunca faço','Raramente','Às vezes','Com frequência','Sempre faço'];
+    for (let v = 1; v <= 5; v++) {
+      const sel = saved === v ? 'selected' : '';
+      optsHTML += `<div class="scale-opt ${sel}" onclick="selectAnswer('${q.id}', ${v}, this)">
+        <span class="so-num">${v}</span>
+        <span class="so-lbl">${lbls[v-1]}</span>
+      </div>`;
+    }
+    cont.innerHTML += `<div class="question-block">
+      <div class="question-meta">
+        <span class="question-num">Q${globalNum}</span>
+        <span class="dim-tag ${sec.tag}" style="font-size:9px;padding:2px 6px;">${sec.id}</span>
+        <span class="perspective-tag ${perspClass}">${perspLabel}</span>
+      </div>
+      <div class="question-text">${q.texto}</div>
+      <div class="scale-row">${optsHTML}</div>
+    </div>`;
+  });
+
+  document.getElementById('btn-prev').style.visibility = idx === 0 ? 'hidden' : 'visible';
+  document.getElementById('btn-next').textContent = idx === SECTIONS.length - 1 ? 'Ver Resultados' : 'Próxima Seção →';
+}
+
+function selectAnswer(qid, val, el) {
+  state.answers[qid] = val;
+  saveState();
+  const row = el.closest('.scale-row');
+  row.querySelectorAll('.scale-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function prevSection() {
+  if (state.currentSection > 0) {
+    state.currentSection--;
+    renderSection(state.currentSection);
+  }
+}
+
+function nextSection() {
+  const sec = SECTIONS[state.currentSection];
+  const unanswered = sec.questoes.filter(q => !state.answers[q.id]);
+  if (unanswered.length > 0) {
+    alert(`Responda todas as questões desta seção antes de continuar. (${unanswered.length} sem resposta)`);
+    return;
+  }
+  if (state.currentSection < SECTIONS.length - 1) {
+    state.currentSection++;
+    renderSection(state.currentSection);
+  } else {
+    buildResults();
+    showPage('page-results');
+  }
+}
+
+// ============================================================
+// CÁLCULO DE SCORES
+// ============================================================
+function calcScores() {
+  const scores = {};
+  SECTIONS.forEach(sec => {
+    const vals = sec.questoes.map(q => state.answers[q.id] || 3);
+    scores[sec.id] = vals.reduce((a,b) => a+b, 0) / vals.length;
+  });
+  return scores;
+}
+
+function getLevel(score) {
+  if (score >= 4.5) return { label: 'Excelente', cls: 'level-excellent' };
+  if (score >= 3.5) return { label: 'Bom', cls: 'level-good' };
+  if (score >= 2.5) return { label: 'Regular', cls: 'level-regular' };
+  return { label: 'Necessita atenção', cls: 'level-attention' };
+}
+
+function getLevelColor(score) {
+  if (score >= 4.5) return '#059669';
+  if (score >= 3.5) return '#1d9e8f';
+  if (score >= 2.5) return '#f59e0b';
+  return '#e05c3a';
+}
+
+function getProfile(scores) {
+  const managing = (scores['AC'] + scores['AO']) / 2;
+  const coaching = (scores['CL'] + scores['CO'] + scores['CA']) / 3;
+  const avg = Object.values(scores).reduce((a,b) => a+b, 0) / 5;
+
+  if (avg >= 4.0 && Math.abs(managing - coaching) < 0.5) {
+    return {
+      nome: 'Gestor de Alta Performance em Metas',
+      descricao: 'Você demonstra maturidade equilibrada entre Managing e Coaching no processo de metas. Sua equipe compreende as metas, sabe como foram construídas, recebe acompanhamento consistente e tem planos de ação ativos. Esse é o perfil que sustenta crescimento de resultados com desenvolvimento de pessoas.',
+      managing: managing.toFixed(1), coaching: coaching.toFixed(1), avg: avg.toFixed(1)
+    };
+  }
+  if (managing >= 3.5 && coaching < 3.0) {
+    return {
+      nome: 'Gestor Controlador de Metas',
+      descricao: 'Você tem boa capacidade de acompanhamento e ação sobre os resultados, mas a equipe ainda não compreende profundamente as metas — o "por que" e o "como foram construídas". O risco é ter uma equipe que executa sob controle, mas que não desenvolve autonomia para ajustar o próprio desempenho.',
+      managing: managing.toFixed(1), coaching: coaching.toFixed(1), avg: avg.toFixed(1)
+    };
+  }
+  if (coaching >= 3.5 && managing < 3.0) {
+    return {
+      nome: 'Gestor Orientador de Metas',
+      descricao: 'Sua equipe compreende bem as metas e como foram construídas, mas falta estrutura de acompanhamento e ação. O gap está na disciplina de gestão: reuniões regulares, intervenção antecipada e planos de ação ativos. Você orienta bem, mas precisa acompanhar com mais consistência.',
+      managing: managing.toFixed(1), coaching: coaching.toFixed(1), avg: avg.toFixed(1)
+    };
+  }
+  return {
+    nome: 'Gestor em Construção no Processo de Metas',
+    descricao: 'Há gaps relevantes tanto no eixo de Coaching (clareza, construção, cascateamento) quanto no de Managing (acompanhamento e ação). Isso não é um julgamento negativo — é um ponto de partida claro. O PDI e o Plano 30/60/90 desta avaliação foram desenhados exatamente para orientar os próximos passos.',
+    managing: managing.toFixed(1), coaching: coaching.toFixed(1), avg: avg.toFixed(1)
+  };
+}
+
+// ============================================================
+// BUILD RESULTS
+// ============================================================
+function buildResults() {
+  const scores = calcScores();
+  const profile = getProfile(scores);
+  const sorted = Object.entries(scores).sort((a,b) => a[1]-b[1]);
+  const weakest = sorted.slice(0,2).map(e => e[0]);
+
+  // HERO
+  const hero = document.getElementById('diag-hero');
+  hero.innerHTML = `
+    <div class="hero-profile-badge">Ferramenta F 1.1 · Metas / OKRs Comerciais</div>
+    <div class="hero-profile-name">${profile.nome}</div>
+    <p style="color:rgba(255,255,255,0.75);font-size:14px;line-height:1.6;max-width:600px;">${profile.descricao}</p>
+    <div class="hero-scores-row">
+      <div class="hero-score-item">
+        <div class="hsi-label">Score Geral</div>
+        <div class="hsi-value">${profile.avg}</div>
+        <div class="hsi-sub">de 5,0</div>
+      </div>
+      <div class="hero-score-item">
+        <div class="hsi-label">Managing</div>
+        <div class="hsi-value" style="color:#fb923c;">${profile.managing}</div>
+        <div class="hsi-sub">AC + AO</div>
+      </div>
+      <div class="hero-score-item">
+        <div class="hsi-label">Coaching</div>
+        <div class="hsi-value" style="color:#a78bfa;">${profile.coaching}</div>
+        <div class="hsi-sub">CL + CO + CA</div>
+      </div>
+      <div class="hero-score-item">
+        <div class="hsi-label">Gestor</div>
+        <div class="hsi-value" style="color:#93c5fd;">${state.perfil.nome.split(' ')[0]}</div>
+        <div class="hsi-sub">${state.perfil.empresa}</div>
+      </div>
+    </div>`;
+
+  // RADAR
+  buildRadar(scores);
+
+  // DIM CARDS
+  const grid = document.getElementById('dim-grid');
+  grid.innerHTML = '';
+  const dimInfo = { CL:{nome:'Clareza',eixo:'Coaching'}, CO:{nome:'Construção',eixo:'Coaching'}, CA:{nome:'Cascateamento',eixo:'Coaching'}, AC:{nome:'Acompanhamento',eixo:'Managing'}, AO:{nome:'Ação',eixo:'Managing'} };
+  SECTIONS.forEach(sec => {
+    const s = scores[sec.id];
+    const lv = getLevel(s);
+    const pct = (s/5)*100;
+    const info = dimInfo[sec.id];
+    grid.innerHTML += `<div class="dim-card">
+      <div class="dc-header">
+        <div>
+          <span class="dim-tag tag-${sec.id}" style="margin-bottom:4px;">${sec.id}</span>
+          <div class="dc-name">${sec.nome}</div>
+          <div class="dc-sub">Eixo: ${info.eixo}</div>
+        </div>
+        <div class="dc-score" style="color:${getLevelColor(s)};">${s.toFixed(1)}<span style="font-size:12px;color:var(--gray-dark);font-weight:400;"> /5</span></div>
+      </div>
+      <div class="dc-bar-bg"><div class="dc-bar-fill" style="width:${pct}%;background:${getLevelColor(s)};"></div></div>
+      <div class="dc-level ${lv.cls}">${lv.label}</div>
+    </div>`;
+  });
+
+  // ALERTA
+  const managing = parseFloat(profile.managing);
+  const coaching = parseFloat(profile.coaching);
+  let alertHTML = '';
+  if (Math.abs(managing - coaching) > 0.8) {
+    const dom = managing > coaching ? 'Managing' : 'Coaching';
+    const def = managing > coaching ? 'Coaching' : 'Managing';
+    alertHTML = `<div class="alert-coral"><strong>Atenção:</strong> Há uma diferença de ${Math.abs(managing-coaching).toFixed(1)} pontos entre os eixos Managing (${managing}) e Coaching (${coaching}). O eixo de <strong>${def}</strong> precisa de desenvolvimento prioritário para equilibrar o perfil e sustentar resultados consistentes.</div>`;
+  }
+
+  // NARRATIVA
+  const weakNames = weakest.map(id => SECTIONS.find(s => s.id === id).nome);
+  const narrative = document.getElementById('narrative-content');
+  narrative.innerHTML = alertHTML + `
+    <div class="narrative-block">
+      <p>O diagnóstico revela um perfil com <strong>score médio de ${profile.avg}</strong> nas cinco dimensões do processo de Metas / OKRs Comerciais. O eixo de <strong>Managing</strong> (Acompanhamento e Ação) atingiu <strong>${profile.managing}</strong>, enquanto o eixo de <strong>Coaching</strong> (Clareza, Construção e Cascateamento) registrou <strong>${profile.coaching}</strong>.</p>
+      <p>As dimensões que mais requerem atenção são <strong>${weakNames[0]}</strong> (${scores[weakest[0]].toFixed(1)}) e <strong>${weakNames[1]}</strong> (${scores[weakest[1]].toFixed(1)}). As saídas das Abas 02, 03 e 04 estão pré-preenchidas com base nesses gaps.</p>
+      <p>Resultado é consequência do desempenho. E desempenho é consequência da compreensão — de saber por que fazer (propósito), o que fazer (atividades), como fazer (processo) e como medir (indicadores). O gestor que equilibra Managing e Coaching no processo de metas não apenas controla resultados: ele desenvolve vendedores que são protagonistas do próprio desempenho.</p>
+    </div>
+    <div class="orientation-box">
+      <div class="ob-label">Orientação Estratégica</div>
+      <p>Persiga o equilíbrio entre <strong>Managing</strong> (acompanhar indicadores, agir sobre desvios, usar dados para antecipar resultados) e <strong>Coaching</strong> (desenvolver compreensão: por que a meta existe, como foi construída, como cada atividade contribui para o resultado). Leve dominância em Coaching — porque o gestor que apenas controla tem equipe dependente; o que também desenvolve, tem equipe autônoma.</p>
+    </div>`;
+
+  // ABA 02
+  const fhfdNome = document.getElementById('fhfd-nome');
+  const fhfdEmpresa = document.getElementById('fhfd-empresa');
+  if (fhfdNome) fhfdNome.textContent = state.perfil.nome;
+  if (fhfdEmpresa) fhfdEmpresa.textContent = state.perfil.empresa;
+  const tbody = document.getElementById('fhfd-body');
+  tbody.innerHTML = '';
+  weakest.forEach((dimId, i) => {
+    const sec = SECTIONS.find(s => s.id === dimId);
+    const r = RECOM[dimId];
+    tbody.innerHTML += `<tr>
+      <td><span class="dim-tag tag-${dimId}" style="font-size:10px;">${dimId}</span><div class="fhfd-dim-label" style="margin-top:4px;">${sec.nome}</div></td>
+      <td><textarea id="fhfd-hoje-${i}">${r.fazHoje}</textarea></td>
+      <td><textarea id="fhfd-dif-${i}">${r.fazerDif}</textarea></td>
+      <td><textarea id="fhfd-imp-${i}">${r.impacto}</textarea></td>
+    </tr>`;
+  });
+
+  // ABA 03 — PDI
+  document.getElementById('pdi-nome').value = state.perfil.nome;
+  document.getElementById('pdi-periodo').value = state.perfil.periodo || 'Próximos 90 dias';
+  document.getElementById('pdi-objetivo').value = `Desenvolver maturidade no processo de Metas / OKRs Comerciais, equilibrando a capacidade de acompanhamento e controle de resultados (Managing) com o desenvolvimento da compreensão da equipe sobre as metas (Coaching).`;
+  document.getElementById('pdi-acoes-gerais').value = `Revisar o processo atual de definição, comunicação e acompanhamento de metas. Implementar melhorias prioritárias nas dimensões de ${weakNames[0]} e ${weakNames[1]}. Conduzir conversas individuais com cada vendedor para alinhar compreensão e planos de ação.`;
+
+  const pdiCont = document.getElementById('pdi-comps-container');
+  pdiCont.innerHTML = '';
+  weakest.forEach((dimId, i) => {
+    const r = RECOM[dimId];
+    const sec = SECTIONS.find(s => s.id === dimId);
+    pdiCont.innerHTML += `<div class="pdi-comp-card">
+      <div class="pdi-comp-header">
+        <div class="pdi-comp-num">${i+1}</div>
+        <span class="dim-tag tag-${dimId}">${dimId}</span>
+        <input class="pdi-comp-name-input" type="text" value="${r.pdiComp}">
+      </div>
+      <div class="pdi-fields-grid">
+        <div class="pdi-field full">
+          <label>O que desenvolver</label>
+          <textarea>${r.pdiAcao}</textarea>
+        </div>
+        <div class="pdi-field">
+          <label>Como aferir</label>
+          <textarea>${r.pdiAferir}</textarea>
+        </div>
+        <div class="pdi-field">
+          <label>Prazo sugerido</label>
+          <select>
+            <option ${r.pdiPrazo==='30 dias'?'selected':''}>30 dias</option>
+            <option ${r.pdiPrazo==='45 dias'?'selected':''}>45 dias</option>
+            <option ${r.pdiPrazo==='60 dias'?'selected':''}>60 dias</option>
+            <option ${r.pdiPrazo==='90 dias'?'selected':''}>90 dias</option>
+          </select>
+        </div>
+        <div class="pdi-field">
+          <label>Nível atual (1–5)</label>
+          <div class="scale-alvo-label">Agora</div>
+          <div class="scale-alvo-row">${[1,2,3,4,5].map(v=>`<div class="scale-alvo-item ${v===Math.round(scores[dimId])?'sel-agora':''}" onclick="toggleAlvo(this,'agora')">${v}</div>`).join('')}</div>
+        </div>
+        <div class="pdi-field">
+          <label>Nível alvo (1–5)</label>
+          <div class="scale-alvo-label">Alvo</div>
+          <div class="scale-alvo-row">${[1,2,3,4,5].map(v=>`<div class="scale-alvo-item ${v===Math.min(5,Math.round(scores[dimId])+1)?'sel-alvo':''}" onclick="toggleAlvo(this,'alvo')">${v}</div>`).join('')}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  // ABA 04 — RITUAIS
+  buildRituais(scores, weakest);
+}
+
+function toggleAlvo(el, tipo) {
+  const row = el.closest('.scale-alvo-row');
+  const cls = tipo === 'agora' ? 'sel-agora' : 'sel-alvo';
+  row.querySelectorAll('.scale-alvo-item').forEach(i => i.classList.remove(cls));
+  el.classList.add(cls);
+}
+
+// ============================================================
+// RADAR
+// ============================================================
+function buildRadar(scores) {
+  const canvas = document.getElementById('radar-chart');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2 - 10;
+  const r = Math.min(W, H) * 0.36;
+  const labels = ['CL','CO','CA','AC','AO'];
+  const labelNames = ['Clareza','Construção','Cascateamento','Acompanham.','Ação'];
+  const n = labels.length;
+  const vals = labels.map(l => scores[l] || 0);
+  const colors = { CL:'#1d9e8f', CO:'#2563a8', CA:'#7c3aed', AC:'#e05c3a', AO:'#059669' };
+
+  ctx.clearRect(0,0,W,H);
+
+  // Grid circles
+  for (let lvl = 1; lvl <= 5; lvl++) {
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const angle = (i * 2*Math.PI/n) - Math.PI/2;
+      const rx = cx + (r * lvl/5) * Math.cos(angle);
+      const ry = cy + (r * lvl/5) * Math.sin(angle);
+      i === 0 ? ctx.moveTo(rx, ry) : ctx.lineTo(rx, ry);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = lvl === 5 ? 'rgba(26,39,68,0.15)' : 'rgba(26,39,68,0.07)';
+    ctx.lineWidth = lvl === 5 ? 1.5 : 1;
+    ctx.stroke();
+  }
+
+  // Axes
+  labels.forEach((_, i) => {
+    const angle = (i * 2*Math.PI/n) - Math.PI/2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + r * Math.cos(angle), cy + r * Math.sin(angle));
+    ctx.strokeStyle = 'rgba(26,39,68,0.12)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // Managing vs Coaching backgrounds
+  const coachIdxs = [0,1,2]; // CL, CO, CA
+  ctx.beginPath();
+  coachIdxs.forEach((i, ci) => {
+    const angle = (i * 2*Math.PI/n) - Math.PI/2;
+    const px = cx + r * Math.cos(angle);
+    const py = cy + r * Math.sin(angle);
+    ci === 0 ? ctx.moveTo(cx, cy) : ctx.lineTo(px, py);
+    if (ci === coachIdxs.length-1) ctx.lineTo(cx,cy);
+  });
+  ctx.fillStyle = 'rgba(167,139,250,0.06)';
+  ctx.fill();
+
+  // Data polygon
+  ctx.beginPath();
+  vals.forEach((v, i) => {
+    const angle = (i * 2*Math.PI/n) - Math.PI/2;
+    const rv = (v/5) * r;
+    const px = cx + rv * Math.cos(angle);
+    const py = cy + rv * Math.sin(angle);
+    i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+  });
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(29,158,143,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = '#1d9e8f';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Data points
+  vals.forEach((v, i) => {
+    const angle = (i * 2*Math.PI/n) - Math.PI/2;
+    const rv = (v/5) * r;
+    const px = cx + rv * Math.cos(angle);
+    const py = cy + rv * Math.sin(angle);
+    ctx.beginPath();
+    ctx.arc(px, py, 5, 0, 2*Math.PI);
+    ctx.fillStyle = colors[labels[i]];
+    ctx.fill();
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  });
+
+  // Labels
+  ctx.font = '600 12px "Source Sans 3", sans-serif';
+  labels.forEach((lbl, i) => {
+    const angle = (i * 2*Math.PI/n) - Math.PI/2;
+    const offset = r + 30;
+    const px = cx + offset * Math.cos(angle);
+    const py = cy + offset * Math.sin(angle);
+    ctx.fillStyle = colors[lbl];
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(lbl, px, py - 7);
+    ctx.fillStyle = 'rgba(74,85,104,0.8)';
+    ctx.font = '11px "Source Sans 3", sans-serif';
+    ctx.fillText(labelNames[i], px, py + 7);
+    ctx.font = '600 12px "Source Sans 3", sans-serif';
+  });
+
+  // Score labels on points
+  vals.forEach((v, i) => {
+    const angle = (i * 2*Math.PI/n) - Math.PI/2;
+    const rv = (v/5) * r;
+    const px = cx + rv * Math.cos(angle);
+    const py = cy + rv * Math.sin(angle);
+    ctx.font = '700 11px "Source Sans 3", sans-serif';
+    ctx.fillStyle = '#1a2744';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(v.toFixed(1), px, py - 14);
+  });
+
+  // Legend
+  ctx.font = '11px "Source Sans 3", sans-serif';
+  ctx.fillStyle = 'rgba(74,85,104,0.7)';
+  ctx.textAlign = 'left';
+  ctx.fillText('Escala: 1 (mínimo) a 5 (máximo)', 10, H - 10);
+}
+
+// ============================================================
+// RITUAIS + PLANO 30/60/90
+// ============================================================
+function buildRituais(scores, weakest) {
+  const cont = document.getElementById('rituais-container');
+  cont.innerHTML = '';
+
+  const rituais = [
+    {
+      freq: 'semanal', freqClass: 'rf-semanal', nome: 'Reunião de Acompanhamento de Indicadores',
+      dia: 'Segunda-feira', hora: '08:30', duracao: '30 min',
+      participantes: 'Gestor + equipe de vendas',
+      pauta: 'Posição de cada vendedor na meta (%), pipeline ativo no período, principais obstáculos da semana, próximas ações prioritárias. Sem debate longo — foco em dados e próximos passos.'
+    },
+    {
+      freq: 'semanal', freqClass: 'rf-semanal', nome: 'Conversa Individual de Coaching (1:1)',
+      dia: 'Ao longo da semana', hora: 'A definir por vendedor', duracao: '30 min por vendedor',
+      participantes: 'Gestor + vendedor',
+      pauta: 'Revisão do plano de ação individual, conexão entre atividades e resultado na meta, desafios comportamentais, desenvolvimento de competências específicas do período.'
+    },
+    {
+      freq: 'mensal', freqClass: 'rf-mensal', nome: 'Revisão Mensal de Resultados e Metas',
+      dia: 'Último dia útil do mês', hora: '14:00', duracao: '90 min',
+      participantes: 'Gestor + equipe',
+      pauta: 'Fechamento do mês: o que foi alcançado, o que ficou abaixo, por que funcionou / não funcionou. Projeção para o próximo mês. Ajuste dos planos de ação individuais. Reconhecimento de destaques.'
+    },
+    {
+      freq: 'mensal', freqClass: 'rf-mensal', nome: 'Atualização e Revisão dos OKRs / Metas',
+      dia: '1º dia útil do mês', hora: '09:00', duracao: '60 min',
+      participantes: 'Gestor + equipe',
+      pauta: 'Apresentação dos números do mês iniciado, revisão dos Key Results, eventuais ajustes nas metas de atividade com base no desempenho anterior, alinhamento de foco para o período.'
+    },
+    {
+      freq: 'trimestral', freqClass: 'rf-trimestral', nome: 'Fechamento e Planejamento Trimestral de Metas',
+      dia: 'Última semana do trimestre', hora: 'A definir', duracao: 'Meio período',
+      participantes: 'Gestor + equipe + liderança (quando aplicável)',
+      pauta: 'Fechamento do trimestre: resultados vs. metas, aprendizados do ciclo, o que manter, o que mudar. Construção participativa das metas do próximo trimestre. Definição dos Objetivos e Key Results do novo ciclo.'
+    }
+  ];
+
+  rituais.forEach((r, i) => {
+    cont.innerHTML += `<div class="ritual-card">
+      <div class="ritual-header">
+        <span class="ritual-freq-badge ${r.freqClass}">${r.freq}</span>
+        <span class="ritual-name">${r.nome}</span>
+      </div>
+      <div class="ritual-fields">
+        <div class="ritual-field">
+          <label>Dia / Momento</label>
+          <input type="text" value="${r.dia}">
+        </div>
+        <div class="ritual-field">
+          <label>Horário</label>
+          <input type="text" value="${r.hora}">
+        </div>
+        <div class="ritual-field">
+          <label>Duração</label>
+          <input type="text" value="${r.duracao}">
+        </div>
+        <div class="ritual-field">
+          <label>Participantes</label>
+          <input type="text" value="${r.participantes}">
+        </div>
+        <div class="ritual-field full">
+          <label>Pauta fixa</label>
+          <textarea>${r.pauta}</textarea>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  // PLANO 30/60/90
+  const planosData = buildPlanoData(weakest);
+  const planoCont = document.getElementById('plano-container');
+  planoCont.innerHTML = '';
+  planosData.forEach((p, i) => {
+    const classes = ['pp-30','pp-60','pp-90'];
+    const numColors = ['pp-num-30','pp-num-60','pp-num-90'];
+    planoCont.innerHTML += `<div class="plano-period-card ${classes[i]}">
+      <div class="pp-header">
+        <div class="pp-num ${numColors[i]}">${p.dias}</div>
+        <div>
+          <div class="pp-label">${p.titulo}</div>
+          <div class="pp-sub">${p.sub}</div>
+        </div>
+      </div>
+      <div class="pp-fields">
+        <div class="pp-field full">
+          <label>Foco do período</label>
+          <input type="text" value="${p.foco}">
+        </div>
+        <div class="pp-field full">
+          <label>Ações prioritárias</label>
+          <textarea>${p.acoes}</textarea>
+        </div>
+        <div class="pp-field">
+          <label>Responsável</label>
+          <input type="text" value="${state.perfil.nome}">
+        </div>
+        <div class="pp-field">
+          <label>Indicador de sucesso</label>
+          <input type="text" value="${p.indicador}">
+        </div>
+      </div>
+    </div>`;
+  });
+}
+
+function buildPlanoData(weakest) {
+  const w1 = weakest[0], w2 = weakest[1];
+  const r1 = RECOM[w1], r2 = RECOM[w2];
+  const s1 = SECTIONS.find(s => s.id === w1).nome;
+  const s2 = SECTIONS.find(s => s.id === w2).nome;
+
+  return [
+    {
+      dias: '30', titulo: 'Diagnóstico e Estruturação',
+      sub: 'Identificar gaps e criar as primeiras estruturas',
+      foco: `Endereçar os gaps de ${s1} — a dimensão de menor pontuação no diagnóstico`,
+      acoes: `${r1.aba4Acao}.\nDocumentar o processo atual de metas: como são definidas, comunicadas e acompanhadas.\nRealizar conversa individual com cada vendedor para mapear o nível de compreensão das metas.`,
+      indicador: `Todos os vendedores conseguem responder: qual é minha meta, por que ela existe, o que preciso fazer para alcançá-la`
+    },
+    {
+      dias: '60', titulo: 'Implementação e Ajuste',
+      sub: 'Colocar em prática e calibrar os novos processos',
+      foco: `Endereçar os gaps de ${s2} e consolidar as melhorias iniciadas nos primeiros 30 dias`,
+      acoes: `${r2.aba4Acao}.\nImplantar cadência fixa de reuniões de acompanhamento (semanal + 1:1 mensal).\nCriar ou revisar os planos de ação individuais de cada vendedor, conectando atividades às metas.`,
+      indicador: `Cadência de rituais funcionando por pelo menos 4 semanas consecutivas sem cancelamentos`
+    },
+    {
+      dias: '90', titulo: 'Consolidação e Revisão de Ciclo',
+      sub: 'Avaliar o progresso e preparar o próximo ciclo',
+      foco: `Consolidar o equilíbrio entre Managing e Coaching no processo de metas`,
+      acoes: `Conduzir revisão estruturada do trimestre com a equipe: o que funcionou, o que não funcionou, aprendizados.\nAplicar novamente a Ferramenta 1.1 para medir a evolução do diagnóstico.\nDefinir as metas do próximo trimestre com o novo processo implantado.`,
+      indicador: `Score médio da equipe na Ferramenta 1.1 acima de 3,5 na reaplicação trimestral`
+    }
+  ];
+}
+
+// ============================================================
+// EXPORTAÇÃO
+// ============================================================
+function exportSection(section) {
+  const scores = calcScores();
+  const profile = getProfile(scores);
+  const weakest = Object.entries(scores).sort((a,b)=>a[1]-b[1]).slice(0,2).map(e=>e[0]);
+  const p = state.perfil;
+
+  const header = `
+    <div style="background:#1a2744;color:white;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:12px;font-weight:600;letter-spacing:1px;">Prof. Paulo H. Donassolo · Recriar a Gestão Comercial</div>
+      <div style="font-size:12px;">Ferramenta F 1.1 — Metas / OKRs Comerciais</div>
+    </div>`;
+
+  const banner = `<div style="background:#1d9e8f;color:white;padding:12px 18px;font-size:12px;font-weight:600;position:sticky;top:0;z-index:999;">
+    Para salvar como PDF: pressione Ctrl+P → Destino: Salvar como PDF → Margens: Nenhuma → Ativar Gráficos de fundo</div>`;
+
+  const metaRow = `<div style="font-size:13px;color:#4a5568;margin-bottom:20px;padding:10px 16px;background:#f4f6f9;border-radius:4px;">
+    <strong>Gestor:</strong> ${p.nome} &nbsp;|&nbsp; <strong>Empresa:</strong> ${p.empresa} &nbsp;|&nbsp; <strong>Cargo:</strong> ${p.cargo || '—'} &nbsp;|&nbsp; <strong>Período:</strong> ${p.periodo || '—'}
+  </div>`;
+
+  let body = '';
+
+  if (section === 'diagnostico') {
+    const dimInfo = { CL:'Clareza', CO:'Construção', CA:'Cascateamento', AC:'Acompanhamento', AO:'Ação' };
+    let dimRows = SECTIONS.map(sec => {
+      const s = scores[sec.id];
+      const lv = getLevel(s);
+      return `<tr style="border-bottom:1px solid #e2e8f0;">
+        <td style="padding:10px 14px;font-weight:600;color:#1a2744;">${sec.id}</td>
+        <td style="padding:10px 14px;">${sec.nome}</td>
+        <td style="padding:10px 14px;font-weight:700;font-size:16px;color:${getLevelColor(s)};">${s.toFixed(1)}</td>
+        <td style="padding:10px 14px;font-weight:600;color:${getLevelColor(s)};">${lv.label}</td>
+      </tr>`;
+    }).join('');
+
+    body = `<h2 style="font-family:Georgia,serif;font-size:22px;color:#1a2744;margin-bottom:8px;">Diagnóstico — ${profile.nome}</h2>
+      <p style="color:#4a5568;font-size:14px;margin-bottom:20px;">${profile.descricao}</p>
+      ${metaRow}
+      <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+        <thead><tr style="background:#1a2744;color:white;">
+          <th style="padding:10px 14px;text-align:left;font-size:11px;letter-spacing:1px;">DIM</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;letter-spacing:1px;">DIMENSÃO</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;letter-spacing:1px;">SCORE</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;letter-spacing:1px;">NÍVEL</th>
+        </tr></thead>
+        <tbody>${dimRows}</tbody>
+      </table>
+      <div style="background:#e8f7f5;border-left:3px solid #1d9e8f;padding:14px 18px;border-radius:4px;font-size:13px;color:#4a5568;">
+        <strong>Managing:</strong> ${profile.managing} &nbsp;|&nbsp; <strong>Coaching:</strong> ${profile.coaching} &nbsp;|&nbsp; <strong>Score Geral:</strong> ${profile.avg}
+      </div>`;
+  }
+
+  if (section === 'fazdiferente') {
+    let rows = weakest.map((dimId, i) => {
+      const sec = SECTIONS.find(s => s.id === dimId);
+      const th = document.querySelector(`#fhfd-hoje-${i}`);
+      const td = document.querySelector(`#fhfd-dif-${i}`);
+      const ti = document.querySelector(`#fhfd-imp-${i}`);
+      const hoje = th ? th.value : RECOM[dimId].fazHoje;
+      const dif = td ? td.value : RECOM[dimId].fazerDif;
+      const imp = ti ? ti.value : RECOM[dimId].impacto;
+      return `<tr style="border-bottom:1px solid #e2e8f0;">
+        <td style="padding:10px 14px;vertical-align:top;"><strong style="font-size:11px;color:#7c3aed;">${dimId}</strong><br><span style="font-size:12px;color:#4a5568;">${sec.nome}</span></td>
+        <td style="padding:10px 14px;vertical-align:top;font-size:13px;color:#4a5568;">${hoje}</td>
+        <td style="padding:10px 14px;vertical-align:top;font-size:13px;color:#4a5568;">${dif}</td>
+        <td style="padding:10px 14px;vertical-align:top;font-size:13px;color:#4a5568;">${imp}</td>
+      </tr>`;
+    }).join('');
+
+    body = `<h2 style="font-family:Georgia,serif;font-size:22px;color:#1a2744;margin-bottom:8px;">Faz Hoje / Fazer Diferente</h2>
+      ${metaRow}
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="background:#1a2744;color:white;">
+          <th style="padding:10px 14px;text-align:left;font-size:11px;width:15%;">DIMENSÃO</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;width:28%;">FAZ HOJE</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;width:32%;">FAZER DIFERENTE</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;width:25%;">IMPACTO ESPERADO</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }
+
+  if (section === 'pdi') {
+    const pdiNome = document.getElementById('pdi-nome')?.value || p.nome;
+    const pdiPer = document.getElementById('pdi-periodo')?.value || p.periodo;
+    const pdiObj = document.getElementById('pdi-objetivo')?.value || '';
+    const pdiAg = document.getElementById('pdi-acoes-gerais')?.value || '';
+
+    let comps = '';
+    weakest.forEach((dimId, i) => {
+      const card = document.querySelectorAll('.pdi-comp-card')[i];
+      if (!card) return;
+      const nome = card.querySelector('.pdi-comp-name-input')?.value || RECOM[dimId].pdiComp;
+      const tas = card.querySelectorAll('textarea');
+      const sels = card.querySelectorAll('select');
+      const acao = tas[0]?.value || RECOM[dimId].pdiAcao;
+      const aferir = tas[1]?.value || RECOM[dimId].pdiAferir;
+      const prazo = sels[0]?.value || RECOM[dimId].pdiPrazo;
+      comps += `<div style="border:1px solid #e2e8f0;border-radius:4px;padding:16px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:24px;height:24px;background:#1a2744;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;">${i+1}</div>
+          <strong style="color:#1a2744;font-size:14px;">${nome}</strong>
+          <span style="font-size:10px;background:#f5f3ff;color:#7c3aed;padding:2px 8px;border-radius:2px;font-weight:600;">${dimId}</span>
+        </div>
+        <table style="width:100%;font-size:13px;color:#4a5568;">
+          <tr><td style="padding:6px 10px;background:#f4f6f9;font-weight:600;width:30%;">O que desenvolver</td><td style="padding:6px 10px;">${acao}</td></tr>
+          <tr><td style="padding:6px 10px;background:#f4f6f9;font-weight:600;">Como aferir</td><td style="padding:6px 10px;">${aferir}</td></tr>
+          <tr><td style="padding:6px 10px;background:#f4f6f9;font-weight:600;">Prazo</td><td style="padding:6px 10px;">${prazo}</td></tr>
+        </table>
+      </div>`;
+    });
+
+    body = `<h2 style="font-family:Georgia,serif;font-size:22px;color:#1a2744;margin-bottom:8px;">PDI — Plano de Desenvolvimento Individual</h2>
+      ${metaRow}
+      <table style="width:100%;font-size:13px;color:#4a5568;margin-bottom:16px;border-collapse:collapse;">
+        <tr><td style="padding:6px 10px;background:#f4f6f9;font-weight:600;width:20%;">Gestor</td><td style="padding:6px 10px;">${pdiNome}</td><td style="padding:6px 10px;background:#f4f6f9;font-weight:600;width:20%;">Período</td><td style="padding:6px 10px;">${pdiPer}</td></tr>
+        <tr><td style="padding:6px 10px;background:#f4f6f9;font-weight:600;">Objetivo do PDI</td><td colspan="3" style="padding:6px 10px;">${pdiObj}</td></tr>
+        <tr><td style="padding:6px 10px;background:#f4f6f9;font-weight:600;">Ações gerais</td><td colspan="3" style="padding:6px 10px;">${pdiAg}</td></tr>
+      </table>
+      <h3 style="font-size:14px;font-weight:700;color:#1a2744;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">Competências a desenvolver</h3>
+      ${comps}`;
+  }
+
+  if (section === 'rituais') {
+    const cards = document.querySelectorAll('#rituais-container .ritual-card');
+    let rituaisHTML = '';
+    cards.forEach(card => {
+      const nome = card.querySelector('.ritual-name')?.textContent || '';
+      const freq = card.querySelector('.ritual-freq-badge')?.textContent || '';
+      const inputs = card.querySelectorAll('input');
+      const textarea = card.querySelector('textarea');
+      rituaisHTML += `<tr style="border-bottom:1px solid #e2e8f0;vertical-align:top;">
+        <td style="padding:8px 10px;"><strong style="font-size:11px;background:#e8f7f5;color:#1d9e8f;padding:2px 6px;border-radius:2px;">${freq}</strong></td>
+        <td style="padding:8px 10px;font-weight:600;font-size:13px;color:#1a2744;">${nome}</td>
+        <td style="padding:8px 10px;font-size:12px;color:#4a5568;">${inputs[0]?.value||''}<br>${inputs[1]?.value||''} · ${inputs[2]?.value||''}</td>
+        <td style="padding:8px 10px;font-size:12px;color:#4a5568;">${textarea?.value||''}</td>
+      </tr>`;
+    });
+
+    const planoCards = document.querySelectorAll('.plano-period-card');
+    let planoHTML = '';
+    ['30','60','90'].forEach((d, i) => {
+      const card = planoCards[i];
+      if (!card) return;
+      const inputs = card.querySelectorAll('input');
+      const textarea = card.querySelector('textarea');
+      planoHTML += `<div style="border-radius:4px;padding:16px;margin-bottom:10px;background:${i===0?'#e8f7f5':i===1?'#eff6ff':'#f5f3ff'};border-left:3px solid ${i===0?'#1d9e8f':i===1?'#2563a8':'#7c3aed'};">
+        <strong style="font-size:20px;font-family:Georgia;color:${i===0?'#1d9e8f':i===1?'#2563a8':'#7c3aed'};">${d} dias</strong>
+        <span style="font-size:13px;font-weight:600;color:#1a2744;margin-left:10px;">${inputs[0]?.value||''}</span>
+        <p style="font-size:13px;color:#4a5568;margin-top:8px;">${textarea?.value?.replace(/\n/g,'<br>')||''}</p>
+        <p style="font-size:12px;color:#718096;margin-top:6px;"><strong>Indicador:</strong> ${inputs[2]?.value||''}</p>
+      </div>`;
+    });
+
+    body = `<h2 style="font-family:Georgia,serif;font-size:22px;color:#1a2744;margin-bottom:8px;">Rituais de Metas / OKRs + Plano 30/60/90</h2>
+      ${metaRow}
+      <h3 style="font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#718096;margin-bottom:10px;">Calendário de Rituais</h3>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+        <thead><tr style="background:#1a2744;color:white;">
+          <th style="padding:8px 10px;text-align:left;font-size:11px;width:10%;">FREQ</th>
+          <th style="padding:8px 10px;text-align:left;font-size:11px;width:25%;">RITUAL</th>
+          <th style="padding:8px 10px;text-align:left;font-size:11px;width:20%;">QUANDO</th>
+          <th style="padding:8px 10px;text-align:left;font-size:11px;width:45%;">PAUTA</th>
+        </tr></thead>
+        <tbody>${rituaisHTML}</tbody>
+      </table>
+      <h3 style="font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#718096;margin-bottom:10px;">Plano de Ação 30 / 60 / 90 Dias</h3>
+      ${planoHTML}`;
+  }
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+    <title>F 1.1 — ${section} — ${p.nome}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+      * { box-sizing:border-box; margin:0; padding:0; }
+      body { font-family:'Source Sans 3',sans-serif; background:white; font-size:14px; color:#1a2744; }
+      .page-wrap { width:210mm; min-height:297mm; padding:18mm 18mm 22mm; margin:0 auto; background:white; }
+      @media print { @page { margin:0; size:A4 portrait; } .no-print { display:none; } }
+    </style>
+  </head><body>
+    ${banner}
+    ${header}
+    <div class="page-wrap">${body}</div>
+    <div style="background:#f4f6f9;border-top:1px solid #e2e8f0;padding:10px 24px;display:flex;justify-content:space-between;font-size:11px;color:#718096;">
+      <span>Prof. Paulo H. Donassolo · Recriar a Gestão Comercial</span>
+      <span>Ferramenta F 1.1 — Metas / OKRs Comerciais</span>
+    </div>
+  </body></html>`);
+  win.document.close();
+}
+
+function exportAll() {
+  ['diagnostico','fazdiferente','pdi','rituais'].forEach((s, i) => {
+    setTimeout(() => exportSection(s), i * 300);
+  });
+}
+
+// ============================================================
+// PERSISTÊNCIA E INIT
+// ============================================================
+window.onload = function() {
+  loadState();
+  if (state.perfil.nome) {
+    document.getElementById('f-nome').value = state.perfil.nome;
+    document.getElementById('f-empresa').value = state.perfil.empresa;
+    document.getElementById('f-cargo').value = state.perfil.cargo || '';
+    document.getElementById('f-equipe').value = state.perfil.equipe || '';
+    document.getElementById('f-tempo').value = state.perfil.tempo || '';
+    document.getElementById('f-periodo').value = state.perfil.periodo || '';
+  }
+  if (Object.keys(state.answers).length === SECTIONS.reduce((a,s)=>a+s.questoes.length,0)) {
+    buildResults();
+    showPage('page-results');
+  }
+};
+</script>
+</body>
+</html>

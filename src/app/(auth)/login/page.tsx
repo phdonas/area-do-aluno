@@ -1,9 +1,11 @@
 import { LoginForm } from '@/components/auth/LoginForm'
 import { Metadata } from 'next'
+import { Suspense } from 'react'
+import { Loader2 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Login | Área do Aluno',
-  description: 'Faça login para acessar o Ecossistema PH Donassolo',
+  title: 'Login',
+  description: 'Faça login para acessar a PHD Academy',
 }
 
 export default function LoginPage() {
@@ -16,9 +18,9 @@ export default function LoginPage() {
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
         <div className="w-full max-w-md apple-blur bg-surface/70 border border-border-custom rounded-[2.5rem] p-8 sm:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-tr from-primary-dark to-primary-light rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-primary/20 mb-6 relative group overflow-hidden">
-               <div className="absolute inset-0 bg-white/20 translate-y-[100%] group-hover:translate-y-[0%] transition-transform duration-300 pointer-events-none"/>
-              <span className="text-2xl text-white font-bold tracking-tighter">PH</span>
+            <div className="w-16 h-16 bg-primary-dark rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-primary/20 mb-6 relative group overflow-hidden border border-white/10">
+               <div className="absolute inset-0 bg-white/5 translate-y-[100%] group-hover:translate-y-[0%] transition-transform duration-300 pointer-events-none"/>
+              <span className="text-2xl text-white font-black tracking-tighter">PHD</span>
             </div>
             <h1 className="text-2xl font-bold text-text-primary tracking-tight">
               Bem-vindo(a) de volta
@@ -28,7 +30,9 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <LoginForm />
+          <Suspense fallback={<div className="h-64 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary/30" /></div>}>
+            <LoginForm />
+          </Suspense>
           
         </div>
         

@@ -51,6 +51,10 @@ export async function createAula(formData: FormData) {
   let recurso_id = formData.get('recurso_id') as string | null
   if (recurso_id === 'null' || !recurso_id) recurso_id = null
 
+  if (tipo_conteudo === 'ferramenta' && !recurso_id) {
+    throw new Error('Você deve selecionar uma Ferramenta Integrada para este formato de aula.')
+  }
+
   const liberacao_dias = parseInt(formData.get('liberacao_dias') as string || '0')
 
   const { data: aula, error } = await supabase.from('aulas').insert({
@@ -152,6 +156,10 @@ export async function updateAula(id: string, formData: FormData) {
   const modulo_id = (modulo_id_raw && modulo_id_raw !== 'null' && modulo_id_raw !== '') ? modulo_id_raw : null
   const questionario_id = (questionario_id_raw && questionario_id_raw !== 'null' && questionario_id_raw !== '') ? questionario_id_raw : null
   const recurso_id = (recurso_id_raw && recurso_id_raw !== 'null' && recurso_id_raw !== '') ? recurso_id_raw : null
+
+  if (tipo_conteudo === 'ferramenta' && !recurso_id) {
+    throw new Error('Você deve selecionar uma Ferramenta Integrada para este formato de aula.')
+  }
 
   const liberacao_dias = parseInt(formData.get('liberacao_dias') as string || '0')
 

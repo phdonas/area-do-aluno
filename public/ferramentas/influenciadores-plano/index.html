@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferramenta 2.1 — Análise dos Fatores Influenciadores e Plano de Desenvolvimento</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-mid: #253564;
+  --teal: #1d9e8f;
+  --teal-light: #e8f7f5;
+  --coral: #e05c3a;
+  --coral-light: #fdf1ee;
+  --slate: #4a5568;
+  --gray-light: #f4f6f9;
+  --gray-mid: #e2e8f0;
+  --gray-dark: #718096;
+  --text: #1a2744;
+  --radius: 6px;
+  --font-title: 'Playfair Display', serif;
+  --font-body: 'Source Sans 3', sans-serif;
+
+  /* Pilares */
+  --EC-color: #2563eb; --EC-light: #eff6ff;
+  --PV-color: #7c3aed; --PV-light: #f5f3ff;
+  --GP-color: #059669; --GP-light: #ecfdf5;
+  --GI-color: #d97706; --GI-light: #fffbeb;
+  --RC-color: #dc2626; --RC-light: #fef2f2;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); color: var(--text); background: var(--gray-light); font-size: 15px; line-height: 1.6; }
+
+/* ── HEADER ── */
+.tool-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: white; padding: 32px 40px 28px; position: relative; overflow: hidden;
+}
+.tool-header::before {
+  content: ''; position: absolute; top: -60px; right: -60px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: rgba(29,158,143,0.12); pointer-events: none;
+}
+.tool-header-inner { max-width: 1100px; margin: 0 auto; }
+.tool-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(29,158,143,0.25); border: 1px solid rgba(29,158,143,0.4);
+  border-radius: 4px; padding: 4px 12px; margin-bottom: 14px;
+  font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #7ee8dd;
+}
+.tool-title { font-family: var(--font-title); font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.tool-subtitle { font-size: 14px; color: rgba(255,255,255,0.72); font-weight: 300; }
+
+/* ── MAIN NAV ── */
+.main-nav {
+  background: white; border-bottom: 1px solid var(--gray-mid);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 8px rgba(26,39,68,0.06);
+}
+.main-nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; gap: 0;
+}
+.nav-btn {
+  flex: 1; padding: 16px 12px; background: none; border: none;
+  border-bottom: 3px solid transparent; cursor: pointer;
+  font-family: var(--font-body); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.5px; color: var(--gray-dark); text-align: center;
+  transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.nav-btn .nav-num {
+  font-size: 18px; font-weight: 700; font-family: var(--font-title);
+  color: var(--gray-mid); transition: color 0.2s;
+}
+.nav-btn .nav-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.nav-btn .nav-sub { font-size: 10px; color: var(--gray-dark); font-weight: 400; letter-spacing: 0; }
+.nav-btn:hover { background: var(--gray-light); }
+.nav-btn.active { color: var(--navy); border-bottom-color: var(--teal); }
+.nav-btn.active .nav-num { color: var(--teal); }
+
+/* ── CONTENT WRAPPER ── */
+.content-wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px 60px; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gray-dark); margin-bottom: 8px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: white; border-radius: var(--radius);
+  box-shadow: 0 2px 12px rgba(26,39,68,0.08); padding: 24px;
+}
+.card + .card { margin-top: 16px; }
+
+/* ── GRID ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+/* ── SCALE DISPLAY ── */
+.scale-row {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 12px;
+}
+.scale-item { text-align: center; }
+.scale-num {
+  width: 40px; height: 40px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; margin: 0 auto 6px;
+  font-size: 18px; font-weight: 700; font-family: var(--font-title);
+}
+.scale-num.s1 { background: #fef2f2; color: #dc2626; }
+.scale-num.s2 { background: #fff7ed; color: #ea580c; }
+.scale-num.s3 { background: #fefce8; color: #ca8a04; }
+.scale-num.s4 { background: #f0fdf4; color: #16a34a; }
+.scale-num.s5 { background: #eff6ff; color: #2563eb; }
+.scale-bar { height: 3px; border-radius: 2px; margin-bottom: 6px; }
+.scale-bar.s1 { background: #dc2626; }
+.scale-bar.s2 { background: #ea580c; }
+.scale-bar.s3 { background: #ca8a04; }
+.scale-bar.s4 { background: #16a34a; }
+.scale-bar.s5 { background: #2563eb; }
+.scale-text { font-size: 11px; color: var(--slate); line-height: 1.3; }
+
+/* ── IDENTIFICATION FORM ── */
+.id-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.id-form .full { grid-column: 1 / -1; }
+.form-group label {
+  display: block; font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); margin-bottom: 6px;
+}
+.form-group input, .form-group select {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--gray-mid);
+  border-radius: var(--radius); font-family: var(--font-body); font-size: 14px;
+  color: var(--text); background: white; transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus {
+  outline: none; border-color: var(--teal);
+}
+
+.note-coral {
+  background: var(--coral-light); border-left: 3px solid var(--coral);
+  padding: 14px 18px; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 13px; color: #7c2d12; margin-top: 16px;
+}
+
+/* ── ASSESSMENT PAGE ── */
+.progress-bar-wrap { background: var(--gray-mid); border-radius: 4px; height: 6px; margin-bottom: 8px; }
+.progress-bar-fill { height: 100%; border-radius: 4px; background: var(--teal); transition: width 0.4s; }
+.progress-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--gray-dark); margin-bottom: 24px; }
+
+.pilar-section { display: none; }
+.pilar-section.active { display: block; }
+
+.pilar-header {
+  display: flex; align-items: center; gap: 14px; padding: 18px 24px;
+  border-radius: var(--radius) var(--radius) 0 0; margin-bottom: 0;
+}
+.pilar-badge {
+  padding: 4px 10px; border-radius: 3px; font-size: 10px;
+  font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+}
+.pilar-header h3 { font-family: var(--font-title); font-size: 20px; color: white; flex: 1; }
+.pilar-header .pilar-count { font-size: 12px; color: rgba(255,255,255,0.7); }
+
+.pilar-body { background: white; border-radius: 0 0 var(--radius) var(--radius); overflow: hidden; box-shadow: 0 2px 12px rgba(26,39,68,0.08); }
+
+.fator-row {
+  padding: 20px 24px; border-bottom: 1px solid var(--gray-mid);
+  display: grid; grid-template-columns: 240px 1fr 1fr; gap: 24px; align-items: start;
+}
+.fator-row:last-child { border-bottom: none; }
+.fator-info {}
+.fator-num { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); margin-bottom: 4px; }
+.fator-nome { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.fator-desc { font-size: 12px; color: var(--slate); line-height: 1.5; }
+
+.score-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); margin-bottom: 10px; }
+.score-options { display: flex; gap: 6px; }
+.score-option {
+  flex: 1; padding: 10px 6px; border: 2px solid var(--gray-mid);
+  border-radius: var(--radius); background: white; cursor: pointer;
+  text-align: center; transition: all 0.15s; font-family: var(--font-body);
+}
+.score-option .opt-num { font-size: 18px; font-weight: 700; font-family: var(--font-title); display: block; }
+.score-option .opt-lbl { font-size: 9px; color: var(--gray-dark); line-height: 1.2; display: block; margin-top: 2px; }
+.score-option:hover { border-color: var(--teal); }
+.score-option.selected-dev { border-color: var(--teal); background: var(--teal-light); }
+.score-option.selected-dev .opt-num { color: var(--teal); }
+.score-option.selected-imp { border-color: var(--coral); background: var(--coral-light); }
+.score-option.selected-imp .opt-num { color: var(--coral); }
+
+/* ── NAV BUTTONS ── */
+.nav-section-btns { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+.btn { padding: 12px 24px; border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.btn-primary { background: var(--navy); color: white; }
+.btn-primary:hover { background: var(--navy-mid); }
+.btn-teal { background: var(--teal); color: white; }
+.btn-teal:hover { background: #178a7d; }
+.btn-outline { background: white; color: var(--navy); border: 2px solid var(--navy); }
+.btn-outline:hover { background: var(--gray-light); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── RESULTS PAGE ── */
+.results-tabs {
+  background: var(--navy); border-radius: var(--radius) var(--radius) 0 0;
+  display: flex; overflow: hidden;
+}
+.result-tab {
+  flex: 1; padding: 14px 10px; background: none; border: none;
+  color: rgba(255,255,255,0.55); cursor: pointer;
+  font-family: var(--font-body); text-align: center;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  transition: all 0.2s;
+}
+.result-tab:last-child { border-right: none; }
+.result-tab .rt-num { font-size: 20px; font-weight: 700; font-family: var(--font-title); display: block; }
+.result-tab .rt-lbl { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.result-tab .rt-sub { font-size: 10px; opacity: 0.7; margin-top: 1px; }
+.result-tab:hover { background: rgba(255,255,255,0.06); color: white; }
+.result-tab.active { background: var(--teal); color: white; }
+
+.results-body { background: white; border-radius: 0 0 var(--radius) var(--radius); box-shadow: 0 2px 12px rgba(26,39,68,0.08); overflow: hidden; }
+.result-pane { display: none; padding: 32px; }
+.result-pane.active { display: block; }
+
+/* ── DIAGNOSTIC ── */
+.diag-header { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; }
+.diag-score-big {
+  width: 90px; height: 90px; border-radius: 50%; background: var(--teal);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: white; flex-shrink: 0;
+}
+.diag-score-big .dsb-val { font-size: 26px; font-weight: 700; font-family: var(--font-title); line-height: 1; }
+.diag-score-big .dsb-lbl { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+
+.pilares-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 28px; }
+.pilar-card-result {
+  padding: 16px; border-radius: var(--radius); border: 1px solid var(--gray-mid);
+}
+.pcr-pilar { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.pcr-nome { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 12px; line-height: 1.3; }
+.pcr-score { font-size: 24px; font-weight: 700; font-family: var(--font-title); margin-bottom: 4px; }
+.pcr-bar { height: 4px; border-radius: 2px; background: var(--gray-mid); margin-bottom: 8px; }
+.pcr-fill { height: 100%; border-radius: 2px; }
+.pcr-level { font-size: 10px; font-weight: 600; }
+
+.canvas-wrap { margin: 0 auto 28px; }
+.two-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; align-items: start; }
+.chart-box { text-align: center; }
+.chart-box h4 { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); margin-bottom: 16px; }
+
+.narrative-box {
+  background: var(--gray-light); border-left: 3px solid var(--teal);
+  padding: 20px 24px; border-radius: 0 var(--radius) var(--radius) 0; margin: 20px 0;
+}
+.narrative-box .nb-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+.narrative-box p { font-size: 14px; line-height: 1.7; color: var(--slate); }
+.narrative-box p + p { margin-top: 10px; }
+
+.alert-box {
+  background: var(--coral-light); border-left: 3px solid var(--coral);
+  padding: 16px 20px; border-radius: 0 var(--radius) var(--radius) 0; margin: 16px 0;
+  font-size: 13px; color: #7c2d12;
+}
+.alert-box strong { display: block; margin-bottom: 4px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+
+.quadrant-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; justify-content: center; }
+.ql-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--slate); }
+.ql-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── FAZ HOJE ── */
+.fhfd-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+.fhfd-table th {
+  background: var(--navy); color: white; font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase; padding: 12px 16px; text-align: left;
+}
+.fhfd-table th:first-child { border-radius: var(--radius) 0 0 0; }
+.fhfd-table th:last-child { border-radius: 0 var(--radius) 0 0; }
+.fhfd-table td { padding: 12px 16px; vertical-align: top; border-bottom: 1px solid var(--gray-mid); font-size: 13px; }
+.fhfd-table tr:last-child td { border-bottom: none; }
+.fhfd-table tr:nth-child(even) td { background: var(--gray-light); }
+.fhfd-table td textarea {
+  width: 100%; border: 1px solid var(--gray-mid); border-radius: 4px;
+  padding: 8px; font-family: var(--font-body); font-size: 13px;
+  line-height: 1.5; resize: vertical; min-height: 70px; background: white; color: var(--text);
+}
+.fhfd-table td textarea:focus { outline: none; border-color: var(--teal); }
+.dim-tag-inline {
+  display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; padding: 2px 6px; border-radius: 2px; margin-bottom: 6px;
+}
+
+/* ── PDI ── */
+.pdi-header-info { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.pdi-field { display: flex; flex-direction: column; gap: 4px; }
+.pdi-field label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); }
+.pdi-field input, .pdi-field textarea {
+  border: 1px solid var(--gray-mid); border-radius: 4px; padding: 8px 12px;
+  font-family: var(--font-body); font-size: 13px; color: var(--text); resize: vertical;
+}
+.pdi-field input:focus, .pdi-field textarea:focus { outline: none; border-color: var(--teal); }
+.pdi-field.full { grid-column: 1/-1; }
+
+.competencia-card { border: 1px solid var(--gray-mid); border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; }
+.cc-header { padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+.cc-num { width: 28px; height: 28px; border-radius: 50%; background: var(--navy); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.cc-pilar-tag { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; }
+.cc-title { font-size: 14px; font-weight: 700; color: var(--navy); flex: 1; }
+.cc-body { padding: 20px 18px; display: grid; grid-template-columns: 1fr 1fr 1fr 120px; gap: 16px; }
+.cc-field { display: flex; flex-direction: column; gap: 6px; }
+.cc-field label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); }
+.cc-field textarea, .cc-field select {
+  border: 1px solid var(--gray-mid); border-radius: 4px; padding: 8px;
+  font-family: var(--font-body); font-size: 13px; color: var(--text);
+  resize: vertical; min-height: 70px; background: white;
+}
+.cc-field textarea:focus, .cc-field select:focus { outline: none; border-color: var(--teal); }
+.cc-field.prazo-field textarea { min-height: auto; resize: none; }
+.scale-selector { display: flex; flex-direction: column; gap: 8px; }
+.ss-row { display: flex; align-items: center; gap: 8px; }
+.ss-lbl { font-size: 11px; color: var(--gray-dark); width: 45px; }
+.ss-dots { display: flex; gap: 4px; }
+.ss-dot {
+  width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--gray-mid);
+  background: white; cursor: pointer; transition: all 0.15s;
+}
+.ss-dot:hover { border-color: var(--teal); }
+.ss-dot.active-now { background: var(--coral); border-color: var(--coral); }
+.ss-dot.active-target { background: var(--teal); border-color: var(--teal); }
+
+/* ── PLANO 90 DIAS ── */
+.p90-intro { margin-bottom: 24px; }
+.p90-months { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+.month-card { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--gray-mid); }
+.month-header { background: var(--navy); color: white; padding: 14px 18px; }
+.month-header h4 { font-family: var(--font-title); font-size: 16px; }
+.month-header p { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+.month-body { padding: 16px 18px; background: white; }
+.month-fator-item { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-mid); }
+.month-fator-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.mfi-nome { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.mfi-acao textarea {
+  width: 100%; border: 1px solid var(--gray-mid); border-radius: 4px;
+  padding: 7px 10px; font-family: var(--font-body); font-size: 12px;
+  color: var(--text); resize: vertical; min-height: 55px; background: white;
+}
+.mfi-acao textarea:focus { outline: none; border-color: var(--teal); }
+
+/* ── PTG SEMANAL ── */
+.ptg-header { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.ptg-week { border: 1px solid var(--gray-mid); border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; }
+.ptg-week-header { background: var(--teal); color: white; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; }
+.ptg-week-header h4 { font-size: 14px; font-weight: 700; }
+.ptg-week-header span { font-size: 11px; opacity: 0.85; }
+.ptg-week-body { padding: 16px 18px; background: white; }
+.ptg-day-row { display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: start; margin-bottom: 10px; }
+.ptg-day-row:last-child { margin-bottom: 0; }
+.ptg-day-lbl { font-size: 11px; font-weight: 700; color: var(--slate); padding-top: 8px; }
+.ptg-day-input {
+  border: 1px solid var(--gray-mid); border-radius: 4px; padding: 7px 10px;
+  font-family: var(--font-body); font-size: 12px; color: var(--text);
+  resize: vertical; min-height: 40px; width: 100%; background: white;
+}
+.ptg-day-input:focus { outline: none; border-color: var(--teal); }
+
+/* ── GUIA FATORES (tab especial) ── */
+.guia-header { margin-bottom: 24px; }
+.guia-header p { font-size: 14px; color: var(--slate); line-height: 1.6; }
+.pilar-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+.pf-btn {
+  padding: 7px 14px; border-radius: 20px; border: 2px solid var(--gray-mid);
+  background: white; font-family: var(--font-body); font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; color: var(--slate);
+}
+.pf-btn:hover { border-color: var(--navy); color: var(--navy); }
+.pf-btn.active { color: white; border-color: transparent; }
+.pf-btn.all.active { background: var(--navy); }
+.pf-btn.EC.active { background: var(--EC-color); border-color: var(--EC-color); }
+.pf-btn.PV.active { background: var(--PV-color); border-color: var(--PV-color); }
+.pf-btn.GP.active { background: var(--GP-color); border-color: var(--GP-color); }
+.pf-btn.GI.active { background: var(--GI-color); border-color: var(--GI-color); }
+.pf-btn.RC.active { background: var(--RC-color); border-color: var(--RC-color); }
+
+.guia-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.guia-card {
+  background: white; border-radius: var(--radius); border: 1px solid var(--gray-mid);
+  box-shadow: 0 2px 8px rgba(26,39,68,0.05); overflow: hidden; cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.guia-card:hover { box-shadow: 0 4px 20px rgba(26,39,68,0.12); transform: translateY(-2px); }
+.guia-card-header { padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; }
+.gc-num-badge {
+  width: 32px; height: 32px; border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: white; flex-shrink: 0;
+}
+.gc-meta { flex: 1; }
+.gc-pilar { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+.gc-nome { font-size: 14px; font-weight: 700; color: var(--navy); line-height: 1.3; }
+.gc-tipo-badge {
+  font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 10px; margin-top: 4px; display: inline-block;
+}
+.gc-tipo-hard { background: #eff6ff; color: #2563eb; }
+.gc-tipo-soft { background: #f0fdf4; color: #16a34a; }
+
+.guia-card-body { padding: 0 16px 16px; display: none; }
+.guia-card.expanded .guia-card-body { display: block; }
+.guia-card-desc { font-size: 13px; color: var(--slate); line-height: 1.6; margin-bottom: 14px; border-top: 1px solid var(--gray-mid); padding-top: 14px; }
+.guia-detail { font-size: 13px; color: var(--navy); font-style: italic; margin-bottom: 14px; padding: 10px 14px; background: var(--gray-light); border-radius: 4px; }
+
+.guia-section-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray-dark); margin-bottom: 8px; }
+.guia-list { list-style: none; margin-bottom: 14px; }
+.guia-list li { font-size: 12px; color: var(--slate); padding: 4px 0 4px 14px; position: relative; line-height: 1.5; }
+.guia-list li::before { content: '—'; position: absolute; left: 0; color: var(--teal); font-weight: 700; }
+
+.gc-competencias { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.gc-comp-item {
+  font-size: 12px; color: var(--slate); padding: 6px 10px; background: var(--gray-light);
+  border-radius: 4px; border-left: 3px solid var(--gray-mid);
+}
+.gc-ferramentas { display: flex; flex-wrap: wrap; gap: 6px; }
+.gc-tool {
+  font-size: 11px; padding: 3px 8px; border-radius: 3px;
+  background: white; border: 1px solid var(--gray-mid); color: var(--slate);
+}
+.guia-card-toggle { text-align: center; padding: 0 0 8px; }
+.toggle-btn {
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--teal); background: none; border: none; cursor: pointer; padding: 8px;
+}
+
+/* ── EXPORT PANEL ── */
+.export-panel {
+  background: var(--navy); border-radius: var(--radius); padding: 24px 28px; margin-top: 28px;
+}
+.export-panel h4 { font-family: var(--font-title); font-size: 16px; color: white; margin-bottom: 6px; }
+.export-panel p { font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 18px; }
+.export-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-export {
+  padding: 10px 18px; border-radius: var(--radius); font-family: var(--font-body);
+  font-size: 12px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; border: none;
+  background: rgba(255,255,255,0.12); color: white; border: 1px solid rgba(255,255,255,0.2);
+  transition: all 0.2s;
+}
+.btn-export:hover { background: rgba(255,255,255,0.2); }
+.btn-export.primary { background: var(--teal); border-color: var(--teal); }
+.btn-export.primary:hover { background: #178a7d; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .pilares-grid { grid-template-columns: repeat(3, 1fr); }
+  .fator-row { grid-template-columns: 1fr; gap: 14px; }
+  .guia-cards { grid-template-columns: repeat(2, 1fr); }
+  .cc-body { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .tool-header { padding: 20px 16px; }
+  .tool-title { font-size: 20px; }
+  .content-wrap { padding: 16px 12px 40px; }
+  .grid-2, .grid-3, .id-form, .pilares-grid, .two-charts, .p90-months, .ptg-header { grid-template-columns: 1fr; }
+  .guia-cards { grid-template-columns: 1fr; }
+  .cc-body { grid-template-columns: 1fr; }
+  .pdi-header-info { grid-template-columns: 1fr; }
+  .results-tabs .rt-sub { display: none; }
+  .main-nav .nav-sub { display: none; }
+  .nav-btn .nav-num { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="tool-header">
+  <div class="tool-header-inner">
+    <div class="tool-badge">Ferramenta 2.1 · Recriar a Gestão Comercial</div>
+    <div class="tool-title">Análise dos Fatores Influenciadores e Plano de Desenvolvimento</div>
+    <div class="tool-subtitle">Diagnóstico dos 17 Fatores · Priorização por Impacto e Desenvolvimento · Plano de Ação 90 Dias e PTG Semanal</div>
+  </div>
+</div>
+
+<!-- MAIN NAVIGATION -->
+<nav class="main-nav">
+  <div class="main-nav-inner">
+    <button class="nav-btn active" onclick="goPage('page-id')">
+      <span class="nav-num">01</span>
+      <span class="nav-label">Identificação</span>
+      <span class="nav-sub">Dados e contexto</span>
+    </button>
+    <button class="nav-btn" onclick="goPage('page-avaliacao')">
+      <span class="nav-num">02</span>
+      <span class="nav-label">Avaliação</span>
+      <span class="nav-sub">17 Fatores</span>
+    </button>
+    <button class="nav-btn" onclick="goPage('page-resultados')">
+      <span class="nav-num">03</span>
+      <span class="nav-label">Resultados</span>
+      <span class="nav-sub">Diagnóstico e Planos</span>
+    </button>
+    <button class="nav-btn" onclick="goPage('page-guia')">
+      <span class="nav-num">&#9432;</span>
+      <span class="nav-label">Guia dos Fatores</span>
+      <span class="nav-sub">O que são e como agir</span>
+    </button>
+  </div>
+</nav>
+
+<!-- PAGE 1: IDENTIFICAÇÃO -->
+<div id="page-id" class="page active">
+  <div class="content-wrap">
+    <!-- Sobre a ferramenta -->
+    <div class="section-label" style="margin-bottom:8px">Sobre esta ferramenta</div>
+    <div class="grid-2" style="margin-bottom:24px">
+      <div class="card">
+        <div class="section-label">Para que serve</div>
+        <p style="font-size:14px; color:var(--slate); margin-top:8px; line-height:1.7">
+          Esta ferramenta permite ao gestor comercial mapear o nível atual de desenvolvimento dos 17 Fatores Influenciadores de Desempenho e cruzá-los com o impacto que cada um tem sobre os resultados da sua operação. O diagnóstico identifica prioridades concretas, elimina dispersão de energia e direciona o plano de desenvolvimento com base na realidade — não em suposições.
+        </p>
+      </div>
+      <div class="card">
+        <div class="section-label">Como funciona</div>
+        <p style="font-size:14px; color:var(--slate); margin-top:8px; line-height:1.7">
+          Cada um dos 17 fatores é avaliado em dois eixos: o quanto está desenvolvido hoje (1 a 5) e o quanto impacta os resultados da sua equipe (1 a 5). O cruzamento gera uma matriz de priorização com quatro quadrantes. Os resultados alimentam automaticamente o diagnóstico, o plano de desenvolvimento individual, o plano de ação de 90 dias e o PTG semanal.
+        </p>
+      </div>
+    </div>
+
+    <!-- Escalas -->
+    <div class="card" style="margin-bottom:24px">
+      <div class="section-label" style="margin-bottom:16px">Escalas de avaliação</div>
+      <div class="grid-2" style="gap:28px">
+        <div>
+          <p style="font-size:12px; font-weight:700; color:var(--teal); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px">Nível de Desenvolvimento Atual</p>
+          <div class="scale-row">
+            <div class="scale-item"><div class="scale-num s1">1</div><div class="scale-bar s1"></div><div class="scale-text">Inexistente / Não trabalhamos</div></div>
+            <div class="scale-item"><div class="scale-num s2">2</div><div class="scale-bar s2"></div><div class="scale-text">Iniciando / Muito incipiente</div></div>
+            <div class="scale-item"><div class="scale-num s3">3</div><div class="scale-bar s3"></div><div class="scale-text">Em desenvolvimento / Parcial</div></div>
+            <div class="scale-item"><div class="scale-num s4">4</div><div class="scale-bar s4"></div><div class="scale-text">Desenvolvido / Funcionando bem</div></div>
+            <div class="scale-item"><div class="scale-num s5">5</div><div class="scale-bar s5"></div><div class="scale-text">Excelente / Referência</div></div>
+          </div>
+        </div>
+        <div>
+          <p style="font-size:12px; font-weight:700; color:var(--coral); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px">Impacto nos Resultados</p>
+          <div class="scale-row">
+            <div class="scale-item"><div class="scale-num s1">1</div><div class="scale-bar s1"></div><div class="scale-text">Muito baixo / Quase não interfere</div></div>
+            <div class="scale-item"><div class="scale-num s2">2</div><div class="scale-bar s2"></div><div class="scale-text">Baixo / Interfere pouco</div></div>
+            <div class="scale-item"><div class="scale-num s3">3</div><div class="scale-bar s3"></div><div class="scale-text">Moderado / Afeta de forma razoável</div></div>
+            <div class="scale-item"><div class="scale-num s4">4</div><div class="scale-bar s4"></div><div class="scale-text">Alto / Impacta resultados</div></div>
+            <div class="scale-item"><div class="scale-num s5">5</div><div class="scale-bar s5"></div><div class="scale-text">Crítico / Determina o resultado</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Identificação -->
+    <div class="card">
+      <div class="section-label" style="margin-bottom:16px">Identificação do gestor</div>
+      <div class="id-form">
+        <div class="form-group">
+          <label>Nome do gestor</label>
+          <input type="text" id="nome" placeholder="Seu nome completo" oninput="saveId()">
+        </div>
+        <div class="form-group">
+          <label>Empresa</label>
+          <input type="text" id="empresa" placeholder="Nome da empresa" oninput="saveId()">
+        </div>
+        <div class="form-group">
+          <label>Cargo</label>
+          <input type="text" id="cargo" placeholder="Seu cargo atual" oninput="saveId()">
+        </div>
+        <div class="form-group">
+          <label>Tamanho da equipe</label>
+          <select id="equipe" onchange="saveId()">
+            <option value="">Selecione</option>
+            <option>1 a 3 vendedores</option>
+            <option>4 a 8 vendedores</option>
+            <option>9 a 15 vendedores</option>
+            <option>Mais de 15 vendedores</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tempo na função</label>
+          <select id="tempo" onchange="saveId()">
+            <option value="">Selecione</option>
+            <option>Menos de 1 ano</option>
+            <option>1 a 3 anos</option>
+            <option>3 a 5 anos</option>
+            <option>Mais de 5 anos</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Período de referência</label>
+          <input type="text" id="periodo" placeholder="Ex: 2º Semestre 2025" oninput="saveId()">
+        </div>
+        <div class="form-group full">
+          <label>Setor / Segmento de atuação</label>
+          <input type="text" id="setor" placeholder="Ex: Indústria de embalagens, Serviços de TI para PMEs..." oninput="saveId()">
+        </div>
+      </div>
+      <div class="note-coral" style="margin-top:20px">
+        <strong>Orientação:</strong> Avalie a realidade atual da sua gestão comercial — não o que deveria ser ou o que está planejado. A honestidade no diagnóstico é o que garante um plano de ação efetivo. Esta ferramenta é de uso pessoal e confidencial.
+      </div>
+    </div>
+
+    <div style="margin-top:24px; text-align:right">
+      <button class="btn btn-teal" onclick="goPage('page-avaliacao')">Iniciar Avaliação dos 17 Fatores &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: AVALIAÇÃO -->
+<div id="page-avaliacao" class="page">
+  <div class="content-wrap">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressBar" style="width:20%"></div>
+    </div>
+    <div class="progress-info">
+      <span id="progressLabel">Pilar 1 de 5 — Estratégia Comercial</span>
+      <span id="progressCount">Fatores 1–3</span>
+    </div>
+
+    <!-- PILAR EC -->
+    <div class="pilar-section active" id="pilar-EC">
+      <div class="pilar-header" style="background: var(--EC-color)">
+        <div class="pilar-badge" style="background:rgba(255,255,255,0.2);color:white">EC</div>
+        <h3>Estratégia Comercial</h3>
+        <span class="pilar-count">Fatores 1 a 3</span>
+      </div>
+      <div class="pilar-body" id="body-EC"></div>
+    </div>
+
+    <!-- PILAR PV -->
+    <div class="pilar-section" id="pilar-PV">
+      <div class="pilar-header" style="background: var(--PV-color)">
+        <div class="pilar-badge" style="background:rgba(255,255,255,0.2);color:white">PV</div>
+        <h3>Processos de Vendas</h3>
+        <span class="pilar-count">Fatores 4 a 6</span>
+      </div>
+      <div class="pilar-body" id="body-PV"></div>
+    </div>
+
+    <!-- PILAR GP -->
+    <div class="pilar-section" id="pilar-GP">
+      <div class="pilar-header" style="background: var(--GP-color)">
+        <div class="pilar-badge" style="background:rgba(255,255,255,0.2);color:white">GP</div>
+        <h3>Gestão de Pessoas</h3>
+        <span class="pilar-count">Fatores 7 a 10</span>
+      </div>
+      <div class="pilar-body" id="body-GP"></div>
+    </div>
+
+    <!-- PILAR GI -->
+    <div class="pilar-section" id="pilar-GI">
+      <div class="pilar-header" style="background: var(--GI-color)">
+        <div class="pilar-badge" style="background:rgba(255,255,255,0.2);color:white">GI</div>
+        <h3>Governança e Indicadores</h3>
+        <span class="pilar-count">Fatores 11 a 13</span>
+      </div>
+      <div class="pilar-body" id="body-GI"></div>
+    </div>
+
+    <!-- PILAR RC -->
+    <div class="pilar-section" id="pilar-RC">
+      <div class="pilar-header" style="background: var(--RC-color)">
+        <div class="pilar-badge" style="background:rgba(255,255,255,0.2);color:white">RC</div>
+        <h3>Relacionamento com Clientes</h3>
+        <span class="pilar-count">Fatores 14 a 17</span>
+      </div>
+      <div class="pilar-body" id="body-RC"></div>
+    </div>
+
+    <div class="nav-section-btns">
+      <button class="btn btn-outline" id="btnPrevPilar" onclick="prevPilar()" disabled>&larr; Pilar Anterior</button>
+      <button class="btn btn-teal" id="btnNextPilar" onclick="nextPilar()">Próximo Pilar &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: RESULTADOS -->
+<div id="page-resultados" class="page">
+  <div class="content-wrap">
+    <div class="results-tabs">
+      <button class="result-tab active" onclick="showResultTab('aba-diag')">
+        <span class="rt-num">01</span>
+        <span class="rt-lbl">Diagnóstico</span>
+        <span class="rt-sub">Matriz e perfil</span>
+      </button>
+      <button class="result-tab" onclick="showResultTab('aba-fhfd')">
+        <span class="rt-num">02</span>
+        <span class="rt-lbl">Faz Hoje</span>
+        <span class="rt-sub">Fazer diferente</span>
+      </button>
+      <button class="result-tab" onclick="showResultTab('aba-pdi')">
+        <span class="rt-num">03</span>
+        <span class="rt-lbl">PDI</span>
+        <span class="rt-sub">Desenvolvimento</span>
+      </button>
+      <button class="result-tab" onclick="showResultTab('aba-plano90')">
+        <span class="rt-num">04a</span>
+        <span class="rt-lbl">Plano 90 Dias</span>
+        <span class="rt-sub">Trimestral</span>
+      </button>
+      <button class="result-tab" onclick="showResultTab('aba-ptg')">
+        <span class="rt-num">04b</span>
+        <span class="rt-lbl">PTG Semanal</span>
+        <span class="rt-sub">Plano do gestor</span>
+      </button>
+    </div>
+    <div class="results-body">
+      <!-- ABA 01: DIAGNÓSTICO -->
+      <div id="aba-diag" class="result-pane active">
+        <div id="diag-content">
+          <p style="color:var(--gray-dark); font-style:italic; text-align:center; padding:40px 0">Complete a avaliação dos 17 fatores para visualizar o diagnóstico.</p>
+        </div>
+      </div>
+
+      <!-- ABA 02: FAZ HOJE / FAZER DIFERENTE -->
+      <div id="aba-fhfd" class="result-pane">
+        <div id="fhfd-content">
+          <p style="color:var(--gray-dark); font-style:italic; text-align:center; padding:40px 0">Complete a avaliação para visualizar as recomendações.</p>
+        </div>
+      </div>
+
+      <!-- ABA 03: PDI -->
+      <div id="aba-pdi" class="result-pane">
+        <div id="pdi-content">
+          <p style="color:var(--gray-dark); font-style:italic; text-align:center; padding:40px 0">Complete a avaliação para gerar o PDI.</p>
+        </div>
+      </div>
+
+      <!-- ABA 04a: PLANO 90 DIAS -->
+      <div id="aba-plano90" class="result-pane">
+        <div id="p90-content">
+          <p style="color:var(--gray-dark); font-style:italic; text-align:center; padding:40px 0">Complete a avaliação para gerar o Plano de 90 Dias.</p>
+        </div>
+      </div>
+
+      <!-- ABA 04b: PTG SEMANAL -->
+      <div id="aba-ptg" class="result-pane">
+        <div id="ptg-content">
+          <p style="color:var(--gray-dark); font-style:italic; text-align:center; padding:40px 0">Complete a avaliação para gerar o PTG Semanal.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPORT PANEL -->
+    <div class="export-panel">
+      <h4>Exportar para PDF</h4>
+      <p>Abra a seção desejada acima antes de exportar. Na nova aba: Ctrl+P &rarr; Destino: Salvar como PDF &rarr; Margens: Nenhuma &rarr; Ativar Gráficos de fundo.</p>
+      <div class="export-btns">
+        <button class="btn-export" onclick="exportSection('diag')">Diagnóstico</button>
+        <button class="btn-export" onclick="exportSection('fhfd')">Faz Hoje / Fazer Diferente</button>
+        <button class="btn-export" onclick="exportSection('pdi')">PDI</button>
+        <button class="btn-export" onclick="exportSection('p90')">Plano 90 Dias</button>
+        <button class="btn-export" onclick="exportSection('ptg')">PTG Semanal</button>
+        <button class="btn-export primary" onclick="exportAll()">Exportar Tudo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: GUIA DOS FATORES -->
+<div id="page-guia" class="page">
+  <div class="content-wrap">
+    <div class="guia-header">
+      <div class="section-label" style="margin-bottom:8px">Guia de Referência</div>
+      <h2 style="font-family:var(--font-title); font-size:24px; color:var(--navy); margin-bottom:10px">Os 17 Fatores Influenciadores de Desempenho</h2>
+      <p>Cada fator representa uma alavanca de resultado da gestão comercial. Entenda o que é cada um, por que importa, como ele se manifesta na prática e quais competências o gestor precisa desenvolver para fortalecê-lo. Clique em qualquer card para expandir o conteúdo.</p>
+    </div>
+    <div class="pilar-filter">
+      <button class="pf-btn all active" onclick="filterGuia('all', this)">Todos os Fatores</button>
+      <button class="pf-btn EC" onclick="filterGuia('EC', this)">Estratégia Comercial</button>
+      <button class="pf-btn PV" onclick="filterGuia('PV', this)">Processos de Vendas</button>
+      <button class="pf-btn GP" onclick="filterGuia('GP', this)">Gestão de Pessoas</button>
+      <button class="pf-btn GI" onclick="filterGuia('GI', this)">Governança e Indicadores</button>
+      <button class="pf-btn RC" onclick="filterGuia('RC', this)">Relacionamento com Clientes</button>
+    </div>
+    <div class="guia-cards" id="guiaCards"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════
+const FATORES = [
+  { id:1, nome:"Segmentação de Mercado", pilar:"Estratégia Comercial", pilarKey:"EC",
+    descricao:"Definição clara e estratégica dos segmentos de mercado-alvo, incluindo critérios de priorização, perfil de cliente ideal (ICP) e personas bem estruturadas.",
+    detalhes:"A segmentação eficaz permite focar recursos nos clientes mais valiosos e criar propostas de valor específicas. Sem ela, a equipe vende para qualquer um — e com muito menor eficiência.",
+    beneficios:["Foco em clientes com maior potencial de conversão","Mensagens de vendas mais assertivas e personalizadas","Otimização de recursos comerciais e de marketing","Maior taxa de fechamento e ticket médio"],
+    exemplos:["Dividir mercado por setor (indústria, varejo, serviços)","Segmentar por porte da empresa (pequeno, médio, grande)","Criar ICP (Ideal Customer Profile) detalhado e atualizado","Priorizar verticais com maior fit produto-mercado"],
+    competencias:["Análise de mercado e identificação de oportunidades","Criação de personas baseadas em dados reais","Definição de critérios de ICP","Priorização de segmentos por potencial e fit","Mapeamento de necessidades por segmento"],
+    ferramentas:["Canvas de Segmentação","Matriz BCG","ICP Template","Persona Map"],
+    tipo:"Hard Skill" },
+  { id:2, nome:"Proposta de Valor", pilar:"Estratégia Comercial", pilarKey:"EC",
+    descricao:"Clareza sobre o valor único entregue ao cliente, diferenciação competitiva e posicionamento de mercado que ressoa com as necessidades reais de cada segmento.",
+    detalhes:"Uma proposta de valor clara comunica por que o cliente deve escolher sua solução ao invés da concorrência. Sem ela, o vendedor vende por preço — e sempre perde margem.",
+    beneficios:["Diferenciação clara no mercado","Justificativa de preço mais alto","Redução de objeções em vendas","Alinhamento interno sobre posicionamento"],
+    exemplos:["Value Proposition Canvas preenchido e atualizado","Elevator pitch de 30 segundos treinado pela equipe","Casos de sucesso quantificados por segmento","ROI demonstrado para cada vertical"],
+    competencias:["Articulação clara do valor entregue","Diferenciação competitiva sustentável","Value selling e consultive selling","Mensuração de percepção de valor","Adaptação da proposta por segmento"],
+    ferramentas:["Value Proposition Canvas","Jobs-to-be-Done Framework","ROI Calculator"],
+    tipo:"Hard Skill" },
+  { id:3, nome:"Modelo de Go-to-Market", pilar:"Estratégia Comercial", pilarKey:"EC",
+    descricao:"Definição da estratégia de canais, estrutura de atendimento, modelo de cobertura e territorialização que otimiza o alcance de mercado com eficiência de custo.",
+    detalhes:"O GTM define como a empresa alcança e atende seus clientes de forma escalável e rentável. Um modelo equivocado gera alto CAC e baixa cobertura.",
+    beneficios:["Cobertura adequada do mercado-alvo","Eficiência no custo de aquisição","Escalabilidade da operação comercial","Clareza sobre responsabilidades por canal e território"],
+    exemplos:["Vendas diretas para grandes contas","Inside sales para médias empresas","Canais indiretos para pequenas empresas","Modelo híbrido com especialização por função"],
+    competencias:["Estratégia de canais (direto, indireto, híbrido)","Definição de territórios e cobertura","Modelo de especialização da equipe","Estratégia de expansão geográfica","Parcerias e ecossistema comercial"],
+    ferramentas:["GTM Canvas","Mapa de Cobertura","Definição de Territórios"],
+    tipo:"Hard Skill" },
+  { id:4, nome:"Metodologia de Vendas", pilar:"Processos de Vendas", pilarKey:"PV",
+    descricao:"Processo estruturado e replicável de vendas, desde prospecção até fechamento, com etapas claras, critérios de passagem e playbooks definidos.",
+    detalhes:"Uma metodologia bem definida garante consistência, previsibilidade e capacidade de replicação do sucesso. Sem ela, cada vendedor faz do seu jeito — e os resultados são imprevisíveis.",
+    beneficios:["Previsibilidade de resultados","Onboarding mais rápido de novos vendedores","Identificação de gargalos no processo","Melhoria contínua baseada em dados"],
+    exemplos:["SPIN Selling implementado e treinado","Solution Selling estruturado por etapa","Challenger Sale adaptado ao contexto","BANT ou MEDDIC como critério de qualificação"],
+    competencias:["Mapeamento e documentação do processo","Definição de gates entre etapas","Criação de playbooks e scripts","Metodologias estruturadas (SPIN, Challenger, etc.)","Qualificação efetiva de oportunidades"],
+    ferramentas:["SPIN Selling","Solution Selling","Challenger Sale","BANT/MEDDIC"],
+    tipo:"Hard Skill" },
+  { id:5, nome:"Gestão de Funil e Pipeline", pilar:"Processos de Vendas", pilarKey:"PV",
+    descricao:"Visibilidade completa sobre oportunidades em cada etapa, gestão de pipeline saudável, taxas de conversão monitoradas e previsibilidade de resultados.",
+    detalhes:"Pipeline saudável é essencial para previsibilidade e permite identificar onde o processo trava. Sem gestão ativa, o gestor só descobre os problemas quando as metas não são atingidas.",
+    beneficios:["Visibilidade de receita futura","Identificação precisa de gargalos","Priorização de esforços da equipe","Forecast mais acurado para o negócio"],
+    exemplos:["Stages bem definidos e documentados no CRM","Critérios de passagem entre etapas claros","Ritual semanal de pipeline review","Métricas de conversão acompanhadas por stage"],
+    competencias:["Estruturação de stages do funil","Definição de taxas de conversão esperadas","Higienização regular do pipeline","Pipeline review estruturado","Gestão de velocidade e volume"],
+    ferramentas:["Pipeline Management","Forecast Tools","Conversion Analytics"],
+    tipo:"Hard Skill" },
+  { id:6, nome:"CRM e Ferramentas", pilar:"Processos de Vendas", pilarKey:"PV",
+    descricao:"Tecnologia adequada para suportar processos comerciais, automações inteligentes, integrações eficientes e adoção consistente pelo time de vendas.",
+    detalhes:"Ferramentas certas aumentam produtividade, garantem histórico de relacionamento e permitem análises que suportam decisões. CRM sem adoção é apenas custo.",
+    beneficios:["Histórico completo de interações com clientes","Automação de tarefas repetitivas e follow-ups","Relatórios e dashboards em tempo real","Integração entre vendas, marketing e pós-venda"],
+    exemplos:["CRM implementado com taxa de adoção acima de 80%","Integrações ativas com email e calendário","Automações de follow-up configuradas","Dashboards de performance acessíveis ao time"],
+    competencias:["Seleção de CRM adequado ao negócio","Configuração de campos e automações","Treinamento e adoção pelo time","Integrações com outros sistemas","Uso de dados para tomada de decisão"],
+    ferramentas:["Salesforce","HubSpot","Pipedrive","RD Station CRM"],
+    tipo:"Hard Skill" },
+  { id:7, nome:"Perfil e Recrutamento", pilar:"Gestão de Pessoas", pilarKey:"GP",
+    descricao:"Clareza sobre perfil ideal de cada cargo comercial, processo seletivo estruturado, avaliação de fit cultural e técnico, onboarding efetivo de 30-60-90 dias.",
+    detalhes:"Contratar certo desde o início reduz turnover, acelera resultados e fortalece a cultura. Seleção por instinto custa caro e desmotiva o time.",
+    beneficios:["Redução significativa de turnover","Ramp-up mais rápido de novos contratados","Fit cultural garantido desde o início","Maior taxa de sucesso no primeiro ano"],
+    exemplos:["Job description com competências técnicas e comportamentais","Entrevistas situacionais com método STAR","Assessment de competências aplicado","Onboarding estruturado de 30-60-90 dias"],
+    competencias:["Definição de perfil de competências por cargo","Processo seletivo estruturado e documentado","Entrevistas situacionais e cases práticos","Avaliação de fit cultural","Onboarding estruturado de 30-60-90 dias"],
+    ferramentas:["Entrevista STAR","Assessment Tools","Case de Vendas"],
+    tipo:"Hard Skill" },
+  { id:8, nome:"Capacitação e Coaching", pilar:"Gestão de Pessoas", pilarKey:"GP",
+    descricao:"Desenvolvimento contínuo de habilidades técnicas e comportamentais através de treinamentos estruturados, coaching individual regular e prática deliberada.",
+    detalhes:"Investir no desenvolvimento do time gera engajamento, melhora performance de forma sustentável e cria uma cultura de aprendizado. Equipes que param de aprender param de crescer.",
+    beneficios:["Evolução contínua da equipe comercial","Maior engajamento e retenção de talentos","Melhoria de performance individual","Desenvolvimento de sucessores internos"],
+    exemplos:["Trilha de onboarding estruturada de 90 dias","Sessões de coaching semanal 1-on-1","Role plays e simulações de situações reais","Certificações e treinamentos externos relevantes"],
+    competencias:["Trilha de capacitação por senioridade","Coaching individual estruturado","Role plays e simulações práticas","Biblioteca de conhecimento atualizada","Mentoria e shadowing"],
+    ferramentas:["Coaching Framework","Role Play Scripts","Learning Management System"],
+    tipo:"Soft Skill" },
+  { id:9, nome:"Cultura e Engajamento", pilar:"Gestão de Pessoas", pilarKey:"GP",
+    descricao:"Ambiente que promove alta performance, colaboração genuína, pertencimento e comportamentos alinhados aos valores da empresa.",
+    detalhes:"Cultura forte é o diferencial entre equipes que entregam e equipes que superam. Valores vividos no dia a dia criam comprometimento que nenhum salário compra.",
+    beneficios:["Maior retenção dos melhores talentos","Produtividade elevada de forma sustentável","Colaboração natural entre áreas","Employer branding forte que atrai candidatos"],
+    exemplos:["Valores vividos no dia a dia — não apenas na parede","Rituais de reconhecimento frequentes e genuínos","Ambiente de feedback aberto e psicologicamente seguro","Celebração de conquistas individuais e coletivas"],
+    competencias:["Definição e vivência de valores","Rituais de reconhecimento","Promoção de colaboração entre pares","Medição e ação sobre engajamento","Ambiente psicologicamente seguro"],
+    ferramentas:["Employee Engagement Survey","Recognition Platform","Culture Canvas"],
+    tipo:"Soft Skill" },
+  { id:10, nome:"Remuneração Variável", pilar:"Gestão de Pessoas", pilarKey:"GP",
+    descricao:"Sistema de recompensas justo, transparente, alinhado aos objetivos estratégicos e genuinamente motivador — comissionamento, bônus e aceleradores de resultado.",
+    detalhes:"Comissionamento bem estruturado direciona comportamento e motiva resultado. Um plano mal desenhado cria distorções, desmotivação e comportamentos contraproducentes.",
+    beneficios:["Alinhamento de incentivos individuais e da empresa","Motivação sustentada do time comercial","Atração de talentos pelo mercado","Controle eficiente de custos variáveis"],
+    exemplos:["Plano de comissionamento transparente e documentado","Aceleradores para desempenho acima da meta","SPIFs para objetivos específicos e temporários","Metas claras, desafiadoras e alcançáveis"],
+    competencias:["Estrutura de comissionamento adequada ao negócio","Alinhamento de metas individuais e da empresa","Transparência nos critérios e regras","Aceleradores e campanhas pontuais","Equilíbrio entre fixo e variável"],
+    ferramentas:["Compensation Plan Template","Commission Calculator","SPIFs Designer"],
+    tipo:"Hard Skill" },
+  { id:11, nome:"KPIs e Métricas", pilar:"Governança e Indicadores", pilarKey:"GI",
+    descricao:"Sistema robusto de indicadores que medem performance, eficiência e resultados em diferentes níveis — operacional, tático e estratégico.",
+    detalhes:"O que não é medido não é gerenciado. KPIs claros permitem gestão por dados e eliminam as discussões subjetivas sobre desempenho.",
+    beneficios:["Decisões baseadas em dados concretos","Identificação rápida de problemas e desvios","Transparência total sobre performance","Cultura data-driven instalada no time"],
+    exemplos:["Dashboard com 5 a 7 KPIs principais visível para o time","Leading e lagging indicators separados e monitorados","Metas definidas por indicador com linha de base","Review mensal de métricas com a equipe"],
+    competencias:["Definição de KPIs por nível hierárquico","Criação de dashboards de acompanhamento","Estabelecimento de metas e benchmarks","Garantia de qualidade dos dados","Análise e storytelling com dados"],
+    ferramentas:["Dashboard BI","Scorecard","Metrics Framework"],
+    tipo:"Hard Skill" },
+  { id:12, nome:"Rituais de Gestão", pilar:"Governança e Indicadores", pilarKey:"GI",
+    descricao:"Reuniões e cerimônias estruturadas que garantem alinhamento, accountability, resolução de problemas e performance consistente ao longo do tempo.",
+    detalhes:"Rituais bem conduzidos criam disciplina, alinhamento e senso de urgência. Sem eles, o gestor apaga incêndios em vez de construir resultados.",
+    beneficios:["Alinhamento constante entre gestor e equipe","Problemas identificados e tratados precocemente","Senso de urgência e accountability claros","Decisões documentadas e acompanhadas"],
+    exemplos:["Daily stand-up de 15 minutos com foco em resultados","Pipeline review semanal com toda a equipe","Forecast meeting mensal com análise de tendências","QBR trimestral com revisão completa de estratégia"],
+    competencias:["Cadência de reuniões estruturada (1-on-1, team, reviews)","Agenda e formato definidos com antecedência","Preparação e follow-up efetivos","Documentação de decisões e encaminhamentos","Uso inteligente do tempo de gestão"],
+    ferramentas:["Meeting Agenda Templates","Cadence Framework","Action Tracker"],
+    tipo:"Soft Skill" },
+  { id:13, nome:"Previsão de Vendas", pilar:"Governança e Indicadores", pilarKey:"GI",
+    descricao:"Capacidade de prever resultados com acurácia crescente, baseada em pipeline real, histórico de conversão e variáveis conhecidas do negócio.",
+    detalhes:"Forecast preciso permite planejamento financeiro e operacional adequado. Sem ele, a empresa oscila entre excesso de otimismo e surpresas negativas.",
+    beneficios:["Planejamento financeiro preciso e confiável","Gestão saudável de expectativas internas","Decisões de contratação e operação informadas","Confiança da diretoria e sócios nos números"],
+    exemplos:["Forecast com acurácia de +/- 10% do resultado real","Categorias de probabilidade definidas (commit, upside, pipeline)","Análise sistemática de previsto versus realizado","Commit e upside separados e tratados diferentemente"],
+    competencias:["Modelo de forecast baseado em dados reais","Categorias de probabilidade bem definidas","Análise previsto vs realizado sistemática","Melhoria contínua de acurácia do forecast","Comunicação do forecast para stakeholders"],
+    ferramentas:["Forecast Model","Probability Calculator","Historical Analysis"],
+    tipo:"Hard Skill" },
+  { id:14, nome:"Experiência do Cliente", pilar:"Relacionamento com Clientes", pilarKey:"RC",
+    descricao:"Jornada do cliente cuidadosamente planejada para gerar satisfação, encantamento e valor percebido em cada ponto de contato com a empresa.",
+    detalhes:"CX excepcional gera retenção natural, upsell orgânico e indicações espontâneas. Clientes que se sentem bem atendidos voltam e trazem outros.",
+    beneficios:["Maior retenção e lealdade dos clientes","NPS elevado e crescente","Indicações orgânicas que reduzem CAC","Redução natural de churn"],
+    exemplos:["Journey map completo documentado e revisado","Touchpoints mapeados e otimizados por etapa","NPS medido e acompanhado trimestralmente","Processo de onboarding de cliente estruturado"],
+    competencias:["Mapeamento da jornada do cliente","Identificação de pontos de atrito e melhoria","Padrões de atendimento de excelência","Medição de NPS e satisfação","Recuperação proativa de problemas"],
+    ferramentas:["Customer Journey Map","NPS Survey","CX Analytics"],
+    tipo:"Soft Skill" },
+  { id:15, nome:"Gestão de Carteira", pilar:"Relacionamento com Clientes", pilarKey:"RC",
+    descricao:"Estratégia estruturada de relacionamento e desenvolvimento de contas, segmentação por potencial, planos de conta estratégicos e equilíbrio hunting/farming.",
+    detalhes:"Carteira bem gerida equilibra hunting e farming, maximizando o lifetime value da base instalada. Gestão reativa de carteira perde oportunidades todos os meses.",
+    beneficios:["Maximização do LTV da base de clientes","Equilíbrio saudável entre hunting e farming","Identificação precoce de riscos de perda","Oportunidades de expansão capturadas sistematicamente"],
+    exemplos:["Segmentação de carteira por potencial e risco (A/B/C)","Account plans para contas estratégicas","Cadência de contato definida por segmento","Health score por cliente monitorado mensalmente"],
+    competencias:["Segmentação de carteira por potencial e risco","Planos de conta para clientes estratégicos","Frequência e qualidade de contato por segmento","Balanceamento entre prospecção e farming","Account mapping e stakeholder management"],
+    ferramentas:["Account Planning Template","Portfolio Matrix","Health Score"],
+    tipo:"Hard Skill" },
+  { id:16, nome:"Pós-Venda e Sucesso do Cliente", pilar:"Relacionamento com Clientes", pilarKey:"RC",
+    descricao:"Garantia de entrega de valor após a venda, resolução proativa de problemas, acompanhamento de health score e QBRs estruturadas para desenvolvimento de contas.",
+    detalhes:"CS proativo previne churn e identifica oportunidades de expansão antes que o cliente pense em sair. A venda não termina no fechamento — começa ali.",
+    beneficios:["Redução consistente de churn","Upsell e cross-sell naturais e frequentes","Referências qualificadas de clientes satisfeitos","Feedback valioso para melhoria do produto/serviço"],
+    exemplos:["Onboarding de cliente estruturado e documentado","QBRs trimestrais com agenda definida","Check-ins proativos antes que o cliente reclame","Success plans por conta estratégica"],
+    competencias:["Processo de transição vendas-entrega","QBRs (Quarterly Business Reviews) estruturadas","Health score e sistema de early warning","Ação proativa em riscos de churn","Criação de defensores e promotores da marca"],
+    ferramentas:["CS Platform","QBR Template","Success Plan"],
+    tipo:"Soft Skill" },
+  { id:17, nome:"Retenção e Expansão", pilar:"Relacionamento com Clientes", pilarKey:"RC",
+    descricao:"Estratégias sistemáticas para reduzir churn, aumentar lifetime value através de upsell, cross-sell e expansão planejada dentro da base de clientes instalada.",
+    detalhes:"Crescer dentro da base instalada é mais eficiente e menos custoso que adquirir novos clientes. Empresas que não medem retenção perdem dinheiro sem perceber.",
+    beneficios:["Maior eficiência no custo de aquisição (CAC)","Crescimento sustentável a partir da base","Base instalada como ativo estratégico","Net revenue retention acima de 100%"],
+    exemplos:["Programa de upsell estruturado com playbook","Identificação sistemática de triggers de expansão","Métricas de churn acompanhadas mensalmente","Net retention medido e reportado para a diretoria"],
+    competencias:["Medição e redução sistemática de churn","Programa estruturado de upsell e cross-sell","Identificação de triggers de expansão","Meta de revenue expansion (NRR)","Economia de unidade e relação LTV:CAC"],
+    ferramentas:["Retention Analytics","Expansion Playbook","Churn Predictor"],
+    tipo:"Hard Skill" }
+];
+
+const PILAR_INFO = {
+  EC: { nome: "Estratégia Comercial", cor: "var(--EC-color)", light: "var(--EC-light)", fatores: [0,1,2] },
+  PV: { nome: "Processos de Vendas", cor: "var(--PV-color)", light: "var(--PV-light)", fatores: [3,4,5] },
+  GP: { nome: "Gestão de Pessoas", cor: "var(--GP-color)", light: "var(--GP-light)", fatores: [6,7,8,9] },
+  GI: { nome: "Governança e Indicadores", cor: "var(--GI-color)", light: "var(--GI-light)", fatores: [10,11,12] },
+  RC: { nome: "Relacionamento com Clientes", cor: "var(--RC-color)", light: "var(--RC-light)", fatores: [13,14,15,16] }
+};
+
+const RECOM = {
+  1: { fazHoje:"Vendendo para qualquer empresa que apareça, sem critério de priorização de segmento ou perfil ideal de cliente.",fazerDif:"Construir ou revisar o ICP da empresa, definindo os 2-3 segmentos com maior taxa de fechamento e ticket médio.",impacto:"Redução do ciclo de vendas e aumento da taxa de conversão ao focar nos segmentos certos.",pdiComp:"Estratégia de Segmentação de Mercado",pdiAcao:"Elaborar o ICP da empresa e apresentar para a equipe em até 30 dias.",pdiPrazo:"30 dias" },
+  2: { fazHoje:"Apresentando a empresa e o produto de forma genérica, sem articular claramente o valor e a diferenciação para o cliente.",fazerDif:"Criar ou revisar a proposta de valor por segmento, com casos de sucesso quantificados e ROI demonstrado.",impacto:"Redução de objeções sobre preço e aumento de velocidade no ciclo de vendas.",pdiComp:"Construção de Proposta de Valor",pdiAcao:"Desenvolver proposta de valor com casos de sucesso para os 2 principais segmentos.",pdiPrazo:"45 dias" },
+  3: { fazHoje:"Atendendo clientes de forma reativa, sem estratégia definida de canais, territórios ou especialização da equipe.",fazerDif:"Definir o modelo de go-to-market com canais, coberturas e responsabilidades claras por perfil de cliente.",impacto:"Aumento de cobertura de mercado e redução do custo de aquisição por cliente.",pdiComp:"Modelo Go-to-Market",pdiAcao:"Mapear canais atuais e definir modelo de cobertura ideal para os próximos 6 meses.",pdiPrazo:"60 dias" },
+  4: { fazHoje:"Cada vendedor desenvolveu seu próprio jeito de vender, sem processo documentado ou critérios comuns de qualificação.",fazerDif:"Documentar o processo de vendas atual, definir etapas claras e criar playbooks mínimos para cada fase.",impacto:"Maior previsibilidade de resultados e aceleração do onboarding de novos vendedores.",pdiComp:"Metodologia e Processo de Vendas",pdiAcao:"Documentar o funil de vendas com etapas e critérios de passagem. Criar um playbook básico de qualificação.",pdiPrazo:"45 dias" },
+  5: { fazHoje:"Pipeline gerenciado de forma reativa, sem visibilidade clara sobre o status das oportunidades e tendências de resultado.",fazerDif:"Estruturar stages do funil no CRM, implementar ritual semanal de pipeline review e monitorar taxas de conversão.",impacto:"Identificação precoce de gargalos e aumento da previsibilidade de receita.",pdiComp:"Gestão de Pipeline e Funil",pdiAcao:"Implementar pipeline review semanal com agenda estruturada e métricas de conversão por etapa.",pdiPrazo:"30 dias" },
+  6: { fazHoje:"CRM subutilizado ou inexistente. Informações de clientes e oportunidades dispersas em planilhas e memória individual.",fazerDif:"Garantir adoção do CRM acima de 80%, configurar automações básicas de follow-up e criar dashboards de acompanhamento.",impacto:"Histórico de relacionamento preservado, aumento de produtividade e decisões baseadas em dados.",pdiComp:"Adoção de CRM e Ferramentas Comerciais",pdiAcao:"Auditar uso atual do CRM e criar plano de adoção com treinamento para toda a equipe.",pdiPrazo:"30 dias" },
+  7: { fazHoje:"Contratando por urgência, sem processo estruturado, avaliando mais pela impressão do que por competências objetivas.",fazerDif:"Criar descrição de cargo com competências técnicas e comportamentais, implementar entrevistas situacionais e onboarding de 90 dias.",impacto:"Redução de turnover e aumento da velocidade de ramp-up de novos vendedores.",pdiComp:"Recrutamento e Seleção Estruturados",pdiAcao:"Elaborar job description por cargo e estruturar roteiro de entrevista situacional.",pdiPrazo:"45 dias" },
+  8: { fazHoje:"Treinamentos pontuais e reativos, sem programa estruturado. Coaching acontece apenas quando há problema de desempenho.",fazerDif:"Criar trilha de capacitação por senioridade e implementar sessões semanais de coaching 1-on-1 com agenda definida.",impacto:"Evolução contínua da equipe, maior engajamento e melhoria de performance ao longo do tempo.",pdiComp:"Capacitação e Coaching da Equipe",pdiAcao:"Criar calendário trimestral de capacitação e iniciar 1-on-1 semanal com cada vendedor.",pdiPrazo:"30 dias" },
+  9: { fazHoje:"Cultura implícita e não gerenciada. Valores declarados mas não vividos. Reconhecimento raro ou ausente.",fazerDif:"Tornar os valores tangíveis com comportamentos concretos, criar rituais de reconhecimento e medir engajamento periodicamente.",impacto:"Maior retenção de talentos, produtividade elevada e colaboração natural entre a equipe.",pdiComp:"Cultura e Engajamento da Equipe",pdiAcao:"Criar ritual mensal de reconhecimento e realizar pesquisa de engajamento semestral.",pdiPrazo:"30 dias" },
+  10: { fazHoje:"Plano de remuneração variável desatualizado, pouco transparente ou não alinhado às prioridades estratégicas da empresa.",fazerDif:"Revisar o plano de comissionamento com transparência total, aceleradores claros e alinhamento com metas da empresa.",impacto:"Maior motivação, direcionamento correto de esforço e retenção dos melhores vendedores.",pdiComp:"Remuneração Variável e Incentivos",pdiAcao:"Revisar o plano de comissionamento atual e apresentar proposta de melhoria com critérios claros.",pdiPrazo:"60 dias" },
+  11: { fazHoje:"Poucos indicadores acompanhados, geralmente apenas o resultado final de vendas. Decisões tomadas por percepção.",fazerDif:"Definir 5-7 KPIs principais (leading e lagging), criar dashboard de acompanhamento e revisar com a equipe mensalmente.",impacto:"Decisões baseadas em dados, identificação precoce de desvios e cultura data-driven instalada.",pdiComp:"KPIs e Gestão por Indicadores",pdiAcao:"Definir painel de KPIs com metas e criar ritual mensal de revisão de métricas com a equipe.",pdiPrazo:"30 dias" },
+  12: { fazHoje:"Reuniões sem agenda definida, sem follow-up e sem ritmo regular. Gestão ocorre por demanda e reatividade.",fazerDif:"Implementar cadência de rituais: daily de 15 min, pipeline review semanal e 1-on-1 quinzenal com cada vendedor.",impacto:"Alinhamento constante, problemas tratados preventivamente e senso de urgência e accountability no time.",pdiComp:"Rituais de Gestão e Cadência",pdiAcao:"Implementar cadência semanal com agenda estruturada para pipeline review e 1-on-1.",pdiPrazo:"15 dias" },
+  13: { fazHoje:"Forecast baseado em intuição ou otimismo. Alta variabilidade entre previsão e resultado real.",fazerDif:"Criar modelo de forecast com categorias de probabilidade (commit, upside, pipeline) e analisar previsto vs realizado mensalmente.",impacto:"Planejamento financeiro mais preciso e credibilidade dos números internamente.",pdiComp:"Previsão de Vendas e Forecast",pdiAcao:"Estruturar modelo de forecast com 3 categorias de probabilidade e histórico dos últimos 6 meses.",pdiPrazo:"45 dias" },
+  14: { fazHoje:"Jornada do cliente não mapeada. Atendimento reativo, sem padrões definidos de qualidade por etapa.",fazerDif:"Mapear a jornada do cliente, identificar pontos de atrito e definir padrões de atendimento por etapa.",impacto:"Maior satisfação, redução de churn e geração orgânica de indicações e recomendações.",pdiComp:"Experiência e Jornada do Cliente",pdiAcao:"Mapear a jornada atual do cliente e identificar os 3 principais pontos de atrito para resolver.",pdiPrazo:"45 dias" },
+  15: { fazHoje:"Carteira tratada de forma uniforme, sem segmentação por potencial. Foco excessivo em novos clientes negligenciando a base.",fazerDif:"Segmentar carteira por potencial (A/B/C), criar planos de conta para clientes estratégicos e definir cadência de contato.",impacto:"Maximização do LTV da base, identificação precoce de riscos e captura de oportunidades de expansão.",pdiComp:"Gestão Estratégica de Carteira",pdiAcao:"Segmentar carteira e criar account plan para os 5 principais clientes estratégicos.",pdiPrazo:"30 dias" },
+  16: { fazHoje:"Pós-venda reativo: só atua quando o cliente reclama. Sem processo estruturado de onboarding ou acompanhamento.",fazerDif:"Criar processo de onboarding de cliente, implementar check-ins proativos e realizar QBRs trimestrais com contas-chave.",impacto:"Redução de churn, aumento de upsell natural e geração de referências qualificadas.",pdiComp:"Pós-Venda e Sucesso do Cliente",pdiAcao:"Criar processo de onboarding e implementar QBR trimestral para as 10 principais contas.",pdiPrazo:"45 dias" },
+  17: { fazHoje:"Receita de clientes existentes estagnada. Upsell e cross-sell acontecem por acaso, não por estratégia.",fazerDif:"Criar programa de upsell estruturado, medir NRR e identificar triggers de expansão nos clientes atuais.",impacto:"Crescimento mais eficiente com menor custo de aquisição e NRR acima de 100%.",pdiComp:"Retenção e Expansão de Receita",pdiAcao:"Medir NRR atual e criar playbook de expansão para os 10 clientes com maior potencial.",pdiPrazo:"60 dias" }
+};
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+let scores = {}; // {fatId: {dev: n, imp: n}}
+let currentPilar = 0;
+const PILAR_KEYS = ['EC','PV','GP','GI','RC'];
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+window.onload = function() {
+  buildAssessment();
+  buildGuia();
+  loadData();
+};
+
+function buildAssessment() {
+  const SCORE_LABELS = ['','Inexistente','Iniciando','Parcial','Desenvolvido','Excelente'];
+  const IMP_LABELS = ['','Muito baixo','Baixo','Moderado','Alto','Crítico'];
+
+  FATORES.forEach(f => {
+    const pilarKey = f.pilarKey;
+    const body = document.getElementById('body-' + pilarKey);
+    const row = document.createElement('div');
+    row.className = 'fator-row';
+    row.innerHTML = `
+      <div class="fator-info">
+        <div class="fator-num">Fator ${f.id}</div>
+        <div class="fator-nome">${f.nome}</div>
+        <div class="fator-desc">${f.descricao}</div>
+      </div>
+      <div>
+        <div class="score-label">Nível de Desenvolvimento Atual</div>
+        <div class="score-options" id="dev-${f.id}">
+          ${[1,2,3,4,5].map(n => `<button class="score-option" onclick="setScore(${f.id},'dev',${n})" id="dev-${f.id}-${n}">
+            <span class="opt-num">${n}</span>
+            <span class="opt-lbl">${SCORE_LABELS[n]}</span>
+          </button>`).join('')}
+        </div>
+      </div>
+      <div>
+        <div class="score-label">Impacto nos Resultados</div>
+        <div class="score-options" id="imp-${f.id}">
+          ${[1,2,3,4,5].map(n => `<button class="score-option" onclick="setScore(${f.id},'imp',${n})" id="imp-${f.id}-${n}">
+            <span class="opt-num">${n}</span>
+            <span class="opt-lbl">${IMP_LABELS[n]}</span>
+          </button>`).join('')}
+        </div>
+      </div>
+    `;
+    body.appendChild(row);
+  });
+}
+
+function buildGuia() {
+  const container = document.getElementById('guiaCards');
+  FATORES.forEach(f => {
+    const div = document.createElement('div');
+    div.className = 'guia-card';
+    div.dataset.pilar = f.pilarKey;
+    div.innerHTML = `
+      <div class="guia-card-header" onclick="toggleGuia(this.parentElement)">
+        <div class="gc-num-badge" style="background:var(--${f.pilarKey}-color)">${f.id}</div>
+        <div class="gc-meta">
+          <div class="gc-pilar" style="color:var(--${f.pilarKey}-color)">${f.pilar}</div>
+          <div class="gc-nome">${f.nome}</div>
+          <span class="gc-tipo-badge gc-tipo-${f.tipo==='Hard Skill'?'hard':'soft'}">${f.tipo}</span>
+        </div>
+      </div>
+      <div class="guia-card-body">
+        <p class="guia-card-desc">${f.descricao}</p>
+        <div class="guia-detail">"${f.detalhes}"</div>
+        <div class="guia-section-title">Por que importa — Benefícios</div>
+        <ul class="guia-list">${f.beneficios.map(b=>`<li>${b}</li>`).join('')}</ul>
+        <div class="guia-section-title">Como se parece na prática</div>
+        <ul class="guia-list">${f.exemplos.map(e=>`<li>${e}</li>`).join('')}</ul>
+        <div class="guia-section-title">Competências para desenvolver</div>
+        <div class="gc-competencias">${f.competencias.map(c=>`<div class="gc-comp-item">${c}</div>`).join('')}</div>
+        <div class="guia-section-title">Ferramentas e referências</div>
+        <div class="gc-ferramentas">${f.ferramentas.map(t=>`<span class="gc-tool">${t}</span>`).join('')}</div>
+      </div>
+      <div class="guia-card-toggle"><button class="toggle-btn" onclick="toggleGuia(this.closest('.guia-card'))">Ver detalhes +</button></div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach((b,i) => {
+    const pages = ['page-id','page-avaliacao','page-resultados','page-guia'];
+    b.classList.toggle('active', pages[i] === id);
+  });
+  if (id === 'page-resultados') generateResults();
+}
+
+function prevPilar() {
+  if (currentPilar > 0) { currentPilar--; showPilar(); }
+}
+
+function nextPilar() {
+  if (currentPilar < PILAR_KEYS.length - 1) { currentPilar++; showPilar(); }
+  else { goPage('page-resultados'); }
+}
+
+function showPilar() {
+  document.querySelectorAll('.pilar-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('pilar-' + PILAR_KEYS[currentPilar]).classList.add('active');
+  const pct = ((currentPilar + 1) / PILAR_KEYS.length) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  const key = PILAR_KEYS[currentPilar];
+  const info = PILAR_INFO[key];
+  document.getElementById('progressLabel').textContent = `Pilar ${currentPilar+1} de 5 — ${info.nome}`;
+  const ids = info.fatores.map(i => FATORES[i].id);
+  document.getElementById('progressCount').textContent = `Fatores ${ids[0]}–${ids[ids.length-1]}`;
+  document.getElementById('btnPrevPilar').disabled = currentPilar === 0;
+  document.getElementById('btnNextPilar').textContent = currentPilar === PILAR_KEYS.length - 1 ? 'Ver Resultados →' : 'Próximo Pilar →';
+}
+
+function showResultTab(id) {
+  document.querySelectorAll('.result-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['aba-diag','aba-fhfd','aba-pdi','aba-plano90','aba-ptg'].indexOf(id);
+  document.querySelectorAll('.result-tab')[idx].classList.add('active');
+}
+
+function filterGuia(pilar, btn) {
+  document.querySelectorAll('.pf-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.guia-card').forEach(c => {
+    c.style.display = (pilar === 'all' || c.dataset.pilar === pilar) ? '' : 'none';
+  });
+}
+
+function toggleGuia(card) {
+  const isExp = card.classList.contains('expanded');
+  card.classList.toggle('expanded', !isExp);
+  card.querySelector('.toggle-btn').textContent = isExp ? 'Ver detalhes +' : 'Fechar —';
+}
+
+// ══════════════════════════════════════════════════════════
+// SCORING
+// ══════════════════════════════════════════════════════════
+function setScore(fatId, type, val) {
+  if (!scores[fatId]) scores[fatId] = {dev:0, imp:0};
+  scores[fatId][type] = val;
+
+  const cls = type === 'dev' ? 'selected-dev' : 'selected-imp';
+  for (let i = 1; i <= 5; i++) {
+    const btn = document.getElementById(`${type}-${fatId}-${i}`);
+    if (btn) btn.classList.remove(cls);
+  }
+  const sel = document.getElementById(`${type}-${fatId}-${val}`);
+  if (sel) sel.classList.add(cls);
+
+  saveData();
+}
+
+function getPilarScores() {
+  const result = {};
+  Object.entries(PILAR_INFO).forEach(([key, info]) => {
+    let sumDev = 0, sumImp = 0, count = 0;
+    info.fatores.forEach(idx => {
+      const f = FATORES[idx];
+      const s = scores[f.id];
+      if (s && s.dev > 0) { sumDev += s.dev; count++; }
+      if (s && s.imp > 0) { sumImp += s.imp; }
+    });
+    result[key] = {
+      dev: count > 0 ? sumDev / count : 0,
+      imp: count > 0 ? sumImp / count : 0,
+      nome: info.nome,
+      cor: info.cor
+    };
+  });
+  return result;
+}
+
+function getLevel(score) {
+  if (score >= 4.5) return { label: 'Excelente', color: '#2563eb' };
+  if (score >= 3.5) return { label: 'Desenvolvido', color: '#16a34a' };
+  if (score >= 2.5) return { label: 'Em desenvolvimento', color: '#ca8a04' };
+  if (score >= 1.5) return { label: 'Iniciando', color: '#ea580c' };
+  return { label: 'Necessita atenção', color: '#dc2626' };
+}
+
+function getPriorityFatores() {
+  // High impact (imp >= 4), low dev (dev <= 2.5) = Critical
+  // High impact (imp >= 3.5), medium dev (dev <= 3) = Priority
+  const criticos = [], prioridade = [], bons = [], programar = [];
+  FATORES.forEach(f => {
+    const s = scores[f.id];
+    if (!s || s.dev === 0) return;
+    if (s.imp >= 4 && s.dev <= 2) criticos.push(f);
+    else if (s.imp >= 3.5 && s.dev <= 3) prioridade.push(f);
+    else if (s.dev >= 4) bons.push(f);
+    else programar.push(f);
+  });
+  return { criticos, prioridade, bons, programar };
+}
+
+function getWeakPilares() {
+  const ps = getPilarScores();
+  return Object.entries(ps)
+    .filter(([,v]) => v.dev > 0)
+    .sort((a,b) => a[1].dev - b[1].dev)
+    .slice(0,2)
+    .map(([k]) => k);
+}
+
+function getWeakFatores(n=5) {
+  return FATORES
+    .filter(f => scores[f.id] && scores[f.id].dev > 0)
+    .sort((a,b) => {
+      const sa = scores[a.id], sb = scores[b.id];
+      const pA = (6-sa.dev) * sa.imp;
+      const pB = (6-sb.dev) * sb.imp;
+      return pB - pA;
+    })
+    .slice(0, n);
+}
+
+// ══════════════════════════════════════════════════════════
+// GENERATE RESULTS
+// ══════════════════════════════════════════════════════════
+function generateResults() {
+  const scored = FATORES.filter(f => scores[f.id] && scores[f.id].dev > 0);
+  if (scored.length < 5) {
+    ['diag','fhfd','pdi','p90','ptg'].forEach(id => {
+      document.getElementById(id+'-content').innerHTML = '<p style="color:var(--gray-dark); font-style:italic; text-align:center; padding:40px 0">Avalie pelo menos 5 fatores para visualizar os resultados.</p>';
+    });
+    return;
+  }
+  genDiag();
+  genFhfd();
+  genPdi();
+  genP90();
+  genPtg();
+}
+
+function genDiag() {
+  const ps = getPilarScores();
+  const { criticos, prioridade, bons } = getPriorityFatores();
+  const nomeFull = getId('nome') || 'Gestor';
+  const empresa = getId('empresa') || '';
+  const periodo = getId('periodo') || '';
+
+  const allDevScores = FATORES.filter(f => scores[f.id] && scores[f.id].dev > 0).map(f => scores[f.id].dev);
+  const mediaGeral = allDevScores.reduce((a,b) => a+b, 0) / allDevScores.length;
+
+  let alertHtml = '';
+  const devVals = Object.values(ps).filter(v => v.dev > 0).map(v => v.dev);
+  if (devVals.length > 1) {
+    const maxD = Math.max(...devVals), minD = Math.min(...devVals);
+    if (maxD - minD > 1.5) {
+      alertHtml = `<div class="alert-box"><strong>Atenção — Desequilíbrio entre pilares</strong>Há uma diferença de ${(maxD-minD).toFixed(1)} pontos entre o pilar mais e menos desenvolvido. Desequilíbrios acima de 1,5 pontos indicam que o crescimento de um pilar está limitado pelo gargalo dos demais.</div>`;
+    }
+  }
+
+  // Determine profile
+  let perfil = '', perfilDesc = '';
+  const avgDev = mediaGeral;
+  const topPilar = Object.entries(ps).filter(([,v])=>v.dev>0).sort((a,b)=>b[1].dev-a[1].dev)[0];
+  const weakPilar = Object.entries(ps).filter(([,v])=>v.dev>0).sort((a,b)=>a[1].dev-b[1].dev)[0];
+
+  if (avgDev >= 4) { perfil = 'Gestão Comercial Avançada'; perfilDesc = `A operação comercial está em nível avançado de maturidade. Os fundamentos estão sólidos e o foco deve estar em otimização e escalabilidade. O desafio principal agora é manter a consistência com o crescimento da operação.`; }
+  else if (avgDev >= 3) { perfil = 'Gestão Comercial em Desenvolvimento'; perfilDesc = `A operação tem bases estabelecidas mas ainda apresenta lacunas relevantes. O momento é de consolidar os processos mais críticos e elevar o desempenho dos pilares mais frágeis antes de avançar para maior sofisticação.`; }
+  else if (avgDev >= 2) { perfil = 'Gestão Comercial em Estruturação'; perfilDesc = `A operação está em fase de estruturação — há oportunidades de melhoria em múltiplos pilares. O foco deve ser nos fatores de maior impacto e menor desenvolvimento, que representam o maior potencial de alavancagem de resultado.`; }
+  else { perfil = 'Gestão Comercial Nascente'; perfilDesc = `A operação está nos estágios iniciais de estruturação. Há muito espaço de melhoria e as ações prioritárias devem focar em construir as bases: metodologia de vendas, funil estruturado e rituais de gestão mínimos.`; }
+
+  let narrativa = `<p>A análise dos 17 Fatores Influenciadores revela uma média geral de desenvolvimento de <strong>${mediaGeral.toFixed(1)} / 5,0</strong>, caracterizando o perfil de <strong>${perfil}</strong>.</p>`;
+  
+  if (topPilar) narrativa += `<p>O pilar mais desenvolvido é <strong>${PILAR_INFO[topPilar[0]].nome}</strong> (${topPilar[1].dev.toFixed(1)}), o que representa uma base importante para sustentar os demais. `;
+  if (weakPilar) narrativa += `O pilar que demanda mais atenção é <strong>${PILAR_INFO[weakPilar[0]].nome}</strong> (${weakPilar[1].dev.toFixed(1)}), com maior gap entre o nível atual e o necessário.</p>`;
+  
+  if (criticos.length > 0) narrativa += `<p>Os fatores mais críticos — alto impacto, baixo desenvolvimento — são: <strong>${criticos.map(f=>f.nome).join(', ')}</strong>. Estes devem ser endereçados com prioridade máxima no plano de ação.</p>`;
+
+  const doc = document.getElementById('diag-content');
+  doc.innerHTML = `
+    <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px; flex-wrap:wrap">
+      <div class="diag-score-big"><div class="dsb-val">${mediaGeral.toFixed(1)}</div><div class="dsb-lbl">Dev Médio</div></div>
+      <div>
+        <div class="section-label">Perfil da gestão comercial</div>
+        <div style="font-family:var(--font-title); font-size:20px; color:var(--navy); margin:4px 0">${perfil}</div>
+        <div style="font-size:13px; color:var(--slate)">${nomeFull}${empresa ? ' · ' + empresa : ''}${periodo ? ' · ' + periodo : ''}</div>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-bottom:12px">Desenvolvimento por pilar</div>
+    <div class="pilares-grid" style="margin-bottom:28px">
+      ${Object.entries(ps).filter(([,v])=>v.dev>0).map(([key,v]) => {
+        const lv = getLevel(v.dev);
+        const pct = (v.dev/5)*100;
+        return `<div class="pilar-card-result" style="border-top:3px solid var(--${key}-color)">
+          <div class="pcr-pilar" style="color:var(--${key}-color)">${key}</div>
+          <div class="pcr-nome">${PILAR_INFO[key].nome}</div>
+          <div class="pcr-score" style="color:var(--${key}-color)">${v.dev.toFixed(1)}<span style="font-size:14px;color:var(--gray-dark)"> / 5,0</span></div>
+          <div class="pcr-bar"><div class="pcr-fill" style="width:${pct}%;background:var(--${key}-color)"></div></div>
+          <div class="pcr-level" style="color:${lv.color}">${lv.label}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="two-charts">
+      <div class="chart-box">
+        <h4>Radar de Desenvolvimento por Pilar</h4>
+        <canvas id="radarChart" width="320" height="280"></canvas>
+      </div>
+      <div class="chart-box">
+        <h4>Matriz de Priorização — Desenvolvimento × Impacto</h4>
+        <canvas id="matrizChart" width="320" height="280"></canvas>
+        <div class="quadrant-legend">
+          <div class="ql-item"><div class="ql-dot" style="background:#dc2626"></div>Alta Prioridade</div>
+          <div class="ql-item"><div class="ql-dot" style="background:#ea580c"></div>Prioridade</div>
+          <div class="ql-item"><div class="ql-dot" style="background:#16a34a"></div>Pontos Fortes</div>
+          <div class="ql-item"><div class="ql-dot" style="background:#94a3b8"></div>Programar</div>
+        </div>
+      </div>
+    </div>
+
+    ${alertHtml}
+
+    <div class="narrative-box">
+      <div class="nb-title">Análise e Interpretação</div>
+      ${narrativa}
+    </div>
+
+    <div class="narrative-box" style="border-left-color:var(--coral)">
+      <div class="nb-title" style="color:var(--coral)">Perfil: ${perfil}</div>
+      <p>${perfilDesc}</p>
+      <p style="margin-top:10px"><strong>Orientação estratégica:</strong> Priorize o desenvolvimento dos fatores de maior impacto e menor desenvolvimento — especialmente ${PILAR_INFO[weakPilar ? weakPilar[0] : 'PV'].nome}. O equilíbrio entre os pilares é o que sustenta o crescimento consistente da operação comercial.</p>
+    </div>
+  `;
+
+  setTimeout(() => { drawRadar(ps); drawMatriz(); }, 100);
+}
+
+function drawRadar(ps) {
+  const canvas = document.getElementById('radarChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2 + 10;
+  const R = Math.min(W,H) * 0.37;
+  const keys = ['EC','PV','GP','GI','RC'];
+  const labels = ['Estratégia','Processos','Pessoas','Governança','Clientes'];
+  const N = keys.length;
+  ctx.clearRect(0,0,W,H);
+
+  // Grid
+  for (let r = 1; r <= 5; r++) {
+    ctx.beginPath();
+    for (let i = 0; i <= N; i++) {
+      const angle = (i/N)*Math.PI*2 - Math.PI/2;
+      const x = cx + Math.cos(angle) * R * (r/5);
+      const y = cy + Math.sin(angle) * R * (r/5);
+      i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; ctx.stroke();
+  }
+  // Axes
+  for (let i = 0; i < N; i++) {
+    const angle = (i/N)*Math.PI*2 - Math.PI/2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle)*R, cy + Math.sin(angle)*R);
+    ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; ctx.stroke();
+  }
+  // Data
+  ctx.beginPath();
+  keys.forEach((k,i) => {
+    const v = ps[k] ? ps[k].dev : 0;
+    const angle = (i/N)*Math.PI*2 - Math.PI/2;
+    const x = cx + Math.cos(angle)*R*(v/5);
+    const y = cy + Math.sin(angle)*R*(v/5);
+    i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(29,158,143,0.2)'; ctx.fill();
+  ctx.strokeStyle = '#1d9e8f'; ctx.lineWidth = 2.5; ctx.stroke();
+  // Points
+  keys.forEach((k,i) => {
+    const v = ps[k] ? ps[k].dev : 0;
+    const angle = (i/N)*Math.PI*2 - Math.PI/2;
+    const x = cx + Math.cos(angle)*R*(v/5);
+    const y = cy + Math.sin(angle)*R*(v/5);
+    ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.fillStyle = '#1d9e8f'; ctx.fill();
+  });
+  // Labels
+  ctx.font = '600 11px Source Sans 3, sans-serif';
+  ctx.fillStyle = '#1a2744'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  keys.forEach((k,i) => {
+    const angle = (i/N)*Math.PI*2 - Math.PI/2;
+    const x = cx + Math.cos(angle)*(R+28);
+    const y = cy + Math.sin(angle)*(R+22);
+    ctx.fillText(labels[i], x, y);
+    const v = ps[k] ? ps[k].dev : 0;
+    if (v > 0) {
+      ctx.font = '700 10px Source Sans 3, sans-serif'; ctx.fillStyle = '#1d9e8f';
+      ctx.fillText(v.toFixed(1), x, y+13);
+      ctx.font = '600 11px Source Sans 3, sans-serif'; ctx.fillStyle = '#1a2744';
+    }
+  });
+}
+
+function drawMatriz() {
+  const canvas = document.getElementById('matrizChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const pad = {l:36, r:16, t:16, b:36};
+  const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+  ctx.clearRect(0,0,W,H);
+
+  // Quadrant fills
+  ctx.fillStyle = 'rgba(220,38,38,0.07)';
+  ctx.fillRect(pad.l, pad.t, pw/2, ph/2);
+  ctx.fillStyle = 'rgba(234,88,12,0.06)';
+  ctx.fillRect(pad.l + pw/2, pad.t, pw/2, ph/2);
+  ctx.fillStyle = 'rgba(22,163,74,0.06)';
+  ctx.fillRect(pad.l + pw/2, pad.t + ph/2, pw/2, ph/2);
+  ctx.fillStyle = 'rgba(148,163,184,0.06)';
+  ctx.fillRect(pad.l, pad.t + ph/2, pw/2, ph/2);
+
+  // Center lines
+  ctx.strokeStyle = '#cbd5e0'; ctx.lineWidth = 1; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(pad.l + pw/2, pad.t); ctx.lineTo(pad.l + pw/2, pad.t + ph); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t + ph/2); ctx.lineTo(pad.l + pw, pad.t + ph/2); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Axes
+  ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t+ph); ctx.lineTo(pad.l+pw, pad.t+ph); ctx.stroke();
+
+  // Labels axes
+  ctx.font = '10px Source Sans 3, sans-serif'; ctx.fillStyle = '#718096'; ctx.textAlign = 'center';
+  ctx.fillText('1', pad.l + 0, pad.t+ph+14);
+  ctx.fillText('5', pad.l + pw, pad.t+ph+14);
+  ctx.fillText('Desenvolvimento', pad.l + pw/2, pad.t+ph+24);
+  ctx.save(); ctx.translate(12, pad.t + ph/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('Impacto', 0, 0); ctx.restore();
+
+  // Quadrant labels
+  ctx.font = '600 9px Source Sans 3, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(220,38,38,0.6)';
+  ctx.fillText('ALTA PRIORIDADE', pad.l + pw/4, pad.t + 14);
+  ctx.fillStyle = 'rgba(234,88,12,0.5)';
+  ctx.fillText('PRIORIDADE', pad.l + 3*pw/4, pad.t + 14);
+  ctx.fillStyle = 'rgba(148,163,184,0.7)';
+  ctx.fillText('PROGRAMAR', pad.l + pw/4, pad.t + ph - 8);
+  ctx.fillStyle = 'rgba(22,163,74,0.6)';
+  ctx.fillText('PONTOS FORTES', pad.l + 3*pw/4, pad.t + ph - 8);
+
+  // Points
+  FATORES.forEach(f => {
+    const s = scores[f.id];
+    if (!s || s.dev === 0) return;
+    const x = pad.l + ((s.dev - 1) / 4) * pw;
+    const y = pad.t + ph - ((s.imp - 1) / 4) * ph;
+
+    let color = '#94a3b8';
+    if (s.imp >= 4 && s.dev <= 2) color = '#dc2626';
+    else if (s.imp >= 3.5 && s.dev <= 3) color = '#ea580c';
+    else if (s.dev >= 4) color = '#16a34a';
+
+    ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI*2);
+    ctx.fillStyle = color; ctx.fill();
+    ctx.font = '700 8px Source Sans 3, sans-serif'; ctx.fillStyle = 'white'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(f.id, x, y);
+  });
+}
+
+function genFhfd() {
+  const weak = getWeakFatores(5);
+  if (weak.length === 0) return;
+  const nome = getId('nome') || 'Gestor';
+  const empresa = getId('empresa') || '';
+
+  let rows = weak.map(f => {
+    const r = RECOM[f.id];
+    const s = scores[f.id];
+    const lvl = getLevel(s.dev);
+    return `<tr>
+      <td>
+        <span class="dim-tag-inline" style="background:var(--${f.pilarKey}-light);color:var(--${f.pilarKey}-color)">${f.pilarKey} · F${f.id}</span>
+        <div style="font-weight:700;color:var(--navy);font-size:13px;margin-bottom:4px">${f.nome}</div>
+        <textarea rows="3">${r.fazHoje}</textarea>
+      </td>
+      <td>
+        <textarea rows="3">${r.fazerDif}</textarea>
+      </td>
+      <td>
+        <textarea rows="3">${r.impacto}</textarea>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('fhfd-content').innerHTML = `
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap">
+      <div>
+        <div style="font-family:var(--font-title); font-size:18px; color:var(--navy)">O que estou fazendo hoje — e o que devo fazer diferente</div>
+        <div style="font-size:12px; color:var(--slate); margin-top:4px">${nome}${empresa?' · '+empresa:''} · Baseado nos fatores de maior prioridade</div>
+      </div>
+    </div>
+    <p style="font-size:13px; color:var(--slate); margin-bottom:16px; line-height:1.6">Os campos abaixo são editáveis. Ajuste as descrições para que reflitam com precisão a sua realidade — o objetivo é que este plano seja de fato acionável.</p>
+    <table class="fhfd-table">
+      <thead><tr>
+        <th style="width:32%">Faz Hoje</th>
+        <th style="width:38%">Fazer Diferente</th>
+        <th style="width:30%">Impacto Esperado</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+function genPdi() {
+  const nome = getId('nome') || '';
+  const empresa = getId('empresa') || '';
+  const periodo = getId('periodo') || '';
+  const weakPilares = getWeakPilares();
+  const weak = getWeakFatores(3);
+
+  let comps = weak.map((f, idx) => {
+    const r = RECOM[f.id];
+    const s = scores[f.id];
+    return `<div class="competencia-card">
+      <div class="cc-header" style="background:var(--${f.pilarKey}-light)">
+        <div class="cc-num">${idx+1}</div>
+        <span class="cc-pilar-tag" style="background:var(--${f.pilarKey}-color);color:white">${f.pilarKey}</span>
+        <div class="cc-title">${r.pdiComp}</div>
+      </div>
+      <div class="cc-body">
+        <div class="cc-field">
+          <label>O que desenvolver</label>
+          <textarea>${f.nome}: ${f.descricao}</textarea>
+        </div>
+        <div class="cc-field">
+          <label>Como desenvolver</label>
+          <textarea>${r.pdiAcao}</textarea>
+        </div>
+        <div class="cc-field">
+          <label>Como aferir</label>
+          <textarea>Revisar semanalmente o progresso das ações definidas. Medir evolução do score deste fator na próxima avaliação.</textarea>
+        </div>
+        <div class="cc-field prazo-field">
+          <label>Prazo</label>
+          <textarea rows="2">${r.pdiPrazo}</textarea>
+          <div style="margin-top:12px">
+            <div class="section-label" style="margin-bottom:6px">Nível Atual → Alvo</div>
+            <div style="display:flex; gap:4px; margin-bottom:4px; align-items:center">
+              <span style="font-size:11px; color:var(--gray-dark); width:42px">Atual</span>
+              ${[1,2,3,4,5].map(n=>`<div style="width:22px;height:22px;border-radius:50%;border:2px solid ${n<=s.dev?'var(--coral)':'var(--gray-mid)'};background:${n<=s.dev?'var(--coral)':'white'}"></div>`).join('')}
+            </div>
+            <div style="display:flex; gap:4px; align-items:center">
+              <span style="font-size:11px; color:var(--gray-dark); width:42px">Alvo</span>
+              ${[1,2,3,4,5].map(n=>`<div style="width:22px;height:22px;border-radius:50%;border:2px solid ${n<=Math.min(s.dev+2,5)?'var(--teal)':'var(--gray-mid)'};background:${n<=Math.min(s.dev+2,5)?'var(--teal)':'white'}"></div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('pdi-content').innerHTML = `
+    <div class="pdi-header-info">
+      <div class="pdi-field"><label>Gestor</label><input type="text" value="${nome}"></div>
+      <div class="pdi-field"><label>Empresa</label><input type="text" value="${empresa}"></div>
+      <div class="pdi-field"><label>Período</label><input type="text" value="${periodo}"></div>
+      <div class="pdi-field"><label>Data de revisão</label><input type="text" placeholder="Ex: 30 de setembro de 2025"></div>
+      <div class="pdi-field full"><label>Objetivo geral do PDI</label>
+        <textarea rows="2">Desenvolver as competências identificadas como prioritárias na análise dos Fatores Influenciadores de Desempenho, com foco nos pilares de ${weakPilares.map(k=>PILAR_INFO[k].nome).join(' e ')}.</textarea>
+      </div>
+      <div class="pdi-field full"><label>Ações gerais de suporte</label>
+        <textarea rows="2">Realizar revisão quinzenal do PDI com a liderança. Registrar evidências de evolução para cada competência. Ajustar prazos conforme contexto.</textarea>
+      </div>
+    </div>
+    ${comps}
+  `;
+}
+
+function genP90() {
+  const weak = getWeakFatores(9);
+  const nome = getId('nome') || 'Gestor';
+  const empresa = getId('empresa') || '';
+  const periodo = getId('periodo') || '';
+
+  const meses = [
+    { titulo: 'Mês 1', foco: 'Fundação e Quick Wins', fatores: weak.slice(0,3) },
+    { titulo: 'Mês 2', foco: 'Consolidação', fatores: weak.slice(3,6) },
+    { titulo: 'Mês 3', foco: 'Avanço e Integração', fatores: weak.slice(6,9) }
+  ];
+
+  const ACOES_DEFAULT = {
+    M1: ['Realizar diagnóstico detalhado e mapear situação atual','Definir responsáveis e recursos necessários','Implementar ação inicial e medir baseline'],
+    M2: ['Consolidar aprendizados do mês 1','Ampliar abrangência da iniciativa para toda a equipe','Revisar e ajustar com base nos resultados iniciais'],
+    M3: ['Estabilizar rotina e indicadores','Documentar processo e boas práticas','Integrar com os demais pilares e avaliar progresso geral']
+  };
+
+  const colunas = meses.map((m, mi) => {
+    const fat = m.fatores.filter(f => f);
+    const fatHtml = fat.length > 0 ? fat.map(f => `
+      <div class="month-fator-item">
+        <div class="mfi-nome" style="color:var(--${f.pilarKey}-color)">F${f.id} · ${f.nome}</div>
+        <div class="mfi-acao"><textarea rows="3">${RECOM[f.id].pdiAcao}</textarea></div>
+      </div>
+    `).join('') : `<div class="month-fator-item"><div class="mfi-acao"><textarea rows="3">${ACOES_DEFAULT['M'+(mi+1)].join('\n')}</textarea></div></div>`;
+    
+    return `<div class="month-card">
+      <div class="month-header"><h4>${m.titulo}</h4><p>${m.foco}</p></div>
+      <div class="month-body">${fatHtml}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('p90-content').innerHTML = `
+    <div class="p90-intro">
+      <div style="font-family:var(--font-title); font-size:18px; color:var(--navy); margin-bottom:6px">Plano de Ação — 90 Dias</div>
+      <div style="font-size:12px; color:var(--slate)">${nome}${empresa?' · '+empresa:''} · ${periodo || 'Período a definir'}</div>
+      <p style="font-size:13px; color:var(--slate); margin-top:10px; line-height:1.6">As ações abaixo foram distribuídas em três meses com base nos fatores de maior prioridade. Os campos são editáveis — ajuste conforme a realidade e os recursos disponíveis na sua operação.</p>
+    </div>
+    <div class="p90-months">${colunas}</div>
+    <div class="narrative-box">
+      <div class="nb-title">Orientação para execução</div>
+      <p>O plano de 90 dias deve ser revisado ao final de cada mês. No encerramento do ciclo, reavaliar os fatores trabalhados e medir a evolução dos scores. O progresso real se mede pela mudança de comportamento da equipe — não apenas pela execução das tarefas.</p>
+    </div>
+  `;
+}
+
+function genPtg() {
+  const weak = getWeakFatores(3);
+  const nome = getId('nome') || 'Gestor';
+  const empresa = getId('empresa') || '';
+
+  const semanas = [
+    { num:1, foco:'Mapeamento e definição de prioridades' },
+    { num:2, foco:'Implementação das primeiras ações' },
+    { num:3, foco:'Acompanhamento e ajustes' },
+    { num:4, foco:'Revisão e planejamento do próximo ciclo' }
+  ];
+
+  const DIAS = ['Segunda','Terça','Quarta','Quinta','Sexta'];
+
+  const getAcaoDia = (semNum, dia) => {
+    if (semNum === 1) {
+      if (dia === 'Segunda') return weak[0] ? `Avaliar situação atual de "${weak[0].nome}" e conversar com equipe` : '';
+      if (dia === 'Terça') return weak[1] ? `Analisar gaps em "${weak[1].nome}" — identificar barreiras` : '';
+      if (dia === 'Quarta') return 'Revisar processos e documentação existente dos fatores prioritários';
+      if (dia === 'Quinta') return weak[2] ? `Planejar ação concreta para "${weak[2].nome}"` : '';
+      if (dia === 'Sexta') return 'Registrar diagnóstico da semana e definir agenda da próxima';
+    } else if (semNum === 2) {
+      if (dia === 'Segunda') return weak[0] ? `Iniciar implementação: "${RECOM[weak[0].id]?.pdiAcao || ''}"` : '';
+      if (dia === 'Terça') return 'Acompanhar andamento das ações e resolver impedimentos';
+      if (dia === 'Quarta') return 'Reunião de alinhamento com a equipe sobre as mudanças em curso';
+      if (dia === 'Quinta') return weak[1] ? `Avançar na ação de "${weak[1].nome}"` : '';
+      if (dia === 'Sexta') return 'Registrar aprendizados e medir primeiros indicadores';
+    } else if (semNum === 3) {
+      if (dia === 'Segunda') return 'Pipeline review com foco nos fatores de processo em desenvolvimento';
+      if (dia === 'Terça') return '1-on-1 com membro da equipe: coletar feedback sobre as mudanças';
+      if (dia === 'Quarta') return 'Revisar métricas e ajustar ações conforme resultados';
+      if (dia === 'Quinta') return weak[2] ? `Aprofundar desenvolvimento de "${weak[2].nome}"` : '';
+      if (dia === 'Sexta') return 'Atualizar plano de ação e registrar progresso no PDI';
+    } else {
+      if (dia === 'Segunda') return 'Revisão completa dos resultados das 4 semanas';
+      if (dia === 'Terça') return 'Reunião com a equipe: resultados, aprendizados e próximos passos';
+      if (dia === 'Quarta') return 'Reavaliar os scores dos fatores trabalhados no ciclo';
+      if (dia === 'Quinta') return 'Planejar ações do próximo ciclo de 4 semanas';
+      if (dia === 'Sexta') return 'Registrar documentação e boas práticas do ciclo';
+    }
+    return '';
+  };
+
+  const semanasHtml = semanas.map(s => `
+    <div class="ptg-week">
+      <div class="ptg-week-header">
+        <h4>Semana ${s.num}</h4>
+        <span>${s.foco}</span>
+      </div>
+      <div class="ptg-week-body">
+        ${DIAS.map(d => `
+          <div class="ptg-day-row">
+            <div class="ptg-day-lbl">${d}</div>
+            <textarea class="ptg-day-input" rows="2">${getAcaoDia(s.num, d)}</textarea>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('ptg-content').innerHTML = `
+    <div class="ptg-header">
+      <div class="pdi-field"><label>Gestor</label><input type="text" value="${nome}"></div>
+      <div class="pdi-field"><label>Empresa</label><input type="text" value="${empresa}"></div>
+      <div class="pdi-field"><label>Ciclo de referência</label><input type="text" placeholder="Ex: Setembro 2025 — Semana 1 a 4"></div>
+      <div class="pdi-field"><label>Foco do ciclo</label><input type="text" value="${weak.length > 0 ? weak.slice(0,2).map(f=>f.nome).join(' e ') : 'Fatores prioritários'}"></div>
+    </div>
+    <p style="font-size:13px; color:var(--slate); margin-bottom:20px; line-height:1.6">O PTG Semanal traduz as prioridades estratégicas em ações concretas do dia a dia. Preencha cada célula com ações específicas, com horário e duração quando possível. Todos os campos são editáveis.</p>
+    ${semanasHtml}
+    <div class="narrative-box">
+      <div class="nb-title">Como usar o PTG</div>
+      <p>Revise o PTG toda segunda-feira pela manhã, ajustando as ações da semana conforme o contexto. Na sexta-feira, registre o que foi feito e o que ficou pendente. O PTG é uma ferramenta viva — não um compromisso rígido, mas uma âncora de foco.</p>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════
+function getId(field) {
+  const el = document.getElementById(field);
+  return el ? el.value : '';
+}
+
+// ══════════════════════════════════════════════════════════
+// PERSISTENCE
+// ══════════════════════════════════════════════════════════
+const STORAGE_KEY = 'rgc_f21';
+
+function saveData() {
+  const data = { scores };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function saveId() {
+  const idData = {
+    nome: getId('nome'), empresa: getId('empresa'), cargo: getId('cargo'),
+    equipe: getId('equipe'), tempo: getId('tempo'), periodo: getId('periodo'), setor: getId('setor')
+  };
+  const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...existing, id: idData }));
+}
+
+function loadData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    if (data.scores) {
+      scores = data.scores;
+      Object.entries(scores).forEach(([fatId, s]) => {
+        if (s.dev > 0) {
+          const btn = document.getElementById(`dev-${fatId}-${s.dev}`);
+          if (btn) btn.classList.add('selected-dev');
+        }
+        if (s.imp > 0) {
+          const btn = document.getElementById(`imp-${fatId}-${s.imp}`);
+          if (btn) btn.classList.add('selected-imp');
+        }
+      });
+    }
+    if (data.id) {
+      Object.entries(data.id).forEach(([k,v]) => {
+        const el = document.getElementById(k);
+        if (el) el.value = v;
+      });
+    }
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════════════════════
+function getMetaHeader() {
+  const nome = getId('nome') || 'Gestor';
+  const empresa = getId('empresa') || '';
+  const periodo = getId('periodo') || '';
+  return `${nome}${empresa?' · '+empresa:''}${periodo?' · '+periodo:''}`;
+}
+
+// Serializes a DOM node to HTML string, converting:
+// - canvas → <img> with data URL
+// - textarea → <div class="print-text"> with current value
+// - input → <div class="print-field"> with current value
+function serializeForPrint(node) {
+  // Deep clone so we don't modify the live DOM
+  const clone = node.cloneNode(true);
+
+  // Replace canvas elements with their image data
+  const canvases = node.querySelectorAll('canvas');
+  const cloneCanvases = clone.querySelectorAll('canvas');
+  canvases.forEach((cv, i) => {
+    try {
+      const dataUrl = cv.toDataURL('image/png');
+      const img = document.createElement('img');
+      img.src = dataUrl;
+      img.style.width = cv.style.width || cv.width + 'px';
+      img.style.height = cv.style.height || cv.height + 'px';
+      img.style.maxWidth = '100%';
+      img.style.display = 'block';
+      img.style.margin = '0 auto';
+      cloneCanvases[i].parentNode.replaceChild(img, cloneCanvases[i]);
+    } catch(e) {}
+  });
+
+  // Replace textarea elements with plain divs showing current value
+  // Must use live DOM to get current .value (not innerHTML)
+  const textareas = node.querySelectorAll('textarea');
+  const cloneTextareas = clone.querySelectorAll('textarea');
+  textareas.forEach((ta, i) => {
+    const val = ta.value || '';
+    const div = document.createElement('div');
+    div.className = 'print-text';
+    // Preserve line breaks
+    div.innerHTML = val.replace(/\n/g, '<br>');
+    // Copy relevant inline style hints
+    div.style.cssText = ta.style.cssText || '';
+    if (cloneTextareas[i] && cloneTextareas[i].parentNode) {
+      cloneTextareas[i].parentNode.replaceChild(div, cloneTextareas[i]);
+    }
+  });
+
+  // Replace input elements with plain spans showing current value
+  const inputs = node.querySelectorAll('input[type="text"], input:not([type])');
+  const cloneInputs = clone.querySelectorAll('input[type="text"], input:not([type])');
+  inputs.forEach((inp, i) => {
+    const val = inp.value || inp.placeholder || '';
+    const span = document.createElement('span');
+    span.className = 'print-field';
+    span.textContent = val;
+    if (cloneInputs[i] && cloneInputs[i].parentNode) {
+      cloneInputs[i].parentNode.replaceChild(span, cloneInputs[i]);
+    }
+  });
+
+  // Remove export panel and nav elements if present
+  clone.querySelectorAll('.export-panel, .nav-section-btns, button').forEach(el => el.remove());
+
+  return clone.innerHTML;
+}
+
+function exportSection(section) {
+  const titles = {
+    diag: 'Diagnóstico — 17 Fatores',
+    fhfd: 'Faz Hoje / Fazer Diferente',
+    pdi: 'PDI — Plano de Desenvolvimento Individual',
+    p90: 'Plano de Ação — 90 Dias',
+    ptg: 'PTG Semanal — Plano de Trabalho do Gestor'
+  };
+  const contentMap = {
+    diag: document.getElementById('diag-content'),
+    fhfd: document.getElementById('fhfd-content'),
+    pdi: document.getElementById('pdi-content'),
+    p90: document.getElementById('p90-content'),
+    ptg: document.getElementById('ptg-content')
+  };
+  const node = contentMap[section];
+  if (!node) return;
+  openPrintWindow(titles[section], serializeForPrint(node));
+}
+
+function exportAll() {
+  const sections = ['diag','fhfd','pdi','p90','ptg'];
+  const titles = ['Diagnóstico — 17 Fatores','Faz Hoje / Fazer Diferente','PDI — Plano de Desenvolvimento Individual','Plano de Ação — 90 Dias','PTG Semanal — Plano de Trabalho do Gestor'];
+  let allHtml = '';
+  sections.forEach((s, i) => {
+    const node = document.getElementById(s + '-content');
+    if (node) {
+      allHtml += `<div style="page-break-before:${i>0?'always':'auto'};padding-top:${i>0?'8mm':'0'}">
+        <h2 style="font-family:'Playfair Display',serif;color:#1a2744;font-size:18px;padding:0 0 12px;border-bottom:2px solid #1d9e8f;margin-bottom:20px">${titles[i]}</h2>
+        ${serializeForPrint(node)}
+      </div>`;
+    }
+  });
+  openPrintWindow('Relatório Completo — Análise dos Fatores Influenciadores', allHtml);
+}
+
+function openPrintWindow(title, content) {
+  const meta = getMetaHeader();
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>${title}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Source Sans 3', sans-serif; color: #1a2744; background: white; font-size: 13px; line-height: 1.6; }
+.print-banner { background: #1a2744; color: white; padding: 12px 24px; font-size: 12px; }
+.print-banner strong { display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; margin-bottom: 3px; }
+.a4-page { width: 210mm; padding: 18mm 18mm 22mm; margin: 0 auto; }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid #1d9e8f; }
+.ph-badge { background: #1d9e8f; color: white; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px; border-radius: 3px; }
+.ph-title { font-family: 'Playfair Display', serif; font-size: 22px; color: #1a2744; margin: 6px 0 4px; }
+.ph-meta { font-size: 11px; color: #718096; }
+.page-footer { display: flex; justify-content: space-between; font-size: 10px; color: #94a3b8; padding-top: 12px; margin-top: 24px; border-top: 1px solid #e2e8f0; }
+
+/* ── CSS VARS ── */
+:root {
+  --navy:#1a2744; --navy-mid:#253564; --teal:#1d9e8f; --teal-light:#e8f7f5;
+  --coral:#e05c3a; --coral-light:#fdf1ee; --slate:#4a5568;
+  --gray-light:#f4f6f9; --gray-mid:#e2e8f0; --gray-dark:#718096; --text:#1a2744; --radius:6px;
+  --EC-color:#2563eb; --EC-light:#eff6ff; --PV-color:#7c3aed; --PV-light:#f5f3ff;
+  --GP-color:#059669; --GP-light:#ecfdf5; --GI-color:#d97706; --GI-light:#fffbeb;
+  --RC-color:#dc2626; --RC-light:#fef2f2;
+}
+
+/* ── PRINT TEXT (replaces textarea/input) ── */
+.print-text {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 12px;
+  color: #1a2744;
+  line-height: 1.55;
+  padding: 8px 10px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  width: 100%;
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.print-field {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  color: #1a2744;
+  display: block;
+  padding: 7px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  background: white;
+  width: 100%;
+}
+
+/* ── DIAGNÓSTICO ── */
+.pilares-grid { display: grid; grid-template-columns: repeat(5,1fr); gap:10px; margin-bottom:20px; }
+.pilar-card-result { padding:12px; border-radius:6px; border:1px solid #e2e8f0; }
+.pcr-pilar { font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+.pcr-nome { font-size:12px; font-weight:700; color:#1a2744; margin-bottom:10px; line-height:1.3; }
+.pcr-score { font-size:20px; font-weight:700; font-family:'Playfair Display',serif; margin-bottom:4px; }
+.pcr-bar { height:4px; border-radius:2px; background:#e2e8f0; margin-bottom:6px; }
+.pcr-fill { height:100%; border-radius:2px; }
+.pcr-level { font-size:10px; font-weight:600; }
+.diag-score-big { width:70px; height:70px; border-radius:50%; background:#1d9e8f; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; flex-shrink:0; }
+.dsb-val { font-size:20px; font-weight:700; font-family:'Playfair Display',serif; line-height:1; }
+.dsb-lbl { font-size:8px; letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
+.two-charts { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
+.chart-box { text-align:center; }
+.chart-box h4 { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#718096; margin-bottom:12px; }
+.chart-box img { max-width:100%; height:auto; display:block; margin:0 auto; }
+.quadrant-legend { display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; justify-content:center; }
+.ql-item { display:flex; align-items:center; gap:5px; font-size:11px; color:#4a5568; }
+.ql-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+/* ── NARRATIVA ── */
+.narrative-box { background:#f4f6f9; border-left:3px solid #1d9e8f; padding:14px 18px; border-radius:0 6px 6px 0; margin:14px 0; }
+.narrative-box .nb-title { font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#1d9e8f; margin-bottom:7px; }
+.narrative-box p { font-size:12px; line-height:1.65; color:#4a5568; }
+.narrative-box p + p { margin-top:7px; }
+.alert-box { background:#fdf1ee; border-left:3px solid #e05c3a; padding:11px 15px; border-radius:0 6px 6px 0; margin:11px 0; font-size:12px; color:#7c2d12; }
+.alert-box strong { display:block; margin-bottom:3px; font-size:10px; letter-spacing:1px; text-transform:uppercase; }
+.section-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#718096; margin-bottom:6px; }
+
+/* ── FAZ HOJE / FAZER DIFERENTE ── */
+.fhfd-table { width:100%; border-collapse:collapse; margin-top:12px; }
+.fhfd-table th { background:#1a2744; color:white; font-size:10px; font-weight:600; letter-spacing:1px; text-transform:uppercase; padding:9px 12px; text-align:left; }
+.fhfd-table th:first-child { border-radius:6px 0 0 0; }
+.fhfd-table th:last-child { border-radius:0 6px 0 0; }
+.fhfd-table td { padding:10px 12px; vertical-align:top; border-bottom:1px solid #e2e8f0; }
+.fhfd-table tr:nth-child(even) td { background:#f4f6f9; }
+.fhfd-table tr:last-child td { border-bottom:none; }
+.dim-tag-inline { display:inline-block; font-size:8px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:2px 5px; border-radius:2px; margin-bottom:4px; }
+.fhfd-table td .print-text { border:none; background:transparent; padding:0; font-size:12px; }
+
+/* ── PDI ── */
+.pdi-header-info { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+.pdi-field { display:flex; flex-direction:column; gap:4px; }
+.pdi-field label { font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#718096; }
+.pdi-field .print-field { font-size:12px; }
+.pdi-field .print-text { font-size:12px; }
+.pdi-field.full { grid-column:1/-1; }
+.competencia-card { border:1px solid #e2e8f0; border-radius:6px; overflow:hidden; margin-bottom:14px; break-inside:avoid; }
+.cc-header { padding:11px 15px; display:flex; align-items:center; gap:10px; }
+.cc-num { width:26px; height:26px; border-radius:50%; background:#1a2744; color:white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+.cc-pilar-tag { font-size:8px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:2px 7px; border-radius:3px; }
+.cc-title { font-size:13px; font-weight:700; color:#1a2744; }
+.cc-body { padding:14px; display:grid; grid-template-columns:1fr 1fr 1fr 110px; gap:12px; }
+.cc-field { display:flex; flex-direction:column; gap:5px; }
+.cc-field label { font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#718096; }
+.cc-field .print-text { font-size:11px; min-height:auto; }
+.cc-field .print-field { font-size:11px; }
+
+/* ── PLANO 90 DIAS ── */
+.p90-months { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px; }
+.month-card { border-radius:6px; overflow:hidden; border:1px solid #e2e8f0; break-inside:avoid; }
+.month-header { background:#1a2744; color:white; padding:11px 15px; }
+.month-header h4 { font-size:14px; font-family:'Playfair Display',serif; }
+.month-header p { font-size:10px; opacity:.7; margin-top:2px; }
+.month-body { padding:14px; background:white; }
+.month-fator-item { margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid #e2e8f0; }
+.month-fator-item:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+.mfi-nome { font-size:11px; font-weight:700; margin-bottom:5px; }
+.mfi-acao .print-text { font-size:11px; border:none; background:#f4f6f9; }
+
+/* ── PTG SEMANAL ── */
+.ptg-header { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.ptg-week { border:1px solid #e2e8f0; border-radius:6px; overflow:hidden; margin-bottom:14px; break-inside:avoid; }
+.ptg-week-header { background:#1d9e8f; color:white; padding:10px 15px; display:flex; justify-content:space-between; align-items:center; }
+.ptg-week-header h4 { font-size:13px; font-weight:700; }
+.ptg-week-header span { font-size:10px; opacity:.85; }
+.ptg-week-body { padding:14px; background:white; }
+.ptg-day-row { display:grid; grid-template-columns:72px 1fr; gap:10px; align-items:start; margin-bottom:8px; }
+.ptg-day-row:last-child { margin-bottom:0; }
+.ptg-day-lbl { font-size:10px; font-weight:700; color:#4a5568; padding-top:9px; }
+.ptg-day-row .print-text { font-size:11px; }
+
+/* ── PRINT RULES ── */
+@media print {
+  @page { margin: 0; size: A4 portrait; }
+  .print-banner { display: none; }
+  body { font-size: 11px; }
+  .a4-page { padding: 14mm 15mm 16mm; }
+}
+</style>
+</head>
+<body>
+<div class="print-banner">
+  <strong>Para salvar como PDF: pressione Ctrl+P &rarr; Destino: Salvar como PDF &rarr; Margens: Nenhuma &rarr; Ativar Gráficos de fundo</strong>
+  Ferramenta 2.1 · Recriar a Gestão Comercial · Prof. Paulo H. Donassolo
+</div>
+<div class="a4-page">
+  <div class="page-header">
+    <div>
+      <div class="ph-badge">Ferramenta 2.1 · Recriar a Gestão Comercial</div>
+      <div class="ph-title">${title}</div>
+      <div class="ph-meta">${meta}</div>
+    </div>
+  </div>
+  ${content}
+  <div class="page-footer">
+    <span>Prof. Paulo H. Donassolo · Recriar a Gestão Comercial</span>
+    <span>Ferramenta 2.1 — Análise dos Fatores Influenciadores e Plano de Desenvolvimento</span>
+  </div>
+</div>
+</body></html>`);
+  w.document.close();
+}
+</script>
+</body>
+</html>

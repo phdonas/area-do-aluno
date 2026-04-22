@@ -11,12 +11,20 @@ const client = new MercadoPagoConfig({
 export async function POST(request: Request) {
   try {
     const { cursoId, cupomCodigo, emailFinal } = await request.json()
-
+    
     if (!cursoId) {
       return NextResponse.json({ error: 'ID do curso é obrigatório' }, { status: 400 })
     }
 
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // Se o email não vier no body (aluno logado), usamos o email do auth
+    const emailCalculado = (emailFinal || user?.email)?.toLowerCase()
+
+    if (!emailCalculado) {
+      return NextResponse.json({ error: 'E-mail do comprador não identificado' }, { status: 401 })
+    }
 
     // 1. Busca detalhes do curso/plano
     const { data: curso, error: cursoError } = await supabase
@@ -45,7 +53,7 @@ export async function POST(request: Request) {
       } else if (cupomCodigo.trim() !== '') {
         // Se tentou usar e falhou, retornamos erro para feedback no checkout
         await registrarLogSistema({
-          email: emailFinal,
+          email: emailCalculado,
           evento: 'CHECKOUT_CUPOM_INVALIDO',
           nivel: 'aviso',
           origem: 'CRIAR_PREFERENCIA',
@@ -70,12 +78,12 @@ export async function POST(request: Request) {
             picture_url: curso.thumb_url
           }
         ],
-        payer: { email: emailFinal },
+        payer: { email: emailCalculado },
         metadata: {
           curso_id: curso.id,
           plano_id: plano?.id,
           cupom_id: appliedCupomId,
-          email_final: emailFinal
+          email_final: emailCalculado
         },
         back_urls: {
           success: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/sucesso`,
@@ -88,7 +96,7 @@ export async function POST(request: Request) {
     })
 
       await registrarLogSistema({
-        email: emailFinal,
+        email: emailCalculado,
         evento: 'CHECKOUT_PREFERENCIA_GERADA',
         nivel: 'info',
         origem: 'CRIAR_PREFERENCIA',

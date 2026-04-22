@@ -1,8 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle2, ChevronRight, HelpCircle, Trophy, RotateCcw, AlertTriangle, ChevronLeft, XCircle, Info } from 'lucide-react'
+import { 
+  CheckCircle2, ChevronRight, HelpCircle, Trophy, 
+  RotateCcw, AlertTriangle, ChevronLeft, XCircle, 
+  Info, X, ArrowRight, Circle
+} from 'lucide-react'
 import Link from 'next/link'
 
 interface QuestionarioPlayerProps {
@@ -11,6 +16,7 @@ interface QuestionarioPlayerProps {
 }
 
 export function QuestionarioPlayer({ questionario, questoes }: QuestionarioPlayerProps) {
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0) // 0: Start, 1: Questions, 2: Result, 3: Review
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, any>>({}) // string for simple, string[] for multiple
@@ -75,55 +81,108 @@ export function QuestionarioPlayer({ questionario, questoes }: QuestionarioPlaye
 
   const result = currentStep >= 2 ? calculateResult() : null
 
+  const handleBack = () => {
+    router.back()
+  }
+
   return (
-    <div className="max-w-4xl mx-auto px-4 md:px-0 py-8 min-h-[85vh] flex flex-col justify-center">
+    <div className="max-w-5xl mx-auto px-4 md:px-6 py-8 min-h-[85vh] flex flex-col items-center">
+      
+      {/* BOTÃO SAIR GLOBAL (Top Right) */}
+      <div className="fixed top-6 right-6 z-[200]">
+        <button 
+          onClick={handleBack}
+          className="flex items-center gap-2 px-6 py-2.5 bg-white border border-border-custom rounded-full shadow-lg hover:shadow-xl transition-all group active:scale-95"
+        >
+          <div className="w-5 h-5 flex items-center justify-center bg-rose-500 rounded-full text-white">
+            <X size={14} strokeWidth={3} />
+          </div>
+          <span className="text-[11px] font-black uppercase tracking-widest text-text-primary">SAIR E VOLTAR</span>
+        </button>
+      </div>
+
       <AnimatePresence mode="wait">
         
-        {/* Passo 0: INTRODUÇÃO */}
+        {/* Passo 0: INTRODUÇÃO (DESIGN PREMIUM COMPLIANT) */}
         {currentStep === 0 && (
           <motion.div 
              key="intro"
-             initial={{ opacity: 0, scale: 0.95 }}
-             animate={{ opacity: 1, scale: 1 }}
-             exit={{ opacity: 0. scale: 0.9 }}
-             className="bg-surface border border-border-custom p-10 md:p-16 rounded-[48px] text-center shadow-2xl relative overflow-hidden"
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             exit={{ opacity: 0, y: -20 }}
+             className="w-full max-w-5xl"
           >
-             <div className="absolute top-0 right-0 p-8 opacity-10">
-                <HelpCircle className="w-32 h-32" />
+             {/* HERO CARD BLUE */}
+             <div className="w-full bg-gradient-to-r from-primary to-primary-dark p-10 md:p-14 rounded-[32px] md:rounded-[40px] shadow-2xl relative overflow-hidden mb-8">
+                <div className="absolute top-0 right-0 p-8 opacity-10">
+                   <HelpCircle className="w-32 h-32 text-white" />
+                </div>
+                
+                <div className="relative z-10 flex flex-col gap-4">
+                  <div className="w-fit px-3 py-1 bg-white/10 backdrop-blur-md rounded-md border border-white/20">
+                     <span className="text-[10px] font-black text-white uppercase tracking-widest">PHD ACADEMY</span>
+                  </div>
+                  
+                  <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter max-w-2xl">{questionario.titulo}</h1>
+                  <p className="text-white/60 text-base md:text-lg font-medium max-w-2xl">
+                    {questionario.descricao || 'Este questionário avaliará seus conhecimentos sobre o conteúdo estudado.'}
+                  </p>
+                </div>
              </div>
-             
-             <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center text-primary mx-auto mb-8">
-                <HelpCircle className="w-10 h-10" />
-             </div>
-             
-             <h1 className="text-4xl font-black text-text-primary tracking-tighter mb-4">{questionario.titulo}</h1>
-             <p className="text-text-secondary text-base mb-10 max-w-lg mx-auto leading-relaxed">
-               {questionario.descricao || 'Este questionário avaliará seus conhecimentos sobre o conteúdo estudado. Leia as questões com atenção.'}
-             </p>
 
-             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12 max-w-2xl mx-auto">
-                <div className="bg-background border border-border-custom p-5 rounded-[24px]">
-                   <div className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-1">Questões</div>
-                   <div className="text-2xl font-black text-text-primary">{totalQuestions}</div>
+             {/* ABANDONAR E VOLTAR (PEQUENO) */}
+             <div className="flex justify-end mb-6">
+                <button onClick={handleBack} className="flex items-center gap-2 text-text-muted hover:text-primary transition-all group">
+                   <X className="w-3.5 h-3.5 group-hover:rotate-90 transition-transform" />
+                   <span className="text-[9px] font-black uppercase tracking-[0.2em]">ABANDONAR E VOLTAR AO CURSO</span>
+                </button>
+             </div>
+
+             {/* INFOS & PROGRESS PREVIEW */}
+             <div className="bg-surface border border-border-custom p-6 md:p-8 rounded-[24px] mb-8 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-[11px] font-black text-text-muted uppercase tracking-widest">Progresso</span>
+                  <span className="text-[11px] font-black text-primary">0 de {totalQuestions} questões</span>
                 </div>
-                <div className="bg-background border border-border-custom p-5 rounded-[24px]">
-                   <div className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-1">Aprovação</div>
-                   <div className="text-2xl font-black text-primary">{questionario.nota_corte || 70}%</div>
-                </div>
-                <div className="bg-background border border-border-custom p-5 rounded-[24px] col-span-2 md:col-span-1">
-                   <div className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-1">Dificuldade</div>
-                   <div className="text-2xl font-black text-indigo-500">Média</div>
+                <div className="h-3 bg-secondary/10 rounded-full overflow-hidden">
+                  <div className="h-full bg-secondary/20 w-0" />
                 </div>
              </div>
-             
-             <button 
-                onClick={() => setCurrentStep(1)}
-                className="w-full md:w-fit px-16 py-6 bg-primary hover:bg-primary-dark text-white font-black rounded-[28px] transition-all shadow-2xl shadow-primary/30 flex items-center justify-center gap-4 mx-auto text-xl group"
-             >
-                Iniciar Avaliação
-                <ChevronRight className="w-6 h-6 transition-transform group-hover:translate-x-1" />
-             </button>
+
+             {/* INSTRUCTIONS & START */}
+             <div className="bg-blue-50/50 border border-blue-200/50 p-10 md:p-14 rounded-[32px] space-y-8 flex flex-col md:flex-row gap-12 items-start shadow-sm">
+                <div className="flex-1 space-y-6">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">📋</span>
+                    <h3 className="text-xl font-bold text-primary tracking-tight">Como usar este diagnóstico:</h3>
+                  </div>
+                  
+                  <ul className="space-y-4">
+                    <li className="flex gap-3 text-text-secondary font-medium">
+                      <span className="text-primary">•</span> Responda todas as {totalQuestions} questões com base na realidade atual.
+                    </li>
+                    <li className="flex gap-3 text-text-secondary font-medium">
+                      <span className="text-primary">•</span> Sinceridade nas respostas é fundamental para o seu desenvolvimento.
+                    </li>
+                    <li className="flex gap-3 text-text-secondary font-medium">
+                      <span className="text-primary">•</span> Ao final, você receberá um relatório completo com análises e recomendações.
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="w-full md:w-fit shrink-0">
+                  <button 
+                    onClick={() => setCurrentStep(1)}
+                    className="w-full px-12 py-5 bg-primary hover:bg-primary-dark text-white font-black rounded-2xl transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 active:scale-95 group"
+                  >
+                    Iniciar Diagnóstico
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+             </div>
           </motion.div>
+        )}
+div>
         )}
 
         {/* Passo 1: QUESTÕES */}

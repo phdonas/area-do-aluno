@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { associarMultiplasAulasModulo, desassociarAulaModulo, desassociarAulaDireta, reordenarAulaModuloPivot } from './actions'
+import { associarMultiplasAulasModulo, desassociarAulaModulo, desassociarAulaDireta, reordenarAulaModuloPivot, reordenarAulasModuloLista } from './actions'
 import { Plus, Trash2, ArrowUp, ArrowDown, ExternalLink, Video, GripVertical, Search, X, CheckSquare, Square } from 'lucide-react'
 import Link from 'next/link'
 
@@ -91,10 +91,21 @@ export function AulaAssociator({
   }
 
   const handleReorder = async (aulaId: string, currentOrdem: number, direction: 'up' | 'down') => {
-    const newO = direction === 'up' ? currentOrdem - 1 : currentOrdem + 1;
+    const currentIndex = aulasDoModulo.findIndex(am => am.aula_id === aulaId);
+    if (currentIndex === -1) return;
+
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= aulasDoModulo.length) return;
+
+    const novaLista = [...aulasDoModulo];
+    const [item] = novaLista.splice(currentIndex, 1);
+    novaLista.splice(newIndex, 0, item);
+
+    const idsOrdenados = novaLista.map(am => am.aula_id);
+
     setLoading(true);
     try {
-      await reordenarAulaModuloPivot(moduloId, aulaId, newO);
+      await reordenarAulasModuloLista(moduloId, idsOrdenados);
     } catch (err) {
       console.error(err);
       alert('Erro ao reordenar aula.');
@@ -110,14 +121,21 @@ export function AulaAssociator({
       return;
     }
     
-    const itemBeingDragged = aulasDoModulo[dragItem.current];
-    const targetItem = aulasDoModulo[dragOverItem.current];
+    // 1. Calcular a nova ordem localmente (Otimista)
+    const novaLista = [...aulasDoModulo];
+    const itemBeingDragged = novaLista[dragItem.current];
+    novaLista.splice(dragItem.current, 1);
+    novaLista.splice(dragOverItem.current, 0, itemBeingDragged);
+    
+    const idsOrdenados = novaLista.map(am => am.aula_id);
     
     setLoading(true);
     try {
-      await reordenarAulaModuloPivot(moduloId, itemBeingDragged.aula_id, targetItem.ordem);
+      // 2. Chamar a action que garante o sequencial 1..N para todos
+      await reordenarAulasModuloLista(moduloId, idsOrdenados);
     } catch(err) {
       console.error(err);
+      alert('Erro ao salvar nova ordem. Tente recarregar a página.');
     } finally {
       dragItem.current = null;
       dragOverItem.current = null;

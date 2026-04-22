@@ -2,10 +2,13 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import { PlayCircle, Lock, CheckCircle2, ArrowRight, Video, ExternalLink, Users } from 'lucide-react'
+import { PlayCircle, Lock, CheckCircle2, ArrowRight, Video, ExternalLink, Users, Clock, Calendar, Sparkles } from 'lucide-react'
 import { formatDuration, cleanTitle } from '@/lib/formatter'
 import { getPrefixosLimpeza } from '@/lib/prefixes'
 import { ModuleListAccordion } from '@/components/module-list-accordion'
+import * as motion from 'framer-motion/client'
+import { FormattedText } from '@/components/CourseContent'
+
 export const dynamic = 'force-dynamic'
 
 export default async function CursoDetaisPage({
@@ -26,11 +29,16 @@ export default async function CursoDetaisPage({
   const { data: isAdmin } = await supabaseAuth.rpc('is_admin')
 
   // 3. Buscar o curso (Admin vê mesmo se for rascunho)
-  const { data: curso } = await supabaseAdmin
-    .from('cursos')
-    .select('*')
-    .eq('id', cursoId)
-    .single()
+  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cursoId)
+  const query = supabaseAdmin.from('cursos').select('*')
+  
+  if (isUUID) {
+    query.or(`id.eq.${cursoId},slug.eq.${cursoId}`)
+  } else {
+    query.eq('slug', cursoId)
+  }
+
+  const { data: curso } = await query.single()
 
   if (!curso) notFound()
 
@@ -56,17 +64,23 @@ export default async function CursoDetaisPage({
   }
 
   // 5. Buscar todos os módulos e aulas (Lógica N:N compatível com Biblioteca)
-  const { data: modulosData } = await supabaseAdmin.rpc('get_modulos_curso', { p_curso_id: cursoId })
-  const modulosIds = modulosData?.map((m: any) => m.id) || []
+  const { data: modulosData } = await supabaseAdmin.rpc('get_modulos_curso', { p_curso_id: curso.id })
+  const uniqueModulosData = Array.from(new Map((modulosData || []).map((m: any) => [m.id, m])).values())
+  const modulosIds = uniqueModulosData.map((m: any) => m.id)
   
   // Buscar aulas diretas (legado) e aulas via pivô
   const { data: aulasDiretas } = await supabaseAdmin.from('aulas').select('*').in('modulo_id', modulosIds)
   const { data: pivotAulas } = await supabaseAdmin.from('modulos_aulas').select('modulo_id, ordem, aulas(*)').in('modulo_id', modulosIds)
 
-  const modulos = (modulosData || []).map((m: any) => {
+  const modulos = uniqueModulosData.map((m: any) => {
     const d = (aulasDiretas || []).filter((a: any) => a.modulo_id === m.id)
     const p = (pivotAulas || []).filter((pa: any) => pa.modulo_id === m.id).map((pa: any) => ({ ...pa.aulas, ordem: pa.ordem }))
-    return { ...m, aulas: [...d, ...p].sort((a: any, b: any) => a.ordem - b.ordem) }
+    
+    // Deduplicar aulas por ID dentro do módulo
+    const combinedAulas = [...d, ...p]
+    const uniqueAulas = Array.from(new Map(combinedAulas.map((a: any) => [a.id, a])).values())
+    
+    return { ...m, aulas: uniqueAulas.sort((a: any, b: any) => a.ordem - b.ordem) }
   })
 
   const todasAulasRaw = modulos.flatMap(m => m.aulas) || []
@@ -94,32 +108,45 @@ export default async function CursoDetaisPage({
 
   return (
     <div className="max-w-6xl mx-auto pb-20">
-      <div className="relative h-72 md:h-96 rounded-[40px] overflow-hidden mb-12 shadow-2xl">
-         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative h-80 md:h-[450px] rounded-[3rem] overflow-hidden mb-16 shadow-2xl border border-white/10 group"
+      >
+         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
          {curso.thumb_url && (
-            <img src={curso.thumb_url} alt={curso.titulo} className="absolute inset-0 w-full h-full object-cover" />
+            <img src={curso.thumb_url} alt={curso.titulo} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
          )}
-          <div className="absolute inset-0 z-20 flex flex-col justify-end p-10 md:p-14">
-            <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-4 leading-none">{cleanTitle(curso.titulo, prefixes)}</h1>
+          <div className="absolute inset-0 z-20 flex flex-col justify-end p-8 md:p-16">
+            <div className="flex items-center gap-3 mb-4">
+               <div className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full border border-white/20 flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white">Conteúdo Premium</span>
+               </div>
+            </div>
+            <h1 className="text-4xl md:text-7xl font-black text-white tracking-tighter mb-6 leading-[0.9] italic uppercase bg-gradient-to-r from-white via-white to-white/70 bg-clip-text text-transparent text-glow">
+              {cleanTitle(curso.titulo, prefixes)}
+            </h1>
             
             {hasAccess ? (
-               <div className="mt-4 flex flex-col gap-3">
-                  <div className="flex items-center justify-between text-white/60 text-[10px] font-black uppercase tracking-widest">
-                     <span>Seu progresso</span>
-                     <span>{progressoPorcentagem}%</span>
+               <div className="mt-4 flex flex-col gap-4 max-w-md">
+                  <div className="flex items-center justify-between text-white/80 text-[10px] font-black uppercase tracking-widest">
+                     <span>Seu progresso na jornada</span>
+                     <span className="text-primary-light">{progressoPorcentagem}%</span>
                   </div>
-                  <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border border-white/5">
+                  <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden backdrop-blur-md border border-white/10 relative">
+                     <div className="absolute inset-0 animate-shimmer opacity-20 pointer-events-none" />
                      <div 
-                        className="h-full bg-gradient-to-r from-blue-500 to-indigo-400 transition-all duration-1000 shadow-[0_0_20px_rgba(59,130,246,0.5)]" 
+                        className="h-full bg-gradient-to-r from-blue-500 via-indigo-400 to-emerald-400 transition-all duration-1000 shadow-[0_0_20px_rgba(59,130,246,0.6)]" 
                         style={{ width: `${progressoPorcentagem}%` }}
                      />
                   </div>
                </div>
             ) : (
-               <p className="text-white/70 max-w-2xl text-lg font-medium line-clamp-2">{curso.descricao}</p>
+               <p className="text-white/80 max-w-2xl text-lg font-medium line-clamp-2 italic leading-relaxed">{curso.descricao}</p>
             )}
          </div>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
          <div className="lg:col-span-2 space-y-16">
@@ -164,9 +191,9 @@ export default async function CursoDetaisPage({
                            <span className="text-[9px] font-black uppercase tracking-widest text-text-muted">Instrutor Verificado</span>
                         </div>
                       </div>
-                      <p className="text-sm text-text-secondary leading-relaxed font-medium">
-                        {professor.biografia}
-                      </p>
+                    <div className="text-sm text-text-secondary leading-relaxed font-medium">
+                      <FormattedText text={professor.biografia} />
+                    </div>
                       
                       {(professor.video_url || professor.site_url) && (
                         <div className="flex flex-wrap gap-3 pt-4">

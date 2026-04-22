@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluxo de Ferramentas — Managing & Coaching EXPOgroup</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --expo-blue: #1B3A6B;
+    --expo-red: #D0021B;
+    --expo-blue-mid: #2E5AA8;
+    --expo-blue-light: #EBF0FA;
+    --expo-red-light: #FBECEE;
+    --gold: #B8860B;
+    --dark: #1A1A1A;
+    --dark2: #2C2C2C;
+    --gray: #6B6B6B;
+    --gray-light: #F7F6F3;
+    --white: #FDFCFA;
+    --border: #DDE3EE;
+    --phase1: #1B3A6B;
+    --phase2: #1A5C3A;
+    --phase3: #5C3A1A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--dark2);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── CAPA ── */
+  .cover {
+    background: var(--expo-blue);
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 64px 64px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 6px;
+    height: 100%;
+    background: var(--expo-red);
+  }
+  .cover-deco {
+    position: absolute;
+    top: -40px; left: -30px;
+    font-family: 'Playfair Display', serif;
+    font-size: 520px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.035);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+  .cover-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: auto;
+    padding-bottom: 40px;
+  }
+  .cover-brand {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+  .cover-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 2px;
+  }
+  .cover h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .cover-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.65);
+    max-width: 580px;
+    position: relative;
+    margin-bottom: 40px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 48px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 24px;
+    position: relative;
+  }
+  .cover-meta-item label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .cover-meta-item span {
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    font-weight: 500;
+  }
+
+  /* ── LAYOUT PRINCIPAL ── */
+  .main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  /* ── SEÇÃO ── */
+  .section {
+    padding: 72px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--expo-blue);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  h2.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--expo-blue);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .section-intro {
+    font-size: 15.5px;
+    color: var(--gray);
+    max-width: 720px;
+    line-height: 1.75;
+    margin-bottom: 48px;
+  }
+
+  /* ── FLUXO VISUAL ── */
+  .flow-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .phase-block {
+    margin-bottom: 56px;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+  }
+  .phase-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+  .phase-dot.f1 { background: var(--phase1); }
+  .phase-dot.f2 { background: var(--phase2); }
+  .phase-dot.f3 { background: var(--phase3); }
+  .phase-dot.fx { background: var(--expo-blue-mid); }
+
+  .phase-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 2px;
+  }
+  .phase-info p {
+    font-size: 13.5px;
+    color: var(--gray);
+  }
+
+  /* ── CARD DE FERRAMENTA ── */
+  .tool-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .tool-card:hover {
+    box-shadow: 0 4px 24px rgba(27,58,107,0.08);
+  }
+
+  .tool-header {
+    display: flex;
+    align-items: stretch;
+    cursor: pointer;
+    user-select: none;
+  }
+  .tool-num {
+    width: 64px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--white);
+    position: relative;
+  }
+  .tool-num.f1 { background: var(--phase1); }
+  .tool-num.f2 { background: var(--phase2); }
+  .tool-num.f3 { background: var(--phase3); }
+  .tool-num.fx { background: var(--expo-blue-mid); }
+
+  .tool-title-block {
+    flex: 1;
+    padding: 18px 24px;
+    background: var(--gray-light);
+  }
+  .tool-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--expo-blue);
+    margin-bottom: 4px;
+    display: block;
+  }
+  .tool-title-block h4 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark);
+    line-height: 1.3;
+  }
+  .tool-toggle {
+    width: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gray-light);
+    border-left: 1px solid var(--border);
+    font-size: 18px;
+    color: var(--expo-blue);
+    transition: transform 0.25s;
+  }
+  .tool-card.open .tool-toggle {
+    transform: rotate(180deg);
+  }
+
+  .tool-body {
+    display: none;
+    padding: 32px;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+  }
+  .tool-card.open .tool-body {
+    display: block;
+  }
+
+  .tool-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 24px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .tool-cell {
+    background: var(--white);
+    padding: 20px;
+  }
+  .tool-cell.full { grid-column: 1 / -1; }
+  .tool-cell label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--expo-blue);
+    display: block;
+    margin-bottom: 8px;
+  }
+  .tool-cell p, .tool-cell li {
+    font-size: 14.5px;
+    color: var(--dark2);
+    line-height: 1.65;
+  }
+  .tool-cell ul {
+    padding-left: 0;
+    list-style: none;
+  }
+  .tool-cell ul li {
+    padding-left: 16px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .tool-cell ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--expo-blue-mid);
+    font-size: 12px;
+  }
+
+  .tool-result {
+    background: var(--expo-blue);
+    border-left: 4px solid var(--expo-red);
+    padding: 20px 24px;
+    border-radius: 0 3px 3px 0;
+    margin-bottom: 20px;
+  }
+  .tool-result label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    display: block;
+    margin-bottom: 8px;
+  }
+  .tool-result p {
+    font-size: 15px;
+    color: var(--white);
+    line-height: 1.65;
+    font-weight: 500;
+  }
+
+  .profiles-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .profile-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    border: 1px solid;
+  }
+  .pb-p1 { background: rgba(27,58,107,0.08); border-color: var(--expo-blue); color: var(--expo-blue); }
+  .pb-p2 { background: rgba(26,92,58,0.08); border-color: var(--phase2); color: var(--phase2); }
+  .pb-p3 { background: rgba(92,58,26,0.08); border-color: var(--phase3); color: var(--phase3); }
+  .pb-all { background: var(--expo-blue-light); border-color: var(--expo-blue-mid); color: var(--expo-blue-mid); }
+
+  .status-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-top: 8px;
+  }
+  .status-ok { background: rgba(26,92,58,0.1); color: var(--phase2); border: 1px solid var(--phase2); }
+  .status-build { background: rgba(184,134,11,0.1); color: var(--gold); border: 1px solid var(--gold); }
+
+  /* ── FLUXO SEQUENCIAL ── */
+  .flow-sequence {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin: 40px 0;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .flow-step {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+    position: relative;
+  }
+  .flow-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -14px;
+    top: 20px;
+    font-size: 18px;
+    color: var(--expo-blue-mid);
+    font-weight: 300;
+  }
+  .flow-step-num {
+    width: 44px;
+    height: 44px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    margin: 0 auto 10px;
+  }
+  .flow-step-num.f1 { background: var(--phase1); }
+  .flow-step-num.f2 { background: var(--phase2); }
+  .flow-step-num.f3 { background: var(--phase3); }
+  .flow-step-num.fx { background: var(--expo-blue-mid); }
+  .flow-step p {
+    font-size: 11px;
+    color: var(--gray);
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  /* ── AVALIAÇÃO FINAL ── */
+  .eval-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .eval-card {
+    padding: 24px;
+    border-radius: 3px;
+    border-left: 4px solid;
+  }
+  .eval-card.green {
+    background: rgba(26,92,58,0.06);
+    border-color: var(--phase2);
+  }
+  .eval-card.blue {
+    background: var(--expo-blue-light);
+    border-color: var(--expo-blue);
+  }
+  .eval-card.amber {
+    background: rgba(184,134,11,0.06);
+    border-color: var(--gold);
+  }
+  .eval-card.red {
+    background: var(--expo-red-light);
+    border-color: var(--expo-red);
+  }
+  .eval-card h4 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .eval-card.green h4 { color: var(--phase2); }
+  .eval-card.blue h4 { color: var(--expo-blue); }
+  .eval-card.amber h4 { color: var(--gold); }
+  .eval-card.red h4 { color: var(--expo-red); }
+  .eval-card ul { list-style: none; padding: 0; }
+  .eval-card ul li {
+    font-size: 14px;
+    color: var(--dark2);
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .eval-card ul li::before { content: '·'; position: absolute; left: 0; font-weight: 700; }
+  .eval-card.green ul li::before { color: var(--phase2); }
+  .eval-card.blue ul li::before { color: var(--expo-blue); }
+  .eval-card.amber ul li::before { color: var(--gold); }
+  .eval-card.red ul li::before { color: var(--expo-red); }
+
+  .conclusion-box {
+    background: var(--expo-blue);
+    border-left: 4px solid var(--expo-red);
+    padding: 28px 32px;
+    border-radius: 0 4px 4px 0;
+    margin-top: 32px;
+  }
+  .conclusion-box label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    display: block;
+    margin-bottom: 12px;
+  }
+  .conclusion-box p {
+    font-size: 16px;
+    color: var(--white);
+    line-height: 1.75;
+    font-weight: 400;
+  }
+  .conclusion-box p strong {
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+  }
+
+  /* ── RODAPÉ ── */
+  .footer {
+    background: var(--expo-blue);
+    padding: 40px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 80px;
+  }
+  .footer-left {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+  .footer-right {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+  }
+
+  @media print {
+    .tool-body { display: block !important; }
+    .tool-toggle { display: none; }
+    .cover { page-break-after: always; }
+    .phase-block { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CAPA -->
+<div class="cover">
+  <div class="cover-deco">F</div>
+  <div class="cover-top">
+    <div class="cover-brand">EXPOgroup · Programa Managing &amp; Coaching</div>
+    <div class="cover-badge">Uso Interno · Confidencial</div>
+  </div>
+  <h1>Fluxo de<br>Ferramentas</h1>
+  <p class="cover-sub">Mapa completo de utilização das 11 ferramentas do programa — para que servem, quem usa, quando usa, como usa e o resultado prático esperado de cada uma.</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <label>Ferramentas</label>
+      <span>11 instrumentos</span>
+    </div>
+    <div class="cover-meta-item">
+      <label>Fases</label>
+      <span>3 fases progressivas</span>
+    </div>
+    <div class="cover-meta-item">
+      <label>Perfis cobertos</label>
+      <span>Broker-Empreendedor · Gestor integrado · Gestor independente</span>
+    </div>
+    <div class="cover-meta-item">
+      <label>Versão</label>
+      <span>v1 · Abril 2025</span>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- INTRODUÇÃO -->
+  <div class="section">
+    <div class="section-label">Visão Geral do Sistema</div>
+    <h2 class="section-title">Como as 11 ferramentas se organizam</h2>
+    <p class="section-intro">O programa Managing &amp; Coaching não é uma sequência de workshops — é um sistema de diagnóstico, cocriação e consolidação que funciona em três fases progressivas. Cada ferramenta tem um papel específico e alimenta as seguintes. Nenhuma pode ser usada isoladamente sem perder eficácia.</p>
+
+    <!-- Fluxo visual sequencial -->
+    <div class="flow-sequence">
+      <div class="flow-step">
+        <div class="flow-step-num f1">1</div>
+        <p>Autoavaliação<br>M&amp;C</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num f1">2</div>
+        <p>Entrevista<br>Estruturada</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num f1">3</div>
+        <p>Survey da<br>Equipa</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num f1">4</div>
+        <p>Observação<br>&amp; Shadowing</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num f1">5</div>
+        <p>Matriz da<br>Equipa</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num f1">6</div>
+        <p>Mapa de<br>Estilo</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num fx">PR</div>
+        <p>Prompt de<br>Análise</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num f2">7</div>
+        <p>Canvas<br>PDI</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num f2">8</div>
+        <p>Roteiro<br>1:1</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num f2">9</div>
+        <p>Roteiro<br>Coaching</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num f3">10</div>
+        <p>Painel<br>KPIs</p>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num f3">11</div>
+        <p>Relatório<br>Evolução</p>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:8px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:12px;height:12px;background:var(--phase1);border-radius:2px;"></div>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);">Fase 1 — Diagnóstico</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:12px;height:12px;background:var(--phase2);border-radius:2px;"></div>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);">Fase 2 — Plano de Ação</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:12px;height:12px;background:var(--phase3);border-radius:2px;"></div>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);">Fase 3 — Implementação</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:12px;height:12px;background:var(--expo-blue-mid);border-radius:2px;"></div>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);">Transição — Análise e Síntese</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 1 -->
+  <div class="section">
+    <div class="section-label">Fase 1</div>
+    <h2 class="section-title">Avaliação Diagnóstica</h2>
+    <p class="section-intro">Seis ferramentas que constroem uma imagem completa de cada gestor antes de qualquer intervenção. O princípio é: <em>diagnóstico antes de prescrição</em>. Cada ferramenta revela uma camada diferente — e apenas a combinação das seis gera o retrato fiel.</p>
+
+    <div class="flow-wrapper">
+
+      <!-- Ferramenta 1 -->
+      <div class="tool-card" id="t1">
+        <div class="tool-header" onclick="toggle('t1')">
+          <div class="tool-num f1">1</div>
+          <div class="tool-title-block">
+            <span class="tool-tag">Ferramenta 1 · Fase 1 · Autoavaliação</span>
+            <h4>Questionário de Autoavaliação Managing &amp; Coaching</h4>
+          </div>
+          <div class="tool-toggle">▾</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-grid">
+            <div class="tool-cell">
+              <label>Para que serve</label>
+              <p>Capturar a percepção que o gestor tem de si mesmo como líder. Mede com que frequência pratica comportamentos de Managing e de Coaching. A escala é de comportamento (1 a 5) — não de concordância — para reduzir o viés de desejabilidade social.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Quem usa</label>
+              <p>Preenchido pelo próprio gestor. Aplicado pelo consultor externo (Paulo) antes da entrevista presencial. Cada um dos três perfis recebe uma versão com tronco comum e blocos específicos à sua realidade.</p>
+              <div class="profiles-row">
+                <span class="profile-badge pb-p1">Perfil 1 · Broker-Empreend.</span>
+                <span class="profile-badge pb-p2">Perfil 2 · Gestor integrado</span>
+                <span class="profile-badge pb-p3">Perfil 3 · Gestor independ.</span>
+              </div>
+            </div>
+            <div class="tool-cell">
+              <label>Quando usar</label>
+              <p>Primeira etapa de toda a Fase 1. Enviado ao gestor <strong>antes</strong> da entrevista — permite que o consultor chegue à conversa com um mapa inicial do perfil declarado.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Como usar</label>
+              <ul>
+                <li>Enviar ao gestor com instruções de preenchimento autónomo</li>
+                <li>Seis blocos: identidade (TC), estrutura/Managing, coerência cultural, motivação, coaching e autoconhecimento</li>
+                <li>Interpretar cruzando desequilíbrio M/C, gap autoavaliação vs. survey da equipa, e blocos de identidade (TC5 e TC6 são os mais reveladores)</li>
+              </ul>
+            </div>
+            <div class="tool-cell full">
+              <label>Limitação importante</label>
+              <p>A autoavaliação captura o que o gestor <em>acredita</em> fazer — não o que de facto faz. O seu valor real é gerar a "linha de base declarada" que será comparada com as ferramentas 2, 3 e 4. Usada isoladamente, tem pouco valor diagnóstico.</p>
+            </div>
+          </div>
+          <div class="tool-result">
+            <label>Resultado prático esperado</label>
+            <p>Mapa inicial do perfil autopercebido do gestor. Hipóteses de trabalho para a entrevista. Base de comparação para identificar o gap de autoconhecimento quando cruzado com o survey da equipa e a observação direta.</p>
+          </div>
+          <span class="status-badge status-ok">✓ Construída</span>
+        </div>
+      </div>
+
+      <!-- Ferramenta 2 -->
+      <div class="tool-card" id="t2">
+        <div class="tool-header" onclick="toggle('t2')">
+          <div class="tool-num f1">2</div>
+          <div class="tool-title-block">
+            <span class="tool-tag">Ferramenta 2 · Fase 1 · Entrevista</span>
+            <h4>Roteiro de Entrevista Estruturada</h4>
+          </div>
+          <div class="tool-toggle">▾</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-grid">
+            <div class="tool-cell">
+              <label>Para que serve</label>
+              <p>Aprofundar o que o questionário apenas esboçou. A entrevista vai além das respostas declaradas — usa perguntas de incidente crítico para ancorar o gestor em situações reais e concretas das últimas duas semanas, revelando padrões comportamentais reais.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Quem usa</label>
+              <p>Conduzida pelo consultor externo (Paulo) em sessão presencial com cada gestor. Duração: 60 a 90 minutos. Protocolo de registo preenchido após a entrevista — nunca durante.</p>
+              <div class="profiles-row">
+                <span class="profile-badge pb-all">Todos os perfis</span>
+              </div>
+            </div>
+            <div class="tool-cell">
+              <label>Quando usar</label>
+              <p>Após o gestor ter devolvido a Ferramenta 1. O consultor chega à entrevista com as respostas do questionário em mãos, usando os padrões identificados para formular hipóteses a explorar.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Como usar</label>
+              <ul>
+                <li>7 blocos: abertura, identidade de liderança, rotina de gestão, resultado vs. desenvolvimento, coaching vs. formação técnica, recrutamento e autoconhecimento</li>
+                <li>Princípio central: quando o gestor generaliza ("normalmente faço…"), interromper com "pode dar-me um exemplo concreto das últimas duas semanas?"</li>
+                <li>Protocolo de registo em 3 campos por bloco: comportamentos descritos, padrões observados e divergências face ao questionário</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tool-result">
+            <label>Resultado prático esperado</label>
+            <p>Compreensão profunda do modelo mental de liderança do gestor: como pensa o seu papel, o que prioriza sob pressão, como descreve as relações com a equipa. Identificação das divergências entre discurso e comportamento declarado — matéria-prima para as ferramentas seguintes.</p>
+          </div>
+          <span class="status-badge status-ok">✓ Construída</span>
+        </div>
+      </div>
+
+      <!-- Ferramenta 3 -->
+      <div class="tool-card" id="t3">
+        <div class="tool-header" onclick="toggle('t3')">
+          <div class="tool-num f1">3</div>
+          <div class="tool-title-block">
+            <span class="tool-tag">Ferramenta 3 · Fase 1 · Survey</span>
+            <h4>Survey de Percepção da Equipa</h4>
+          </div>
+          <div class="tool-toggle">▾</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-grid">
+            <div class="tool-cell">
+              <label>Para que serve</label>
+              <p>Trazer a voz da equipa para o diagnóstico. Enquanto as ferramentas 1 e 2 capturam a perspectiva do gestor, esta ferramenta captura como a equipa <em>experiencia</em> a liderança desse gestor — nas mesmas dimensões, permitindo comparação directa.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Quem usa</label>
+              <p>Survey enviado pelo consultor externo directamente à equipa de cada gestor, de forma anónima. Para Perfil 1 (Broker-Empreendedor), os respondentes são os gestores de equipa sob ele. Para Perfis 2 e 3, são os consultores imobiliários.</p>
+              <div class="profiles-row">
+                <span class="profile-badge pb-p1">P1 → respondentes: gestores</span>
+                <span class="profile-badge pb-p2">P2/P3 → respondentes: consultores</span>
+              </div>
+            </div>
+            <div class="tool-cell">
+              <label>Quando usar</label>
+              <p>Em paralelo com a entrevista (Ferramenta 2). Enviado pelo consultor, nunca pelo gestor — o anonimato é condição para respostas honestas. Regra: mínimo de 3 respondentes por equipa para dados utilizáveis.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Como usar</label>
+              <ul>
+                <li>6 dimensões: clareza de expectativas, qualidade e frequência do feedback, suporte e disponibilidade, confiança na liderança, desenvolvimento recebido, autonomia percebida</li>
+                <li>Escala 1 a 5 — mesma métrica do questionário do gestor</li>
+                <li>Uma questão aberta por bloco para capturar nuances não cobertas pela escala</li>
+                <li>Dados individuais nunca identificados no relatório consolidado para os Managing Partners</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tool-result">
+            <label>Resultado prático esperado</label>
+            <p>Quantificação do gap de autoconhecimento — a diferença entre como o gestor se avalia e como a equipa o avalia nas mesmas dimensões. Este gap é o dado mais poderoso do diagnóstico: gestores que se superestimam têm pontos cegos que só esta ferramenta revela.</p>
+          </div>
+          <span class="status-badge status-ok">✓ Construída</span>
+        </div>
+      </div>
+
+      <!-- Ferramenta 4 -->
+      <div class="tool-card" id="t4">
+        <div class="tool-header" onclick="toggle('t4')">
+          <div class="tool-num f1">4</div>
+          <div class="tool-title-block">
+            <span class="tool-tag">Ferramenta 4 · Fase 1 e 3 · Observação</span>
+            <h4>Protocolo de Observação e Shadowing</h4>
+          </div>
+          <div class="tool-toggle">▾</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-grid">
+            <div class="tool-cell">
+              <label>Para que serve</label>
+              <p>Observar o gestor em acção — em reunião de equipa ou em conversa 1:1 com um consultor. O comportamento ao vivo revela o que nem a autoavaliação nem a entrevista conseguem: o que o gestor realmente faz quando está sob pressão do dia-a-dia.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Quem usa</label>
+              <p>Aplicado pelo consultor externo (Paulo) em duas fases distintas. Na Fase 1, para diagnóstico. Na Fase 3, com o instrumento idêntico, para medir a evolução — antes vs. depois com comparação directa.</p>
+              <div class="profiles-row">
+                <span class="profile-badge pb-all">Todos os perfis</span>
+              </div>
+            </div>
+            <div class="tool-cell">
+              <label>Quando usar</label>
+              <p>Após as ferramentas 1, 2 e 3 terem gerado hipóteses. O consultor sabe o que procurar antes de observar. Reaplicada na Fase 3 — nas mesmas condições e formato — para comparação.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Como usar</label>
+              <ul>
+                <li>Duas versões: observação de reunião de equipa e observação de conversa 1:1</li>
+                <li>6 dimensões: qualidade da escuta, natureza das perguntas (abertas vs. fechadas), clareza de direcionamento, gestão do tempo, presença de elementos de coaching, engajamento da equipa</li>
+                <li>Linguagem de registo descritiva e factual — nunca julgamentos: "fez 3 perguntas fechadas seguidas" não "não sabe fazer coaching"</li>
+                <li>Inclui roteiro de devolutiva estruturada imediatamente após a observação</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tool-result">
+            <label>Resultado prático esperado</label>
+            <p>Evidências comportamentais concretas que confirmam ou contradizem as hipóteses levantadas pelas ferramentas anteriores. Registo factual que serve de linha de base para a comparação de evolução na Fase 3. Devolutiva imediata que inicia o processo de consciência do gestor.</p>
+          </div>
+          <span class="status-badge status-ok">✓ Construída</span>
+        </div>
+      </div>
+
+      <!-- Ferramenta 5 -->
+      <div class="tool-card" id="t5">
+        <div class="tool-header" onclick="toggle('t5')">
+          <div class="tool-num f1">5</div>
+          <div class="tool-title-block">
+            <span class="tool-tag">Ferramenta 5 · Fase 1 · Diagnóstico da Equipa</span>
+            <h4>Matriz de Posicionamento da Equipa</h4>
+          </div>
+          <div class="tool-toggle">▾</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-grid">
+            <div class="tool-cell">
+              <label>Para que serve</label>
+              <p>Dois propósitos simultâneos: (1) criar um mapa real da equipa em termos de performance e potencial, que alimentará o PDI; (2) revelar o modelo mental do gestor — a forma como ele preenche a matriz é tão diagnóstica quanto os dados que insere.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Quem usa</label>
+              <p>Cocriada pelo consultor externo com o gestor durante a entrevista (Ferramenta 2). O gestor posiciona os seus consultores ao vivo — o consultor regista e observa o raciocínio espontâneo.</p>
+              <div class="profiles-row">
+                <span class="profile-badge pb-all">Todos os perfis</span>
+              </div>
+            </div>
+            <div class="tool-cell">
+              <label>Quando usar</label>
+              <p>Durante a Ferramenta 2 (Entrevista Estruturada), como componente integrado. O consultor introduz a matriz a meio da entrevista, quando o tema da equipa estiver ativo.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Como usar</label>
+              <ul>
+                <li>Dois eixos: performance actual (produção, volume, qualidade relacional) e potencial de desenvolvimento (motivação intrínseca, capacidade de aprendizagem, proactividade)</li>
+                <li>Observar onde o gestor concentra a atenção — os quadrantes que ignora são tão reveladores quanto os que preenche com facilidade</li>
+                <li>Atenção à distinção: consultor com 10 anos e resultados mediocres ≠ consultor com 10 anos e resultados excelentes — a maturidade é distinta</li>
+              </ul>
+            </div>
+            <div class="tool-cell full">
+              <label>O que o preenchimento revela sobre o gestor</label>
+              <p>Concentração de energia em top performers? Negligência dos de baixo potencial? Incapacidade de distinguir maturidade técnica de maturidade motivacional? Ausência de pessoas no quadrante alto potencial / baixa performance (o mais desenvolvível)? Cada padrão tem uma leitura de liderança específica.</p>
+            </div>
+          </div>
+          <div class="tool-result">
+            <label>Resultado prático esperado</label>
+            <p>Mapa real da equipa que alimenta directamente o PDI (Ferramenta 7). Revelação do modelo mental de liderança: como o gestor distribui atenção, energia e desenvolvimento — e onde estão as suas cegueiras diagnósticas sobre os próprios liderados.</p>
+          </div>
+          <span class="status-badge status-ok">✓ Construída</span>
+        </div>
+      </div>
+
+      <!-- Ferramenta 6 -->
+      <div class="tool-card" id="t6">
+        <div class="tool-header" onclick="toggle('t6')">
+          <div class="tool-num f1">6</div>
+          <div class="tool-title-block">
+            <span class="tool-tag">Ferramenta 6 · Fase 1 · Síntese Interpretativa</span>
+            <h4>Mapa de Estilo de Liderança</h4>
+          </div>
+          <div class="tool-body">
+          <div class="tool-grid">
+            <div class="tool-cell">
+              <label>Para que serve</label>
+              <p>Sintetizar os dados das cinco ferramentas anteriores numa leitura interpretativa do estilo de liderança predominante do gestor e da sua adequação situacional. Não é preenchida pelo gestor — é construída pelo consultor como síntese integradora.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Quem usa</label>
+              <p>Construída exclusivamente pelo consultor externo (Paulo), com base nos dados das ferramentas 1 a 5. Apresentada ao gestor na sessão de devolutiva — nunca antes.</p>
+              <div class="profiles-row">
+                <span class="profile-badge pb-all">Todos os perfis</span>
+              </div>
+            </div>
+            <div class="tool-cell">
+              <label>Quando usar</label>
+              <p>Após a conclusão de todas as ferramentas anteriores (1 a 5). É o último instrumento da Fase 1 antes da produção dos relatórios pelo Prompt de Análise.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Como usar</label>
+              <ul>
+                <li>Dois níveis de análise: estilo predominante (como tende a liderar independentemente do perfil do consultor) e adequação situacional (adapta o estilo conforme a maturidade de cada liderado?)</li>
+                <li>Modelo de referência: liderança situacional adaptada ao contexto de intraempreendedores imobiliários</li>
+                <li>Distinção central: maturidade técnica (sabe fazer) vs. maturidade motivacional (quer fazer)</li>
+                <li>Apresentada com narrativa descritiva — nunca como julgamento de carácter</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tool-result">
+            <label>Resultado prático esperado</label>
+            <p>Retrato fiel e fundamentado do perfil de liderança do gestor — onde o estilo está alinhado com o que a equipa precisa e onde existe desajuste que impacta o desenvolvimento dos consultores. Peça central da devolutiva individual.</p>
+          </div>
+          <span class="status-badge status-ok">✓ Construída</span>
+          </div>
+          <div class="tool-toggle">▾</div>
+        </div>
+      </div>
+
+      <!-- Prompt de Análise -->
+      <div class="tool-card" id="tp">
+        <div class="tool-header" onclick="toggle('tp')">
+          <div class="tool-num fx">PR</div>
+          <div class="tool-title-block">
+            <span class="tool-tag">Protocolo de Análise · Transição 1→2 · Síntese e Relatórios</span>
+            <h4>Prompt de Análise do Protocolo de Registo</h4>
+          </div>
+          <div class="tool-toggle">▾</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-grid">
+            <div class="tool-cell">
+              <label>Para que serve</label>
+              <p>Transformar os dados recolhidos nas 6 ferramentas diagnósticas em dois documentos distintos: o Relatório Individual para cada gestor e o Relatório Consolidado para os Managing Partners. É o motor analítico que fecha a Fase 1 e abre a Fase 2.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Quem usa</label>
+              <p>Aplicado exclusivamente pelo consultor externo (Paulo). Os relatórios produzidos têm destinatários e lógicas diferentes — o que chega a cada um foi deliberadamente desenhado para esse fim.</p>
+              <div class="profiles-row">
+                <span class="profile-badge pb-all">Todos os perfis</span>
+              </div>
+            </div>
+            <div class="tool-cell full">
+              <label>Relatório Individual — entregue ao gestor em sessão presencial</label>
+              <ul>
+                <li><strong>Perfil de Liderança Actual</strong> — texto directo fundamentado em comportamentos observados</li>
+                <li><strong>Posicionamento no Quadrante M&amp;C</strong> — Alto Managing + Alto Coaching / Alto Managing + Baixo Coaching / Baixo Managing + Alto Coaching / Baixo Managing + Baixo Coaching</li>
+                <li><strong>Gap de Autoconhecimento</strong> — onde a autoavaliação diverge do comportamento observado — divergências para cima são pontos cegos prioritários</li>
+                <li><strong>Relação com a Cultura EXPOgroup</strong> — onde pratica a cultura e onde ainda opera no modelo padrão de mercado</li>
+                <li><strong>Prioridades de Desenvolvimento</strong> — 3 a 5 prioridades ordenadas por impacto</li>
+                <li><strong>Recomendações para o Programa</strong> — ênfases específicas para este gestor</li>
+              </ul>
+            </div>
+            <div class="tool-cell full">
+              <label>Relatório Consolidado — entregue à liderança EXPOgroup (Managing Partners)</label>
+              <p style="margin-bottom:10px;">Regra inegociável: dados individuais identificados nunca aparecem neste documento.</p>
+              <ul>
+                <li>Perfil Coletivo de Liderança do Grupo</li>
+                <li>Distribuição nos Quadrantes M&amp;C — visão sistémica</li>
+                <li>Gap entre Cultura EXPOgroup e Prática de Liderança — secção mais estratégica</li>
+                <li>Padrões colectivos de gap de autoconhecimento</li>
+                <li>Prioridades Estratégicas e Recomendações para o Design do Programa</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tool-result">
+            <label>Resultado prático esperado</label>
+            <p>Dois documentos com funções distintas: o Individual cria consciência e comprometimento no gestor; o Consolidado dá à liderança EXPOgroup uma visão sistémica do seu grupo de gestores — sem expor ninguém — e fundamenta as decisões de design da Fase 2.</p>
+          </div>
+          <span class="status-badge status-ok">✓ Construído</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FASE 2 -->
+  <div class="section">
+    <div class="section-label">Fase 2</div>
+    <h2 class="section-title">Plano de Ação e Desenvolvimento</h2>
+    <p class="section-intro">Três ferramentas que transformam os achados do diagnóstico em comportamentos novos. O princípio é cocriação — o gestor não recebe um plano prescrito, constrói o seu próprio plano com a facilitação do consultor.</p>
+
+    <div class="flow-wrapper">
+
+      <!-- Ferramenta 7 -->
+      <div class="tool-card" id="t7">
+        <div class="tool-header" onclick="toggle('t7')">
+          <div class="tool-num f2">7</div>
+          <div class="tool-title-block">
+            <span class="tool-tag">Ferramenta 7 · Fase 2 · Desenvolvimento Individual</span>
+            <h4>Canvas de PDI — Plano de Desenvolvimento Individual</h4>
+          </div>
+          <div class="tool-toggle">▾</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-grid">
+            <div class="tool-cell">
+              <label>Para que serve</label>
+              <p>Transformar as prioridades do diagnóstico num contrato de desenvolvimento concreto entre o gestor e ele mesmo. Máximo de cinco competências por PDI. O foco é comportamental — não conceitual: o que o gestor vai parar de fazer, continuar a fazer e começar a fazer.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Quem usa</label>
+              <p>Cocriado pelo consultor externo com o gestor em sessão 1:1. Pertence ao gestor — não ao consultor. Não é partilhado com os Managing Partners sem autorização explícita do gestor.</p>
+              <div class="profiles-row">
+                <span class="profile-badge pb-all">Todos os perfis</span>
+              </div>
+            </div>
+            <div class="tool-cell">
+              <label>Quando usar</label>
+              <p>Após a devolutiva do Relatório Individual (Ferramenta PR). O gestor já conhece os seus dados — a sessão de PDI começa onde a devolutiva terminou: "o que vais fazer diferente?"</p>
+            </div>
+            <div class="tool-cell">
+              <label>Como usar</label>
+              <ul>
+                <li>Blocos por competência: comportamento atual observado → comportamento desejado (observável) → ações concretas → indicador de progresso → prazo</li>
+                <li>Inclui roteiro de condução da sessão — o consultor usa perguntas que ajudam o gestor a chegar às suas próprias prioridades, não lista prescrita externamente</li>
+                <li>Versão física (preenchida à mão em sessão) + versão digital para acompanhamento</li>
+                <li>A Matriz da Equipa (Ferramenta 5) alimenta directamente as competências a desenvolver no PDI</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tool-result">
+            <label>Resultado prático esperado</label>
+            <p>Plano de desenvolvimento pessoal com responsabilidade do próprio gestor — não imposto externamente. O facto de ser cocriado aumenta significativamente a adesão e a probabilidade de implementação real. É o mapa de trabalho para toda a Fase 3.</p>
+          </div>
+          <span class="status-badge status-ok">✓ Construída</span>
+        </div>
+      </div>
+
+      <!-- Ferramenta 8 -->
+      <div class="tool-card" id="t8">
+        <div class="tool-header" onclick="toggle('t8')">
+          <div class="tool-num f2">8</div>
+          <div class="tool-title-block">
+            <span class="tool-tag">Ferramenta 8 · Fase 2 e 3 · Prática Diária</span>
+            <h4>Roteiro de Reunião 1:1 Estruturada</h4>
+          </div>
+          <div class="tool-toggle">▾</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-grid">
+            <div class="tool-cell">
+              <label>Para que serve</label>
+              <p>Dar ao gestor uma estrutura prática para as suas conversas regulares com cada consultor da equipa. O objetivo não é criar uma agenda de cobrança de resultados — é treinar o gestor a conduzir conversas de desenvolvimento no ritmo semanal.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Quem usa</label>
+              <p>Ferramenta do próprio gestor — usada por ele com cada membro da sua equipa. Introduzida pelo consultor na Fase 2 e praticada e consolidada na Fase 3.</p>
+              <div class="profiles-row">
+                <span class="profile-badge pb-p2">Perfil 2 · Gestor integrado</span>
+                <span class="profile-badge pb-p3">Perfil 3 · Gestor independ.</span>
+              </div>
+            </div>
+            <div class="tool-cell">
+              <label>Quando usar</label>
+              <p>Introduzida na Fase 2, logo após a construção do PDI. Praticada com supervisão na Fase 3. É o veículo de execução semanal do PDI no campo real — a onde o desenvolvimento acontece de facto.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Como usar</label>
+              <ul>
+                <li>4 blocos com tempo sugerido: abertura e check-in (5 min), resultados e indicadores recentes (10 min), desafios e aprendizados (10 min), próximos passos e comprometimentos (5 min)</li>
+                <li>Inclui banco de perguntas de coaching por bloco — para substituir a tendência natural de dar respostas</li>
+                <li>Adaptada para o Perfil 1: os liderados são gestores, não consultores — a conversa tem natureza diferente</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tool-result">
+            <label>Resultado prático esperado</label>
+            <p>Instalação de uma cadência regular de acompanhamento individual na rotina do gestor — o ritual semanal que transforma intenção de desenvolvimento em prática sistemática. Sem esta ferramenta, os insights do diagnóstico ficam sem veículo de implementação.</p>
+          </div>
+          <span class="status-badge status-ok">✓ Construída</span>
+        </div>
+      </div>
+
+      <!-- Ferramenta 9 -->
+      <div class="tool-card" id="t9">
+        <div class="tool-header" onclick="toggle('t9')">
+          <div class="tool-num f2">9</div>
+          <div class="tool-title-block">
+            <span class="tool-tag">Ferramenta 9 · Fase 2 e 3 · Prática Aprofundada</span>
+            <h4>Roteiro de Conversa de Coaching</h4>
+          </div>
+          <div class="tool-toggle">▾</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-grid">
+            <div class="tool-cell">
+              <label>Para que serve</label>
+              <p>Guiar o gestor em conversas de desenvolvimento profundo com um consultor diante de um desafio específico real. Enquanto o 1:1 (Ferramenta 8) estrutura a cadência regular, esta ferramenta estrutura os momentos de coaching intensivo.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Quem usa</label>
+              <p>Ferramenta do próprio gestor — usada com um consultor específico quando há um desafio concreto que merece aprofundamento. Introduzida na Fase 2, praticada na Fase 3.</p>
+              <div class="profiles-row">
+                <span class="profile-badge pb-all">Todos os perfis</span>
+              </div>
+            </div>
+            <div class="tool-cell">
+              <label>Quando usar</label>
+              <p>Quando um consultor enfrenta um bloqueio específico — uma transação difícil, uma crise de motivação, uma decisão de carreira. Não é ferramenta de uso semanal — é accionada por situações concretas.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Como usar</label>
+              <ul>
+                <li>Modelo GROW adaptado ao contexto imobiliário: <strong>Goal</strong> (objetivo do consultor — não do gestor), <strong>Reality</strong> (como o consultor descreve a situação), <strong>Options</strong> (alternativas que o consultor identifica — gestor amplia, não decide), <strong>Will</strong> (comprometimento concreto)</li>
+                <li>Inclui alertas explícitos nos momentos de maior tentação de intervir e dar resposta directa</li>
+                <li>Distinção importante: o objetivo desta ferramenta é sempre o do consultor, nunca o do gestor para ele</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tool-result">
+            <label>Resultado prático esperado</label>
+            <p>Gestor capaz de conduzir uma conversa de desenvolvimento real — em que o consultor sai com clareza própria e comprometimento próprio, sem que o gestor tenha precisado dar as respostas. É a diferença entre gerir e desenvolver.</p>
+          </div>
+          <span class="status-badge status-ok">✓ Construída</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FASE 3 -->
+  <div class="section">
+    <div class="section-label">Fase 3</div>
+    <h2 class="section-title">Implementação e Sustentação</h2>
+    <p class="section-intro">Duas ferramentas que monitoram a mudança real no comportamento de liderança e fecham o ciclo com evidências. O princípio é autonomia crescente — o consultor acompanha, não instrui.</p>
+
+    <div class="flow-wrapper">
+
+      <!-- Ferramenta 10 -->
+      <div class="tool-card" id="t10">
+        <div class="tool-header" onclick="toggle('t10')">
+          <div class="tool-num f3">10</div>
+          <div class="tool-title-block">
+            <span class="tool-tag">Ferramenta 10 · Fase 3 · Automonitorização</span>
+            <h4>Painel de KPIs de Gestão</h4>
+          </div>
+          <div class="tool-toggle">▾</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-grid">
+            <div class="tool-cell">
+              <label>Para que serve</label>
+              <p>Fazer o gestor monitorar o seu comportamento de liderança com a mesma disciplina com que monitoriza os números de venda. Não mede resultados comerciais da equipa — mede se o gestor está a fazer o que se comprometeu a fazer no PDI.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Quem usa</label>
+              <p>Usado pelo gestor para automonitorização e pelo consultor externo para acompanhamento. Formato simples — planilha ou painel digital acessível no dia a dia.</p>
+              <div class="profiles-row">
+                <span class="profile-badge pb-all">Todos os perfis</span>
+              </div>
+            </div>
+            <div class="tool-cell">
+              <label>Quando usar</label>
+              <p>Implementado no início da Fase 3 e monitorizado ao longo de todo o período de implementação. É o instrumento de responsabilização contínua entre as sessões de acompanhamento com o consultor.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Como usar</label>
+              <ul>
+                <li>Indicadores de comportamento de liderança: frequência de 1:1 realizadas por consultor por semana, qualidade do feedback percebida pela equipa (survey rápido mensal), retenção de consultores nos últimos 90 dias, progresso dos PDIs activos</li>
+                <li>Revisado nas sessões de coaching de progresso com o consultor</li>
+                <li>Se um KPI não está a ser monitorizado, é sinal de que não está a ser praticado</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tool-result">
+            <label>Resultado prático esperado</label>
+            <p>Visibilidade sobre os comportamentos de liderança que o gestor está ou não a implementar. Cria accountability sem vigilância — o gestor monitoriza-se a si mesmo, com os dados visíveis também para o consultor. Previne o risco de regresso silencioso ao modelo anterior.</p>
+          </div>
+          <span class="status-badge status-ok">✓ Construída</span>
+        </div>
+      </div>
+
+      <!-- Ferramenta 11 -->
+      <div class="tool-card" id="t11">
+        <div class="tool-header" onclick="toggle('t11')">
+          <div class="tool-num f3">11</div>
+          <div class="tool-title-block">
+            <span class="tool-tag">Ferramenta 11 · Fase 3 · Encerramento do Ciclo</span>
+            <h4>Relatório de Evolução Individual e Consolidado</h4>
+          </div>
+          <div class="tool-toggle">▾</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-grid">
+            <div class="tool-cell">
+              <label>Para que serve</label>
+              <p>Fechar o ciclo com evidências. Compara os dados do diagnóstico inicial (Fase 1) com os dados da reavaliação final (Fase 3) nas mesmas dimensões e com os mesmos instrumentos. Fundamenta a decisão de roll-out para o resto do grupo.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Quem usa</label>
+              <p>Produzido pelo consultor externo. Dois documentos distintos: o Individual entregue ao gestor, o Consolidado entregue à liderança EXPOgroup — com a mesma regra de confidencialidade do Protocolo de Análise.</p>
+              <div class="profiles-row">
+                <span class="profile-badge pb-all">Todos os perfis</span>
+              </div>
+            </div>
+            <div class="tool-cell">
+              <label>Quando usar</label>
+              <p>No encerramento da Fase 3 — após a reaplicação da Ferramenta 4 (Shadowing) e do survey da equipa (Ferramenta 3) nas mesmas condições do diagnóstico inicial.</p>
+            </div>
+            <div class="tool-cell">
+              <label>Como usar</label>
+              <ul>
+                <li><strong>Relatório Individual</strong>: evolução em competências M&amp;C, percepção da equipa antes vs. depois, progresso do PDI — entregue ao gestor</li>
+                <li><strong>Relatório Consolidado</strong>: padrões de evolução do grupo, o que mudou coletivamente, o que permanece como lacuna, recomendações para continuidade — entregue à liderança</li>
+                <li>Inclui <strong>Proposta de Roll-out</strong> fundamentada nos dados do piloto: o que funcionou, o que precisa ajuste, número recomendado de gestores por ciclo, perfil a priorizar, como o gestor piloto pode actuar como referência interna</li>
+              </ul>
+            </div>
+          </div>
+          <div class="tool-result">
+            <label>Resultado prático esperado</label>
+            <p>Evidência objectiva da evolução — ou da ausência dela. Transforma o programa de uma intervenção de confiança numa intervenção baseada em dados. Fundamenta o roll-out com evidências reais do piloto, não com promessas do consultor.</p>
+          </div>
+          <span class="status-badge status-ok">✓ Construída</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AVALIAÇÃO FINAL -->
+  <div class="section">
+    <div class="section-label">Análise Crítica</div>
+    <h2 class="section-title">As ferramentas respondem ao objetivo?</h2>
+    <p class="section-intro">Uma leitura directa sobre se o conjunto de ferramentas, como está desenhado, consegue desenvolver Managing &amp; Coaching nos três perfis de gestor e instalar uma rotina estruturada de Coaching com os liderados.</p>
+
+    <div class="eval-grid">
+      <div class="eval-card green">
+        <h4>✓ Pontos fortes do sistema</h4>
+        <ul>
+          <li>O diagnóstico é multidimensional — 5 perspectivas antes de qualquer prescrição</li>
+          <li>O gap de autoconhecimento (F3 vs F1) é o dado mais poderoso e o sistema captura-o de forma rigorosa</li>
+          <li>A Ferramenta 4 (Shadowing) reaplicada na Fase 3 cria antes/depois mensurável</li>
+          <li>O PDI cocriado aumenta adesão — não é plano imposto</li>
+          <li>A Proposta de Roll-out baseada em dados do piloto é um diferenciador real de consultoria</li>
+          <li>A distinção por perfil (BE, Integrado, Independente) está presente em todas as ferramentas</li>
+        </ul>
+      </div>
+      <div class="eval-card blue">
+        <h4>→ Dependências críticas de sequência</h4>
+        <ul>
+          <li>F1 alimenta F2 — sem o questionário, a entrevista perde profundidade</li>
+          <li>F3 + F4 + F5 alimentam F6 — o Mapa de Estilo só é válido com todas as anteriores</li>
+          <li>PR alimenta F7 — o PDI começa onde o Relatório Individual termina</li>
+          <li>F7 alimenta F8 e F9 — as ferramentas de prática dependem das prioridades do PDI</li>
+          <li>F8 + F9 alimentam F10 — os KPIs medem a prática das ferramentas 8 e 9</li>
+          <li>F3 + F4 reaplicadas alimentam F11 — o relatório de evolução exige reaplicação dos mesmos instrumentos</li>
+        </ul>
+      </div>
+      <div class="eval-card amber">
+        <h4>⚠ Atenção — pontos a monitorizar</h4>
+        <ul>
+          <li>O sistema mede comportamento de liderança mas não mede directamente impacto nos resultados comerciais da equipa — essa correlação será visível apenas no médio prazo</li>
+          <li>A cadência das sessões de acompanhamento entre fases deve ser formalizada antes do piloto para garantir consistência</li>
+          <li>O critério operacional de "coaching instalado" merece definição clara: quantos 1:1 por semana, em que formato, por quanto tempo</li>
+          <li>A adesão às ferramentas 8 e 9 no dia-a-dia depende de suporte activo do consultor nas primeiras semanas da Fase 3</li>
+        </ul>
+      </div>
+      <div class="eval-card red">
+        <h4>✗ O que o sistema não resolve sozinho</h4>
+        <ul>
+          <li>A motivação intrínseca do gestor para mudar — o sistema dá dados e estrutura, não disposição</li>
+          <li>A resistência de gestores que entregam resultados e percepcionam a mudança como ameaça</li>
+          <li>O tempo real disponível nos gestores para 1:1 semanais com cada consultor</li>
+          <li>A consistência do consultor externo no acompanhamento entre fases — o sistema pressupõe presença contínua</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="conclusion-box">
+      <label>Leitura final — o sistema está em condições de responder ao objetivo?</label>
+      <p><strong>Sim — o sistema está completo e em condições de ser executado.</strong> As 11 ferramentas formam um sistema coerente, progressivo e fundamentado para desenvolver Managing &amp; Coaching nos três perfis de gestor do EXPOgroup. O diagnóstico é multidimensional e robusto. A lógica de cocriação do PDI é correcta para um contexto de alta autonomia e intraempreendedorismo. As ferramentas 8 e 9 dão ao gestor o roteiro prático para instalar a rotina de Coaching no campo — com cadência regular (1:1) e com profundidade situacional (modelo GROW). O Painel de KPIs (F10) garante accountability contínua. A reaplicação dos instrumentos de diagnóstico na Fase 3 transforma o programa numa intervenção baseada em dados, não em percepção. <strong>O sistema responde ao gap identificado pela liderança EXPOgroup: gestores que sabem o que é o Coaching mas não têm estrutura para o praticar de forma sistemática com os seus liderados.</strong> O piloto dirá o que ajustar antes do roll-out.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- RODAPÉ -->
+<div class="footer">
+  <div class="footer-left">EXPOgroup · Managing &amp; Coaching · Fluxo de Ferramentas v1</div>
+  <div class="footer-right">Prof. Paulo H. Donassolo · Consultoria em Gestão e Desenvolvimento de Lideranças · Abril 2025</div>
+</div>
+
+<script>
+  function toggle(id) {
+    const card = document.getElementById(id);
+    card.classList.toggle('open');
+  }
+  // Abrir primeira ferramenta de cada fase por defeito
+  ['t1','t7','t10'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('open');
+  });
+</script>
+
+</body>
+</html>

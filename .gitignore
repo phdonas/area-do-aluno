@@ -47,3 +47,4 @@ next-env.d.ts
 /check_*.ts
 /tmp_*
 ts_errors.txt
+force_reset_password.js

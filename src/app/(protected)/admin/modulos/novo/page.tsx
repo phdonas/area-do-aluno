@@ -68,6 +68,21 @@ export default function NovoModuloPage() {
             </div>
           </div>
 
+          <div className="space-y-4 pt-10 border-t border-border-custom px-4 bg-primary/5 rounded-2xl py-6 my-6">
+            <label htmlFor="ui_layout" className="block text-sm font-bold text-text-primary">Layout de Exibição (Player)</label>
+            <select 
+              id="ui_layout" 
+              name="ui_layout" 
+              className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm appearance-none"
+            >
+              <option value="padrao">📺 Lista de Aulas (Vídeo Padrão)</option>
+              <option value="fluxo">🗺️ Fluxo de Ferramentas (Mapa Visual)</option>
+            </select>
+            <p className="text-[10px] text-text-muted font-medium uppercase tracking-widest mt-1">
+              Define se o módulo abre o player de vídeo ou o mapa interativo de ferramentas.
+            </p>
+          </div>
+
           <div className="pt-6 border-t border-border-custom flex justify-end gap-3">
             <Link 
               href="/admin/modulos"

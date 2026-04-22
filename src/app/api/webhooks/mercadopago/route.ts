@@ -2,7 +2,7 @@ import { MercadoPagoConfig, Payment } from 'mercadopago'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextResponse } from 'next/server'
 import crypto from 'crypto'
-import { enviarEmailComunicacao } from '@/lib/mail'
+import { enviarEmailComunicacao } from '@/lib/email-service'
 import { registrarUsoCupom } from '@/lib/cupons'
 import { registrarLogSistema } from '@/lib/logs'
 
@@ -65,12 +65,23 @@ export async function POST(request: Request) {
       cursoNome = curso?.titulo || ''
     }
 
-    // 3. Lógica de Acesso
+    // 3. Lógica de Acesso e Prazo
     const { data: usuario } = await supabase
       .from('usuarios')
       .select('id')
       .eq('email', email)
       .maybeSingle()
+
+    // Busca duração do plano se existir
+    let duracaoMeses = 12 // Default 1 ano
+    if (plano_id) {
+      const { data: plano } = await supabase.from('planos').select('duracao_meses').eq('id', plano_id).single()
+      if (plano) duracaoMeses = plano.duracao_meses
+    }
+
+    const dataVencimento = duracaoMeses === 0 
+      ? '9999-12-31T23:59:59Z' 
+      : new Date(Date.now() + duracaoMeses * 30 * 24 * 60 * 60 * 1000).toISOString()
 
     if (usuario?.id) {
       // MATRÍCULA DIRETA
@@ -80,8 +91,8 @@ export async function POST(request: Request) {
         curso_id: curso_id || null,
         status: 'ativa',
         data_inicio: new Date().toISOString(),
-        data_vencimento: new Date(Date.now() + 365*24*60*60*1000).toISOString(),
-        metadata: { mp_payment_id: dataId, via: 'webhook' }
+        data_vencimento: dataVencimento,
+        metadata: { mp_payment_id: dataId, via: 'webhook', duracao_original: duracaoMeses }
       })
       
       await enviarEmailComunicacao({ email, cursoNome, tipo: 'matricula_direta' })

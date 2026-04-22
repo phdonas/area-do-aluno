@@ -3,7 +3,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import crypto from 'crypto'
-import { enviarEmailComunicacao } from '@/lib/mail'
+import { enviarEmailComunicacao } from '@/lib/email-service'
 
 export async function criarConvite(data: { email: string; curso_id?: string; plano_tipo?: string; origem: string }) {
   const supabase = createAdminClient()

@@ -23,7 +23,8 @@ export default async function AulasListPage({
 
   let query = supabase
     .from('aulas')
-    .select('*, modulos_aulas(count)');
+    .select('*, modulos_aulas(count)')
+    .limit(100);
 
   if (tituloQuery) {
     query = query.ilike('titulo', `%${tituloQuery}%`);

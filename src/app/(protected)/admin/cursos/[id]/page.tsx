@@ -1,21 +1,34 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import { notFound } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { notFound, redirect } from 'next/navigation'
 import { CourseEditorTabs } from '../CourseEditorTabs'
 import { CursoBasicsForm } from '../CursoBasicsForm'
 import { PilarAssociator } from '../PilarAssociator'
 import { ModuloAssociator } from '../ModuloAssociator'
 import { updateCursoBasics } from '../actions'
-import { Eye } from 'lucide-react'
+import { Eye, Video } from 'lucide-react'
 import Link from 'next/link'
+import { AdminTutorialCard } from '@/components/admin/AdminTutorialCard'
 
 export const dynamic = 'force-dynamic'
 
 export default async function EditarCursoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const supabase = createAdminClient()
+  const supabaseAdmin = createAdminClient()
+  const supabaseAuth = await createClient()
+
+  const { data: { user } } = await supabaseAuth.auth.getUser()
+  if (!user) redirect('/login')
+
+  const { data: isAdminRole } = await supabaseAuth.rpc('is_admin')
+  const { data: userData } = await supabaseAuth.from('usuarios').select('is_staff').eq('id', user.id).single()
+  
+  const isAdmin = !!isAdminRole
+  const isStaff = !!userData?.is_staff
+  const role = isAdmin ? 'admin' : (isStaff ? 'staff' : 'user')
 
   // 1. Buscar dados do Curso
-  const { data: curso, error: cursoErr } = await supabase
+  const { data: curso, error: cursoErr } = await supabaseAdmin
     .from('cursos')
     .select('*')
     .eq('id', id)
@@ -27,18 +40,18 @@ export default async function EditarCursoPage({ params }: { params: Promise<{ id
   }
 
   // 2. Buscar Professores para o select
-  const { data: professores } = await supabase.from('professores').select('id, nome')
+  const { data: professores } = await supabaseAdmin.from('professores').select('id, nome')
 
   // 3. Buscar Todos os Pilares e Pilares do Curso
   const [{ data: todosPilares }, { data: cursoPilares }] = await Promise.all([
-    supabase.from('pilares').select('id, nome, cor_badge').order('nome'),
-    supabase.from('cursos_pilares').select('pilar_id').eq('curso_id', id)
+    supabaseAdmin.from('pilares').select('id, nome, cor_badge').order('nome'),
+    supabaseAdmin.from('cursos_pilares').select('pilar_id').eq('curso_id', id)
   ])
 
   // 4. Buscar Todos os Módulos e Módulos do Curso (Pivô N:N)
   const [{ data: todosModulos }, { data: cursoModulos }] = await Promise.all([
-    supabase.from('modulos').select('id, titulo').order('titulo'),
-    supabase.from('cursos_modulos')
+    supabaseAdmin.from('modulos').select('id, titulo').order('titulo'),
+    supabaseAdmin.from('cursos_modulos')
       .select('*, modulo:modulos(id, titulo)')
       .eq('curso_id', id)
       .order('ordem', { ascending: true })
@@ -51,13 +64,14 @@ export default async function EditarCursoPage({ params }: { params: Promise<{ id
 
   if (moduloIds.length > 0) {
     // Buscar primeiro as aulas vinculadas à tabela pivot (Biblioteca Global / Sincronização)
-    const { data: pivotAulas } = await supabase
+    const { data: pivotAulas } = await supabaseAdmin
       .from('modulos_aulas')
-      .select('modulo_id, aula:aulas(*)')
+      .select('modulo_id, ordem, aula:aulas(*)')
       .in('modulo_id', moduloIds)
+      .order('ordem', { ascending: true })
 
     // Buscar depois as aulas vinculadas diretamente (Módulos Exclusivos / Legado)
-    const { data: directAulas } = await supabase
+    const { data: directAulas } = await supabaseAdmin
       .from('aulas')
       .select('*')
       .in('modulo_id', moduloIds)
@@ -67,7 +81,8 @@ export default async function EditarCursoPage({ params }: { params: Promise<{ id
       pivotAulas.forEach(item => {
         if (item.aula) {
           const modId = item.modulo_id
-          const aulaObj = { ...item.aula, is_pivot: true }
+          // Usa a ordem da pivot (local ao módulo), não a ordem global da aula
+          const aulaObj = { ...item.aula, is_pivot: true, ordem: item.ordem }
           if (!aulasPorModulo[modId]) aulasPorModulo[modId] = []
           if (!aulasPorModulo[modId].some(a => a.id === aulaObj.id)) {
             aulasPorModulo[modId].push(aulaObj)
@@ -94,7 +109,7 @@ export default async function EditarCursoPage({ params }: { params: Promise<{ id
 
   // Ordenar aulas dentro dos módulos pela propriedade 'ordem'
   Object.keys(aulasPorModulo).forEach(modId => {
-    aulasPorModulo[modId].sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+    aulasPorModulo[modId].sort((a, b) => (a.ordem ?? 999) - (b.ordem ?? 999))
   })
 
   // Preparar ação de salvamento
@@ -131,12 +146,46 @@ export default async function EditarCursoPage({ params }: { params: Promise<{ id
         key={`tabs-${id}`}
         vendasContent={
           <div key="vendas-view" className="animate-in fade-in duration-500">
-            <CursoBasicsForm 
-              key={`form-${id}-${curso.updated_at}`}
-              curso={curso} 
-              professores={professores || []} 
-              action={updateAction} 
-            />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+              <div className="lg:col-span-2">
+                <CursoBasicsForm 
+                  key={`form-${id}-${curso.updated_at}`}
+                  curso={curso} 
+                  professores={professores || []} 
+                  action={updateAction} 
+                />
+              </div>
+              <div className="space-y-6">
+                <AdminTutorialCard 
+                  moduleTitle="Cursos"
+                  color="emerald"
+                  role={role}
+                  steps={[
+                    {
+                      title: "Otimização de SEO",
+                      description: "Manter o slug curto e focado em palavras-chave ajuda na indexação externa e organização do catálogo."
+                    },
+                    {
+                      title: "Destaque de Vitrine",
+                      description: "A imagem de capa é o primeiro contato do aluno. Utilize cores que contrastem com o fundo do site."
+                    },
+                    {
+                      title: "Status de Produção",
+                      description: "Se o curso estiver em 'Rascunho', matrículas existentes continuam funcionando, mas novos alunos não conseguem comprar."
+                    }
+                  ]}
+                />
+                <div className="bg-surface border border-border-custom rounded-[2rem] p-8 flex items-center gap-6 hover:border-emerald-500/30 transition-all cursor-default shadow-lg group">
+                   <div className="w-16 h-16 bg-emerald-500/10 rounded-[1.25rem] flex items-center justify-center text-emerald-600 shrink-0 group-hover:scale-110 transition-transform">
+                      <Video className="w-8 h-8" />
+                   </div>
+                   <div>
+                      <p className="text-xs font-black text-text-primary uppercase tracking-[0.1em] italic">Vídeo: Melhores Práticas</p>
+                      <p className="text-[10px] text-text-muted mt-1 uppercase font-bold leading-relaxed">Aprenda a cadastrar combos de produtos.</p>
+                   </div>
+                </div>
+              </div>
+            </div>
           </div>
         }
         conteudoContent={

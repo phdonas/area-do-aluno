@@ -1,20 +1,28 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const fontSans = Inter({
+  variable: "--font-sans",
+  subsets: ["latin"],
+});
+
+const fontDisplay = Plus_Jakarta_Sans({
+  variable: "--font-display",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Área do Aluno | PH Donassolo",
-  description: "Plataforma de ensino do Prof. Paulo Henrique Donassolo",
+  title: {
+    default: "PHD Academy | Ecossistema de Aprendizado",
+    template: "%s | PHD Academy"
+  },
+  description: "Plataforma de ensino oficial da PHD Academy",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Área do Aluno",
+    title: "PHD Academy",
   },
 };
 
@@ -26,7 +34,7 @@ export const viewport = {
   userScalable: false,
 };
 
-import { ThemeProvider } from "@/components/theme-provider";
+import { AppProviders } from "@/providers/app-providers";
 
 export default function RootLayout({
   children,
@@ -37,17 +45,12 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${inter.variable} h-full antialiased`}
+      className={`${fontSans.variable} ${fontDisplay.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
+      <body suppressHydrationWarning className="min-h-full flex flex-col font-sans">
+        <AppProviders>
           {children}
-        </ThemeProvider>
+        </AppProviders>
       </body>
     </html>
   );

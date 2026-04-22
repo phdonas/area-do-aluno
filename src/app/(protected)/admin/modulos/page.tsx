@@ -24,11 +24,7 @@ export default async function ModulosListPage({
     .from('modulos')
     .select(`
       *, 
-      cursos_modulos(curso_id), 
-      modulos_aulas(
-        aulas(*)
-      ), 
-      aulas:aulas!aulas_modulo_id_fkey(*)
+      cursos_modulos(count)
     `);
 
   if (tituloQuery) {
@@ -97,7 +93,7 @@ export default async function ModulosListPage({
               {modulos.map(modulo => {
                 // Se curso_id for NULL o módulo é global (biblioteca pura)
                 const isGlobal = modulo.curso_id === null;
-                const conexoes = modulo.cursos_modulos?.length || 0;
+                const conexoes = modulo.cursos_modulos?.[0]?.count || 0;
 
                 return (
                   <tr key={modulo.id} className="hover:bg-black/5 transition-colors">
@@ -107,19 +103,9 @@ export default async function ModulosListPage({
                       </Link>
                       <p className="text-xs text-text-secondary truncate max-w-[250px]">{modulo.descricao}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        {(() => {
-                           const getDurSeg = (aula: any) => {
-                               return (aula?.duracao_segundos || (aula?.duracao_minutos ? aula.duracao_minutos * 60 : 0));
-                           };
-                           const duracaoAulasVinculadasSeg = (modulo.modulos_aulas || []).reduce((acc: number, ma: any) => acc + getDurSeg(ma.aulas), 0);
-                           const duracaoAulasDiretasSeg = (modulo.aulas || []).reduce((acc: number, a: any) => acc + getDurSeg(a), 0);
-                           const totalSegundos = duracaoAulasVinculadasSeg + duracaoAulasDiretasSeg;
-                           return (
-                             <span className="text-[10px] text-text-muted flex items-center gap-1 bg-background border border-border-custom px-2 py-0.5 rounded font-mono">
-                                <Clock className="w-3 h-3" /> {formatDuration(totalSegundos)}
-                             </span>
-                           )
-                        })()}
+                        <span className="text-[10px] text-text-muted flex items-center gap-1 bg-background border border-border-custom px-2 py-0.5 rounded font-mono uppercase tracking-widest">
+                           Layout: {modulo.ui_layout || 'padrao'}
+                        </span>
                       </div>
                     </td>
                     <td className="p-4">

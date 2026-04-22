@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
@@ -47,12 +48,14 @@ export async function cadastrarUsuario(prevState: any, formData: FormData) {
 
   // 2. Se houver um token de convite, processar a matrícula automática
   if (token && userId) {
-    // Busca o convite
-    const { data: convite, error: conviteError } = await supabase
-      .from('convites')
+    const supabaseAdmin = createAdminClient()
+    
+    // Busca o convite (Usa Admin para bypassar RLS do convite)
+    const { data: convite, error: conviteError } = await supabaseAdmin
+      .from('convites_matricula')
       .select('*')
       .eq('token', token)
-      .eq('status', 'pendente')
+      .eq('usado', false)
       .single()
 
     if (convite && !conviteError) {
@@ -60,19 +63,19 @@ export async function cadastrarUsuario(prevState: any, formData: FormData) {
       if (convite.curso_id) {
          // O sistema de assinaturas usa planos. 
          // O Blueprint diz que convites presenciais têm "plano_tipo".
-         // Precisamos mapear para um plano existente ou criar uma assinatura direta.
          
          // Para este MVP, vamos buscar um plano que seja do tipo coerente
-         const { data: plano } = await supabase
+         const { data: plano } = await supabaseAdmin
            .from('planos')
            .select('id')
-           .eq('is_global', convite.plano_tipo === 'vitalicio' || convite.plano_tipo === '1ano')
+           .eq('is_global', convite.plano_tipo === 'vitalicio' || convite.plano_tipo === '1ano' || convite.plano_tipo === 'plano_vortex')
            .limit(1)
-           .single()
+           .maybeSingle()
 
-         await supabase.from('assinaturas').insert({
+         await supabaseAdmin.from('assinaturas').insert({
            usuario_id: userId,
            plano_id: plano?.id,
+           curso_id: convite.curso_id, // Vincula o curso diretamente também
            status: 'ativa',
            data_inicio: new Date().toISOString(),
            data_vencimento: convite.plano_tipo === 'vitalicio' ? '9999-12-31T23:59:59Z' : new Date(Date.now() + 365*24*60*60*1000).toISOString(),
@@ -84,22 +87,23 @@ export async function cadastrarUsuario(prevState: any, formData: FormData) {
          })
 
          // LOG de Matrícula (Task 1.3)
-         await supabase.from('logs_matriculas').insert({
+         await supabaseAdmin.from('logs_matriculas').insert({
            usuario_id: userId,
-           evento: 'matricula',
+           email,
+           evento: 'matricula_via_convite',
            curso_id: convite.curso_id,
-           origem: 'convite',
+           origem: 'workflow_cadastro',
            detalhes: { token, origem_convite: convite.origem }
          })
       }
 
-      // 2.2 Marca convite como aceito
-      await supabase
-        .from('convites')
+      // 2.2 Marca convite como usado e vincula ao usuário
+      await supabaseAdmin
+        .from('convites_matricula')
         .update({ 
-           status: 'aceito', 
-           aceito_em: new Date().toISOString(),
-           user_id: userId 
+           usado: true,
+           usuario_id: userId,
+           aceito_em: new Date().toISOString()
         })
         .eq('id', convite.id)
     }

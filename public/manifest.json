@@ -1,7 +1,7 @@
 {
-  "name": "PH Donassolo - Área do Aluno",
-  "short_name": "Área Aluno",
-  "description": "Plataforma de ensino exclusiva do Ecossistema PH Donassolo.",
+  "name": "PHD Academy",
+  "short_name": "PHD Academy",
+  "description": "Plataforma de ensino exclusiva PHD Academy.",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#0A0F1E",

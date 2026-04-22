@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHD Academy — Autoavaliação do Gestor Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-mid: #253564;
+  --teal: #1d9e8f;
+  --teal-light: #e8f7f5;
+  --coral: #e05c3a;
+  --coral-light: #fdf1ee;
+  --slate: #4a5568;
+  --gray-light: #f4f6f9;
+  --gray-mid: #e2e8f0;
+  --gray-dark: #718096;
+  --white: #ffffff;
+  --text: #1a2744;
+  --M-color: #2563a8;
+  --M-light: #eff6ff;
+  --C-color: #1d9e8f;
+  --C-light: #e8f7f5;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Source Sans 3', sans-serif;
+  --shadow: 0 2px 12px rgba(26,39,68,0.08);
+  --shadow-md: 0 4px 24px rgba(26,39,68,0.12);
+  --radius: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--gray-light);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ── LAYOUT ── */
+.app-wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 80px; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── HEADER ── */
+.tool-header {
+  background: var(--navy);
+  color: white;
+  padding: 40px 48px;
+  border-radius: var(--radius);
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.tool-header::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 200px; height: 100%;
+  background: linear-gradient(135deg, transparent 40%, rgba(29,158,143,0.2));
+}
+.tool-header .badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+  border: 1px solid var(--teal);
+  padding: 3px 10px;
+  border-radius: 2px;
+  margin-bottom: 14px;
+}
+.tool-header h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.tool-header p {
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  max-width: 520px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 32px;
+  margin-bottom: 20px;
+}
+.card-sm { padding: 24px; }
+
+/* ── SECTION LABELS ── */
+.section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--gray-mid);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label .tag-M {
+  background: var(--M-light);
+  color: var(--M-color);
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-weight: 700;
+}
+.section-label .tag-C {
+  background: var(--C-light);
+  color: var(--C-color);
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-weight: 700;
+}
+
+/* ── FORM FIELDS ── */
+.fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field-group { display: flex; flex-direction: column; gap: 6px; }
+.field-group label { font-size: 12px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: 0.5px; }
+.field-group input, .field-group select {
+  border: 1px solid var(--gray-mid);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text);
+  transition: border-color 0.2s;
+  background: white;
+}
+.field-group input:focus, .field-group select:focus {
+  outline: none;
+  border-color: var(--teal);
+}
+.field-group.full { grid-column: 1 / -1; }
+
+/* ── PROGRESS ── */
+.progress-bar {
+  background: var(--gray-mid);
+  height: 4px;
+  border-radius: 2px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--M-color));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.progress-info .section-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+.progress-info .step-count { font-size: 12px; color: var(--gray-dark); }
+
+/* ── QUESTION ITEMS ── */
+.question-item {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--gray-mid);
+}
+.question-item:last-child { border-bottom: none; }
+
+.question-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.q-type-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 2px 7px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.q-type-M { background: var(--M-light); color: var(--M-color); }
+.q-type-C { background: var(--C-light); color: var(--C-color); }
+.q-type-MC { background: #f3e8ff; color: #6d28d9; }
+
+.q-text { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.5; }
+
+.scale-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.scale-option { flex: 1; }
+.scale-option input[type="radio"] { display: none; }
+.scale-option label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px 4px;
+  border: 1px solid var(--gray-mid);
+  border-radius: var(--radius);
+  transition: all 0.15s;
+  text-align: center;
+}
+.scale-option label:hover { border-color: var(--teal); background: var(--teal-light); }
+.scale-option input:checked + label {
+  border-color: var(--teal);
+  background: var(--teal-light);
+  color: var(--teal);
+}
+.scale-num { font-size: 16px; font-weight: 700; color: var(--navy); }
+.scale-option input:checked + label .scale-num { color: var(--teal); }
+.scale-txt { font-size: 10px; color: var(--gray-dark); line-height: 1.3; }
+
+/* ── BUTTONS ── */
+.btn {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 12px 28px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+}
+.btn-primary { background: var(--navy); color: white; }
+.btn-primary:hover { background: var(--navy-mid); }
+.btn-teal { background: var(--teal); color: white; }
+.btn-teal:hover { background: #178577; }
+.btn-outline { background: transparent; color: var(--navy); border: 1px solid var(--navy); }
+.btn-outline:hover { background: var(--gray-light); }
+.btn-coral { background: var(--coral); color: white; }
+.btn-coral:hover { background: #c94f30; }
+.btn-sm { padding: 8px 16px; font-size: 12px; }
+
+.btn-row { display: flex; gap: 12px; align-items: center; margin-top: 24px; flex-wrap: wrap; }
+.btn-row.right { justify-content: flex-end; }
+.btn-row.between { justify-content: space-between; }
+
+/* ── DIAGNOSTICO ── */
+.diag-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: white;
+  padding: 32px;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+}
+.diag-hero h2 { font-family: var(--font-display); font-size: 22px; margin-bottom: 6px; }
+.diag-hero .meta { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 20px; }
+
+.mc-scores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+.mc-score-card {
+  background: rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+}
+.mc-score-card .label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; margin-bottom: 6px; }
+.mc-score-card .score { font-size: 36px; font-weight: 700; font-family: var(--font-display); }
+.mc-score-card .score-max { font-size: 14px; opacity: 0.5; }
+.mc-score-card.M .score { color: #7ab3f0; }
+.mc-score-card.C .score { color: #5ecfc3; }
+.mc-score-card .bar { background: rgba(255,255,255,0.15); height: 4px; border-radius: 2px; margin-top: 10px; }
+.mc-score-card .bar-fill { height: 100%; border-radius: 2px; }
+.mc-score-card.M .bar-fill { background: #7ab3f0; }
+.mc-score-card.C .bar-fill { background: #5ecfc3; }
+
+.profile-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 8px 16px;
+  border-radius: 3px;
+  margin-top: 16px;
+}
+.profile-badge .p-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.6; }
+.profile-badge .p-name { font-size: 14px; font-weight: 600; }
+
+/* ── RADAR ── */
+.radar-wrap { display: flex; justify-content: center; padding: 20px 0; }
+
+/* ── DIMENSION SCORES ── */
+.dim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.dim-card {
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-mid);
+}
+.dim-card .dim-name { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.dim-card .dim-bar { background: var(--gray-mid); height: 6px; border-radius: 3px; margin: 8px 0; overflow: hidden; }
+.dim-card .dim-fill { height: 100%; border-radius: 3px; }
+.dim-card .dim-score-row { display: flex; justify-content: space-between; align-items: center; }
+.dim-card .dim-score { font-size: 22px; font-weight: 700; font-family: var(--font-display); }
+.dim-card .dim-score-max { font-size: 13px; color: var(--gray-dark); font-weight: 400; margin-left: 1px; }
+.dim-card .dim-level { font-size: 11px; color: var(--gray-dark); }
+.dim-card.high { border-left: 3px solid #22c55e; }
+.dim-card.mid { border-left: 3px solid #f59e0b; }
+.dim-card.low { border-left: 3px solid var(--coral); }
+.dim-card.M .dim-fill { background: var(--M-color); }
+.dim-card.C .dim-fill { background: var(--C-color); }
+.dim-card.MC .dim-fill { background: #8b5cf6; }
+
+/* ── NARRATIVE ── */
+.narrative-box {
+  background: var(--gray-light);
+  border-left: 3px solid var(--teal);
+  padding: 20px 24px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin: 20px 0;
+}
+.narrative-box .nb-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+.narrative-box p { font-size: 14px; line-height: 1.7; color: var(--slate); }
+
+.alert-box {
+  background: var(--coral-light);
+  border-left: 3px solid var(--coral);
+  padding: 16px 20px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin: 16px 0;
+  font-size: 13px;
+  color: #7c2d12;
+}
+.alert-box strong { display: block; margin-bottom: 4px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── FAZ HOJE / FAZER DIFERENTE ── */
+.fhfd-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+.fhfd-table th {
+  background: var(--navy);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 12px 16px;
+  text-align: left;
+}
+.fhfd-table th:first-child { border-radius: var(--radius) 0 0 0; }
+.fhfd-table th:last-child { border-radius: 0 var(--radius) 0 0; }
+.fhfd-table td {
+  padding: 12px 16px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--gray-mid);
+  font-size: 13px;
+}
+.fhfd-table tr:last-child td { border-bottom: none; }
+.fhfd-table tr:nth-child(even) td { background: var(--gray-light); }
+.fhfd-table td textarea {
+  width: 100%;
+  border: 1px solid var(--gray-mid);
+  border-radius: 4px;
+  padding: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 70px;
+  background: white;
+  color: var(--text);
+}
+.fhfd-table td textarea:focus { outline: none; border-color: var(--teal); }
+.fhfd-table .col-hoje { width: 28%; }
+.fhfd-table .col-dif { width: 37%; }
+.fhfd-table .col-imp { width: 35%; }
+
+.dim-tag-inline {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 2px;
+  margin-bottom: 6px;
+}
+.dim-tag-M { background: var(--M-light); color: var(--M-color); }
+.dim-tag-C { background: var(--C-light); color: var(--C-color); }
+
+/* ── PDI ── */
+.pdi-header-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 20px;
+  background: var(--gray-light);
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+}
+.pdi-info-item .pdi-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); margin-bottom: 4px; }
+.pdi-info-item input, .pdi-info-item textarea {
+  width: 100%;
+  border: 1px solid var(--gray-mid);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: white;
+  color: var(--text);
+}
+.pdi-info-item.full { grid-column: 1 / -1; }
+.pdi-info-item textarea { min-height: 60px; resize: vertical; }
+
+.pdi-comp {
+  border: 1px solid var(--gray-mid);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.pdi-comp-header {
+  background: var(--navy);
+  color: white;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pdi-comp-header .comp-num { font-size: 11px; opacity: 0.6; }
+.pdi-comp-header .comp-name { font-size: 14px; font-weight: 600; }
+.pdi-comp-body { padding: 20px; }
+.pdi-comp-body label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--slate); margin-bottom: 6px; display: block; }
+.pdi-comp-body input, .pdi-comp-body textarea {
+  width: 100%;
+  border: 1px solid var(--gray-mid);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  margin-bottom: 14px;
+  background: white;
+  color: var(--text);
+}
+.pdi-comp-body textarea { min-height: 60px; resize: vertical; }
+.pdi-scale-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
+.pdi-scale-row .ps-label { font-size: 11px; color: var(--slate); width: 50px; }
+.pdi-scale-row input { width: 60px !important; margin-bottom: 0 !important; text-align: center; }
+.pdi-scale-arrow { font-size: 18px; color: var(--gray-dark); }
+
+/* ── PTG ── */
+.ptg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.ptg-section { background: var(--gray-light); border-radius: var(--radius); padding: 20px; }
+.ptg-section h4 { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--navy); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--gray-mid); }
+.ptg-section textarea {
+  width: 100%;
+  border: 1px solid var(--gray-mid);
+  border-radius: 4px;
+  padding: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: white;
+  color: var(--text);
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+.ptg-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.ptg-metric {
+  background: white;
+  border: 1px solid var(--gray-mid);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+}
+.ptg-metric .m-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); margin-bottom: 6px; }
+.ptg-metric input {
+  width: 100%;
+  border: 1px solid var(--gray-mid);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--teal);
+  background: white;
+}
+
+.ptg-actions { background: white; border: 1px solid var(--gray-mid); border-radius: var(--radius); overflow: hidden; }
+.ptg-actions-header {
+  background: var(--navy);
+  color: white;
+  padding: 14px 20px;
+  display: grid;
+  grid-template-columns: 32px 1fr 140px 120px;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.ptg-action-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 140px 120px;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--gray-mid);
+  align-items: start;
+}
+.ptg-action-row:last-child { border-bottom: none; }
+.ptg-action-row:nth-child(even) { background: var(--gray-light); }
+.ptg-action-row .row-num { font-size: 13px; font-weight: 700; color: var(--gray-dark); padding-top: 8px; }
+.ptg-action-row textarea, .ptg-action-row input {
+  width: 100%;
+  border: 1px solid var(--gray-mid);
+  border-radius: 4px;
+  padding: 7px 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: white;
+  color: var(--text);
+  resize: vertical;
+}
+.ptg-action-row textarea { min-height: 60px; }
+.status-select {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 6px;
+}
+.status-select label { display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; }
+.status-select input { width: auto !important; }
+
+/* ── EXPORT PANEL ── */
+.export-panel {
+  background: var(--navy);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  color: white;
+  margin-top: 24px;
+}
+.export-panel h3 { font-size: 14px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; opacity: 0.8; }
+.export-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+.export-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  padding: 9px 16px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+.export-btn:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
+.export-btn.primary-export { background: var(--teal); border-color: var(--teal); }
+.export-btn.primary-export:hover { background: #178577; }
+
+.print-note { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 10px; }
+
+/* ── MAIN TAB BUTTONS ── */
+.main-tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.65);
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+  text-align: left;
+}
+.main-tab-btn:hover {
+  background: rgba(255,255,255,0.12);
+  color: white;
+  border-color: rgba(255,255,255,0.3);
+}
+.main-tab-btn.active {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: white;
+}
+.mtab-num {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  opacity: 0.7;
+}
+.main-tab-btn.active .mtab-num { opacity: 1; }
+.mtab-label {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.mtab-sub {
+  font-size: 11px;
+  opacity: 0.7;
+  line-height: 1.3;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── FOOTER NOTE ── */
+.tool-footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 12px;
+  color: var(--gray-dark);
+  margin-top: 20px;
+}
+
+/* ── WELCOME PAGE ── */
+.welcome-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+.info-card {
+  background: white;
+  border: 1px solid var(--gray-mid);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.info-card .ic-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+.info-card p { font-size: 13px; line-height: 1.7; color: var(--slate); }
+.info-card ul { font-size: 13px; line-height: 1.9; color: var(--slate); padding-left: 16px; }
+
+.scale-preview {
+  display: flex;
+  gap: 6px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+.sp-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--gray-light);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 12px;
+}
+.sp-item .sp-num { font-size: 15px; font-weight: 700; color: var(--navy); min-width: 18px; }
+
+.important-note {
+  background: var(--coral-light);
+  border-left: 3px solid var(--coral);
+  padding: 14px 18px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 13px;
+  color: #7c2d12;
+  margin-top: 16px;
+}
+
+/* responsive */
+@media (max-width: 620px) {
+  .fields-grid, .mc-scores, .dim-grid, .ptg-grid, .ptg-metrics, .welcome-grid { grid-template-columns: 1fr; }
+  .ptg-actions-header, .ptg-action-row { grid-template-columns: 24px 1fr; }
+  .ptg-actions-header span:nth-child(3), .ptg-actions-header span:nth-child(4) { display: none; }
+  .tool-header { padding: 28px 24px; }
+  .card { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app-wrap">
+  
+<!-- Floating Close Button (Standardized) -->
+<button onclick="window.close(); if(window.opener) { window.close(); } else { window.history.back(); }" class="fixed top-4 right-4 z-[9999] bg-white/80 backdrop-blur hover:bg-red-600 hover:text-white text-gray-800 font-bold py-2 px-4 rounded-full shadow-2xl border border-gray-200 transition-all flex items-center gap-2 text-xs md:text-sm group">
+    <span class="bg-red-500 text-white w-5 h-5 flex items-center justify-center rounded-full text-[10px] group-hover:bg-white group-hover:text-red-600 transition-colors">✕</span>
+    SAIR E VOLTAR
+</button>
+
+<!-- HEADER -->
+<div class="tool-header">
+  <div class="badge">PHD Academy · Managing & Coaching</div>
+  <h1>Autoavaliação do Gestor Comercial</h1>
+  <p>Diagnóstico integrado de Managing & Coaching com geração de planos de ação personalizados.</p>
+</div>
+
+<!-- PAGE 1: WELCOME + IDENTIFICATION -->
+<div class="page active" id="page-welcome">
+  <div class="card">
+    <div class="section-label">Sobre esta ferramenta</div>
+    <div class="welcome-grid">
+      <div class="info-card">
+        <div class="ic-label">Para que serve</div>
+        <p>Identificar o equilíbrio entre as dimensões de <strong>Managing</strong> (gestão de processos e resultados) e <strong>Coaching</strong> (desenvolvimento de pessoas), gerando planos concretos de ação.</p>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Como funciona</div>
+        <ul>
+          <li>30 questões em 5 seções</li>
+          <li>Pontuação separada M e C</li>
+          <li>Diagnóstico com radar visual</li>
+          <li>Saídas pré-preenchidas e editáveis</li>
+        </ul>
+      </div>
+      <div class="info-card" style="grid-column:1/-1;">
+        <div class="ic-label">Escala de avaliação utilizada nas questões</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px;">
+          <div style="text-align:center;background:var(--gray-light);border-radius:var(--radius);padding:14px 8px;border-top:3px solid #cbd5e1;">
+            <div style="font-size:24px;font-weight:700;color:#94a3b8;font-family:var(--font-display);">1</div>
+            <div style="font-size:11px;color:var(--slate);margin-top:4px;font-weight:500;">Nunca faço</div>
+          </div>
+          <div style="text-align:center;background:var(--gray-light);border-radius:var(--radius);padding:14px 8px;border-top:3px solid #f59e0b;">
+            <div style="font-size:24px;font-weight:700;color:#f59e0b;font-family:var(--font-display);">2</div>
+            <div style="font-size:11px;color:var(--slate);margin-top:4px;font-weight:500;">Raramente</div>
+          </div>
+          <div style="text-align:center;background:var(--gray-light);border-radius:var(--radius);padding:14px 8px;border-top:3px solid #fb923c;">
+            <div style="font-size:24px;font-weight:700;color:#fb923c;font-family:var(--font-display);">3</div>
+            <div style="font-size:11px;color:var(--slate);margin-top:4px;font-weight:500;">Às vezes</div>
+          </div>
+          <div style="text-align:center;background:var(--gray-light);border-radius:var(--radius);padding:14px 8px;border-top:3px solid #1d9e8f;">
+            <div style="font-size:24px;font-weight:700;color:#1d9e8f;font-family:var(--font-display);">4</div>
+            <div style="font-size:11px;color:var(--slate);margin-top:4px;font-weight:500;">Com frequência</div>
+          </div>
+          <div style="text-align:center;background:#e8f7f5;border-radius:var(--radius);padding:14px 8px;border-top:3px solid #1a2744;">
+            <div style="font-size:24px;font-weight:700;color:#1a2744;font-family:var(--font-display);">5</div>
+            <div style="font-size:11px;color:var(--slate);margin-top:4px;font-weight:500;">Sempre faço</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:6px 4px 0;font-size:10px;color:var(--gray-dark);">
+          <span>← Necessita desenvolvimento</span>
+          <span>Comportamento consolidado →</span>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Resultado esperado</div>
+        <p>Perfil M&amp;C com diagnóstico narrativo, Faz Hoje/Fazer Diferente, PDI e PTG prontos para implementação imediata.</p>
+      </div>
+    </div>
+    <div class="important-note">
+      <strong>Orientação importante:</strong> Responda com base no que você <em>efetivamente faz</em>, não no que considera ideal. A autoavaliação captura comportamentos reais — não aspirações. Seu valor está na honestidade das respostas.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Identificação</div>
+    <div class="fields-grid">
+      <div class="field-group">
+        <label>Nome completo *</label>
+        <input type="text" id="f-nome" placeholder="Seu nome">
+      </div>
+      <div class="field-group">
+        <label>Empresa *</label>
+        <input type="text" id="f-empresa" placeholder="Nome da empresa">
+      </div>
+      <div class="field-group">
+        <label>Cargo / Função</label>
+        <input type="text" id="f-cargo" placeholder="Ex: Gerente Comercial">
+      </div>
+      <div class="field-group">
+        <label>Tamanho da equipe</label>
+        <select id="f-equipe">
+          <option value="">Selecione</option>
+          <option value="1-3">1 a 3 pessoas</option>
+          <option value="4-7">4 a 7 pessoas</option>
+          <option value="8-15">8 a 15 pessoas</option>
+          <option value="16+">16 ou mais pessoas</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Tempo na função</label>
+        <select id="f-tempo">
+          <option value="">Selecione</option>
+          <option value="menos1">Menos de 1 ano</option>
+          <option value="1-3">1 a 3 anos</option>
+          <option value="mais3">Mais de 3 anos</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Período de referência</label>
+        <input type="text" id="f-periodo" placeholder="Ex: Abril – Junho 2025">
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row right">
+    <button class="btn btn-primary" onclick="startAssessment()">Iniciar Avaliação →</button>
+  </div>
+</div>
+
+<!-- PAGE 2: QUESTIONNAIRE -->
+<div class="page" id="page-quest">
+  <div class="card">
+    <div class="progress-info">
+      <span class="section-name" id="prog-section-name">Seção 1 de 5</span>
+      <span class="step-count" id="prog-step">Questões 1–6</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+    <div id="section-header" class="section-label"></div>
+    <div id="questions-container"></div>
+    <div class="btn-row between">
+      <button class="btn btn-outline btn-sm" id="btn-prev" onclick="prevSection()">← Anterior</button>
+      <button class="btn btn-teal" id="btn-next" onclick="nextSection()">Próxima Seção →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: RESULTS -->
+<div class="page" id="page-results">
+
+  <!-- SAÍDAS NAVIGATION — prominent -->
+  <div style="background:var(--navy);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:14px;">Navegue pelas saídas da avaliação</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+      <button class="main-tab-btn active" onclick="switchTab('diagnostico')" id="mtab-diagnostico">
+        <span class="mtab-num">01</span>
+        <span class="mtab-label">Diagnóstico</span>
+        <span class="mtab-sub">Perfil M&amp;C + Radar</span>
+      </button>
+      <button class="main-tab-btn" onclick="switchTab('fazdiferente')" id="mtab-fazdiferente">
+        <span class="mtab-num">02</span>
+        <span class="mtab-label">Faz Hoje</span>
+        <span class="mtab-sub">Fazer Diferente</span>
+      </button>
+      <button class="main-tab-btn" onclick="switchTab('pdi')" id="mtab-pdi">
+        <span class="mtab-num">03</span>
+        <span class="mtab-label">PDI</span>
+        <span class="mtab-sub">Plano de Desenvolvimento</span>
+      </button>
+      <button class="main-tab-btn" onclick="switchTab('ptg')" id="mtab-ptg">
+        <span class="mtab-num">04</span>
+        <span class="mtab-label">PTG</span>
+        <span class="mtab-sub">Plano de Trabalho</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB: DIAGNOSTICO -->
+  <div class="tab-content active" id="tab-diagnostico">
+    <div class="diag-hero" id="diag-hero"></div>
+    <div class="card">
+      <div class="section-label">Radar de Competências M&amp;C</div>
+      <div class="radar-wrap"><canvas id="radar-chart" width="440" height="380"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="section-label">Desempenho por Dimensão</div>
+      <div class="dim-grid" id="dim-grid"></div>
+    </div>
+    <div class="card">
+      <div class="section-label">Análise e Recomendações</div>
+      <div id="narrative-content"></div>
+    </div>
+  </div>
+
+  <!-- TAB: FAZ HOJE / FAZER DIFERENTE -->
+  <div class="tab-content" id="tab-fazdiferente">
+    <div class="card">
+      <div class="section-label">Faz Hoje / Fazer Diferente — Gestor</div>
+      <p style="font-size:13px;color:var(--slate);margin-bottom:16px;">Com base nas dimensões de menor desempenho, identifique o que você faz hoje, o que pode fazer de diferente e o impacto esperado. Edite conforme sua realidade.</p>
+      <div id="fhfd-name-row" style="margin-bottom:14px;">
+        <span style="font-size:12px;font-weight:600;color:var(--slate);">Nome do Gestor: </span>
+        <span id="fhfd-nome" style="font-size:14px;font-weight:600;color:var(--navy);"></span>
+      </div>
+      <table class="fhfd-table">
+        <thead>
+          <tr>
+            <th class="col-hoje">Faz Hoje</th>
+            <th class="col-dif">Fazer Diferente</th>
+            <th class="col-imp">Impacto Esperado</th>
+          </tr>
+        </thead>
+        <tbody id="fhfd-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB: PDI -->
+  <div class="tab-content" id="tab-pdi">
+    <div class="card">
+      <div class="section-label">PDI — Plano de Desenvolvimento Individual do Gestor</div>
+      <div class="pdi-header-info">
+        <div class="pdi-info-item">
+          <div class="pdi-label">Gestor</div>
+          <input type="text" id="pdi-nome">
+        </div>
+        <div class="pdi-info-item">
+          <div class="pdi-label">Período</div>
+          <input type="text" id="pdi-periodo">
+        </div>
+        <div class="pdi-info-item full">
+          <div class="pdi-label">Objetivo geral do PDI</div>
+          <textarea id="pdi-objetivo"></textarea>
+        </div>
+        <div class="pdi-info-item full">
+          <div class="pdi-label">Ações estratégicas gerais</div>
+          <textarea id="pdi-acoes-gerais"></textarea>
+        </div>
+      </div>
+      <div id="pdi-comps"></div>
+    </div>
+  </div>
+
+  <!-- TAB: PTG -->
+  <div class="tab-content" id="tab-ptg">
+    <div class="card">
+      <div class="section-label">PTG — Plano de Trabalho do Gestor</div>
+      <div class="pdi-header-info" style="margin-bottom:20px;">
+        <div class="pdi-info-item">
+          <div class="pdi-label">Gestor</div>
+          <input type="text" id="ptg-nome">
+        </div>
+        <div class="pdi-info-item">
+          <div class="pdi-label">Período</div>
+          <input type="text" id="ptg-periodo">
+        </div>
+        <div class="pdi-info-item">
+          <div class="pdi-label">Análise de Progressos</div>
+          <input type="text" id="ptg-analise" placeholder="Ex: Segundas às 8h30 (15 min)">
+        </div>
+        <div class="pdi-info-item">
+          <div class="pdi-label">Foco do coaching para a equipe</div>
+          <input type="text" id="ptg-foco-coaching" placeholder="Ex: Prospecção e conversão">
+        </div>
+      </div>
+      <div class="ptg-grid">
+        <div class="ptg-section">
+          <h4>Prioridades nos próximos 90 dias</h4>
+          <textarea id="ptg-prioridades"></textarea>
+        </div>
+        <div class="ptg-section">
+          <h4>Foco para este mês</h4>
+          <textarea id="ptg-foco-mes"></textarea>
+        </div>
+      </div>
+      <div class="section-label" style="margin-top:4px;">Métricas de Sucesso</div>
+      <div class="ptg-metrics">
+        <div class="ptg-metric">
+          <div class="m-label">Métrica 1</div>
+          <input type="text" id="ptg-m1" placeholder="Indicador → Meta">
+        </div>
+        <div class="ptg-metric">
+          <div class="m-label">Métrica 2</div>
+          <input type="text" id="ptg-m2" placeholder="Indicador → Meta">
+        </div>
+        <div class="ptg-metric">
+          <div class="m-label">Métrica 3</div>
+          <input type="text" id="ptg-m3" placeholder="Indicador → Meta">
+        </div>
+      </div>
+      <div class="section-label">Plano de Ação (O que / Quando / Status)</div>
+      <div class="ptg-actions">
+        <div class="ptg-actions-header">
+          <span>#</span>
+          <span>O que fazer</span>
+          <span>Quando</span>
+          <span>Status</span>
+        </div>
+        <div id="ptg-actions-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPORT PANEL -->
+  <div class="export-panel">
+    <h3>Exportar como PDF</h3>
+    <div class="export-buttons">
+      <button class="export-btn" onclick="exportSection('questionario')">Questionário + Diagnóstico</button>
+      <button class="export-btn" onclick="exportSection('diagnostico')">Somente Diagnóstico</button>
+      <button class="export-btn" onclick="exportSection('fazdiferente')">Faz Hoje / Fazer Diferente</button>
+      <button class="export-btn" onclick="exportSection('pdi')">PDI</button>
+      <button class="export-btn" onclick="exportSection('ptg')">PTG</button>
+      <button class="export-btn primary-export" onclick="exportSection('todos')">Exportar Tudo</button>
+    </div>
+    <p class="print-note">Ao clicar, o documento abrirá no navegador. Use Ctrl+P (ou Cmd+P) → "Salvar como PDF" → Margens: Nenhuma → ativar "Gráficos de fundo".</p>
+  </div>
+
+  <div class="btn-row" style="margin-top:20px;">
+    <button class="btn btn-outline btn-sm" onclick="goToPage('page-quest')">← Rever Respostas</button>
+  </div>
+</div>
+
+<div class="tool-footer">
+  Elaborado por Prof. Paulo H. Donassolo · Metodologia Recriar a Gestão Comercial
+</div>
+
+</div><!-- end app-wrap -->
+
+<script>
+// ══════════════════════════════════════════════
+// DATA: QUESTIONNAIRE
+// ══════════════════════════════════════════════
+const SECOES = [
+  {
+    id: 'rotina',
+    nome: 'Rotina, Planejamento e Gestão do Tempo',
+    tipo: 'M',
+    descricao: 'Managing',
+    questoes: [
+      { id:'r1', tipo:'M', texto:'Tenho rotina semanal estruturada e a sigo com consistência (agenda, prioridades, reuniões).' },
+      { id:'r2', tipo:'M', texto:'Planejo e comunico com antecedência as pautas das reuniões de equipe.' },
+      { id:'r3', tipo:'M', texto:'Dedico tempo regularmente ao acompanhamento do pipeline e das oportunidades em aberto.' },
+      { id:'r4', tipo:'M', texto:'Delego atividades operacionais para focar no que gera maior impacto nos resultados.' },
+      { id:'r5', tipo:'MC', texto:'Reservo blocos de tempo na agenda especificamente para coaching e desenvolvimento da equipe.' },
+      { id:'r6', tipo:'M', texto:'Sei dizer "não" a demandas de baixo impacto para proteger o foco nas prioridades estratégicas.' },
+    ]
+  },
+  {
+    id: 'acompanhamento',
+    nome: 'Acompanhamento, Presença e Feedback',
+    tipo: 'MC',
+    descricao: 'Managing & Coaching',
+    questoes: [
+      { id:'a1', tipo:'M', texto:'Acompanho sistematicamente os resultados individuais e da equipe, utilizando métricas de processo e de resultado.' },
+      { id:'a2', tipo:'C', texto:'Realizo reuniões 1 a 1 regulares com cada membro da equipe com foco em desenvolvimento, não apenas em cobranças.' },
+      { id:'a3', tipo:'C', texto:'Vou ao campo (ou acompanho atendimentos) para observar o vendedor em ação, sem interferir durante a interação com o cliente.' },
+      { id:'a4', tipo:'C', texto:'Após o campo ou reunião, ofereço feedback estruturado: o que foi bem, o que pode melhorar e um plano de ação concreto.' },
+      { id:'a5', tipo:'MC', texto:'Utilizo o modelo Observar → Avaliar → Atuar (ou equivalente) para conduzir o desenvolvimento no campo.' },
+      { id:'a6', tipo:'M', texto:'Conduzo reuniões de equipe que geram comprometimento com ações e responsáveis definidos.' },
+    ]
+  },
+  {
+    id: 'desenvolvimento',
+    nome: 'Desenvolvimento de Pessoas',
+    tipo: 'C',
+    descricao: 'Coaching',
+    questoes: [
+      { id:'d1', tipo:'C', texto:'Conheço os pontos fortes e as principais áreas de desenvolvimento de cada membro da minha equipe.' },
+      { id:'d2', tipo:'C', texto:'Elaboro e acompanho PDIs (Planos de Desenvolvimento Individual) de forma sistemática com cada vendedor.' },
+      { id:'d3', tipo:'C', texto:'Provoco as pessoas a saírem da zona de conforto e a aceitarem novos desafios e responsabilidades.' },
+      { id:'d4', tipo:'C', texto:'Incentivo e estruturo o compartilhamento de conhecimento entre os membros da equipe.' },
+      { id:'d5', tipo:'C', texto:'Adapto meu estilo de liderança às necessidades e ao momento de cada pessoa (mais diretivo com quem tem menos experiência, mais delegador com quem tem mais).' },
+      { id:'d6', tipo:'C', texto:'Conectou o desenvolvimento das pessoas aos objetivos comerciais da empresa — o PDI e as metas andam juntos.' },
+    ]
+  },
+  {
+    id: 'comunicacao',
+    nome: 'Comunicação, Motivação e Ambiente',
+    tipo: 'C',
+    descricao: 'Coaching',
+    questoes: [
+      { id:'c1', tipo:'C', texto:'Demonstro interesse genuíno pelas motivações, objetivos e desafios pessoais de cada membro da equipe.' },
+      { id:'c2', tipo:'C', texto:'Crio um ambiente em que as pessoas podem errar, aprender e se expressar sem medo de punição ou julgamento.' },
+      { id:'c3', tipo:'C', texto:'Reconheço e valorizo o esforço e a evolução — não apenas os resultados finais.' },
+      { id:'c4', tipo:'MC', texto:'Comunico com clareza e objetividade: as pessoas sabem o que é esperado delas, como são avaliadas e quais são as prioridades.' },
+      { id:'c5', tipo:'C', texto:'Utilizo escuta ativa nas conversas com a equipe — faço perguntas antes de dar respostas ou soluções.' },
+      { id:'c6', tipo:'M', texto:'Construo metas em conjunto com a equipe, garantindo compreensão e comprometimento com os objetivos.' },
+    ]
+  },
+  {
+    id: 'resultados',
+    nome: 'Resultados, Indicadores e Execução',
+    tipo: 'M',
+    descricao: 'Managing',
+    questoes: [
+      { id:'re1', tipo:'M', texto:'Monitoro KPIs de processo (atividades) e de resultado (vendas) e tomo decisões com base neles.' },
+      { id:'re2', tipo:'M', texto:'Identifico rapidamente quais vendedores estão fora do padrão esperado e atuo sobre isso.' },
+      { id:'re3', tipo:'MC', texto:'Conectou as ações de coaching e desenvolvimento ao impacto nos KPIs e nos resultados comerciais.' },
+      { id:'re4', tipo:'M', texto:'Garanto que o processo de vendas é seguido pela equipe e identifico onde há quebras de execução.' },
+      { id:'re5', tipo:'C', texto:'Utilizo os dados de performance para construir conversas de desenvolvimento — não apenas para cobranças.' },
+      { id:'re6', tipo:'M', texto:'Minhas previsões de vendas (forecast) são confiáveis e baseadas em critérios objetivos do pipeline.' },
+    ]
+  }
+];
+
+const ESCALA = [
+  {val:1, txt:'Nunca faço'},
+  {val:2, txt:'Raramente'},
+  {val:3, txt:'Às vezes'},
+  {val:4, txt:'Com frequência'},
+  {val:5, txt:'Sempre faço'},
+];
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let state = {
+  currentSection: 0,
+  respostas: {},
+  perfil: {},
+  scores: {},
+  weakDims: []
+};
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function goToPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startAssessment() {
+  const nome = document.getElementById('f-nome').value.trim();
+  const empresa = document.getElementById('f-empresa').value.trim();
+  if (!nome || !empresa) { alert('Preencha ao menos Nome e Empresa para continuar.'); return; }
+  state.perfil = {
+    nome, empresa,
+    cargo: document.getElementById('f-cargo').value,
+    equipe: document.getElementById('f-equipe').value,
+    tempo: document.getElementById('f-tempo').value,
+    periodo: document.getElementById('f-periodo').value || 'Próximos 90 dias'
+  };
+  state.currentSection = 0;
+  renderSection();
+  goToPage('page-quest');
+}
+
+function renderSection() {
+  const sec = SECOES[state.currentSection];
+  const total = SECOES.length;
+  const pct = ((state.currentSection + 1) / total) * 100;
+
+  document.getElementById('prog-section-name').textContent = `Seção ${state.currentSection+1} de ${total}: ${sec.nome}`;
+  document.getElementById('prog-step').textContent = `${sec.questoes.length} questões`;
+  document.getElementById('progress-fill').style.width = pct + '%';
+
+  const tagColor = sec.tipo === 'M' ? '#2563a8' : sec.tipo === 'C' ? '#1d9e8f' : '#6d28d9';
+  const tagLabel = sec.tipo === 'M' ? 'Managing' : sec.tipo === 'C' ? 'Coaching' : 'Managing & Coaching';
+  document.getElementById('section-header').innerHTML = `${sec.nome} <span class="tag-${sec.tipo}" style="background:${sec.tipo==='MC'?'#f3e8ff':''}; color:${tagColor}; font-size:9px; padding:2px 7px; border-radius:2px; font-weight:700; margin-left:6px;">${tagLabel}</span>`;
+
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+
+  sec.questoes.forEach((q, idx) => {
+    const saved = state.respostas[q.id] || null;
+    const typeClass = q.tipo === 'M' ? 'q-type-M' : q.tipo === 'C' ? 'q-type-C' : 'q-type-MC';
+    const typeLabel = q.tipo === 'M' ? 'M' : q.tipo === 'C' ? 'C' : 'M·C';
+    let scaleHTML = ESCALA.map(e => `
+      <div class="scale-option">
+        <input type="radio" name="q_${q.id}" id="q_${q.id}_${e.val}" value="${e.val}" ${saved==e.val?'checked':''}>
+        <label for="q_${q.id}_${e.val}">
+          <span class="scale-num">${e.val}</span>
+          <span class="scale-txt">${e.txt}</span>
+        </label>
+      </div>`).join('');
+
+    container.innerHTML += `
+      <div class="question-item">
+        <div class="question-top">
+          <span class="q-type-tag ${typeClass}">${typeLabel}</span>
+          <span class="q-text">${idx+1}. ${q.texto}</span>
+        </div>
+        <div class="scale-row">${scaleHTML}</div>
+      </div>`;
+  });
+
+  document.getElementById('btn-prev').style.visibility = state.currentSection === 0 ? 'hidden' : 'visible';
+  const isLast = state.currentSection === SECOES.length - 1;
+  document.getElementById('btn-next').textContent = isLast ? 'Ver Diagnóstico →' : 'Próxima Seção →';
+}
+
+function collectCurrentSection() {
+  const sec = SECOES[state.currentSection];
+  sec.questoes.forEach(q => {
+    const checked = document.querySelector(`input[name="q_${q.id}"]:checked`);
+    if (checked) state.respostas[q.id] = parseInt(checked.value);
+  });
+}
+
+function nextSection() {
+  collectCurrentSection();
+  const sec = SECOES[state.currentSection];
+  const unanswered = sec.questoes.filter(q => !state.respostas[q.id]);
+  if (unanswered.length > 0) {
+    if (!confirm(`Há ${unanswered.length} questão(ões) sem resposta nesta seção. Deseja continuar mesmo assim?`)) return;
+  }
+  if (state.currentSection < SECOES.length - 1) {
+    state.currentSection++;
+    renderSection();
+    window.scrollTo(0,0);
+  } else {
+    generateResults();
+    goToPage('page-results');
+  }
+}
+
+function prevSection() {
+  collectCurrentSection();
+  if (state.currentSection > 0) {
+    state.currentSection--;
+    renderSection();
+    window.scrollTo(0,0);
+  }
+}
+
+// ══════════════════════════════════════════════
+// SCORING
+// ══════════════════════════════════════════════
+function computeScores() {
+  const dims = {};
+  let totalM = 0, countM = 0, totalC = 0, countC = 0;
+
+  SECOES.forEach(sec => {
+    let secTotal = 0, secCount = 0;
+    sec.questoes.forEach(q => {
+      const val = state.respostas[q.id] || 0;
+      secTotal += val; secCount++;
+      if (q.tipo === 'M' || q.tipo === 'MC') { totalM += val; countM++; }
+      if (q.tipo === 'C' || q.tipo === 'MC') { totalC += val; countC++; }
+    });
+    dims[sec.id] = {
+      nome: sec.nome,
+      tipo: sec.tipo,
+      avg: secCount > 0 ? secTotal / secCount : 0,
+      total: secTotal,
+      count: secCount
+    };
+  });
+
+  const scoreM = countM > 0 ? (totalM / countM) : 0;
+  const scoreC = countC > 0 ? (totalC / countC) : 0;
+
+  // Also per-question detail for weak identification
+  const qDetails = {};
+  SECOES.forEach(sec => {
+    sec.questoes.forEach(q => {
+      qDetails[q.id] = { val: state.respostas[q.id] || 0, texto: q.texto, tipo: q.tipo, secId: sec.id, secNome: sec.nome };
+    });
+  });
+
+  return { dims, scoreM, scoreC, qDetails };
+}
+
+function getProfile(scoreM, scoreC) {
+  const avgTotal = (scoreM + scoreC) / 2;
+  if (scoreC >= 4.0 && scoreM >= 3.5) return { nome: 'Gestor Coach de Alta Performance', descricao: 'Você equilibra bem a gestão da rotina com o desenvolvimento de pessoas. Este é o perfil mais próximo do ideal para gestores comerciais em PMEs.' };
+  if (scoreC >= 4.0 && scoreM < 3.5) return { nome: 'Coach sem Estrutura', descricao: 'Você investe no desenvolvimento das pessoas, mas a gestão da rotina e dos resultados precisa de mais atenção. Sem estrutura de Managing, o coaching perde eficácia.' };
+  if (scoreM >= 4.0 && scoreC < 3.5) return { nome: 'Gestor Controlador', descricao: 'Você domina a gestão de processos e resultados, mas ainda tende ao microgerenciamento. Desenvolver o componente Coaching liberará sua equipe para se autogerenciar.' };
+  if (scoreC < 3.0 && scoreM < 3.0) return { nome: 'Gestor em Desenvolvimento', descricao: 'Há oportunidades importantes tanto em Managing quanto em Coaching. Uma agenda de desenvolvimento estruturada e consistente fará grande diferença nos próximos 90 dias.' };
+  if (scoreM > scoreC + 0.5) return { nome: 'Managing Dominante', descricao: 'Sua orientação tende à gestão de processos e resultados. Incrementar o componente Coaching é o próximo passo para construir uma equipe mais autônoma e de maior performance.' };
+  if (scoreC > scoreM + 0.5) return { nome: 'Coaching Dominante', descricao: 'Você tem boa orientação para o desenvolvimento de pessoas. Estruturar melhor a rotina de Managing garantirá que o esforço de coaching se converta em resultados consistentes.' };
+  return { nome: 'Perfil Equilibrado em Desenvolvimento', descricao: 'Você tem uma base razoável em ambas as dimensões, com espaço claro para evolução. Os planos de ação a seguir apontam onde concentrar energia.' };
+}
+
+function getLevel(avg) {
+  if (avg >= 4.5) return { label: 'Excelente', cls: 'high' };
+  if (avg >= 3.5) return { label: 'Bom', cls: 'high' };
+  if (avg >= 2.5) return { label: 'Regular', cls: 'mid' };
+  return { label: 'Necessita atenção', cls: 'low' };
+}
+
+// ══════════════════════════════════════════════
+// RECOMMENDATIONS DATABASE
+// ══════════════════════════════════════════════
+const RECOM = {
+  rotina: {
+    fazHoje: 'Agenda pouco estruturada, com prioridades definidas no dia a dia; tendência a reagir a demandas urgentes.',
+    fazerDif: 'Elaborar agenda semanal fixa com blocos dedicados a: pipeline, 1a1s, campo e desenvolvimento. Reservar 5 a 10h semanais exclusivas para coaching.',
+    impacto: 'Redução do microgerenciamento reativo; maior presença estratégica junto à equipe; aumento da previsibilidade dos resultados.',
+    pdiComp: 'Planejamento e Gestão do Tempo do Gestor',
+    pdiAcao: 'Criar e seguir rotina semanal com blocos fixos de Managing e Coaching. Revisar agenda todas as sextas-feiras.',
+    pdiAferição: 'Execução da agenda semanal ≥ 80% das semanas no trimestre.',
+    ptgAcao: 'Elaborar e fixar agenda semanal de campo, 1a1s e reuniões de equipe',
+    ptgQuando: 'Até o final da primeira semana',
+  },
+  acompanhamento: {
+    fazHoje: 'Acompanhamento focado em resultados e cobranças; visitas ao campo ocasionais e sem metodologia de observação estruturada.',
+    fazerDif: 'Implementar rotina de campo com modelo Observar → Avaliar → Atuar. Conduzir 1a1s semanais com foco em desenvolvimento, utilizando dados de performance como ponto de partida.',
+    impacto: 'Feedback mais preciso e oportuno; aceleração do desenvolvimento individual; maior engajamento dos vendedores.',
+    pdiComp: 'Acompanhamento no Campo e Feedback Estruturado',
+    pdiAcao: 'Realizar no mínimo 1 acompanhamento de campo por vendedor por mês com registro de observação e plano de ação.',
+    pdiAferição: 'Frequência de acompanhamentos de campo registrados mensalmente.',
+    ptgAcao: 'Implementar rotina de 1a1 semanal com cada vendedor (20–30 min com pauta)',
+    ptgQuando: 'A partir da próxima semana',
+  },
+  desenvolvimento: {
+    fazHoje: 'Desenvolvimento das pessoas ocorre de forma reativa — quando surge um problema. PDIs inexistentes ou desatualizados.',
+    fazerDif: 'Elaborar PDI com cada vendedor no início do trimestre. Revisar mensalmente. Conectar as ações de desenvolvimento ao desempenho no campo.',
+    impacto: 'Equipe mais autônoma e comprometida com o próprio crescimento; redução da dependência do gestor no dia a dia.',
+    pdiComp: 'Elaboração e Acompanhamento de PDIs',
+    pdiAcao: 'Criar PDI com cada membro da equipe até o final do mês e revisar trimestralmente com dados de aferição.',
+    pdiAferição: '100% dos vendedores com PDI ativo e revisado no trimestre.',
+    ptgAcao: 'Elaborar PDI com cada membro da equipe e agendar revisões trimestrais',
+    ptgQuando: 'Até o dia 20 do mês corrente',
+  },
+  comunicacao: {
+    fazHoje: 'Comunicação focada em resultados e processos; pouco espaço para escuta ativa e conversas sobre motivação e desenvolvimento pessoal.',
+    fazerDif: 'Incorporar escuta ativa nas reuniões 1a1. Perguntar antes de responder. Criar ambiente seguro onde o vendedor possa expor dificuldades sem medo de julgamento.',
+    impacto: 'Maior confiança e engajamento; revelação de dificuldades antes que virem problemas; equipe mais automotivada.',
+    pdiComp: 'Escuta Ativa e Ambiente Psicologicamente Seguro',
+    pdiAcao: 'Praticar escuta ativa nas conversas 1a1: formular perguntas abertas antes de oferecer soluções. Reconhecer esforço e evolução, não apenas resultado.',
+    pdiAferição: 'Percepção da equipe sobre qualidade das conversas (survey trimestral simples).',
+    ptgAcao: 'Implementar dinâmica de perguntas abertas nas reuniões 1a1 (modelo GROW ou equivalente)',
+    ptgQuando: 'A partir das próximas reuniões',
+  },
+  resultados: {
+    fazHoje: 'Gestão de KPIs com foco em resultado final (vendas); menos atenção aos indicadores de processo e à execução do funil.',
+    fazerDif: 'Monitorar KPIs de processo (nº de visitas, apresentações, propostas) além do resultado. Usar dados de performance como base das conversas de desenvolvimento.',
+    impacto: 'Intervenções mais precoces e precisas; previsões de vendas mais confiáveis; equipe focada nas atividades de maior impacto.',
+    pdiComp: 'Gestão por Indicadores de Processo e Resultado',
+    pdiAcao: 'Definir e acompanhar semanalmente 2–3 KPIs de processo por vendedor. Usar dados nas conversas de coaching.',
+    pdiAferição: 'Consistência semanal no registro e análise dos KPIs de processo.',
+    ptgAcao: 'Definir KPIs de processo por vendedor e incluir na pauta das reuniões semanais',
+    ptgQuando: 'Até o final do mês',
+  }
+};
+
+// ══════════════════════════════════════════════
+// GENERATE RESULTS
+// ══════════════════════════════════════════════
+function generateResults() {
+  const { dims, scoreM, scoreC, qDetails } = computeScores();
+  const profile = getProfile(scoreM, scoreC);
+
+  state.scores = { dims, scoreM, scoreC, profile };
+
+  // Sort dims by avg ascending to find weakest
+  const dimsSorted = Object.entries(dims).sort((a,b) => a[1].avg - b[1].avg);
+  state.weakDims = dimsSorted.slice(0,2).map(d => d[0]);
+
+  // ── DIAGNOSTIC HERO ──
+  const heroEl = document.getElementById('diag-hero');
+  const mPct = Math.round((scoreM/5)*100);
+  const cPct = Math.round((scoreC/5)*100);
+  const equipeLabel = { '1-3':'1–3 pessoas','4-7':'4–7 pessoas','8-15':'8–15 pessoas','16+':'16+ pessoas' };
+  const tempoLabel = { 'menos1':'< 1 ano','1-3':'1–3 anos','mais3':'> 3 anos' };
+  heroEl.innerHTML = `
+    <h2>${state.perfil.nome}</h2>
+    <div class="meta">${state.perfil.empresa} · ${state.perfil.cargo || 'Gestor Comercial'} · Equipe: ${equipeLabel[state.perfil.equipe]||'—'} · Experiência na função: ${tempoLabel[state.perfil.tempo]||'—'} · ${state.perfil.periodo}</div>
+    <div class="profile-badge">
+      <span class="p-label">Perfil</span>
+      <span class="p-name">${profile.nome}</span>
+    </div>
+    <div class="mc-scores">
+      <div class="mc-score-card M">
+        <div class="label">Managing (M)</div>
+        <div class="score">${scoreM.toFixed(1)}<span class="score-max"> / 5,0</span></div>
+        <div style="font-size:11px;opacity:0.6;margin:3px 0 6px;">Gestão de processos e resultados</div>
+        <div class="bar"><div class="bar-fill" style="width:${mPct}%"></div></div>
+      </div>
+      <div class="mc-score-card C">
+        <div class="label">Coaching (C)</div>
+        <div class="score">${scoreC.toFixed(1)}<span class="score-max"> / 5,0</span></div>
+        <div style="font-size:11px;opacity:0.6;margin:3px 0 6px;">Desenvolvimento de pessoas</div>
+        <div class="bar"><div class="bar-fill" style="width:${cPct}%"></div></div>
+      </div>
+    </div>`;
+
+  // ── RADAR ──
+  setTimeout(() => drawRadar(dims), 100);
+
+  // ── DIM CARDS ──
+  const dimGrid = document.getElementById('dim-grid');
+  dimGrid.innerHTML = '';
+  SECOES.forEach(sec => {
+    const d = dims[sec.id];
+    const lv = getLevel(d.avg);
+    const pct = Math.round((d.avg/5)*100);
+    const typeClass = sec.tipo === 'M' ? 'M' : sec.tipo === 'C' ? 'C' : 'MC';
+    const typeBadge = sec.tipo === 'M' ? '<span class="dim-tag-inline dim-tag-M">Managing</span>' : sec.tipo === 'C' ? '<span class="dim-tag-inline dim-tag-C">Coaching</span>' : '<span class="dim-tag-inline" style="background:#f3e8ff;color:#6d28d9;">M·C</span>';
+    dimGrid.innerHTML += `
+      <div class="dim-card ${lv.cls} ${typeClass}">
+        ${typeBadge}
+        <div class="dim-name">${sec.nome}</div>
+        <div class="dim-score-row">
+          <span><span class="dim-score">${d.avg.toFixed(1)}</span><span class="dim-score-max"> / 5,0</span></span>
+          <span class="dim-level">${lv.label}</span>
+        </div>
+        <div class="dim-bar"><div class="dim-fill" style="width:${pct}%"></div></div>
+      </div>`;
+  });
+
+  // ── NARRATIVE ──
+  buildNarrative(scoreM, scoreC, profile, dims);
+
+  // ── FAZ HOJE / FAZER DIFERENTE ──
+  document.getElementById('fhfd-nome').textContent = state.perfil.nome;
+  buildFHFD();
+
+  // ── PDI ──
+  buildPDI();
+
+  // ── PTG ──
+  buildPTG();
+}
+
+function buildNarrative(scoreM, scoreC, profile, dims) {
+  const nc = document.getElementById('narrative-content');
+  let html = `<div class="narrative-box"><div class="nb-title">Interpretação do Perfil</div><p>${profile.descricao}</p></div>`;
+
+  // Context based on team size and experience
+  const isSmallTeam = ['1-3','4-7'].includes(state.perfil.equipe);
+  const isNewManager = state.perfil.tempo === 'menos1';
+  const isExperienced = state.perfil.tempo === 'mais3';
+
+  let contextMsg = '';
+  if (isSmallTeam && isNewManager) contextMsg = 'Para gestores recentes com equipes pequenas, a prioridade é criar rotinas de acompanhamento antes de qualquer iniciativa de escala. ';
+  else if (isSmallTeam && isExperienced) contextMsg = 'Gestores experientes com equipes pequenas frequentemente têm a oportunidade de transformar cada interação em um momento de coaching de alto impacto. ';
+  else if (!isSmallTeam && isNewManager) contextMsg = 'Assumir uma equipe grande recentemente exige estruturar rapidamente a rotina de Managing — sem ela, o coaching torna-se inviável. ';
+  else if (!isSmallTeam && isExperienced) contextMsg = 'Com equipe ampla e experiência consolidada, o foco deve ser na sistematização do coaching para criar autonomia e liberar tempo estratégico. ';
+
+  if (contextMsg) html += `<div class="narrative-box" style="border-left-color:var(--M-color);"><div class="nb-title">Contexto do Gestor</div><p>${contextMsg}</p></div>`;
+
+  // Gap between M and C
+  const diff = Math.abs(scoreM - scoreC);
+  if (diff > 0.8) {
+    const dominant = scoreM > scoreC ? 'Managing' : 'Coaching';
+    const weak = scoreM > scoreC ? 'Coaching' : 'Managing';
+    html += `<div class="alert-box"><strong>Desequilíbrio M&amp;C identificado</strong>
+      Sua pontuação em <strong>${dominant}</strong> está significativamente acima de <strong>${weak}</strong> (diferença de ${diff.toFixed(1)} ponto). 
+      O objetivo é que o componente Coaching seja progressivamente dominante, com o Managing funcionando como estrutura de suporte — não como finalidade em si. 
+      ${scoreM > scoreC ? 'Investir em desenvolvimento de pessoas reduzirá a necessidade de microgerenciamento e criará equipes mais autônomas.' : 'Estruturar a rotina de Managing garantirá que os esforços de coaching gerem resultados mensuráveis e consistentes.'}
+    </div>`;
+  }
+
+  // Weakest dims analysis
+  const weakEntries = state.weakDims.map(id => ({ id, ...dims[id] }));
+  if (weakEntries.length > 0) {
+    html += `<div class="narrative-box" style="border-left-color:var(--coral);"><div class="nb-title" style="color:var(--coral);">Dimensões Prioritárias para Desenvolvimento</div>`;
+    weakEntries.forEach(d => {
+      const r = RECOM[d.id];
+      html += `<p style="margin-bottom:10px;"><strong>${d.nome}</strong> (média ${d.avg.toFixed(1)}/5) — ${r ? r.fazHoje : 'Esta dimensão apresenta o maior gap e deve concentrar os esforços do próximo ciclo.'}</p>`;
+    });
+    html += `</div>`;
+  }
+
+  // Strategic orientation note
+  html += `<div class="narrative-box"><div class="nb-title">Orientação Estratégica</div>
+    <p>O objetivo central da gestão comercial moderna é construir uma equipe capaz de se autogerenciar e se autodesenvolver. Para isso, o gestor precisa progressivamente <strong>rotinizar o componente Managing</strong> — transformando cobranças em processos — e <strong>ampliar o tempo e a qualidade do Coaching</strong>. O gestor que ainda passa mais tempo controlando do que desenvolvendo está trabalhando contra sua própria alavancagem.</p>
+  </div>`;
+
+  nc.innerHTML = html;
+}
+
+function buildFHFD() {
+  const tbody = document.getElementById('fhfd-body');
+  tbody.innerHTML = '';
+
+  // Top 3-5 from weak dims
+  const actions = [];
+  state.weakDims.forEach(dimId => {
+    const r = RECOM[dimId];
+    if (r) {
+      const sec = SECOES.find(s => s.id === dimId);
+      const tipoCls = sec.tipo === 'M' ? 'dim-tag-M' : sec.tipo === 'C' ? 'dim-tag-C' : '';
+      const tipoLabel = sec.tipo === 'M' ? 'Managing' : sec.tipo === 'C' ? 'Coaching' : 'M·C';
+      const tipoBg = sec.tipo === 'MC' ? '#f3e8ff' : '';
+      const tipoColor = sec.tipo === 'MC' ? '#6d28d9' : '';
+      // Up to 2-3 actions per weak dim
+      actions.push({ dimId, sec, tipoCls, tipoLabel, tipoBg, tipoColor, faz: r.fazHoje, dif: r.fazerDif, imp: r.impacto });
+      // Add second action from specific questions
+      const qLow = Object.entries(state.scores.dims[dimId] ? {} : {});
+      // Add a second focused action
+      const sec2 = SECOES.find(s => s.id === dimId);
+      const lowQ = sec2 ? sec2.questoes.filter(q => (state.respostas[q.id]||0) <= 2) : [];
+      if (lowQ.length > 0) {
+        const q = lowQ[0];
+        actions.push({ dimId, sec, tipoCls, tipoLabel, tipoBg, tipoColor, faz: `Baixa frequência: "${q.texto.substring(0,80)}..."`, dif: r.fazerDif, imp: r.impacto });
+      }
+    }
+  });
+
+  // Limit to 5
+  const toShow = actions.slice(0,5);
+  toShow.forEach((a, idx) => {
+    const tipoSpan = a.tipoBg
+      ? `<span class="dim-tag-inline" style="background:${a.tipoBg};color:${a.tipoColor};">${a.tipoLabel}</span>`
+      : `<span class="dim-tag-inline ${a.tipoCls}">${a.tipoLabel}</span>`;
+    tbody.innerHTML += `<tr>
+      <td>${tipoSpan}<br><textarea rows="3">${a.faz}</textarea></td>
+      <td><textarea rows="3">${a.dif}</textarea></td>
+      <td><textarea rows="3">${a.imp}</textarea></td>
+    </tr>`;
+  });
+}
+
+function buildPDI() {
+  document.getElementById('pdi-nome').value = state.perfil.nome;
+  document.getElementById('pdi-periodo').value = state.perfil.periodo;
+  document.getElementById('pdi-objetivo').value = 'Desenvolver as competências de Coaching e estruturar a rotina de Managing para construir uma equipe mais autônoma e de alta performance.';
+
+  const actionsText = state.weakDims.map(id => RECOM[id]?.pdiAcao || '').filter(Boolean).join('; ');
+  document.getElementById('pdi-acoes-gerais').value = actionsText;
+
+  const compsEl = document.getElementById('pdi-comps');
+  compsEl.innerHTML = '';
+
+  // Build 2-3 competencies from weak dims
+  const comps = state.weakDims.slice(0,3).map((dimId, idx) => {
+    const r = RECOM[dimId];
+    const d = state.scores.dims[dimId];
+    return { num: idx+1, nome: r?.pdiComp || SECOES.find(s=>s.id===dimId)?.nome, acao: r?.pdiAcao || '', aferição: r?.pdiAferição || '', agora: Math.round(d?.avg || 2), alvo: Math.min(5, Math.round((d?.avg||2)+2)) };
+  });
+
+  comps.forEach(c => {
+    compsEl.innerHTML += `
+    <div class="pdi-comp">
+      <div class="pdi-comp-header">
+        <span class="comp-num">Competência ${c.num}</span>
+        <span class="comp-name">${c.nome}</span>
+      </div>
+      <div class="pdi-comp-body">
+        <label>O que precisa ser desenvolvido</label>
+        <textarea rows="2">${c.acao}</textarea>
+        <label>Como será desenvolvido (ações específicas)</label>
+        <textarea rows="2">${c.acao}</textarea>
+        <label>Como será aferido</label>
+        <input type="text" value="${c.aferição}">
+        <label>Escala de evolução esperada</label>
+        <div class="pdi-scale-row">
+          <span class="ps-label">Agora</span>
+          <input type="number" min="1" max="5" value="${c.agora}">
+          <span class="pdi-scale-arrow">→</span>
+          <span class="ps-label">Alvo</span>
+          <input type="number" min="1" max="5" value="${c.alvo}">
+        </div>
+      </div>
+    </div>`;
+  });
+}
+
+function buildPTG() {
+  document.getElementById('ptg-nome').value = state.perfil.nome;
+  document.getElementById('ptg-periodo').value = state.perfil.periodo;
+
+  // Prioridades
+  const prioridades = state.weakDims.map((id,i) => {
+    const r = RECOM[id];
+    return `${i+1}. ${r?.pdiComp || SECOES.find(s=>s.id===id)?.nome}`;
+  }).join('\n');
+  document.getElementById('ptg-prioridades').value = prioridades + '\n' + (state.weakDims.length < 5 ? (state.scores.scoreC < 3.5 ? '\n3. Ampliar presença e acompanhamento de campo\n4. Estruturar rotina de reuniões 1a1 com desenvolvimento' : '\n3. Manter rotina de pipeline e previsão de vendas') : '');
+
+  const focoCoach = state.scores.scoreC < state.scores.scoreM ? 'Desenvolvimento de pessoas e coaching no campo' : 'Estruturação da rotina de Managing e KPIs';
+  document.getElementById('ptg-foco-coaching').value = focoCoach;
+  document.getElementById('ptg-foco-mes').value = state.weakDims.map(id => RECOM[id]?.ptgAcao || '').filter(Boolean).join('\n');
+
+  // Metrics
+  document.getElementById('ptg-m1').value = 'Horas semanais de coaching → Meta: 5h';
+  document.getElementById('ptg-m2').value = '% PDIs ativos na equipe → Meta: 100%';
+  document.getElementById('ptg-m3').value = 'Visitas de campo por mês → Meta: 4+';
+
+  // Actions (max 5)
+  const body = document.getElementById('ptg-actions-body');
+  body.innerHTML = '';
+  const allActions = [];
+  state.weakDims.forEach(id => {
+    const r = RECOM[id];
+    if (r) {
+      allActions.push({ acao: r.ptgAcao, quando: r.ptgQuando });
+      allActions.push({ acao: r.pdiAcao, quando: 'Até o final do mês' });
+    }
+  });
+  // Always include a field practice action
+  allActions.push({ acao: 'Dedicar 1h diária ao meu próprio desenvolvimento como Gestor Coach', quando: 'Diariamente' });
+
+  allActions.slice(0,5).forEach((a, idx) => {
+    body.innerHTML += `
+    <div class="ptg-action-row">
+      <span class="row-num">${idx+1}</span>
+      <textarea rows="2">${a.acao}</textarea>
+      <input type="text" value="${a.quando}">
+      <div class="status-select">
+        <label><input type="radio" name="status_${idx}" value="afazer"> A fazer</label>
+        <label><input type="radio" name="status_${idx}" value="fazendo" checked> Fazendo</label>
+        <label><input type="radio" name="status_${idx}" value="feito"> Feito</label>
+      </div>
+    </div>`;
+  });
+}
+
+// ══════════════════════════════════════════════
+// RADAR CHART
+// ══════════════════════════════════════════════
+function drawRadar(dims) {
+  const canvas = document.getElementById('radar-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const cx = W/2, cy = H/2 - 10;
+  const R = Math.min(W, H) * 0.38;
+  const labels = SECOES.map(s => s.nome.split(',')[0].substring(0,22));
+  const values = SECOES.map(s => dims[s.id]?.avg || 0);
+  const types = SECOES.map(s => s.tipo);
+  const n = labels.length;
+  const angleStep = (2 * Math.PI) / n;
+  const startAngle = -Math.PI / 2;
+
+  // Grid
+  for (let level = 1; level <= 5; level++) {
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const angle = startAngle + i * angleStep;
+      const r = (level / 5) * R;
+      const x = cx + r * Math.cos(angle);
+      const y = cy + r * Math.sin(angle);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = level === 5 ? '#c0c8d8' : '#e2e8f0';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    if (level % 2 === 0) {
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px Source Sans 3, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(level, cx + (level/5)*R*Math.cos(startAngle) - 8, cy + (level/5)*R*Math.sin(startAngle));
+    }
+  }
+
+  // Axes
+  for (let i = 0; i < n; i++) {
+    const angle = startAngle + i * angleStep;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(angle), cy + R * Math.sin(angle));
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Data polygon
+  ctx.beginPath();
+  for (let i = 0; i < n; i++) {
+    const angle = startAngle + i * angleStep;
+    const r = (values[i] / 5) * R;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(29,158,143,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = '#1d9e8f';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Points
+  for (let i = 0; i < n; i++) {
+    const angle = startAngle + i * angleStep;
+    const r = (values[i] / 5) * R;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    const color = types[i] === 'M' ? '#2563a8' : types[i] === 'C' ? '#1d9e8f' : '#8b5cf6';
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, 2*Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // Labels
+  ctx.font = '11px Source Sans 3, sans-serif';
+  for (let i = 0; i < n; i++) {
+    const angle = startAngle + i * angleStep;
+    const lx = cx + (R + 28) * Math.cos(angle);
+    const ly = cy + (R + 28) * Math.sin(angle);
+    const color = types[i] === 'M' ? '#2563a8' : types[i] === 'C' ? '#1d9e8f' : '#8b5cf6';
+    ctx.fillStyle = color;
+    ctx.textAlign = Math.abs(lx - cx) < 5 ? 'center' : lx < cx ? 'right' : 'left';
+    ctx.textBaseline = ly < cy ? 'bottom' : 'top';
+
+    // Wrap long labels
+    const words = labels[i].split(' ');
+    let line = '', lineY = ly;
+    words.forEach((w, wi) => {
+      const test = line + (line ? ' ' : '') + w;
+      if (ctx.measureText(test).width > 110 && wi > 0) {
+        ctx.fillText(line, lx, lineY);
+        line = w; lineY += 13;
+      } else { line = test; }
+    });
+    ctx.fillText(line, lx, lineY);
+    ctx.fillText(`(${values[i].toFixed(1)})`, lx, lineY + 13);
+  }
+}
+
+// ══════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
+  const active = document.getElementById('mtab-' + name);
+  if (active) active.classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════════
+// EXPORT HTML → PDF
+// ══════════════════════════════════════════════
+function getMetaInfo() {
+  return `${state.perfil.nome} · ${state.perfil.empresa} · ${state.perfil.periodo}`;
+}
+
+function buildA4Page(title, contentHTML, badge='') {
+  return `<div style="width:210mm;min-height:297mm;padding:20mm 18mm 16mm;box-sizing:border-box;page-break-after:always;position:relative;font-family:'Source Sans 3',sans-serif;color:#1a2744;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6mm;padding-bottom:4mm;border-bottom:2px solid #1a2744;">
+      <div>
+        <div style="font-size:8pt;letter-spacing:2px;text-transform:uppercase;color:#1d9e8f;margin-bottom:3px;">${badge || 'Managing & Coaching · Autoavaliação do Gestor'}</div>
+        <div style="font-size:16pt;font-weight:700;color:#1a2744;">${title}</div>
+      </div>
+      <div style="text-align:right;font-size:8pt;color:#718096;line-height:1.5;">${getMetaInfo()}</div>
+    </div>
+    ${contentHTML}
+    <div style="position:absolute;bottom:10mm;left:18mm;right:18mm;display:flex;justify-content:space-between;font-size:7pt;color:#a0aec0;border-top:1px solid #e2e8f0;padding-top:4px;">
+      <span>PHD Academy · Prof. Paulo H. Donassolo</span>
+      <span>Ferramenta Interativa</span>
+    </div>
+  </div>`;
+}
+
+function buildScoreBar(val, color='#1d9e8f') {
+  const pct = (val/5)*100;
+  return `<div style="background:#e2e8f0;height:5px;border-radius:3px;margin:4px 0;overflow:hidden;"><div style="width:${pct}%;height:100%;background:${color};border-radius:3px;"></div></div>`;
+}
+
+function exportSection(type) {
+  if (!state.scores || !state.scores.dims) {
+    alert('Complete a avaliação primeiro para gerar os documentos.'); return;
+  }
+  const p = state.perfil;
+  let pages = '';
+
+  if (type === 'questionario' || type === 'todos') {
+    // Build questionnaire recap
+    let qHTML = `<table style="width:100%;border-collapse:collapse;font-size:8.5pt;">
+      <thead><tr style="background:#1a2744;color:white;">
+        <th style="padding:6px 10px;text-align:left;width:55%;">Questão</th>
+        <th style="padding:6px 10px;text-align:center;width:10%;">Tipo</th>
+        <th style="padding:6px 10px;text-align:center;width:35%;">Resposta</th>
+      </tr></thead><tbody>`;
+    SECOES.forEach(sec => {
+      qHTML += `<tr><td colspan="3" style="background:#f4f6f9;padding:6px 10px;font-size:7.5pt;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#4a5568;border-bottom:1px solid #e2e8f0;">${sec.nome}</td></tr>`;
+      sec.questoes.forEach(q => {
+        const val = state.respostas[q.id] || 0;
+        const tColor = q.tipo==='M'?'#2563a8':q.tipo==='C'?'#1d9e8f':'#6d28d9';
+        const tBg = q.tipo==='M'?'#eff6ff':q.tipo==='C'?'#e8f7f5':'#f3e8ff';
+        const dots = [1,2,3,4,5].map(n=>`<span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${n<=val?'#1d9e8f':'#e2e8f0'};margin:0 2px;"></span>`).join('');
+        const scaleTxt = ['','Nunca faço','Raramente','Às vezes','Com frequência','Sempre faço'][val]||'—';
+        qHTML += `<tr style="border-bottom:1px solid #f4f6f9;">
+          <td style="padding:7px 10px;font-size:8.5pt;line-height:1.5;">${q.texto}</td>
+          <td style="padding:7px 10px;text-align:center;"><span style="background:${tBg};color:${tColor};font-size:7pt;font-weight:700;padding:2px 5px;border-radius:2px;">${q.tipo}</span></td>
+          <td style="padding:7px 10px;text-align:center;">${dots}<br><span style="font-size:7pt;color:#718096;">${val}/5 · ${scaleTxt}</span></td>
+        </tr>`;
+      });
+    });
+    qHTML += '</tbody></table>';
+    pages += buildA4Page('Questionário de Autoavaliação M&C', qHTML, 'Questionário Respondido');
+  }
+
+  if (type === 'diagnostico' || type === 'questionario' || type === 'todos') {
+    const s = state.scores;
+    const dimRows = SECOES.map(sec => {
+      const d = s.dims[sec.id];
+      const lv = getLevel(d.avg);
+      const lvColor = lv.cls==='high'?'#22c55e':lv.cls==='mid'?'#f59e0b':'#e05c3a';
+      const tColor = sec.tipo==='M'?'#2563a8':sec.tipo==='C'?'#1d9e8f':'#6d28d9';
+      const tBg = sec.tipo==='M'?'#eff6ff':sec.tipo==='C'?'#e8f7f5':'#f3e8ff';
+      return `<tr style="border-bottom:1px solid #f4f6f9;">
+        <td style="padding:8px 10px;font-size:8.5pt;">${sec.nome}</td>
+        <td style="padding:8px 10px;text-align:center;"><span style="background:${tBg};color:${tColor};font-size:7pt;font-weight:700;padding:2px 6px;border-radius:2px;">${sec.tipo}</span></td>
+        <td style="padding:8px 10px;">${buildScoreBar(d.avg, tColor)}</td>
+        <td style="padding:8px 10px;text-align:center;font-size:13pt;font-weight:700;color:${tColor};">${d.avg.toFixed(1)}</td>
+        <td style="padding:8px 10px;text-align:center;"><span style="color:${lvColor};font-size:8pt;font-weight:600;">${lv.label}</span></td>
+      </tr>`;
+    }).join('');
+
+    const diagHTML = `
+      <div style="background:#1a2744;padding:14px 18px;border-radius:4px;color:white;margin-bottom:12px;">
+        <div style="font-size:8pt;letter-spacing:1.5px;text-transform:uppercase;color:#5ecfc3;margin-bottom:4px;">Perfil Identificado</div>
+        <div style="font-size:13pt;font-weight:700;margin-bottom:6px;">${s.profile.nome}</div>
+        <div style="display:flex;gap:16px;margin-top:10px;">
+          <div style="flex:1;background:rgba(255,255,255,0.08);padding:12px;border-radius:4px;text-align:center;">
+            <div style="font-size:7pt;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;margin-bottom:4px;">Managing</div>
+            <div style="font-size:24pt;font-weight:700;color:#7ab3f0;">${s.scoreM.toFixed(1)}<span style="font-size:12pt;opacity:0.5;">/5</span></div>
+            ${buildScoreBar(s.scoreM,'#7ab3f0')}
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,0.08);padding:12px;border-radius:4px;text-align:center;">
+            <div style="font-size:7pt;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;margin-bottom:4px;">Coaching</div>
+            <div style="font-size:24pt;font-weight:700;color:#5ecfc3;">${s.scoreC.toFixed(1)}<span style="font-size:12pt;opacity:0.5;">/5</span></div>
+            ${buildScoreBar(s.scoreC,'#5ecfc3')}
+          </div>
+        </div>
+      </div>
+      <div style="font-size:8.5pt;line-height:1.7;background:#f4f6f9;padding:12px 14px;border-left:3px solid #1d9e8f;border-radius:0 4px 4px 0;margin-bottom:12px;">${s.profile.descricao}</div>
+      <table style="width:100%;border-collapse:collapse;font-size:8.5pt;">
+        <thead><tr style="background:#1a2744;color:white;">
+          <th style="padding:6px 10px;text-align:left;">Dimensão</th>
+          <th style="padding:6px 10px;text-align:center;">Tipo</th>
+          <th style="padding:6px 10px;width:30%;">Score</th>
+          <th style="padding:6px 10px;text-align:center;">Média</th>
+          <th style="padding:6px 10px;text-align:center;">Nível</th>
+        </tr></thead>
+        <tbody>${dimRows}</tbody>
+      </table>
+      <div style="margin-top:12px;font-size:8.5pt;line-height:1.7;background:#fdf1ee;padding:12px 14px;border-left:3px solid #e05c3a;border-radius:0 4px 4px 0;">
+        <strong style="display:block;font-size:7.5pt;letter-spacing:1px;text-transform:uppercase;color:#e05c3a;margin-bottom:4px;">Orientação Estratégica</strong>
+        O objetivo é construir uma equipe que se autogerencie e se autodessenvolva. Para isso, rotinize o componente Managing e amplie o tempo e a qualidade do Coaching. O gestor que controla mais do que desenvolve trabalha contra sua própria alavancagem.
+      </div>`;
+    pages += buildA4Page('Diagnóstico Managing & Coaching', diagHTML, 'Relatório de Diagnóstico');
+  }
+
+  if (type === 'fazdiferente' || type === 'todos') {
+    const rows = document.querySelectorAll('#fhfd-body tr');
+    let tableRows = '';
+    rows.forEach(row => {
+      const tds = row.querySelectorAll('td');
+      tableRows += `<tr style="border-bottom:1px solid #e2e8f0;">`;
+      tds.forEach((td, i) => {
+        const ta = td.querySelector('textarea');
+        const val = ta ? ta.value : td.textContent;
+        const span = td.querySelector('span.dim-tag-inline');
+        const tagHTML = span ? `<span style="display:inline-block;font-size:7pt;font-weight:700;padding:2px 5px;border-radius:2px;background:${span.style.background||'#eff6ff'};color:${span.style.color||'#2563a8'};margin-bottom:4px;">${span.textContent}</span><br>` : '';
+        tableRows += `<td style="padding:10px;vertical-align:top;font-size:8.5pt;line-height:1.6;width:${i===0?'28%':i===1?'37%':'35%'};">${tagHTML}${val}</td>`;
+      });
+      tableRows += '</tr>';
+    });
+    const fhHTML = `
+      <div style="margin-bottom:8px;font-size:9pt;color:#4a5568;">Gestor: <strong>${p.nome}</strong> · ${p.empresa}</div>
+      <table style="width:100%;border-collapse:collapse;font-size:8.5pt;">
+        <thead><tr style="background:#1a2744;color:white;">
+          <th style="padding:8px 12px;text-align:left;width:28%;">Faz Hoje</th>
+          <th style="padding:8px 12px;text-align:left;width:37%;">Fazer Diferente</th>
+          <th style="padding:8px 12px;text-align:left;width:35%;">Impacto Esperado</th>
+        </tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>`;
+    pages += buildA4Page('Faz Hoje / Fazer Diferente', fhHTML, 'Plano de Mudança de Comportamento');
+  }
+
+  if (type === 'pdi' || type === 'todos') {
+    const pdiNome = document.getElementById('pdi-nome').value;
+    const pdiPer = document.getElementById('pdi-periodo').value;
+    const pdiObj = document.getElementById('pdi-objetivo').value;
+    const pdiAcG = document.getElementById('pdi-acoes-gerais').value;
+    let compsHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px;background:#f4f6f9;border-radius:4px;margin-bottom:12px;font-size:8.5pt;">
+        <div><span style="font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Gestor</span><br><strong>${pdiNome}</strong></div>
+        <div><span style="font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Período</span><br><strong>${pdiPer}</strong></div>
+        <div style="grid-column:1/-1;"><span style="font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Objetivo geral</span><br>${pdiObj}</div>
+        <div style="grid-column:1/-1;"><span style="font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Ações estratégicas</span><br>${pdiAcG}</div>
+      </div>`;
+
+    document.querySelectorAll('.pdi-comp').forEach((comp, i) => {
+      const header = comp.querySelector('.comp-name')?.textContent || `Competência ${i+1}`;
+      const textareas = Array.from(comp.querySelectorAll('textarea')).map(el => el.value);
+      const numberInputs = Array.from(comp.querySelectorAll('input[type="number"]')).map(el => el.value);
+      const oQueDesenv = textareas[0] || '—';
+      const comoDesenv = textareas[1] || '—';
+      const comoAferido = comp.querySelector('input[type="text"]')?.value || '—';
+      const agora = numberInputs[0] || '2';
+      const alvo = numberInputs[1] || '4';
+      const barW = Math.round((parseInt(alvo)/5)*100);
+      compsHTML += `
+        <div style="border:1px solid #e2e8f0;border-radius:4px;margin-bottom:10px;overflow:hidden;">
+          <div style="background:#253564;color:white;padding:8px 14px;font-size:9pt;font-weight:600;">${header}</div>
+          <div style="padding:12px 14px;font-size:8.5pt;line-height:1.6;">
+            <div style="margin-bottom:8px;"><strong style="font-size:7.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">O que desenvolver</strong><br>${oQueDesenv}</div>
+            <div style="margin-bottom:8px;"><strong style="font-size:7.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Como será desenvolvido</strong><br>${comoDesenv}</div>
+            <div style="margin-bottom:8px;"><strong style="font-size:7.5pt;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Como será aferido</strong><br>${comoAferido}</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
+              <span style="font-size:8pt;">Agora: <strong>${agora} / 5</strong></span>
+              <div style="flex:1;background:#e2e8f0;height:6px;border-radius:3px;"><div style="width:${barW}%;height:100%;background:#1d9e8f;border-radius:3px;"></div></div>
+              <span style="font-size:8pt;">Alvo: <strong>${alvo} / 5</strong></span>
+            </div>
+          </div>
+        </div>`;
+    });
+    pages += buildA4Page('PDI — Plano de Desenvolvimento Individual', compsHTML, 'Plano de Desenvolvimento do Gestor');
+  }
+
+  if (type === 'ptg' || type === 'todos') {
+    const ptgNome = document.getElementById('ptg-nome').value;
+    const ptgPer = document.getElementById('ptg-periodo').value;
+    const ptgAnalise = document.getElementById('ptg-analise').value;
+    const ptgFocoC = document.getElementById('ptg-foco-coaching').value;
+    const ptgPri = document.getElementById('ptg-prioridades').value;
+    const ptgFocoM = document.getElementById('ptg-foco-mes').value;
+    const ptgM1 = document.getElementById('ptg-m1').value;
+    const ptgM2 = document.getElementById('ptg-m2').value;
+    const ptgM3 = document.getElementById('ptg-m3').value;
+
+    let actionsRows = '';
+    document.querySelectorAll('.ptg-action-row').forEach((row, idx) => {
+      const ta = row.querySelector('textarea')?.value || '';
+      const inp = row.querySelector('input[type="text"]')?.value || '';
+      const status = row.querySelector('input[type="radio"]:checked')?.value || 'afazer';
+      const statusMap = {afazer:'A fazer',fazendo:'Fazendo',feito:'Feito'};
+      const statusColor = {afazer:'#718096',fazendo:'#2563a8',feito:'#22c55e'};
+      actionsRows += `<tr style="border-bottom:1px solid #f4f6f9;${idx%2===1?'background:#f9fafc':''}">
+        <td style="padding:8px 12px;width:32px;font-weight:700;color:#718096;font-size:10pt;">${idx+1}</td>
+        <td style="padding:8px 12px;font-size:8.5pt;line-height:1.5;">${ta}</td>
+        <td style="padding:8px 12px;font-size:8.5pt;">${inp}</td>
+        <td style="padding:8px 12px;font-size:8pt;font-weight:600;color:${statusColor[status]||'#718096'};">${statusMap[status]||'A fazer'}</td>
+      </tr>`;
+    });
+
+    const ptgHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px;background:#f4f6f9;border-radius:4px;margin-bottom:12px;font-size:8.5pt;">
+        <div><span style="font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Gestor</span><br><strong>${ptgNome}</strong></div>
+        <div><span style="font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Período</span><br><strong>${ptgPer}</strong></div>
+        <div><span style="font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Análise de progressos</span><br>${ptgAnalise}</div>
+        <div><span style="font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Foco do coaching</span><br>${ptgFocoC}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div style="background:#f4f6f9;padding:12px;border-radius:4px;">
+          <div style="font-size:8pt;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1a2744;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #e2e8f0;">Prioridades 90 Dias</div>
+          <div style="font-size:8.5pt;white-space:pre-line;line-height:1.7;">${ptgPri}</div>
+        </div>
+        <div style="background:#f4f6f9;padding:12px;border-radius:4px;">
+          <div style="font-size:8pt;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1a2744;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #e2e8f0;">Foco deste Mês</div>
+          <div style="font-size:8.5pt;white-space:pre-line;line-height:1.7;">${ptgFocoM}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+        ${[ptgM1,ptgM2,ptgM3].map((m,i)=>`<div style="background:white;border:1px solid #e2e8f0;padding:10px;border-radius:4px;text-align:center;"><div style="font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;margin-bottom:4px;">Métrica ${i+1}</div><div style="font-size:10pt;font-weight:600;color:#1d9e8f;">${m}</div></div>`).join('')}
+      </div>
+      <div style="font-size:8pt;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1a2744;margin-bottom:8px;">Plano de Ação</div>
+      <table style="width:100%;border-collapse:collapse;font-size:8.5pt;">
+        <thead><tr style="background:#1a2744;color:white;">
+          <th style="padding:6px 12px;text-align:center;width:32px;">#</th>
+          <th style="padding:6px 12px;text-align:left;">O que fazer</th>
+          <th style="padding:6px 12px;text-align:left;width:130px;">Quando</th>
+          <th style="padding:6px 12px;text-align:center;width:80px;">Status</th>
+        </tr></thead>
+        <tbody>${actionsRows}</tbody>
+      </table>`;
+    pages += buildA4Page('PTG — Plano de Trabalho do Gestor', ptgHTML, 'Plano de Trabalho Trimestral');
+  }
+
+  const fullHTML = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+    <title>Autoavaliação M&C · ${p.nome}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0;}
+      body{background:white;font-family:'Source Sans 3',sans-serif;}
+      @media print{body{margin:0;}@page{margin:0;size:A4 portrait;}}
+      @media screen{body{background:#888;padding:20px;} div[style*="210mm"]{margin:0 auto 20px;box-shadow:0 4px 20px rgba(0,0,0,0.3);}}
+    </style>
+  </head><body>
+    <div style="display:none;background:#1a2744;color:white;padding:12px 20px;font-size:12px;text-align:center;position:fixed;top:0;left:0;right:0;z-index:999;" id="print-banner">
+      Para salvar como PDF: pressione <strong>Ctrl+P</strong> (Windows) ou <strong>Cmd+P</strong> (Mac) → Destino: <strong>Salvar como PDF</strong> → Margens: <strong>Nenhuma</strong> → Ativar <strong>Gráficos de fundo</strong>
+    </div>
+    <script>document.getElementById('print-banner').style.display='block';<\/script>
+    ${pages}
+  </body></html>`;
+
+  const win = window.open('', '_blank');
+  if (!win) {
+    alert('O seu navegador bloqueou a abertura da janela. Permita pop-ups para este site e tente novamente.');
+    return;
+  }
+  win.document.write(fullHTML);
+  win.document.close();
+}
+</script>
+</body>
+</html>

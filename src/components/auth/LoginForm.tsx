@@ -76,7 +76,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full py-3.5 px-4 bg-primary text-white font-medium rounded-xl hover:bg-primary-dark focus:outline-none focus:ring-4 focus:ring-primary/20 transition-all disabled:opacity-70 flex justify-center items-center shadow-lg shadow-primary/20"
+        className="w-full py-4 px-4 bg-[#0050FF] text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all disabled:opacity-70 flex justify-center items-center shadow-lg shadow-blue-500/30"
       >
         {isPending ? (
           <Loader2 className="w-5 h-5 animate-spin" />
@@ -84,6 +84,22 @@ export function LoginForm() {
           'Entrar na Plataforma'
         )}
       </button>
+
+      <div className="relative py-4">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border-custom"></div>
+        </div>
+        <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest">
+          <span className="bg-surface px-4 text-text-muted">Ou</span>
+        </div>
+      </div>
+
+      <Link
+        href="/registrar"
+        className="w-full py-3.5 px-4 border border-border-custom text-text-primary font-bold rounded-xl hover:bg-black/5 transition-all flex justify-center items-center text-sm"
+      >
+        Não tem uma conta? <span className="text-primary ml-1.5">Criar agora</span>
+      </Link>
     </form>
   )
 }

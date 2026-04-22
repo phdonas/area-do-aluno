@@ -31,14 +31,14 @@ export function RadarChart({ data }: RadarChartProps) {
   const gridLevels = [20, 40, 60, 80]
 
   return (
-    <div className="bg-surface border border-border-custom rounded-[2rem] p-8 flex flex-col items-center shadow-sm h-full">
+    <div className="bg-primary/10 dark:bg-blue-50/90 border border-primary/20 dark:border-blue-200 rounded-xl p-8 flex flex-col items-center shadow-sm h-full backdrop-blur-sm">
       <div className="flex items-center justify-between w-full mb-6">
         <div>
-          <h3 className="text-sm font-black uppercase tracking-widest text-text-primary">Radar de Competências</h3>
-          <p className="text-[10px] text-text-muted uppercase tracking-wider font-bold">Domínio por Área</p>
+          <h3 className="text-sm font-black uppercase tracking-widest text-foreground dark:text-primary-dark font-display">Radar de Competências</h3>
+          <p className="text-[10px] text-text-muted dark:text-primary/60 uppercase tracking-wider font-bold font-sans">Domínio por Área</p>
         </div>
-        <div className="px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
-          <span className="text-[9px] font-black text-primary uppercase">Dados Reais</span>
+        <div className="px-3 py-1 bg-secondary/10 dark:bg-secondary/20 rounded-md border border-secondary/20 dark:border-secondary/30">
+          <span className="text-[9px] font-black text-secondary dark:text-secondary-dark uppercase leading-none">Dados Reais</span>
         </div>
       </div>
 

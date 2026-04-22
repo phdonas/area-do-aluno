@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { ensureAdmin } from '@/lib/auth-check'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -15,7 +15,7 @@ function cleanPrice(priceRaw: string | null): string | null {
 
 export async function toggleAulaGratis(aulaId: string, isGratis: boolean, cursoId: string) {
   await ensureAdmin()
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   const { error } = await supabase
     .from('aulas')
@@ -46,7 +46,7 @@ function slugify(text: string) {
 
 export async function createCurso(formData: FormData) {
   await ensureAdmin()
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   const titulo = formData.get('titulo') as string
   let slug = formData.get('slug') as string
@@ -56,6 +56,7 @@ export async function createCurso(formData: FormData) {
   const descricao = formData.get('descricao') as string
   const thumb_url = formData.get('thumb_url') as string
   const status = formData.get('status') as string || 'rascunho'
+  const destaque_vitrine = formData.get('destaque_vitrine') === 'on'
   
   const objetivos = formData.get('objetivos') as string
   const publico_alvo = formData.get('publico_alvo') as string
@@ -70,6 +71,7 @@ export async function createCurso(formData: FormData) {
     descricao,
     thumb_url,
     status,
+    destaque_vitrine,
     objetivos: formData.get('objetivos') as string,
     publico_alvo: formData.get('publico_alvo') as string,
     resultados_esperados: formData.get('resultados_esperados') as string,
@@ -91,12 +93,13 @@ export async function createCurso(formData: FormData) {
 
   // Redirecionamos direto para a página de edição (onde estará o montador N:N)
   revalidatePath('/admin/cursos')
+  revalidatePath('/vitrine')
   redirect(`/admin/cursos/${data.id}`)
 }
 
 export async function updateCursoBasics(id: string, formData: FormData) {
   await ensureAdmin()
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   const titulo = formData.get('titulo') as string
   let slug = formData.get('slug') as string
@@ -106,6 +109,7 @@ export async function updateCursoBasics(id: string, formData: FormData) {
   const descricao = formData.get('descricao') as string
   const thumb_url = formData.get('thumb_url') as string
   const status = formData.get('status') as string
+  const destaque_vitrine = formData.get('destaque_vitrine') === 'on'
 
   const objetivos = formData.get('objetivos') as string
   const publico_alvo = formData.get('publico_alvo') as string
@@ -120,6 +124,7 @@ export async function updateCursoBasics(id: string, formData: FormData) {
     descricao,
     thumb_url,
     status,
+    destaque_vitrine,
     objetivos: formData.get('objetivos') as string,
     publico_alvo: formData.get('publico_alvo') as string,
     resultados_esperados: formData.get('resultados_esperados') as string,
@@ -141,11 +146,12 @@ export async function updateCursoBasics(id: string, formData: FormData) {
 
   revalidatePath('/admin/cursos')
   revalidatePath(`/admin/cursos/${id}`)
+  revalidatePath('/vitrine')
 }
 
 export async function deleteCurso(id: string) {
   await ensureAdmin()
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   // 1. Verificação de Blindagem: Não deletar se houver módulos ementados
   const { count: countModulos } = await supabase
@@ -154,7 +160,7 @@ export async function deleteCurso(id: string) {
     .eq('curso_id', id)
 
   if (countModulos && countModulos > 0) {
-    throw new Error('Não é possível excluir um curso que possui módulos cadastrados na ementa. Remova os módulos primeiro ou inative o curso.')
+    return { success: false, error: 'Não é possível excluir um curso que possui módulos cadastrados na ementa. Remova os módulos primeiro ou inative o curso.' }
   }
 
   // 2. Verificação de Alunos (Assinaturas)
@@ -164,7 +170,7 @@ export async function deleteCurso(id: string) {
     .eq('curso_id', id)
 
   if (countMatriculas && countMatriculas > 0) {
-    throw new Error('Não é possível excluir um curso que possui alunos matriculados (ativos ou inativos).')
+    return { success: false, error: 'Não é possível excluir um curso que possui alunos matriculados (ativos ou inativos).' }
   }
 
   // Se passou pelas travas, remove relações pivot de menor impacto
@@ -176,15 +182,18 @@ export async function deleteCurso(id: string) {
 
   if (error) {
     console.error('Erro ao deletar curso', error)
-    throw new Error(`Falha ao deletar curso: ${error.message}`)
+    return { success: false, error: `Falha ao deletar curso: ${error.message}` }
   }
 
   revalidatePath('/admin/cursos')
+  revalidatePath('/vitrine')
+  return { success: true }
 }
 
 // Action para associar pilar
 export async function togglePilarCurso(cursoId: string, pilarId: string, associar: boolean) {
-  const supabase = await createClient()
+  await ensureAdmin()
+  const supabase = createAdminClient()
   if (associar) {
     await supabase.from('cursos_pilares').insert({ curso_id: cursoId, pilar_id: pilarId })
   } else {
@@ -214,13 +223,15 @@ async function normalizeModulosOrdemInternal(cursoId: string, supabase: any) {
 
 // Action para adicionar módulo e ordenar
 export async function associarModuloCurso(cursoId: string, moduloId: string, ordem: number) {
-  const supabase = await createClient()
+  await ensureAdmin()
+  const supabase = createAdminClient()
   await supabase.from('cursos_modulos').insert({ curso_id: cursoId, modulo_id: moduloId, ordem })
   revalidatePath(`/admin/cursos/${cursoId}`)
 }
 
 export async function associarMultiplosModulosCurso(cursoId: string, moduloIds: string[], startOrdem: number) {
-  const supabase = await createClient()
+  await ensureAdmin()
+  const supabase = createAdminClient()
   const inserts = moduloIds.map((modulo_id, index) => ({
     curso_id: cursoId,
     modulo_id,
@@ -235,7 +246,8 @@ export async function associarMultiplosModulosCurso(cursoId: string, moduloIds: 
 }
 
 export async function desassociarModuloCurso(cursoId: string, moduloId: string) {
-  const supabase = await createClient()
+  await ensureAdmin()
+  const supabase = createAdminClient()
   await supabase.from('cursos_modulos').delete().match({ curso_id: cursoId, modulo_id: moduloId })
   
   // Normaliza após remover
@@ -246,7 +258,7 @@ export async function desassociarModuloCurso(cursoId: string, moduloId: string) 
 
 export async function reordenarModuloCurso(cursoId: string, moduloIds: string[]) {
   await ensureAdmin()
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   
   // Atualiza todos os módulos passados com a nova ordem sequencial
   for (let i = 0; i < moduloIds.length; i++) {
@@ -262,7 +274,8 @@ export async function reordenarModuloCurso(cursoId: string, moduloIds: string[])
 }
 
 export async function criarModuloExclusivo(cursoId: string, titulo: string, nextOrdem: number) {
-  const supabase = await createClient()
+  await ensureAdmin()
+  const supabase = createAdminClient()
   
   // 1. Cria o módulo marcado com curso_id (Isolado/Legado)
   const { data: novoModulo, error: modErr } = await supabase
@@ -291,7 +304,7 @@ export async function criarModuloExclusivo(cursoId: string, titulo: string, next
 
 export async function reordenarAulaModulo(cursoId: string, moduloId: string, aulaIds: string[]) {
   await ensureAdmin()
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   for (let i = 0; i < aulaIds.length; i++) {
     const aulaId = aulaIds[i]
@@ -310,6 +323,82 @@ export async function reordenarAulaModulo(cursoId: string, moduloId: string, aul
       await supabase.from('modulos_aulas').update({ ordem: i + 1 }).match({ modulo_id: moduloId, aula_id: aulaId })
     }
   }
+
+  revalidatePath(`/admin/cursos/${cursoId}`)
+}
+
+export async function separarModuloCurso(cursoId: string, originalModuloId: string, novoTitulo: string) {
+  await ensureAdmin()
+  const supabase = createAdminClient()
+
+  // 1. Pegar a ordem do módulo original neste curso
+  const { data: relOriginal } = await supabase
+    .from('cursos_modulos')
+    .select('ordem')
+    .match({ curso_id: cursoId, modulo_id: originalModuloId })
+    .single()
+
+  const ordem = relOriginal ? relOriginal.ordem : 999;
+
+  // 2. Busca a descricao original
+  const { data: modOriginal } = await supabase.from('modulos').select('descricao').eq('id', originalModuloId).single();
+  const descricao = modOriginal?.descricao || null;
+
+  const { data: novoModulo, error: modErr } = await supabase
+    .from('modulos')
+    .insert({ 
+      titulo: novoTitulo, 
+      descricao,
+      ordem: 0,
+      curso_id: cursoId // Marca como exclusivo deste curso
+    })
+    .select('id')
+    .single()
+
+  if (modErr || !novoModulo) {
+    console.error('Erro ao separar módulo', modErr)
+    throw new Error('Falha ao separar módulo: ' + (modErr?.message ?? 'módulo não retornado'))
+  }
+
+  // 3. Substituir no curso (remove o antigo, coloca o novo na mesma ordem)
+  await supabase.from('cursos_modulos').delete().match({ curso_id: cursoId, modulo_id: originalModuloId })
+  
+  await supabase.from('cursos_modulos').insert({
+    curso_id: cursoId,
+    modulo_id: novoModulo.id,
+    ordem: ordem
+  })
+
+  // 4. Copiar o vínculo das aulas para o novo módulo
+  const { data: pivotAulas } = await supabase.from('modulos_aulas').select('aula_id, ordem').eq('modulo_id', originalModuloId)
+  const { data: directAulas } = await supabase.from('aulas').select('id, ordem').eq('modulo_id', originalModuloId)
+
+  const insercoesPivot: any[] = []
+
+  if (pivotAulas) {
+    pivotAulas.forEach(item => {
+      if (item.aula_id) {
+        insercoesPivot.push({ modulo_id: novoModulo.id, aula_id: item.aula_id, ordem: item.ordem })
+      }
+    })
+  }
+
+  if (directAulas) {
+    directAulas.forEach(item => {
+      // Como a relação direta era 1:N, na cópia nós colocamos na pivot N:N para não duplicar o registro da aula original
+      insercoesPivot.push({ modulo_id: novoModulo.id, aula_id: item.id, ordem: item.ordem })
+    })
+  }
+
+  // Remove duplicates based on aula_id
+  const uniqInsercoesPivot = Array.from(new Map(insercoesPivot.map(item => [item.aula_id, item])).values())
+
+  if (uniqInsercoesPivot.length > 0) {
+    await supabase.from('modulos_aulas').insert(uniqInsercoesPivot)
+  }
+
+  // 5. Normalizar ordens
+  await normalizeModulosOrdemInternal(cursoId, supabase)
 
   revalidatePath(`/admin/cursos/${cursoId}`)
 }

@@ -135,7 +135,7 @@ export default function AtivacaoContaPage() {
             exit={{ opacity: 0, scale: 0.98 }}
             className="max-w-2xl w-full bg-surface border border-border-custom rounded-[2.5rem] shadow-2xl overflow-hidden relative"
           >
-            {/* Progress - PH Academy Style */}
+            {/* Progress - PHDonassolo Academy Style */}
             <div className="absolute top-0 left-0 w-full h-1.5 bg-border-custom/30">
                 <motion.div 
                    className="h-full bg-primary" 
@@ -150,7 +150,7 @@ export default function AtivacaoContaPage() {
                   <div className="flex items-center justify-between">
                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
                         <Sparkles className="w-3 h-3 text-primary" />
-                        <span className="text-[9px] font-black uppercase tracking-widest text-primary">PH Academy • Ativação</span>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-primary">PHDonassolo Academy • Ativação</span>
                      </div>
                      <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Passo {step} de 3</span>
                   </div>
@@ -357,7 +357,7 @@ export default function AtivacaoContaPage() {
              <div className="space-y-3 relative z-10">
                 <h2 className="text-2xl font-black text-text-primary uppercase tracking-tight italic">Conta Ativada!</h2>
                 <p className="text-sm font-medium text-text-secondary leading-relaxed px-4">
-                   Parabéns! Seu perfil completo foi consolidado na PH Academy. Redirecionando...
+                   Parabéns! Seu perfil completo foi consolidado na PHDonassolo Academy. Redirecionando...
                 </p>
              </div>
              

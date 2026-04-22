@@ -34,8 +34,7 @@ export async function ensureAdmin() {
     .single()
 
   if (dbError || !profile || !profile.is_admin) {
-    console.error('Tentativa de acesso não autorizado:', user.email)
-    throw new Error('Acesso negado: Somente administradores podem realizar esta ação.')
+    throw new Error('Unauthorized admin action')
   }
 
   return user
@@ -67,8 +66,7 @@ export async function ensureAccess() {
     .single()
 
   if (dbError || !profile || (!profile.is_admin && !profile.is_staff)) {
-    console.error('Acesso ao painel negado:', user.email)
-    throw new Error('Acesso negado ao Painel Gestor.')
+    throw new Error('Unauthorized access to Admin Panel')
   }
 
   return { 

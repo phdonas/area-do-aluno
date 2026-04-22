@@ -4,72 +4,110 @@ import { createPilar } from '../actions'
 
 export default function NovoPilarPage() {
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="mb-8">
+    <div className="max-w-2xl mx-auto space-y-8">
+      <div>
         <Link 
           href="/admin/pilares" 
           className="text-text-muted hover:text-text-primary text-sm flex items-center gap-2 mb-4 w-fit transition-colors"
         >
           <ChevronLeft className="w-4 h-4" /> Voltar para Pilares
         </Link>
-        <h1 className="text-2xl font-bold text-text-primary">Cadastrar Novo Pilar</h1>
-        <p className="text-text-secondary text-sm mt-1">Defina as categorias que agruparão seus cursos e trilhas.</p>
+        <h1 className="text-3xl font-black text-text-primary italic">Novo Pilar Estratégico</h1>
+        <p className="text-text-secondary text-sm mt-1">Crie categorias macro para estruturar sua vitrine e cursos.</p>
       </div>
 
-      <div className="bg-surface border border-border-custom p-6 md:p-8 rounded-2xl shadow-sm">
-        <form action={createPilar} className="space-y-6">
+      <div className="bg-surface border border-border-custom p-8 md:p-10 rounded-[2.5rem] shadow-xl">
+        <form action={createPilar} className="space-y-8">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <label htmlFor="nome" className="block text-xs font-black uppercase tracking-widest text-text-primary">Nome do Pilar *</label>
+              <input 
+                type="text" 
+                id="nome" 
+                name="nome" 
+                required
+                placeholder="Ex: Alta Performance"
+                className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-text-primary focus:outline-none focus:border-primary transition-all font-medium"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="slug" className="block text-xs font-black uppercase tracking-widest text-text-primary">Slug (URL/Filtro)</label>
+              <input 
+                type="text" 
+                id="slug" 
+                name="slug" 
+                className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-text-primary focus:outline-none focus:border-primary transition-all font-mono text-xs"
+                placeholder="ex: alta-performance (opcional)"
+              />
+            </div>
+          </div>
+
           <div className="space-y-2">
-            <label htmlFor="nome" className="block text-sm font-bold text-text-primary">Nome do Pilar *</label>
-            <input 
-              type="text" 
-              id="nome" 
-              name="nome" 
-              required
-              placeholder="Ex: Formação Executiva"
-              className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary placeholder:text-text-muted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+            <label htmlFor="subtitulo" className="block text-xs font-black uppercase tracking-widest text-text-primary">Subtítulo (Exibição na Vitrine)</label>
+            <textarea 
+              id="subtitulo" 
+              name="subtitulo" 
+              rows={3}
+              className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-text-primary focus:outline-none focus:border-primary transition-all font-medium resize-none"
+              placeholder="Descreva este pilar para os visitantes..."
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-2">
-              <label htmlFor="cor_badge" className="block text-sm font-bold text-text-primary">Cor de Destaque</label>
-              <div className="flex items-center gap-3">
-                <input 
+              <label htmlFor="icone" className="block text-xs font-black uppercase tracking-widest text-text-primary">Ícone (Visual)</label>
+              <select 
+                id="icone" 
+                name="icone" 
+                defaultValue="Zap"
+                className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-text-primary focus:outline-none focus:border-primary transition-all font-bold"
+              >
+                <option value="Zap">Zap (Energia)</option>
+                <option value="Target">Target (Alvo)</option>
+                <option value="Brain">Brain (Mente)</option>
+                <option value="Leaf">Leaf (Eco/Sustentável)</option>
+                <option value="Users">Users (Liderança)</option>
+                <option value="Award">Award (Conquista)</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+               <label htmlFor="cor_badge" className="block text-xs font-black uppercase tracking-widest text-text-primary">Cor</label>
+               <input 
                   type="color" 
                   id="cor_badge" 
                   name="cor_badge" 
                   defaultValue="#2563EB"
-                  className="w-14 h-14 bg-background border border-border-custom rounded-xl p-1 cursor-pointer"
-                />
-                <p className="text-xs text-text-muted">Clique no quadrado para abrir a paleta e escolher a cor principal do pilar.</p>
-              </div>
+                  className="w-full h-14 bg-background border border-border-custom rounded-2xl p-2 cursor-pointer"
+               />
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="ordem" className="block text-sm font-bold text-text-primary">Ordem de Exibição</label>
+              <label htmlFor="ordem" className="block text-xs font-black uppercase tracking-widest text-text-primary">Ordem</label>
               <input 
                 type="number" 
                 id="ordem" 
                 name="ordem" 
                 defaultValue="0"
-                className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-mono text-sm"
+                className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-text-primary focus:outline-none focus:border-primary transition-all font-mono"
               />
-              <p className="text-xs text-text-muted">0 é o primeiro, 1 o segundo...</p>
             </div>
           </div>
 
-          <div className="pt-6 border-t border-border-custom flex justify-end gap-3">
+          <div className="pt-10 border-t border-border-custom flex flex-col sm:flex-row justify-end gap-4">
             <Link 
               href="/admin/pilares"
-              className="px-6 py-3 rounded-xl border border-border-custom text-text-secondary hover:bg-black/5 font-medium transition-colors"
+              className="px-8 py-4 rounded-2xl border border-border-custom text-text-secondary hover:bg-black/5 font-bold transition-all text-xs uppercase tracking-widest text-center"
             >
               Cancelar
             </Link>
             <button 
               type="submit"
-              className="px-6 py-3 rounded-xl bg-primary hover:bg-primary-dark text-white font-bold flex items-center gap-2 transition-colors shadow-sm"
+              className="px-10 py-4 rounded-2xl bg-primary hover:bg-primary-dark text-white font-black flex items-center justify-center gap-3 transition-all shadow-xl shadow-primary/20 text-xs uppercase tracking-widest"
             >
-              <Save className="w-5 h-5" />
+              <Save className="w-5 h-5 font-black" />
               Criar Pilar
             </button>
           </div>

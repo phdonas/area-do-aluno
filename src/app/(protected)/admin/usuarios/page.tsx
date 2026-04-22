@@ -64,6 +64,7 @@ export default async function AdminUsuariosPage() {
                <thead>
                   <tr className="border-b border-border-custom">
                      <th className="px-10 py-6 text-left text-[10px] font-black uppercase tracking-widest text-text-muted">Membro</th>
+                     <th className="px-10 py-6 text-left text-[10px] font-black uppercase tracking-widest text-text-muted text-center">Cursos Ativos</th>
                      <th className="px-10 py-6 text-left text-[10px] font-black uppercase tracking-widest text-text-muted">Identidade Digital</th>
                      <th className="px-10 py-6 text-left text-[10px] font-black uppercase tracking-widest text-text-muted text-center">Permissões</th>
                      <th className="px-10 py-6 text-left text-[10px] font-black uppercase tracking-widest text-text-muted text-center">Cadastro</th>
@@ -71,10 +72,11 @@ export default async function AdminUsuariosPage() {
                   </tr>
                </thead>
                <tbody className="divide-y divide-border-custom">
-                  {usuarios.map((u) => {
+                  {usuarios.map((u: any) => {
                      const isSelf = u.id === user.id
                      const roleLabel = u.is_admin ? '🛡️ Admin' : u.is_staff ? '💼 Staff' : '👤 Aluno'
                      const roleColor = u.is_admin ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : u.is_staff ? 'bg-indigo-500/10 text-indigo-500 border-indigo-500/20' : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                     const totalCursos = u.assinaturas?.[0]?.count || 0
                      
                      return (
                         <tr key={u.id} className="group hover:bg-black/[0.02] transition-all">
@@ -93,6 +95,11 @@ export default async function AdminUsuariosPage() {
                                        {u.is_admin ? 'Administrador' : u.is_staff ? 'Equipe PH' : 'Membro Regular'}
                                     </p>
                                  </div>
+                              </div>
+                           </td>
+                           <td className="px-10 py-8 text-center">
+                              <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-black/5 text-[10px] font-black text-text-primary border border-border-custom">
+                                 {totalCursos}
                               </div>
                            </td>
                            <td className="px-10 py-8">

@@ -7,7 +7,7 @@ import {
   FileQuestion, Package, Wrench, Users, Eraser, Activity, TrendingUp, AlertTriangle, Clock, 
   BarChart3, Banknote, History, GraduationCap, ChevronRight, Eye, Play, Search, UserPlus,
   CalendarDays, Filter, ChevronDown, Target, Send, Tag, ShieldCheck, Zap, Award, Settings,
-  Columns3, MailCheck, History as HistoryIcon, Ticket
+  Columns3, MailCheck, History as HistoryIcon, Ticket, DollarSign
 } from 'lucide-react'
 
 import AnalyticsVisual from './AnalyticsVisual'
@@ -56,6 +56,7 @@ export default async function AdminDashboardPage({
     { count: aulasCount },
     { count: questCount },
     { count: totalMatriculasAtivas },
+    { count: matriculasPendentesCount },
     { data: activeStudentsData },
     { data: cursosLista }, 
     { data: aulasSemVideo },
@@ -69,6 +70,7 @@ export default async function AdminDashboardPage({
     supabaseAdmin.from('aulas').select('*', { count: 'exact', head: true }),
     supabaseAdmin.from('questionarios').select('*', { count: 'exact', head: true }),
     supabaseAdmin.from('assinaturas').select('*', { count: 'exact', head: true }).in('status', ['ativa', 'ativo', 'Ativa', 'Ativo']),
+    supabaseAdmin.from('assinaturas').select('*', { count: 'exact', head: true }).in('status', ['pendente', 'Pendente']),
     supabaseAdmin.from('assinaturas').select('usuario_id').in('status', ['ativa', 'ativo', 'Ativa', 'Ativo']),
     supabaseAdmin.from('cursos').select('id, titulo'),
     supabaseAdmin.from('aulas').select('id').is('video_url', null),
@@ -78,7 +80,7 @@ export default async function AdminDashboardPage({
     
     (() => {
       let q = supabaseAdmin.from('assinaturas')
-        .select('id, created_at, curso_id, plano_id, status, cursos(preco), planos(preco_mensal, preco_anual)')
+        .select('id, created_at, curso_id, plano_id, status, valor_pago, moeda, cursos(preco), planos(preco_mensal, preco_anual)')
         .in('status', ['ativa', 'ativo', 'Ativa', 'Ativo'])
       if (startDate) q = q.gte('created_at', startDate)
       if (cursoId) q = q.eq('curso_id', cursoId)
@@ -100,7 +102,9 @@ export default async function AdminDashboardPage({
   const uniqueStudentsSet = new Set((activeStudentsData || []).map(a => a.usuario_id))
   const totalAlunosAtivos = uniqueStudentsSet.size || 0
 
-  // 3. Processamento de Faturamento e Matrículas
+  // 3. Processamento de Faturamento Global (Híbrido)
+  let fatBRL = 0
+  let fatEUR = 0
   let fatCursos = 0
   let fatPlanos = 0
   let countCursos = 0
@@ -109,20 +113,27 @@ export default async function AdminDashboardPage({
   const assinaturasParaProcessar = assinaturasPeriodo || []
   
   assinaturasParaProcessar.forEach((ass: any) => {
+     const valor = Number(ass.valor_pago || 0)
+     
+     // Separação por Moeda
+     if (ass.moeda === 'EUR') {
+       fatEUR += valor
+     } else {
+       fatBRL += valor
+     }
+
+     // Separação por Categoria (Cursos vs Planos)
      if (ass.curso_id) {
-       const precoRaw = ass.cursos?.preco || '0'
-       const valor = parseFloat(precoRaw.toString().replace(/[^\d.]/g, '') || '0')
        fatCursos += valor
        countCursos++
-     }
-     if (ass.plano_id) {
-       const precoRaw = ass.planos?.preco_anual || ass.planos?.preco_mensal || '0'
-       const valor = parseFloat(precoRaw.toString().replace(/[^\d.]/g, '') || '0')
+     } else if (ass.plano_id) {
        fatPlanos += valor
        countPlanos++
      }
   })
-  const totalFaturamento = fatCursos + fatPlanos
+  
+  // Taxa de conversão fictícia apenas para o card de resumo principal
+  const totalFaturamento = fatBRL + (fatEUR * 6) 
   const totalMatrículasPeriodo = countCursos + countPlanos
 
   // 4. Engajamento
@@ -164,112 +175,149 @@ export default async function AdminDashboardPage({
     return progresso >= 0
   }).length
 
+  const sections = [
+    {
+      title: 'Aulas e Cursos',
+      description: 'Gestão de conteúdo e estrutura acadêmica',
+      color: 'border-indigo-500/20',
+      items: [
+        { label: 'Aulas Globais', count: aulasCount, href: '/admin/aulas', icon: MonitorPlay, color: 'bg-indigo-600/50' },
+        { label: 'Ementas & Módulos', count: modulosCount, href: '/admin/modulos', icon: Columns3, color: 'bg-blue-600/50' },
+        { label: 'Cursos', count: cursosCount, href: '/admin/cursos', icon: BookOpen, color: 'bg-sky-600/50' },
+        { label: 'Pilares', href: '/admin/pilares', icon: Layers, color: 'bg-cyan-600/50' },
+      ]
+    },
+    {
+      title: 'Materiais e Ferramentas',
+      description: 'Recursos interativos e organização',
+      color: 'border-emerald-500/20',
+      items: [
+        { label: 'Recursos & Ferramentas', href: '/admin/recursos', icon: Wrench, color: 'bg-emerald-600/50' },
+        { label: 'Questionários', count: questCount, href: '/admin/questionarios', icon: FileQuestion, color: 'bg-teal-600/50' },
+        { label: 'Limpeza de Nomes', href: '/admin/configuracoes/prefixos', icon: Eraser, color: 'bg-slate-600/50' },
+      ]
+    },
+    {
+      title: 'Gestão de Alunos',
+      description: 'Controle de acesso e consulta de progresso',
+      color: 'border-amber-500/20',
+      items: [
+        { label: 'Alunos / Matrículas', count: totalAlunosAtivos, href: '/admin/alunos', icon: Users, color: 'bg-amber-600/50' },
+        { label: 'Matrículas Pendentes', count: matriculasPendentesCount, href: '/admin/matriculas', icon: Clock, color: 'bg-orange-600/50' },
+        { label: 'Consulta por Curso', href: '/admin/alunos/consulta', icon: Search, color: 'bg-yellow-600/50', description: 'Novo: Filtros Avançados' },
+      ]
+    },
+    {
+      title: 'Promoções',
+      description: 'Estratégias de vendas e precificação',
+      color: 'border-rose-500/20',
+      items: [
+        { label: 'Cupons & Promo', href: '/admin/cupons', icon: Ticket, color: 'bg-rose-600/50' },
+        { label: 'Gestão de Planos & Preços', href: '/admin/planos', icon: DollarSign, color: 'bg-pink-600/50' },
+        { label: 'Configuração de Checkout', href: '/admin/configuracoes/checkout', icon: MonitorPlay, color: 'bg-red-600/50' },
+      ]
+    },
+    {
+      title: 'Certificados',
+      description: 'Emissão e personalização de diplomas',
+      color: 'border-purple-500/20',
+      items: [
+        { label: 'Configurar Certificados', href: '/admin/certificados/config', icon: Award, color: 'bg-purple-600/50' },
+        { label: 'Emissão de Certificados', href: '/admin/certificados/emissao', icon: Target, color: 'bg-violet-600/50' },
+      ]
+    },
+    {
+      title: 'Gestão de Pessoas',
+      description: 'Administração de equipe e professores',
+      color: 'border-blue-500/20',
+      items: [
+        { label: 'Cadastro de Professores', href: '/admin/professores', icon: UserPlus, color: 'bg-blue-600/50' },
+        { label: 'Gestão de Equipe', href: '/admin/usuarios', icon: ShieldCheck, color: 'bg-indigo-600/50' },
+        { label: 'Gestão de Convites', href: '/admin/convites', icon: MailCheck, color: 'bg-sky-600/50' },
+        { label: 'Auditoria & Logs', href: '/admin/auditoria', icon: HistoryIcon, color: 'bg-slate-600/50' },
+      ]
+    },
+    {
+      title: 'Financeiro',
+      description: 'Visibilidade de faturamento e moedas',
+      color: 'border-teal-500/20',
+      items: [
+        { label: 'Dashboard Financeiro', href: '/admin/financeiro', icon: Banknote, color: 'bg-teal-600/55' },
+      ]
+    }
+  ]
+
   return (
     <div className="max-w-7xl mx-auto space-y-16 pb-20 animate-in fade-in duration-1000">
       
-      {/* 🟢 SECRETARIA E CONFIGURAÇÕES */}
-      <section className="space-y-8">
-        <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-l-4 border-indigo-600 pl-6">
-          <div>
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted mb-2 block">Pilar Operacional</span>
-            <h1 className="text-4xl font-black text-text-primary tracking-tighter">Secretaria e Configurações</h1>
-            <p className="text-text-secondary mt-2 font-medium">Gestão administrativa de alunos, cursos e ferramentas.</p>
-          </div>
-          <div className="flex gap-3">
-             <Link href="/admin/cursos/novo" className="px-6 py-3 bg-primary text-white font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-primary-dark transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
-                <GraduationCap className="w-4 h-4" /> Novo Curso
-             </Link>
-          </div>
-        </header>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-           {[
-             { label: 'Cursos', count: cursosCount, href: '/admin/cursos', icon: <BookOpen className="w-4 h-4 text-indigo-500" />, color: 'bg-indigo-500/10' },
-             { label: 'Ementas & Módulos', count: modulosCount, href: '/admin/modulos', icon: <Columns3 className="w-4 h-4 text-blue-500" />, color: 'bg-blue-500/10' },
-             { label: 'Aulas Globais', count: aulasCount, href: '/admin/aulas', icon: <MonitorPlay className="w-4 h-4 text-emerald-500" />, color: 'bg-emerald-500/10' },
-             { label: 'Alunos / Matrículas', count: `${totalAlunosAtivos} / ${totalMatriculasAtivas}`, href: '/admin/alunos', icon: <Users className="w-4 h-4 text-amber-500" />, color: 'bg-amber-500/10' },
-           ].map((item, idx) => (
-             <Link key={idx} href={item.href} className="p-6 bg-surface border border-border-custom rounded-[2rem] hover:border-primary transition-all group flex flex-col justify-between h-32">
-                <div className={`w-10 h-10 ${item.color} rounded-xl flex items-center justify-center`}>
-                   {item.icon}
-                </div>
-                <div>
-                   <p className="text-[10px] font-black uppercase text-text-muted">{item.label}</p>
-                   <p className="text-2xl font-black text-text-primary">{item.count}</p>
-                </div>
-             </Link>
-           ))}
+      {/* 🔴 CABEÇALHO DO DASHBOARD */}
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
+        <div className="border-l-4 border-primary pl-6">
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted mb-2 block">Painel Administrativo</span>
+          <h1 className="text-4xl md:text-5xl font-black text-text-primary tracking-tighter italic uppercase">Gestão da Academia</h1>
+          <p className="text-text-secondary mt-2 font-medium">Controle total sobre o ecossistema PHD.</p>
         </div>
-
-        <div className="space-y-4">
-           <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-text-muted px-2 flex items-center gap-3">
-             <Settings className="w-3.5 h-3.5" />
-             Configuração da Plataforma
-           </h3>
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-              {/* LINHA 1 */}
-              <Link href="/admin/ferramentas" className="p-6 bg-surface border border-border-custom rounded-3xl hover:bg-black/[0.02] flex flex-col gap-3 group transition-all">
-                 <Zap className="w-5 h-5 text-primary" />
-                 <span className="text-[9px] font-black uppercase tracking-widest leading-tight">Ferramentas SaaS</span>
-              </Link>
-              <Link href="/admin/questionarios" className="p-6 bg-surface border border-border-custom rounded-3xl hover:bg-black/[0.02] flex flex-col gap-3 group transition-all">
-                 <FileQuestion className="w-5 h-5 text-blue-500" />
-                 <span className="text-[9px] font-black uppercase tracking-widest leading-tight">Questionários ({questCount})</span>
-              </Link>
-              <Link href="/admin/cupons" className="p-6 bg-surface border border-border-custom rounded-3xl hover:bg-black/[0.02] flex flex-col gap-3 group transition-all">
-                 <Ticket className="w-5 h-5 text-emerald-500" />
-                 <span className="text-[9px] font-black uppercase tracking-widest leading-tight">Cupons & Promo</span>
-              </Link>
-              <Link href="/admin/pilares" className="p-6 bg-surface border border-border-custom rounded-3xl hover:bg-black/[0.02] flex flex-col gap-3 group transition-all">
-                 <Layers className="w-5 h-5 text-amber-500" />
-                 <span className="text-[9px] font-black uppercase tracking-widest leading-tight">Pilares</span>
-              </Link>
-
-              {/* LINHA 2 */}
-              <Link href="/admin/convites" className="p-6 bg-surface border border-border-custom rounded-3xl hover:bg-black/[0.02] flex flex-col gap-3 group transition-all">
-                 <MailCheck className="w-5 h-5 text-blue-500" />
-                 <span className="text-[9px] font-black uppercase tracking-widest leading-tight">Gestão de Convites</span>
-              </Link>
-              <Link href="/admin/usuarios" className="p-6 bg-surface border border-border-custom rounded-3xl hover:bg-black/[0.02] flex flex-col gap-3 group transition-all">
-                 <ShieldCheck className="w-5 h-5 text-indigo-500" />
-                 <span className="text-[9px] font-black uppercase tracking-widest leading-tight">Gestão de Equipe</span>
-              </Link>
-              <Link href="/admin/configuracoes/prefixos" className="p-6 bg-surface border border-border-custom rounded-3xl hover:bg-black/[0.02] flex flex-col gap-3 group transition-all">
-                 <Eraser className="w-5 h-5 text-slate-500" />
-                 <span className="text-[9px] font-black uppercase tracking-widest leading-tight">Limpeza de Nomes</span>
-              </Link>
-              <Link href="/admin/auditoria" className="p-6 bg-surface border border-border-custom rounded-3xl hover:bg-black/[0.02] flex flex-col gap-3 group transition-all">
-                 <HistoryIcon className="w-5 h-5 text-cyan-500" />
-                 <span className="text-[9px] font-black uppercase tracking-widest leading-tight">Auditoria & Logs</span>
-              </Link>
-
-              {/* LINHA 3 & 4 (Híbrida) */}
-              <Link href="/admin/professores" className="p-6 bg-surface border border-border-custom rounded-3xl hover:bg-black/[0.02] flex flex-col gap-3 group transition-all">
-                 <UserPlus className="w-5 h-5 text-primary" />
-                 <span className="text-[9px] font-black uppercase tracking-widest leading-tight">Cadastro de Professores</span>
-              </Link>
-              <Link href="/admin/certificados/config" className="p-6 bg-surface border border-border-custom rounded-3xl hover:bg-black/[0.02] flex flex-col gap-3 group transition-all">
-                 <Award className="w-5 h-5 text-indigo-500" />
-                 <span className="text-[9px] font-black uppercase tracking-widest leading-tight">Configurar Certificados</span>
-              </Link>
-              <Link href="/admin/certificados/emissao" className="p-6 bg-surface border border-border-custom rounded-3xl hover:bg-black/[0.02] flex flex-col gap-3 group transition-all">
-                 <Target className="w-5 h-5 text-emerald-500" />
-                 <span className="text-[9px] font-black uppercase tracking-widest leading-tight">Emissão de Certificados</span>
-              </Link>
-           </div>
+        <div className="flex gap-3">
+           <Link href="/admin/cursos/novo" className="px-6 py-4 bg-primary text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-2xl hover:bg-primary-dark transition-all shadow-xl shadow-primary/20 flex items-center gap-3 active:scale-95">
+              <GraduationCap className="w-5 h-5" /> Novo Curso
+           </Link>
         </div>
-      </section>
+      </header>
+
+      {/* 🟠 SEÇÕES DE GESTÃO */}
+      <div className="space-y-20">
+        {sections.map((section, sIdx) => (
+          <section key={sIdx} className="space-y-8 animate-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: `${sIdx * 100}ms` }}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-custom pb-4 mx-4 md:mx-0">
+              <div className="space-y-1">
+                <h3 className="text-2xl font-black text-text-primary uppercase tracking-tighter italic">{section.title}</h3>
+                <p className="text-[13px] text-text-muted font-bold uppercase tracking-widest">{section.description}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-0">
+              {section.items.map((item, iIdx) => (
+                <Link 
+                  key={iIdx} 
+                  href={item.href} 
+                  className={`p-6 ${item.color} rounded-[2.5rem] border border-white/10 hover:scale-[1.03] active:scale-95 transition-all group flex flex-col justify-between h-44 shadow-2xl backdrop-blur-xl relative overflow-hidden`}
+                >
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl" />
+                  
+                  <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner group-hover:rotate-6 transition-transform relative z-10 border border-white/10">
+                     <item.icon className="w-6 h-6 text-white" />
+                  </div>
+                  
+                  <div className="relative z-10">
+                    <div className="flex justify-between items-end">
+                      <div className="space-y-1">
+                        <span className="text-[16px] font-black uppercase tracking-[0.2em] text-white brightness-200 block">{item.label}</span>
+                        {'description' in item && <p className="text-[14px] text-white font-bold uppercase leading-tight mt-1">{item.description}</p>}
+                      </div>
+                      {item.count !== undefined && (
+                        <span className="text-5xl font-black text-white leading-none tracking-tighter drop-shadow-2xl">
+                          {item.count}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
 
       {/* 🔵 BUSINESS INTELLIGENCE */}
-      <section className="space-y-10 pt-10 border-t border-border-custom border-dashed">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+      <section className="space-y-10 pt-20 border-t-2 border-border-custom border-dashed">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 px-4 md:px-0">
            <div className="border-l-4 border-indigo-600 pl-6">
               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted mb-2 block">Pilar Estratégico</span>
               <h2 className="text-4xl font-black text-text-primary tracking-tighter italic uppercase underline decoration-indigo-500/20">Business Intelligence</h2>
            </div>
 
            <div className="flex flex-wrap items-center gap-4 bg-surface p-3 rounded-[2rem] border border-border-custom shadow-sm">
-              <div className="flex bg-background p-1 rounded-xl border border-border-custom">
+              <div className="flex bg-background p-1 rounded-xl border border-border-custom overflow-x-auto">
                  {[
                    { id: 'total', label: 'Tudo' },
                    { id: 'hoje', label: 'Hoje' },
@@ -280,7 +328,7 @@ export default async function AdminDashboardPage({
                     <Link 
                       key={p.id} 
                       href={`/admin?periodo=${p.id}${cursoId ? `&cursoId=${cursoId}` : ''}${planoId ? `&planoId=${planoId}` : ''}`} 
-                      className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${periodo === p.id ? 'bg-indigo-600 text-white shadow-lg' : 'text-text-muted hover:bg-black/5'}`}
+                      className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${periodo === p.id ? 'bg-indigo-600 text-white shadow-lg' : 'text-text-muted hover:bg-black/5'}`}
                     >
                       {p.label}
                     </Link>
@@ -295,7 +343,7 @@ export default async function AdminDashboardPage({
            </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4 md:px-0">
            <div className="space-y-6">
               <div className="bg-gradient-to-br from-indigo-700 to-indigo-900 text-white rounded-[3rem] p-10 shadow-2xl shadow-indigo-600/30 relative overflow-hidden group">
                  <div className="absolute top-[-10%] right-[-10%] w-40 h-40 bg-white/5 rounded-full blur-[80px]" />
