@@ -105,8 +105,7 @@ export default async function NovoQuestionarioPage() {
         <aside className="space-y-6">
           <AdminTutorialCard 
             role={role}
-            title="Guia de Avaliações"
-            description="Crie testes desafiadores para medir o aprendizado dos seus alunos."
+            moduleTitle="Guia de Avaliações"
             steps={[
               {
                 title: "Nota de Aprovação",

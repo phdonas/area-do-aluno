@@ -206,8 +206,7 @@ export default async function EditarAulaPage({ params }: { params: Promise<{ id:
         <aside className="space-y-6">
           <AdminTutorialCard 
             role={role}
-            title="Guia de Edição"
-            description="Mantenha o conteúdo da aula atualizado e vinculado aos recursos corretos."
+            moduleTitle="Edição de Aula"
             steps={[
               {
                 title: "Formatos Inteligentes",

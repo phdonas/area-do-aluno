@@ -140,8 +140,7 @@ export default async function NovoPacotePage() {
         <aside className="space-y-6">
           <AdminTutorialCard 
             role={role}
-            title="Guia de Pacotes"
-            description="Combine seus cursos em ofertas irresistíveis para seus alunos."
+            moduleTitle="Guia de Pacotes"
             steps={[
               {
                 title: "O que é um Pacote?",
