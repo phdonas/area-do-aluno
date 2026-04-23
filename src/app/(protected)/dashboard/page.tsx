@@ -294,16 +294,13 @@ export default async function DashboardPage() {
       <section className="space-y-12">
          <div className="flex items-center justify-between border-l-4 border-primary pl-8"><h2 className="text-base font-black text-text-primary/40 uppercase tracking-[0.3em]">Meus Cursos / Materiais</h2></div>
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {[...pacotesComprados.map(p => ({...p, type: 'pacote'})), ...allActiveCourses.map(c => ({...c, type: 'curso'}))].map((item: any) => {
-               const stats = item.type === 'curso' ? getStatsCurso(item.id) : { percent: 0, lastId: null, hasActivity: false, hasFluxo: false }
+            {allActiveCourses.map(c => ({...c, type: 'curso'})).map((item: any) => {
+               const stats = getStatsCurso(item.id)
                const progresso = stats.percent
                let linkDestino = `/catalogo/${item.id}`
-               if (item.type === 'curso') {
-                 const forceIndex = stats.hasFluxo
-                 linkDestino = (stats.hasActivity && !forceIndex) ? `/player/${item.id}/${stats.lastId}` : `/player/${item.id}`
-               } else if (item.type === 'pacote') {
-                 linkDestino = `/catalogo/pacote/${item.id}`
-               }
+               
+               const forceIndex = stats.hasFluxo
+               linkDestino = (stats.hasActivity && !forceIndex) ? `/player/${item.id}/${stats.lastId}` : `/player/${item.id}`
 
                return (
                  <Link key={item.id} href={linkDestino} className="group bg-card border border-border/50 rounded-xl overflow-hidden hover:shadow-2xl hover:border-primary/30 transition-all duration-500 h-full flex flex-col shadow-sm">
