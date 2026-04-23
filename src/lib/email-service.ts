@@ -44,7 +44,7 @@ export async function sendEmail({ to, subject, html }: { to: string, subject: st
 export async function enviarEmailComunicacao({ email, password, token, cursoNome, tipo }: SendInviteEmailParams) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const loginLink = `${siteUrl}/login`
-  const activationLink = `${siteUrl}/ativar?token=${token}`
+  const activationLink = `${siteUrl}/cadastro?token=${token}`
   
   const subjects = {
     boas_vindas: 'Boas Vindas ao Ecossistema do Prof. Paulo Donassolo. Seus acessos estão liberados!',
