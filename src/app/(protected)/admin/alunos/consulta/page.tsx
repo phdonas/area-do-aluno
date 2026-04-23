@@ -93,7 +93,7 @@ export default async function StudentQueryPage({ searchParams }: PageProps) {
     
     // Identificar todas as aulas que pertencem a este curso (via módulos)
     const courseLessons = allLessons?.filter(l => 
-      l.modulos && l.modulos.curso_id === enroll.curso_id
+      l.modulos && (Array.isArray(l.modulos) ? l.modulos[0]?.curso_id : (l.modulos as any).curso_id) === enroll.curso_id
     ) || []
 
     const progressPercent = courseLessons.length > 0 
