@@ -1,5 +1,5 @@
 import { createAdminClient } from './supabase/admin'
-import { enviarEmailComunicacao } from './mail'
+import { enviarEmailComunicacao } from './email-service'
 
 export async function processarAvisosExpiracao() {
   const supabase = createAdminClient()

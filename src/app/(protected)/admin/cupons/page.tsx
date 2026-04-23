@@ -146,8 +146,7 @@ export default async function AdminCuponsPage() {
         <aside className="mt-40 space-y-6">
           <AdminTutorialCard 
             role={role}
-            title="Guia de Cupons"
-            description="Crie estratégias de desconto para impulsionar suas vendas."
+            moduleTitle="Guia de Cupons"
             steps={[
               {
                 title: "Código Único",

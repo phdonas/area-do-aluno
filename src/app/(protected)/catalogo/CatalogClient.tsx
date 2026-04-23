@@ -161,7 +161,7 @@ export function CatalogClient({ cursos, pacotes, pilares, idsAcessos }: CatalogC
                       </Link>
                       <div className="absolute top-4 right-4 flex flex-wrap gap-2 justify-end max-w-[80%]">
                          {(curso.pilar_nomes && curso.pilar_nomes.length > 0) ? (
-                           curso.pilar_nomes.map((nome, i) => (
+                           curso.pilar_nomes.map((nome: string, i: number) => (
                              <span key={i} className="px-3 py-1 bg-primary text-white rounded-full text-[7px] font-black uppercase tracking-widest shadow-lg shadow-primary/20">
                                {nome}
                              </span>

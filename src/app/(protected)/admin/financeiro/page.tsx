@@ -47,20 +47,20 @@ export default function FinanceiroDashboardPage() {
         .order('data_pagamento', { ascending: false })
 
       if (assinaturas) {
-        const brl = assinaturas.filter(a => a.moeda === 'BRL').reduce((acc, a) => acc + Number(a.valor_pago || 0), 0)
-        const eur = assinaturas.filter(a => a.moeda === 'EUR').reduce((acc, a) => acc + Number(a.valor_pago || 0), 0)
+        const brl = (assinaturas as any[]).filter((a: any) => a.moeda === 'BRL').reduce((acc: number, a: any) => acc + Number(a.valor_pago || 0), 0)
+        const eur = (assinaturas as any[]).filter((a: any) => a.moeda === 'EUR').reduce((acc: number, a: any) => acc + Number(a.valor_pago || 0), 0)
         
-        const countBR = assinaturas.filter(a => a.pais_origem === 'BR').length
-        const countPT = assinaturas.filter(a => a.pais_origem === 'PT').length
+        const countBR = (assinaturas as any[]).filter((a: any) => a.pais_origem === 'BR').length
+        const countPT = (assinaturas as any[]).filter((a: any) => a.pais_origem === 'PT').length
 
         // Agrupamento por método
-        const metodos = assinaturas.reduce((acc: any, a) => {
+        const metodos = (assinaturas as any[]).reduce((acc: any, a: any) => {
           acc[a.metodo_pagamento || 'N/D'] = (acc[a.metodo_pagamento || 'N/D'] || 0) + 1
           return acc
         }, {})
 
         // Agrupamento por curso
-        const cursosMap = assinaturas.reduce((acc: any, a) => {
+        const cursosMap = (assinaturas as any[]).reduce((acc: any, a: any) => {
           const titulo = a.cursos?.titulo || 'N/D'
           if(!acc[titulo]) acc[titulo] = { nome: titulo, valor: 0, qtd: 0 }
           acc[titulo].valor += Number(a.valor_pago || 0)

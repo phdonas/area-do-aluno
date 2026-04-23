@@ -213,7 +213,7 @@ export default async function PlayerPage({
              actionUrl: `/player/${curso.slug || curso.id}/${a.id}`, // Link para a página da aula (hub)
              downloadUrl: undefined
            }))}
-           completedToolsIds={aulasConcluidasIds}
+           completedToolsIds={Array.from(aulasConcluidasIds)}
         />
       </PlayerLayout>
     )

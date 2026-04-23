@@ -81,8 +81,11 @@ export default async function EditarCursoPage({ params }: { params: Promise<{ id
       pivotAulas.forEach(item => {
         if (item.aula) {
           const modId = item.modulo_id
+          const actualAula = Array.isArray(item.aula) ? item.aula[0] : item.aula
+          if (!actualAula) return
+          
           // Usa a ordem da pivot (local ao módulo), não a ordem global da aula
-          const aulaObj = { ...item.aula, is_pivot: true, ordem: item.ordem }
+          const aulaObj = { ...actualAula, is_pivot: true, ordem: item.ordem }
           if (!aulasPorModulo[modId]) aulasPorModulo[modId] = []
           if (!aulasPorModulo[modId].some(a => a.id === aulaObj.id)) {
             aulasPorModulo[modId].push(aulaObj)

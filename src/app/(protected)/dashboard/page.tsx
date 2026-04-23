@@ -25,7 +25,7 @@ export default async function DashboardPage() {
   if (!user) return null
 
    const results = await Promise.all([
-    supabaseAdmin.from('assinaturas').select('curso_id, created_at, cursos(*), planos!left(is_global)').eq('usuario_id', user.id).in('status', ['ativa', 'ativo', 'Ativa', 'Ativo']),
+    supabaseAdmin.from('assinaturas').select('curso_id, plano_id, created_at, cursos(*), planos!left(is_global)').eq('usuario_id', user.id).in('status', ['ativa', 'ativo', 'Ativa', 'Ativo']),
     supabaseAdmin.from('progresso_aulas').select('aula_id, concluida, ultima_visualizacao, curso_id').eq('usuario_id', user.id),
     supabaseAdmin.from('cursos').select('*').eq('status', 'publicado'),
     supabaseAdmin.from('progresso_aulas')
@@ -62,12 +62,12 @@ export default async function DashboardPage() {
   }
 
   // 1.5 Mapeamento de Acessos (Suporte a Plano Global)
-  const hasGlobalPlan = assinaturas.some(a => (a.planos as any)?.is_global)
+  const hasGlobalPlan = assinaturas.some((a: any) => (a.planos as any)?.is_global)
   
   const idsCursosComprados = [
-    ...(assinaturas?.map(a => a.curso_id) || []),
-    ...(cursosBase?.filter(c => (c as any).is_free).map(c => c.id) || []),
-    ...(hasGlobalPlan ? (cursosBase?.map(c => c.id) || []) : [])
+    ...(assinaturas?.map((a: any) => a.curso_id) || []),
+    ...(cursosBase?.filter((c: any) => (c as any).is_free).map((c: any) => c.id) || []),
+    ...(hasGlobalPlan ? (cursosBase?.map((c: any) => c.id) || []) : [])
   ].filter(Boolean).reduce((acc: string[], cur: string) => {
     if (!acc.includes(cur)) acc.push(cur)
     return acc
@@ -75,7 +75,7 @@ export default async function DashboardPage() {
 
   // 1.6 Resolução Hierárquica da Grade (Idêntico ao Player)
   const gradesCursos = await Promise.all(
-    idsCursosComprados.map(async (cursoId) => {
+    idsCursosComprados.map(async (cursoId: string) => {
       const { data: modulosData } = await supabaseAdmin.rpc('get_modulos_curso', { p_curso_id: cursoId })
       const modulosIds = modulosData?.map((m: any) => m.id) || []
       
@@ -110,14 +110,14 @@ export default async function DashboardPage() {
     })
   )
 
-  const todasAulas = gradesCursos.flatMap(g => g.aulas)
-  const cursoFluxoMap = new Map(idsCursosComprados.map((id, idx) => [id, gradesCursos[idx].hasFluxo]))
-  const progressoMap = new Map(progressoTotal?.map(p => {
+  const todasAulas = gradesCursos.flatMap((g: any) => g.aulas)
+  const cursoFluxoMap = new Map(idsCursosComprados.map((id: string, idx: number) => [id, gradesCursos[idx].hasFluxo]))
+  const progressoMap = new Map(progressoTotal?.map((p: any) => {
     const key = p.curso_id ? `${p.curso_id}-${p.aula_id}` : p.aula_id;
     return [key, p];
   }) || [])
   
-  const idsAulasConcluidas = new Set(progressoTotal?.filter(p => p.concluida).map(p => {
+  const idsAulasConcluidas = new Set(progressoTotal?.filter((p: any) => p.concluida).map((p: any) => {
     return p.curso_id ? `${p.curso_id}-${p.aula_id}` : p.aula_id;
   }) || [])
 
@@ -132,7 +132,7 @@ export default async function DashboardPage() {
       return false
     })
 
-    if (aulasDoCurso.length === 0) return { percent: 0, lastId: null }
+    if (aulasDoCurso.length === 0) return { percent: 0, lastId: null, hasActivity: false, hasFluxo: false }
 
     const concluidas = aulasDoCurso.filter(a => idsAulasConcluidas.has(`${cursoId}-${a.id}`) || idsAulasConcluidas.has(a.id)).length
     const percent = Math.round((concluidas / aulasDoCurso.length) * 100)
@@ -182,7 +182,7 @@ export default async function DashboardPage() {
     { subject: 'Performance', value: 5, fullMark: 100 }
   ]
 
-  const pacotesComprados = (assinaturas?.filter(a => a.plano_id).map(a => a.planos) || []).filter(Boolean)
+  const pacotesComprados = (assinaturas?.filter((a: any) => a.plano_id).map((a: any) => a.planos) || []).filter(Boolean)
   const allActiveCourses = (cursosBase || []).filter(c => idsCursosComprados.includes(c.id))
   const pilarMaisFraco = [...radarDataFinal].sort((a, b) => a.value - b.value)[0]
   
@@ -200,8 +200,8 @@ export default async function DashboardPage() {
     if (stats.percent < 100) {
       recomendacaoItem = curso
       aulaRecomendadaObj = todasAulas.find((a: any) => a.id === stats.lastId)
-      recomendacaoHasActivity = stats.hasActivity
-      recomendacaoHasFluxo = stats.hasFluxo
+      recomendacaoHasActivity = !!stats.hasActivity
+      recomendacaoHasFluxo = !!stats.hasFluxo
       break
     }
   }
@@ -212,8 +212,8 @@ export default async function DashboardPage() {
       if (stats.percent < 100) {
         recomendacaoItem = curso
         aulaRecomendadaObj = todasAulas.find((a: any) => a.id === stats.lastId)
-        recomendacaoHasActivity = stats.hasActivity
-        recomendacaoHasFluxo = stats.hasFluxo
+        recomendacaoHasActivity = !!stats.hasActivity
+        recomendacaoHasFluxo = !!stats.hasFluxo
         break
       }
     }
@@ -295,7 +295,7 @@ export default async function DashboardPage() {
          <div className="flex items-center justify-between border-l-4 border-primary pl-8"><h2 className="text-base font-black text-text-primary/40 uppercase tracking-[0.3em]">Meus Cursos / Materiais</h2></div>
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {[...pacotesComprados.map(p => ({...p, type: 'pacote'})), ...allActiveCourses.map(c => ({...c, type: 'curso'}))].map((item: any) => {
-               const stats = item.type === 'curso' ? getStatsCurso(item.id) : { percent: 0, lastId: null }
+               const stats = item.type === 'curso' ? getStatsCurso(item.id) : { percent: 0, lastId: null, hasActivity: false, hasFluxo: false }
                const progresso = stats.percent
                let linkDestino = `/catalogo/${item.id}`
                if (item.type === 'curso') {

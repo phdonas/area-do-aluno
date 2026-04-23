@@ -34,8 +34,7 @@ export default async function GestaoPlanosPage() {
         <aside className="mt-28 space-y-6">
           <AdminTutorialCard 
             role={role}
-            title="Guia de Vendas"
-            description="Configure como seus cursos serão vendidos e empacotados."
+            moduleTitle="Guia de Vendas"
             steps={[
               {
                 title: "Planos vs Cursos",
