@@ -1,7 +1,7 @@
 'use client'
 
 import { useActionState } from 'react'
-import { updatePassword } from '../confirmar-senha/actions'
+import { updatePassword } from '@/app/(auth)/confirmar-senha/actions'
 import { Loader2, Lock, ShieldCheck } from 'lucide-react'
 
 export function ConfirmarSenhaForm() {

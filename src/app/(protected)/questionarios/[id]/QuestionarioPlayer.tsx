@@ -182,8 +182,6 @@ export function QuestionarioPlayer({ questionario, questoes }: QuestionarioPlaye
              </div>
           </motion.div>
         )}
-div>
-        )}
 
         {/* Passo 1: QUESTÕES */}
         {currentStep === 1 && currentQuestion && (
