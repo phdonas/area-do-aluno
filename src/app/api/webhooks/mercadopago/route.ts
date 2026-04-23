@@ -10,6 +10,8 @@ const client = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN || 'TEST-MOCK-TOKEN-PH' 
 })
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
