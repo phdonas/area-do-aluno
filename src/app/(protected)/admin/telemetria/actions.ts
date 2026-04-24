@@ -24,10 +24,10 @@ export async function listarUsoFerramentas(filters: { email?: string, ferramenta
     }
   }
 
-  // 2. Agora buscamos os logs filtrando pelos IDs encontrados (se houver filtro)
+  // 2. Agora buscamos os logs puros (sem JOIN) para garantir que apareçam
   let query = supabase
     .from('log_uso_ferramentas')
-    .select('*, usuarios(nome, email)', { count: 'exact' })
+    .select('*', { count: 'exact' })
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
@@ -42,9 +42,11 @@ export async function listarUsoFerramentas(filters: { email?: string, ferramenta
   const { data, error, count } = await query
 
   if (error) {
-    console.error('Erro ao listar telemetria:', error)
+    console.error('❌ ERRO CRÍTICO NA TELEMETRIA:', error.message, error.details)
     return { logs: [], total: 0 }
   }
+
+  console.log('✅ Logs recuperados:', data?.length || 0)
 
   return { 
     logs: data || [], 

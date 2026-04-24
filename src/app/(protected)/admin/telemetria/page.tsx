@@ -184,7 +184,7 @@ export default function TelemetriaPage() {
                            <div className="flex items-center gap-3">
                               <Users className="w-4 h-4 text-text-muted" />
                               <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">
-                                {log.usuarios?.nome || log.usuarios?.email || 'Desconhecido'}
+                                {log.usuarios?.nome || log.usuarios?.email || log.usuario_id || 'Desconhecido'}
                               </p>
                            </div>
                         </td>
