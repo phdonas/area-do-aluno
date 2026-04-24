@@ -47,7 +47,7 @@ export default async function EditarModuloPage({ params }: { params: Promise<{ i
     .select('id, titulo, modulo_id')
     .or(`modulo_id.is.null,modulo_id.eq.${id}`)
     .order('titulo', { ascending: true })
-    .limit(100)
+    .limit(1000)
 
   // 2. Fetch Aulas atreladas a este módulo (Diretas)
   const { data: aulasDiretas } = await supabaseAdmin
