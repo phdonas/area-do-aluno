@@ -28,11 +28,17 @@ export const InteractiveCTA: React.FC<InteractiveCTAProps> = ({
   const handleAction = async (e: React.MouseEvent) => {
     // 1. Registra a telemetria antes de abrir (segurança extra)
     if (tipo === 'ferramenta' || tipo === 'simulador') {
+      console.log('🔘 [Client] Clique no CTA:', { titulo, url });
       logFerramentaUsage({
-        ferramentaId: aulaId, // Usamos o ID da aula se não tiver o do recurso
+        ferramentaId: aulaId,
         ferramentaNome: titulo,
         urlAcessada: url
-      }).catch(err => console.error('Erro ao registrar log no clique:', err))
+      }).then(res => {
+        if (res.success) console.log('✅ [Client] Log de clique registrado!');
+        else console.error('❌ [Client] Falha no log de clique:', res.error);
+      }).catch(err => {
+        console.error('💥 [Client] Erro crítico no log de clique:', err);
+      });
     }
 
     // 2. Rastreamento e Auto-conclusão (Desativado p/ Ferramentas)

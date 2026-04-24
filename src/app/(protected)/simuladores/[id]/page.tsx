@@ -33,11 +33,17 @@ export default function SimuladorPlayerPage() {
         } else {
           setRecurso(data)
           // Registrar uso na telemetria (sem aguardar para não travar a UI)
+          console.log('📡 [Client] Tentando registrar telemetria (Player)...');
           logFerramentaUsage({
             ferramentaId: data.id,
             ferramentaNome: data.titulo,
             urlAcessada: data.arquivo_url
-          })
+          }).then(res => {
+            if (res?.success) console.log('✅ [Client] Telemetria registrada!');
+            else console.error('❌ [Client] Falha na telemetria:', res?.error);
+          }).catch(err => {
+            console.error('💥 [Client] Erro crítico na telemetria:', err);
+          });
         }
       } catch (err) {
         setError('Erro ao carregar recurso')

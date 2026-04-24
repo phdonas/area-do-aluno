@@ -18,11 +18,17 @@ export async function logFerramentaUsage({
   ferramentaNome,
   urlAcessada
 }: LogUsageParams) {
+  console.log('📡 [Server Action] Iniciando registro de uso:', { ferramentaNome, ferramentaId });
+
   try {
     const supabase = await createClient()
     
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return { success: false, error: 'Usuário não autenticado' }
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+    if (userError || !user) {
+      console.error('❌ [Server Action] Erro de autenticação:', userError);
+      return { success: false, error: 'Usuário não autenticado' }
+    }
 
     const { error } = await supabase
       .from('log_uso_ferramentas')
@@ -30,17 +36,18 @@ export async function logFerramentaUsage({
         usuario_id: user.id,
         ferramenta_id: ferramentaId || null,
         ferramenta_nome: ferramentaNome,
-        url_acessada: urlAcessada || null
+        url_acessada: urlAcessada || ''
       })
 
     if (error) {
-      console.error('Erro ao registrar log de uso:', error)
+      console.error('❌ [Server Action] Erro ao inserir no Supabase:', error);
       return { success: false, error: error.message }
     }
 
+    console.log('✅ [Server Action] Uso registrado com sucesso para:', user.email);
     return { success: true }
   } catch (err) {
-    console.error('Falha catastrófica no log de uso:', err)
-    return { success: false, error: 'Internal Error' }
+    console.error('💥 [Server Action] Erro inesperado:', err);
+    return { success: false, error: 'Erro interno no servidor' }
   }
 }

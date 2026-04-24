@@ -15,10 +15,16 @@ function ExternalSimulatorContent() {
 
   React.useEffect(() => {
     if (url) {
+      console.log('📡 [Client] Tentando registrar telemetria (Externo)...', { titulo, url });
       logFerramentaUsage({
-        ferramentaNome: titulo,
-        urlAcessada: url
-      })
+        ferramentaNome: titulo || 'Ferramenta Externa',
+        urlAcessada: url || window.location.href
+      }).then(res => {
+        if (res.success) console.log('✅ [Client] Telemetria registrada (Externo)!');
+        else console.error('❌ [Client] Falha na telemetria (Externo):', res.error);
+      }).catch(err => {
+        console.error('💥 [Client] Erro crítico na telemetria (Externo):', err);
+      });
     }
   }, [url, titulo])
 
