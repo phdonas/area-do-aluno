@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import '@/styles/course-flow.css'
 import { ArrowRight, Download, Play, CheckCircle2, ChevronDown } from 'lucide-react'
+import { logFerramentaUsage } from '@/app/(protected)/simuladores/actions'
 
 interface Tool {
   id: string
@@ -55,6 +56,33 @@ export const CourseFlowTemplate: React.FC<CourseFlowTemplateProps> = ({
     if (phase === 2) return 'f2'
     if (phase === 3) return 'f3'
     return 'fx'
+  }
+
+  const handleAction = async (url: string, title: string, id?: string) => {
+    console.log('📡 [Flow] Iniciando acesso via mapa:', title);
+    
+    // Registrar telemetria preventivamente
+    logFerramentaUsage({
+      ferramentaId: id,
+      ferramentaNome: title,
+      urlAcessada: url
+    }).then(res => {
+      if (res.success) console.log('✅ [Flow] Telemetria registrada');
+      else console.error('❌ [Flow] Falha na telemetria:', res.error);
+    }).catch(console.error);
+  }
+
+  const getWrappedUrl = (url: string, title: string) => {
+    if (!url) return url;
+    const isExternal = url.startsWith('http');
+    const isAlreadyWrapped = url.includes('/simuladores/');
+    const isInternalPlayer = url.includes('/player/');
+
+    // Se for um arquivo HTML externo e não estiver envelopado, envolver
+    if (isExternal && !isAlreadyWrapped && !isInternalPlayer) {
+      return `/simuladores/external?url=${encodeURIComponent(url)}&titulo=${encodeURIComponent(title)}&tipo=ferramenta`;
+    }
+    return url;
   }
 
   return (
@@ -118,7 +146,13 @@ export const CourseFlowTemplate: React.FC<CourseFlowTemplateProps> = ({
               return (
                 <div key={`seq-${t.id}`} className="flow-step-wrapper">
                   {t.actionUrl ? (
-                    <a href={t.actionUrl} target="_blank" rel="noopener noreferrer" className="no-underline">
+                    <a 
+                      href={getWrappedUrl(t.actionUrl, t.title)} 
+                      target={getWrappedUrl(t.actionUrl, t.title).includes('/simuladores/') ? "_self" : "_blank"} 
+                      rel="noopener noreferrer" 
+                      className="no-underline"
+                      onClick={() => handleAction(t.actionUrl!, t.title, t.id)}
+                    >
                       {cardContent}
                     </a>
                   ) : (
@@ -179,7 +213,13 @@ export const CourseFlowTemplate: React.FC<CourseFlowTemplateProps> = ({
 
                    <div className="flow-tool-action">
                       {tool.actionUrl && (
-                        <a href={tool.actionUrl} target="_blank" rel="noopener noreferrer" className="btn-flow btn-flow-primary">
+                        <a 
+                          href={getWrappedUrl(tool.actionUrl, tool.title)} 
+                          target={getWrappedUrl(tool.actionUrl, tool.title).includes('/simuladores/') ? "_self" : "_blank"} 
+                          rel="noopener noreferrer" 
+                          className="btn-flow btn-flow-primary"
+                          onClick={() => handleAction(tool.actionUrl!, tool.title, tool.id)}
+                        >
                           <Play size={16} fill="white" />
                           Acessar Ferramenta
                         </a>
