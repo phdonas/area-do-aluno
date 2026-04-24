@@ -63,7 +63,9 @@ export default async function AdminDashboardPage({
     { data: matriculasRecentes },
     { data: assinaturasPeriodo },
     { data: progressoConcluido },
-    { data: todasAulas }
+    { data: todasAulas },
+    { count: pilaresCount },
+    { count: recursosCount }
   ] = await Promise.all([
     supabaseAdmin.from('cursos').select('*', { count: 'exact', head: true }),
     supabaseAdmin.from('modulos').select('*', { count: 'exact', head: true }),
@@ -96,7 +98,9 @@ export default async function AdminDashboardPage({
       return q
     })(),
 
-    supabaseAdmin.from('aulas').select('id, titulo, modulo_id, modulos(curso_id)')
+    supabaseAdmin.from('aulas').select('id, titulo, modulo_id, modulos(curso_id)'),
+    supabaseAdmin.from('pilares').select('*', { count: 'exact', head: true }),
+    supabaseAdmin.from('recursos').select('*', { count: 'exact', head: true })
   ])
 
   const uniqueStudentsSet = new Set((activeStudentsData || []).map(a => a.usuario_id))
@@ -184,7 +188,7 @@ export default async function AdminDashboardPage({
         { label: 'Aulas Globais', count: aulasCount, href: '/admin/aulas', icon: MonitorPlay, color: 'bg-indigo-600/50' },
         { label: 'Ementas & Módulos', count: modulosCount, href: '/admin/modulos', icon: Columns3, color: 'bg-blue-600/50' },
         { label: 'Cursos', count: cursosCount, href: '/admin/cursos', icon: BookOpen, color: 'bg-sky-600/50' },
-        { label: 'Pilares', href: '/admin/pilares', icon: Layers, color: 'bg-cyan-600/50' },
+        { label: 'Pilares', count: pilaresCount, href: '/admin/pilares', icon: Layers, color: 'bg-cyan-600/50' },
       ]
     },
     {
@@ -192,7 +196,7 @@ export default async function AdminDashboardPage({
       description: 'Recursos interativos e organização',
       color: 'border-emerald-500/20',
       items: [
-        { label: 'Recursos & Ferramentas', href: '/admin/recursos', icon: Wrench, color: 'bg-emerald-600/50' },
+        { label: 'Recursos & Ferramentas', count: recursosCount, href: '/admin/recursos', icon: Wrench, color: 'bg-emerald-600/50' },
         { label: 'Questionários', count: questCount, href: '/admin/questionarios', icon: FileQuestion, color: 'bg-teal-600/50' },
         { label: 'Limpeza de Nomes', href: '/admin/configuracoes/prefixos', icon: Eraser, color: 'bg-slate-600/50' },
       ]
@@ -204,7 +208,8 @@ export default async function AdminDashboardPage({
       items: [
         { label: 'Alunos / Matrículas', count: totalAlunosAtivos, href: '/admin/alunos', icon: Users, color: 'bg-amber-600/50' },
         { label: 'Matrículas Pendentes', count: matriculasPendentesCount, href: '/admin/matriculas', icon: Clock, color: 'bg-orange-600/50' },
-        { label: 'Consulta por Curso', href: '/admin/alunos/consulta', icon: Search, color: 'bg-yellow-600/50', description: 'Novo: Filtros Avançados' },
+        { label: 'Gestão de Convites', href: '/admin/convites', icon: MailCheck, color: 'bg-yellow-600/50' },
+        { label: 'Consulta por Curso', href: '/admin/alunos/consulta', icon: Search, color: 'bg-yellow-500/40', description: 'Novo: Filtros Avançados' },
       ]
     },
     {
@@ -233,7 +238,6 @@ export default async function AdminDashboardPage({
       items: [
         { label: 'Cadastro de Professores', href: '/admin/professores', icon: UserPlus, color: 'bg-blue-600/50' },
         { label: 'Gestão de Equipe', href: '/admin/usuarios', icon: ShieldCheck, color: 'bg-indigo-600/50' },
-        { label: 'Gestão de Convites', href: '/admin/convites', icon: MailCheck, color: 'bg-sky-600/50' },
         { label: 'Auditoria & Logs', href: '/admin/auditoria', icon: HistoryIcon, color: 'bg-slate-600/50' },
       ]
     },
