@@ -95,6 +95,13 @@ export const CourseFlowTemplate: React.FC<CourseFlowTemplateProps> = ({
           <h2 className="flow-section-title">{introTitle}</h2>
           <p className="flow-section-intro">{introText}</p>
 
+          <div className="bg-primary/5 border border-primary/10 text-text-primary px-5 py-4 rounded-xl flex items-center gap-3 mb-8 w-fit shadow-sm">
+             <span className="text-xl">🖱️</span>
+             <p className="text-xs font-bold m-0 uppercase tracking-widest">
+               Clique no card da jornada ou no descritivo abaixo para acessar a ferramenta
+             </p>
+          </div>
+
           {/* Fluxo visual sequencial resumido */}
           <div className="flow-sequence">
             {tools.map((t) => {
