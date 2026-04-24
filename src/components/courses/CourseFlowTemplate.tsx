@@ -97,27 +97,29 @@ export const CourseFlowTemplate: React.FC<CourseFlowTemplateProps> = ({
 
           {/* Fluxo visual sequencial resumido */}
           <div className="flow-sequence">
-              {tools.map((t) => {
-                const isCompleted = completedToolsIds.includes(t.id);
-                const Content = (
-                  <div className={`flow-step ${isCompleted ? 'completed' : ''} group`}>
-                    <div className={`flow-step-num ${getPhaseClass(t.phase)} ${isCompleted ? 'bg-green-500 !text-white' : ''} group-hover:shadow-lg transition-all`}>
-                      {isCompleted ? <CheckCircle2 size={12} /> : t.num}
-                    </div>
-                    <p className="group-hover:text-primary transition-colors">{t.title.split(' ').slice(0, 2).join(' ')}...</p>
+            {tools.map((t) => {
+              const isCompleted = completedToolsIds.includes(t.id);
+              const cardContent = (
+                <div className={`flow-step-card ${isCompleted ? 'completed' : ''}`}>
+                  <div className={`flow-step-num ${getPhaseClass(t.phase)}`}>
+                    {isCompleted ? <CheckCircle2 size={24} /> : t.num}
                   </div>
-                );
+                  <h4>{t.title}</h4>
+                </div>
+              );
 
-                return t.actionUrl ? (
-                  <a key={`seq-${t.id}`} href={t.actionUrl} target="_blank" rel="noopener noreferrer" className="block flex-1 no-underline">
-                    {Content}
-                  </a>
-                ) : (
-                  <div key={`seq-${t.id}`} className="flex-1">
-                    {Content}
-                  </div>
-                );
-              })}
+              return (
+                <div key={`seq-${t.id}`} className="flow-step-wrapper">
+                  {t.actionUrl ? (
+                    <a href={t.actionUrl} target="_blank" rel="noopener noreferrer" className="no-underline">
+                      {cardContent}
+                    </a>
+                  ) : (
+                    cardContent
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 

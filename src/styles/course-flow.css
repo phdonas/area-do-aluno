@@ -159,66 +159,101 @@
   margin-bottom: 48px;
 }
 
-/* ── FLUXO SEQUENCIAL ── */
+/* ── FLUXO SEQUENCIAL (ROADMAP) ── */
 .flow-sequence {
   display: flex;
-  align-items: flex-start;
-  gap: 0;
-  margin: 40px 0;
-  overflow-x: auto;
-  padding-bottom: 8px;
-}
-.flow-step {
-  flex: 1;
-  min-width: 120px;
-  text-align: center;
+  flex-wrap: wrap;
+  gap: 32px 16px;
+  margin: 60px 0;
   position: relative;
+  padding: 20px 0;
 }
-.flow-step:not(:last-child)::after {
-  content: '→';
+
+/* Linha de conexão discreta */
+.flow-sequence::before {
+  content: '';
   position: absolute;
-  right: -14px;
-  top: 20px;
-  font-size: 18px;
-  color: var(--expo-blue-mid);
-  font-weight: 300;
+  top: 50px;
+  left: 40px;
+  right: 40px;
+  height: 2px;
+  background: var(--border-ef);
+  z-index: 0;
 }
+
+.flow-step-wrapper {
+  flex: 1;
+  min-width: 200px;
+  max-width: 280px;
+  position: relative;
+  z-index: 1;
+}
+
+.flow-step-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--white);
+  border: 1px solid var(--border-ef);
+  padding: 24px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  height: 100%;
+  text-align: center;
+}
+
+.flow-step-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--expo-blue);
+  box-shadow: 0 15px 35px rgba(27,58,107,0.1);
+}
+
 .flow-step-num {
-  width: 44px;
-  height: 44px;
-  border-radius: 3px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Playfair Display', serif;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: 900;
   color: var(--white);
-  margin: 0 auto 10px;
+  margin-bottom: 20px;
   transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  flex-shrink: 0;
 }
-.flow-step:hover .flow-step-num {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(27,58,107,0.15);
+
+.flow-step-card h4 {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--expo-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  margin: 0;
 }
+
+.flow-step-card.completed {
+  border-color: #22c55e40;
+}
+
+.flow-step-card.completed .flow-step-num {
+  background: #22c55e !important;
+  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.2);
+}
+
+.flow-step-card.completed h4 {
+  color: #1a5c3a;
+}
+
 .flow-step-num.f1 { background: var(--phase1); }
 .flow-step-num.f2 { background: var(--phase2); }
 .flow-step-num.f3 { background: var(--phase3); }
 .flow-step-num.fx { background: var(--expo-blue-mid); }
-.flow-step p {
-  font-size: 11px;
-  color: var(--gray);
-  line-height: 1.4;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-.flow-step:hover p {
-  color: var(--expo-blue);
-}
-.flow-step.completed p {
-  color: #22c55e;
-  font-weight: 800;
-}
 
 /* ── CARD DE FERRAMENTA (ACCORDION) ── */
 .flow-tool-card {
