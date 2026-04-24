@@ -9,7 +9,7 @@ export async function listarUsoFerramentas(filters: { email?: string, ferramenta
 
   let query = supabase
     .from('log_uso_ferramentas')
-    .select('*, usuarios!left(email)')
+    .select('*, usuarios!left(email)', { count: 'exact' })
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
