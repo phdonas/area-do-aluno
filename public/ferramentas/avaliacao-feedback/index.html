@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.1 Avaliação de Pessoas · Feedback · PDI — Recriar a Gestão Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1a2744;--navy-mid:#253564;--teal:#1d9e8f;--teal-light:#e8f7f5;
+  --coral:#e05c3a;--coral-light:#fdf1ee;--slate:#4a5568;
+  --gray-light:#f4f6f9;--gray-mid:#e2e8f0;--gray-dark:#718096;--white:#ffffff;
+  --c1:#7c3aed;--c1l:#f5f3ff;--c2:#059669;--c2l:#ecfdf5;
+  --c3:#2563eb;--c3l:#eff6ff;--c4:#d97706;--c4l:#fffbeb;
+  --s1c:#e05c3a;--s2c:#d97706;--s3c:#059669;--s4c:#1d9e8f;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--gray-light);color:var(--navy);line-height:1.6;font-size:15px;}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);color:white;padding:24px 40px;}
+.hdr-in{max-width:1100px;margin:0 auto;display:flex;align-items:flex-start;gap:18px;}
+.badge{background:var(--teal);color:white;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 13px;border-radius:4px;white-space:nowrap;margin-top:3px;}
+.hdr-in h1{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:600;line-height:1.2;}
+.hdr-in p{font-size:.85rem;color:rgba(255,255,255,.65);margin-top:3px;}
+
+/* TEAM BAR */
+.tbar{background:white;border-bottom:2px solid var(--gray-mid);padding:10px 40px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(26,39,68,.07);}
+.tbar-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.tbar-lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray-dark);white-space:nowrap;}
+.tchips{display:flex;gap:7px;flex-wrap:wrap;flex:1;min-height:28px;align-items:center;}
+.tchip{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid transparent;transition:all .12s;}
+.tchip.s1{background:#fef2f0;color:var(--s1c);border-color:#fbd0c8;}
+.tchip.s2{background:#fffbeb;color:var(--s2c);border-color:#fde68a;}
+.tchip.s3{background:#ecfdf5;color:var(--s3c);border-color:#a7f3d0;}
+.tchip.s4{background:#e8f7f5;color:var(--s4c);border-color:#99e6df;}
+.tchip:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.1);}
+.tchip-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.tcnt{font-size:11px;color:var(--gray-dark);white-space:nowrap;}
+.btn-new{background:var(--navy);color:white;border:none;padding:7px 16px;border-radius:4px;font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer;white-space:nowrap;transition:background .15s;}
+.btn-new:hover{background:var(--navy-mid);}
+
+/* MAIN */
+.wrap{max-width:1100px;margin:0 auto;padding:28px 40px 60px;}
+
+/* STEPS */
+.steps{display:flex;align-items:center;margin-bottom:24px;}
+.sitem{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-dark);}
+.sitem.active{color:var(--navy);}
+.sitem.done{color:var(--teal);}
+.snum{width:24px;height:24px;border-radius:50%;background:var(--gray-mid);color:var(--gray-dark);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sitem.active .snum{background:var(--navy);color:white;}
+.sitem.done .snum{background:var(--teal);color:white;}
+.ssep{width:24px;height:1px;background:var(--gray-mid);flex-shrink:0;}
+
+/* CARD */
+.card{background:white;border-radius:6px;box-shadow:0 2px 12px rgba(26,39,68,.08);padding:26px 30px;margin-bottom:18px;}
+.ctitle{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:var(--navy);margin-bottom:5px;}
+.csub{font-size:13px;color:var(--gray-dark);margin-bottom:20px;}
+.slbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:block;}
+.slbl-gray{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray-dark);margin-bottom:10px;display:block;}
+
+/* FORM */
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg.full{grid-column:1/-1;}
+label.fl{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--slate);text-transform:uppercase;}
+input[type=text],input[type=date],select,textarea{border:1.5px solid var(--gray-mid);border-radius:4px;padding:9px 11px;font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--navy);background:white;outline:none;transition:border-color .15s;width:100%;}
+input[type=text]:focus,input[type=date]:focus,select:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(29,158,143,.1);}
+textarea{resize:vertical;min-height:66px;}
+
+/* SLIDERS */
+.sg{margin-bottom:14px;}
+.sg-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px;}
+.sg-name{font-size:13px;font-weight:600;color:var(--navy);}
+.sg-val{font-size:17px;font-weight:700;color:var(--teal);min-width:26px;text-align:right;}
+.sg-desc{font-size:11px;color:var(--gray-dark);margin-bottom:5px;}
+input[type=range]{width:100%;height:4px;-webkit-appearance:none;appearance:none;background:var(--gray-mid);border-radius:2px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--teal);cursor:pointer;border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+
+/* CHECK GRIDS */
+.cg2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.cg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;}
+.ci{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border:1.5px solid var(--gray-mid);border-radius:4px;cursor:pointer;transition:all .12s;}
+.ci:hover{border-color:var(--teal);background:var(--teal-light);}
+.ci input{margin-top:2px;flex-shrink:0;accent-color:var(--teal);width:14px;height:14px;}
+.ci-txt strong{display:block;font-size:13px;font-weight:700;color:var(--navy);}
+.ci-txt span{font-size:11px;color:var(--gray-dark);line-height:1.4;}
+
+/* LIKERT */
+.lb{border:1.5px solid var(--gray-mid);border-radius:4px;padding:13px 15px;margin-bottom:11px;transition:border-color .12s;}
+.lb:hover{border-color:var(--teal);}
+.lq{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:11px;line-height:1.5;}
+.lsc{display:flex;gap:6px;align-items:center;}
+.lrow{display:flex;justify-content:space-between;margin-top:5px;}
+.lrow span{font-size:10px;color:var(--gray-dark);}
+.lo{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;}
+.lo input[type=radio]{accent-color:var(--teal);width:15px;height:15px;cursor:pointer;}
+.lo label{font-size:11px;font-weight:700;color:var(--gray-dark);cursor:pointer;letter-spacing:0;text-transform:none;}
+
+/* DIM HEADER */
+.dh{display:flex;align-items:center;gap:11px;padding:11px 15px;border-radius:4px;margin-bottom:14px;margin-top:22px;}
+.dh:first-child{margin-top:0;}
+.dh.c1{background:var(--c1l);border-left:4px solid var(--c1);}
+.dh.c2{background:var(--c2l);border-left:4px solid var(--c2);}
+.dh.c3{background:var(--c3l);border-left:4px solid var(--c3);}
+.dh.c4{background:var(--c4l);border-left:4px solid var(--c4);}
+.dh h4{font-size:13px;font-weight:700;margin-bottom:2px;}
+.dh p{font-size:11px;color:var(--gray-dark);}
+
+/* BOXES */
+.note{background:var(--coral-light);border-left:3px solid var(--coral);padding:11px 15px;border-radius:0 4px 4px 0;font-size:12px;color:var(--slate);margin-bottom:18px;line-height:1.5;}
+.info{background:var(--teal-light);border-left:3px solid var(--teal);padding:11px 15px;border-radius:0 4px 4px 0;font-size:12px;color:var(--slate);margin-bottom:18px;line-height:1.5;}
+
+/* NAV */
+.navr{display:flex;justify-content:space-between;align-items:center;margin-top:22px;padding-top:18px;border-top:1px solid var(--gray-mid);}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:4px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .15s;}
+.btn-p{background:var(--navy);color:white;}
+.btn-p:hover{background:var(--navy-mid);}
+.btn-s{background:white;color:var(--navy);border:1.5px solid var(--navy);}
+.btn-s:hover{background:var(--gray-light);}
+.btn-t{background:var(--teal);color:white;}
+.btn-t:hover{background:#18877a;}
+
+/* PAGES */
+.pg{display:none;}
+.pg.active{display:block;}
+.hidden{display:none!important;}
+.sep{height:1px;background:var(--gray-mid);margin:18px 0;}
+
+/* TABS */
+.tnav{background:var(--navy);border-radius:6px 6px 0 0;display:flex;overflow:hidden;}
+.tbtn{flex:1;display:flex;flex-direction:column;align-items:center;padding:13px 8px;background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;transition:all .15s;border-right:1px solid rgba(255,255,255,.1);font-family:'Source Sans 3',sans-serif;}
+.tbtn:last-child{border-right:none;}
+.tbtn.active{background:rgba(255,255,255,.12);color:white;}
+.tbtn:hover:not(.active){background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);}
+.tnum{font-size:17px;font-weight:700;line-height:1;margin-bottom:2px;}
+.tlbl{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.tsubl{font-size:8px;color:rgba(255,255,255,.38);margin-top:1px;}
+.tbtn.active .tsubl{color:rgba(255,255,255,.55);}
+.tc{display:none;}
+.tc.active{display:block;}
+.rcard{background:white;border-radius:0 0 6px 6px;box-shadow:0 4px 16px rgba(26,39,68,.1);padding:28px;}
+
+/* SCORES */
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:22px;}
+.sc{padding:14px;border-radius:4px;text-align:center;}
+.sc.c1{background:var(--c1l);border-top:3px solid var(--c1);}
+.sc.c2{background:var(--c2l);border-top:3px solid var(--c2);}
+.sc.c3{background:var(--c3l);border-top:3px solid var(--c3);}
+.sc.c4{background:var(--c4l);border-top:3px solid var(--c4);}
+.sc-d{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-dark);margin-bottom:3px;}
+.sc-v{font-size:1.9rem;font-weight:700;line-height:1;}
+.sc.c1 .sc-v{color:var(--c1);}
+.sc.c2 .sc-v{color:var(--c2);}
+.sc.c3 .sc-v{color:var(--c3);}
+.sc.c4 .sc-v{color:var(--c4);}
+.sc-s{font-size:11px;color:var(--gray-dark);margin-top:3px;}
+.sc-n{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:20px;margin-top:5px;}
+
+/* QUADRANT LAYOUT */
+.qwrap{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:22px;align-items:start;}
+.lcrd{border:2px solid var(--teal);border-radius:6px;padding:18px;}
+.lstag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 11px;border-radius:20px;color:white;margin-bottom:9px;}
+.lcrd h3{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:7px;}
+.lcrd p{font-size:12px;color:var(--slate);line-height:1.6;margin-bottom:8px;}
+.lai{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;font-size:12px;color:var(--slate);}
+.lab{width:5px;height:5px;border-radius:50%;background:var(--teal);margin-top:6px;flex-shrink:0;}
+
+/* PERFIL */
+.prow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:11px;}
+.pblk{background:var(--gray-light);border-radius:4px;padding:13px 15px;}
+.pblk h5{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray-dark);margin-bottom:7px;}
+.tbr{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.tbn{font-size:11px;color:var(--navy);width:110px;flex-shrink:0;}
+.tbt{flex:1;height:5px;background:var(--gray-mid);border-radius:3px;overflow:hidden;}
+.tbf{height:100%;background:var(--teal);border-radius:3px;}
+.tbv{font-size:11px;font-weight:700;color:var(--teal);width:20px;text-align:right;}
+.tags{display:flex;gap:5px;flex-wrap:wrap;}
+.tg{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.tg.tp{background:#f3e8ff;color:#7c3aed;}
+.tg.ts{background:var(--coral-light);color:var(--coral);}
+.tg.tv{background:var(--teal-light);color:var(--teal);}
+.tg.te{background:#eff6ff;color:var(--c3);}
+
+/* NARRATIVA */
+.narr{background:var(--navy);color:rgba(255,255,255,.9);border-radius:4px;padding:18px 22px;font-size:13px;line-height:1.7;margin-top:18px;}
+
+/* FAZ HOJE */
+.ft{width:100%;border-collapse:collapse;}
+.ft th{background:var(--navy);color:white;padding:9px 13px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-align:left;}
+.ft td{padding:6px;border-bottom:1px solid var(--gray-mid);vertical-align:top;}
+.ft td textarea{border:none;background:transparent;width:100%;font-size:13px;color:var(--navy);resize:none;min-height:52px;padding:3px;font-family:'Source Sans 3',sans-serif;}
+.ft td textarea:focus{outline:1px solid var(--teal);border-radius:2px;background:var(--teal-light);}
+
+/* EQUIPE */
+.emat{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;background:var(--gray-mid);border:2px solid var(--gray-mid);border-radius:4px;overflow:hidden;margin-bottom:20px;min-height:260px;}
+.qcell{background:white;padding:14px;}
+.qst{display:inline-block;color:white;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.qpc{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;}
+.etbl{width:100%;border-collapse:collapse;}
+.etbl th{background:var(--gray-light);color:var(--slate);padding:7px 11px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-align:left;border-bottom:2px solid var(--gray-mid);}
+.etbl td{padding:9px 11px;border-bottom:1px solid var(--gray-mid);font-size:13px;color:var(--navy);}
+
+/* ROTEIRO */
+.rsel{display:flex;gap:11px;margin-bottom:22px;}
+.ropt{flex:1;border:2px solid var(--gray-mid);border-radius:6px;padding:14px;cursor:pointer;transition:all .15s;text-align:center;}
+.ropt.sel{border-color:var(--teal);background:var(--teal-light);}
+.ropt h4{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:3px;}
+.ropt p{font-size:11px;color:var(--gray-dark);line-height:1.4;}
+.rfl{display:none;}
+.rfl.active{display:block;}
+.fstep{display:flex;gap:14px;margin-bottom:14px;}
+.fsn{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;margin-top:2px;}
+.fsn.al{background:var(--navy);}
+.fsn.el{background:var(--teal);}
+.fsn.ml{background:var(--coral);}
+.fsn.ec{background:var(--navy-mid);}
+.fsb{flex:1;}
+.fsb h5{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-dark);margin-bottom:5px;}
+.fsb textarea{width:100%;min-height:66px;border:1.5px solid var(--gray-mid);border-radius:4px;padding:9px 11px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--navy);resize:vertical;}
+.fsb textarea:focus{border-color:var(--teal);outline:none;}
+.fcon{width:2px;height:14px;background:var(--gray-mid);margin-left:14px;}
+
+/* PDI */
+.pst{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--navy);margin-bottom:14px;padding-bottom:7px;border-bottom:2px solid var(--teal);display:flex;align-items:center;gap:9px;}
+.pstag{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:20px;}
+.pstag.col{background:var(--teal-light);color:var(--teal);}
+.pstag.ges{background:var(--coral-light);color:var(--coral);}
+.pcb{border:1.5px solid var(--gray-mid);border-radius:4px;padding:16px;margin-bottom:12px;}
+.pch{display:flex;align-items:center;gap:9px;margin-bottom:12px;}
+.pcn{width:26px;height:26px;border-radius:50%;background:var(--navy);color:white;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pcin{flex:1;}
+.pcin input{font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:700;color:var(--navy);border:none;border-bottom:2px solid var(--gray-mid);padding:3px 0;width:100%;background:transparent;}
+.pcin input:focus{outline:none;border-bottom-color:var(--teal);}
+.pfg{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.pf label{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-dark);display:block;margin-bottom:3px;}
+.pf textarea{width:100%;min-height:58px;border:1.5px solid var(--gray-mid);border-radius:4px;padding:7px 9px;font-family:'Source Sans 3',sans-serif;font-size:12px;color:var(--navy);resize:none;}
+.pr{display:flex;gap:7px;margin-top:7px;}
+.po{flex:1;text-align:center;padding:5px;border:1.5px solid var(--gray-mid);border-radius:4px;font-size:11px;font-weight:700;color:var(--gray-dark);cursor:pointer;transition:all .12s;}
+.po.sel{border-color:var(--teal);background:var(--teal-light);color:var(--teal);}
+.gab{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px;}
+.gf label{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-dark);display:block;margin-bottom:3px;}
+.gf textarea{width:100%;min-height:62px;border:1.5px solid var(--gray-mid);border-radius:4px;padding:7px 9px;font-family:'Source Sans 3',sans-serif;font-size:12px;color:var(--navy);resize:none;}
+.gf.full{grid-column:1/-1;}
+.gf textarea:focus{border-color:var(--coral);outline:none;}
+
+/* EXPORT */
+.expanel{background:var(--navy);border-radius:6px;padding:18px 26px;margin-top:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:11px;}
+.expanel p{color:rgba(255,255,255,.65);font-size:12px;}
+.exbtns{display:flex;gap:9px;flex-wrap:wrap;}
+.exb{padding:7px 16px;border-radius:4px;font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.3);color:white;background:rgba(255,255,255,.1);transition:all .15s;}
+.exb:hover{background:rgba(255,255,255,.2);}
+.exb.all{background:var(--teal);border-color:var(--teal);}
+
+/* ALERT */
+.alert{background:var(--coral-light);border:1.5px solid var(--coral);border-radius:4px;padding:11px 15px;font-size:12px;color:var(--coral);font-weight:600;margin-bottom:14px;display:none;}
+
+@media(max-width:640px){
+  .wrap{padding:18px 16px 40px;}
+  .hdr{padding:18px 20px;}
+  .tbar{padding:10px 16px;}
+  .fg2,.fg3,.cg2,.cg3,.sgrid,.qwrap,.prow,.pfg,.gab{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="badge">Ferramenta 3.1</div>
+    <div>
+      <h1>Avaliação de Pessoas · Feedback · PDI</h1>
+      <p>Recriar a Gestão Comercial &nbsp;·&nbsp; Prof. Paulo Henrique Donassolo &nbsp;·&nbsp; Camada Pessoas</p>
+    </div>
+  </div>
+</div>
+
+<div class="tbar">
+  <div class="tbar-in">
+    <span class="tbar-lbl">Equipe</span>
+    <div class="tchips" id="tchips"><span style="font-size:12px;color:var(--gray-dark)">Nenhum colaborador avaliado ainda</span></div>
+    <span class="tcnt" id="tcnt"></span>
+    <button class="btn-new" onclick="novoColab()">+ Novo Colaborador</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- PÁGINA QUESTIONÁRIO -->
+<div class="pg active" id="pgQ">
+
+  <div class="steps" id="steps">
+    <div class="sitem active" data-s="1"><div class="snum">1</div><span>Identificação</span></div>
+    <div class="ssep"></div>
+    <div class="sitem" data-s="2"><div class="snum">2</div><span>Perfil</span></div>
+    <div class="ssep"></div>
+    <div class="sitem" data-s="3"><div class="snum">3</div><span>Valores</span></div>
+    <div class="ssep"></div>
+    <div class="sitem" data-s="4"><div class="snum">4</div><span>Competência</span></div>
+    <div class="ssep"></div>
+    <div class="sitem" data-s="5"><div class="snum">5</div><span>Comprometimento</span></div>
+    <div class="ssep"></div>
+    <div class="sitem" data-s="6"><div class="snum">6</div><span>Desempenho</span></div>
+  </div>
+
+  <!-- SEÇÃO 1 -->
+  <div id="s1" class="sw">
+    <div class="card">
+      <span class="slbl">Seção 1 · Identificação</span>
+      <div class="ctitle">Dados do Gestor e do Colaborador</div>
+      <div class="csub">Preencha as informações de contexto antes de iniciar a avaliação.</div>
+
+      <span class="slbl-gray">Gestor</span>
+      <div class="fg2" style="margin-bottom:18px">
+        <div class="fg"><label class="fl">Nome do Gestor</label><input type="text" id="gNome" placeholder="Nome completo"></div>
+        <div class="fg"><label class="fl">Empresa</label><input type="text" id="gEmpresa" placeholder="Nome da empresa"></div>
+        <div class="fg"><label class="fl">Cargo / Função</label><input type="text" id="gCargo" placeholder="Ex.: Gerente Comercial"></div>
+        <div class="fg"><label class="fl">Tamanho da Equipe</label>
+          <select id="gEquipe"><option value="">Selecione</option><option>1 a 3 pessoas</option><option>4 a 6 pessoas</option><option>7 a 10 pessoas</option><option>Mais de 10 pessoas</option></select>
+        </div>
+      </div>
+
+      <span class="slbl-gray">Colaborador</span>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Nome do Colaborador</label><input type="text" id="cNome" placeholder="Nome completo"></div>
+        <div class="fg"><label class="fl">Cargo / Função</label><input type="text" id="cCargo" placeholder="Ex.: Vendedor Externo"></div>
+        <div class="fg"><label class="fl">Tempo na Função</label>
+          <select id="cTF"><option value="">Selecione</option><option>Menos de 6 meses</option><option>6 meses a 1 ano</option><option>1 a 2 anos</option><option>2 a 4 anos</option><option>Mais de 4 anos</option></select>
+        </div>
+        <div class="fg"><label class="fl">Tempo na Equipe</label>
+          <select id="cTE"><option value="">Selecione</option><option>Menos de 6 meses</option><option>6 meses a 1 ano</option><option>1 a 2 anos</option><option>2 a 4 anos</option><option>Mais de 4 anos</option></select>
+        </div>
+        <div class="fg"><label class="fl">Período de Referência</label><input type="text" id="periodo" placeholder="Ex.: 1º Trimestre 2025"></div>
+        <div class="fg"><label class="fl">Data da Avaliação</label><input type="date" id="dataAval"></div>
+        <div class="fg full"><label class="fl">Contexto da Avaliação</label><textarea id="contexto" placeholder="Território, tipo de cliente, produto, situação específica que influencia esta avaliação..."></textarea></div>
+      </div>
+
+      <div class="navr"><div></div><button class="btn btn-p" onclick="ir(2)">Próxima Seção &rarr;</button></div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 2 -->
+  <div id="s2" class="sw hidden">
+    <div class="card">
+      <span class="slbl">Seção 2 · Perfil Comportamental</span>
+      <div class="ctitle">Como você percebe este colaborador</div>
+      <div class="note">Esta seção registra a sua percepção sobre o colaborador. Use-a como ponto de partida para a conversa de feedback — não como julgamento definitivo. O colaborador pode ter uma visão diferente sobre si mesmo, e essa diferença é rica para o desenvolvimento.</div>
+
+      <div class="dh c1"><div><h4>Personalidade — Big Five</h4><p>Avalie de 1 (muito baixo) a 10 (muito alto) cada característica</p></div></div>
+      <div class="sg"><div class="sg-row"><span class="sg-name">Extroversão</span><span class="sg-val" id="ve">5</span></div><div class="sg-desc">Energia para relacionamentos, sociabilidade, gosta de trabalhar em equipe</div><input type="range" id="se" min="1" max="10" value="5" oninput="sv('e')"></div>
+      <div class="sg"><div class="sg-row"><span class="sg-name">Estabilidade Emocional</span><span class="sg-val" id="vst">5</span></div><div class="sg-desc">Tranquilidade, calma sob pressão, resistência a mudanças emocionais</div><input type="range" id="sst" min="1" max="10" value="5" oninput="sv('st')"></div>
+      <div class="sg"><div class="sg-row"><span class="sg-name">Agradabilidade</span><span class="sg-val" id="vag">5</span></div><div class="sg-desc">Cooperação, otimismo sobre as pessoas, valoriza relacionamentos</div><input type="range" id="sag" min="1" max="10" value="5" oninput="sv('ag')"></div>
+      <div class="sg"><div class="sg-row"><span class="sg-name">Curiosidade / Abertura</span><span class="sg-val" id="vcu">5</span></div><div class="sg-desc">Abertura a novas ideias, criatividade, disposição para aprender</div><input type="range" id="scu" min="1" max="10" value="5" oninput="sv('cu')"></div>
+      <div class="sg"><div class="sg-row"><span class="sg-name">Diligência</span><span class="sg-val" id="vdi">5</span></div><div class="sg-desc">Autodisciplina, orientação a metas, organização e planejamento</div><input type="range" id="sdi" min="1" max="10" value="5" oninput="sv('di')"></div>
+
+      <div class="sep"></div>
+      <div class="dh c1"><div><h4>Temperamento Dominante</h4><p>Selecione até 2 temperamentos que melhor descrevem este colaborador</p></div></div>
+      <div class="cg2">
+        <label class="ci"><input type="checkbox" name="tmp" value="sanguineo" onchange="lim('tmp',2,this)"><div class="ci-txt"><strong>Sanguíneo</strong><span>Foco no RELACIONAMENTO — comunicativo, entusiasta, simpático, faz junto</span></div></label>
+        <label class="ci"><input type="checkbox" name="tmp" value="colerico" onchange="lim('tmp',2,this)"><div class="ci-txt"><strong>Colérico</strong><span>Foco no RESULTADO — audacioso, enérgico, decidido, faz agora</span></div></label>
+        <label class="ci"><input type="checkbox" name="tmp" value="melancolico" onchange="lim('tmp',2,this)"><div class="ci-txt"><strong>Melancólico</strong><span>Foco nos SENTIMENTOS — perfeccionista, leal, analítico, faz em harmonia</span></div></label>
+        <label class="ci"><input type="checkbox" name="tmp" value="fleumatico" onchange="lim('tmp',2,this)"><div class="ci-txt"><strong>Fleumático</strong><span>Foco na RAZÃO — calmo, prático, diplomata, faz do jeito certo</span></div></label>
+      </div>
+
+      <div class="sep"></div>
+      <div class="dh c1"><div><h4>Sabotadores Predominantes</h4><p>Padrões que tendem a aparecer sob pressão — selecione 2 a 3</p></div></div>
+      <div class="info">Identificar os sabotadores não é um julgamento negativo. É reconhecer padrões que, quando ativados, diminuem a performance — e que, quando nomeados, podem ser trabalhados.</div>
+      <div class="cg2">
+        <label class="ci"><input type="checkbox" name="sab" value="insistente" onchange="lim('sab',3,this)"><div class="ci-txt"><strong>Insistente</strong><span>Perfeccionista, sempre exige mais, dificuldade em delegar</span></div></label>
+        <label class="ci"><input type="checkbox" name="sab" value="prestativo" onchange="lim('sab',3,this)"><div class="ci-txt"><strong>Prestativo</strong><span>Busca aceitação ajudando demais, dificuldade em dizer não</span></div></label>
+        <label class="ci"><input type="checkbox" name="sab" value="mega_realiz" onchange="lim('sab',3,this)"><div class="ci-txt"><strong>Mega Realizador</strong><span>Precisa entregar acima do esperado, identidade ligada ao resultado</span></div></label>
+        <label class="ci"><input type="checkbox" name="sab" value="vitima" onchange="lim('sab',3,this)"><div class="ci-txt"><strong>Vítima</strong><span>Usa emoções para se conectar, dificuldade em assumir responsabilidade</span></div></label>
+        <label class="ci"><input type="checkbox" name="sab" value="mega_rac" onchange="lim('sab',3,this)"><div class="ci-txt"><strong>Mega Racional</strong><span>Visto como frio, foca apenas no processo, pouca empatia demonstrada</span></div></label>
+        <label class="ci"><input type="checkbox" name="sab" value="hiper_vig" onchange="lim('sab',3,this)"><div class="ci-txt"><strong>Hiper Vigilante</strong><span>Ansiedade contínua, foco no que pode dar errado</span></div></label>
+        <label class="ci"><input type="checkbox" name="sab" value="inquieto" onchange="lim('sab',3,this)"><div class="ci-txt"><strong>Inquieto</strong><span>Busca novidade em tudo, raramente se satisfaz com o entregue</span></div></label>
+        <label class="ci"><input type="checkbox" name="sab" value="controlador" onchange="lim('sab',3,this)"><div class="ci-txt"><strong>Controlador</strong><span>Necessidade extrema de controlar pessoas e situações</span></div></label>
+        <label class="ci"><input type="checkbox" name="sab" value="esquivo" onchange="lim('sab',3,this)"><div class="ci-txt"><strong>Esquivo</strong><span>Foca no positivo, foge de conflitos e tarefas desagradáveis</span></div></label>
+        <label class="ci"><input type="checkbox" name="sab" value="critico" onchange="lim('sab',3,this)"><div class="ci-txt"><strong>Crítico</strong><span>Acha defeitos com facilidade, tendência a cobrar e punir</span></div></label>
+      </div>
+
+      <div class="navr"><button class="btn btn-s" onclick="ir(1)">&larr; Voltar</button><button class="btn btn-p" onclick="ir(3)">Próxima Seção &rarr;</button></div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 3 -->
+  <div id="s3" class="sw hidden">
+    <div class="card">
+      <span class="slbl">Seção 3 · Valores e Estilo de Trabalho</span>
+      <div class="ctitle">O que move esta pessoa</div>
+      <div class="csub">Identifique os valores e os estilos de trabalho preferidos deste colaborador.</div>
+
+      <div class="dh c2"><div><h4>Valores Principais</h4><p>Selecione os 3 valores mais importantes para este colaborador</p></div></div>
+      <div class="cg3">
+        <label class="ci"><input type="checkbox" name="val" value="ambicao" onchange="lim('val',3,this)"><div class="ci-txt"><strong>Ambição</strong><span>Destaque, reconhecimento, ser bem-sucedido</span></div></label>
+        <label class="ci"><input type="checkbox" name="val" value="autonomia" onchange="lim('val',3,this)"><div class="ci-txt"><strong>Autonomia</strong><span>Autodirecionar-se, tomar decisões próprias</span></div></label>
+        <label class="ci"><input type="checkbox" name="val" value="benevolencia" onchange="lim('val',3,this)"><div class="ci-txt"><strong>Benevolência</strong><span>Ajudar e cuidar das pessoas</span></div></label>
+        <label class="ci"><input type="checkbox" name="val" value="seguranca" onchange="lim('val',3,this)"><div class="ci-txt"><strong>Segurança</strong><span>Harmonia, estabilidade, previsibilidade</span></div></label>
+        <label class="ci"><input type="checkbox" name="val" value="conformidade" onchange="lim('val',3,this)"><div class="ci-txt"><strong>Conformidade</strong><span>Seguir regras e procedimentos</span></div></label>
+        <label class="ci"><input type="checkbox" name="val" value="estimulacao" onchange="lim('val',3,this)"><div class="ci-txt"><strong>Estimulação</strong><span>Desafios, variedade, novidade constante</span></div></label>
+        <label class="ci"><input type="checkbox" name="val" value="poder" onchange="lim('val',3,this)"><div class="ci-txt"><strong>Poder</strong><span>Influência, autoridade, liderança</span></div></label>
+        <label class="ci"><input type="checkbox" name="val" value="universalismo" onchange="lim('val',3,this)"><div class="ci-txt"><strong>Universalismo</strong><span>Justiça, igualdade, bem coletivo</span></div></label>
+        <label class="ci"><input type="checkbox" name="val" value="realizacao" onchange="lim('val',3,this)"><div class="ci-txt"><strong>Realização</strong><span>Competência, sucesso pessoal e profissional</span></div></label>
+      </div>
+
+      <div class="sep"></div>
+      <div class="dh c2"><div><h4>Estilos de Trabalho Preferidos</h4><p>Selecione até 3 estilos que melhor descrevem como este colaborador trabalha</p></div></div>
+      <div class="cg3">
+        <label class="ci"><input type="checkbox" name="est" value="agilidade" onchange="lim('est',3,this)"><div class="ci-txt"><strong>Agilidade</strong><span>Prefere ritmo rápido, decisão rápida</span></div></label>
+        <label class="ci"><input type="checkbox" name="est" value="competitividade" onchange="lim('est',3,this)"><div class="ci-txt"><strong>Competitividade</strong><span>Gosta de competir, foco intenso em vencer</span></div></label>
+        <label class="ci"><input type="checkbox" name="est" value="atencao_det" onchange="lim('est',3,this)"><div class="ci-txt"><strong>Atenção a Detalhes</strong><span>Analítico, valoriza qualidade e precisão</span></div></label>
+        <label class="ci"><input type="checkbox" name="est" value="or_recompensa" onchange="lim('est',3,this)"><div class="ci-txt"><strong>Orientado a Recompensa</strong><span>Motivado por ganhos e reconhecimento</span></div></label>
+        <label class="ci"><input type="checkbox" name="est" value="estabilidade" onchange="lim('est',3,this)"><div class="ci-txt"><strong>Estabilidade</strong><span>Organização, estrutura, definições claras</span></div></label>
+        <label class="ci"><input type="checkbox" name="est" value="or_resultado" onchange="lim('est',3,this)"><div class="ci-txt"><strong>Orientado a Resultado</strong><span>O que importa é a entrega final</span></div></label>
+        <label class="ci"><input type="checkbox" name="est" value="trabalho_eq" onchange="lim('est',3,this)"><div class="ci-txt"><strong>Trabalho em Equipe</strong><span>Decisões compartilhadas, colaboração</span></div></label>
+        <label class="ci"><input type="checkbox" name="est" value="aut_est" onchange="lim('est',3,this)"><div class="ci-txt"><strong>Autonomia</strong><span>Trabalha melhor com liberdade de método</span></div></label>
+        <label class="ci"><input type="checkbox" name="est" value="aprendizagem" onchange="lim('est',3,this)"><div class="ci-txt"><strong>Aprendizagem Contínua</strong><span>Busca crescimento e desenvolvimento constante</span></div></label>
+      </div>
+
+      <div class="navr"><button class="btn btn-s" onclick="ir(2)">&larr; Voltar</button><button class="btn btn-p" onclick="ir(4)">Próxima Seção &rarr;</button></div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 4 -->
+  <div id="s4" class="sw hidden">
+    <div class="card">
+      <span class="slbl">Seção 4 · Competência</span>
+      <div class="ctitle">Capacidade técnica e experiência</div>
+      <div class="csub">Avalie o nível de conhecimento, habilidade e experiência para executar as atividades da função.</div>
+      <div id="qC"></div>
+      <div class="navr"><button class="btn btn-s" onclick="ir(3)">&larr; Voltar</button><button class="btn btn-p" onclick="ir(5)">Próxima Seção &rarr;</button></div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 5 -->
+  <div id="s5" class="sw hidden">
+    <div class="card">
+      <span class="slbl">Seção 5 · Comprometimento</span>
+      <div class="ctitle">Motivação, engajamento e iniciativa</div>
+      <div class="csub">Avalie o nível de motivação, engajamento, confiança e proatividade demonstrados no período.</div>
+      <div id="qM"></div>
+      <div class="navr"><button class="btn btn-s" onclick="ir(4)">&larr; Voltar</button><button class="btn btn-p" onclick="ir(6)">Próxima Seção &rarr;</button></div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 6 -->
+  <div id="s6" class="sw hidden">
+    <div class="card">
+      <span class="slbl">Seção 6 · Desempenho e Resultados</span>
+      <div class="ctitle">Execução das atividades e entrega de resultados</div>
+      <div class="csub">O desempenho nas atividades é a causa. Os resultados são a consequência. Avalie ambos separadamente.</div>
+
+      <div class="dh c3"><div><h4>Avaliação de Desempenho nas Atividades</h4><p>Escala 1 (muito abaixo do esperado) a 5 (muito acima do esperado)</p></div></div>
+      <div id="qD"></div>
+
+      <div class="sep"></div>
+      <div class="dh c4"><div><h4>Pontos Qualitativos do Período</h4><p>Registre as principais realizações e dificuldades identificadas</p></div></div>
+      <div class="fg2">
+        <div class="fg"><label class="fl">Principais Realizações no Período</label><textarea id="realiz" placeholder="Descreva os principais resultados positivos, conquistas ou comportamentos que merecem destaque..."></textarea></div>
+        <div class="fg"><label class="fl">Principais Dificuldades Identificadas</label><textarea id="dificul" placeholder="Descreva os principais obstáculos, lacunas ou comportamentos que precisam ser trabalhados..."></textarea></div>
+      </div>
+
+      <div class="navr"><button class="btn btn-s" onclick="ir(5)">&larr; Voltar</button><button class="btn btn-t" onclick="gerar()">Gerar Resultados &rarr;</button></div>
+    </div>
+  </div>
+
+</div><!-- /pgQ -->
+
+<!-- PÁGINA RESULTADOS -->
+<div class="pg" id="pgR">
+  <div class="tnav">
+    <button class="tbtn active" onclick="tab(0)"><span class="tnum">01</span><span class="tlbl">Diagnóstico</span><span class="tsubl">Perfil + Quadrante</span></button>
+    <button class="tbtn" onclick="tab(1)"><span class="tnum">02</span><span class="tlbl">Faz Hoje</span><span class="tsubl">Fazer Diferente</span></button>
+    <button class="tbtn" onclick="tab(2)"><span class="tnum">03</span><span class="tlbl">Equipe</span><span class="tsubl">Visão Coletiva</span></button>
+    <button class="tbtn" onclick="tab(3)"><span class="tnum">04</span><span class="tlbl">Roteiro</span><span class="tsubl">Feedback 1a1</span></button>
+    <button class="tbtn" onclick="tab(4)"><span class="tnum">05</span><span class="tlbl">PDI</span><span class="tsubl">Plano de Ação</span></button>
+  </div>
+  <div class="rcard">
+
+    <!-- T0 DIAGNÓSTICO -->
+    <div class="tc active" id="t0">
+      <div class="alert" id="alrt"></div>
+      <div class="sgrid" id="sgrid"></div>
+      <div class="qwrap">
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-dark);margin-bottom:3px"><span>Baixa Competência</span><span>Alta Competência</span></div>
+          <canvas id="qcv" width="370" height="310" style="display:block;max-width:100%;border-radius:4px;"></canvas>
+          <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-dark);text-align:center;margin-top:5px">Matriz Competência × Comprometimento</div>
+        </div>
+        <div class="lcrd" id="lcrd"></div>
+      </div>
+      <span class="slbl">Perfil Comportamental</span>
+      <div class="prow" id="prow"></div>
+      <div class="narr" id="narr"></div>
+    </div>
+
+    <!-- T1 FAZ HOJE -->
+    <div class="tc" id="t1">
+      <span class="slbl">Análise de Comportamento</span>
+      <div class="ctitle" style="margin-bottom:5px">Faz Hoje · Fazer Diferente · Impacto Esperado</div>
+      <div class="csub" style="margin-bottom:18px">Baseado nas dimensões de menor pontuação. Edite os campos conforme sua análise.</div>
+      <table class="ft"><thead><tr><th style="width:30%">Faz Hoje</th><th style="width:35%">Fazer Diferente</th><th style="width:35%">Impacto Esperado</th></tr></thead><tbody id="ftb"></tbody></table>
+    </div>
+
+    <!-- T2 EQUIPE -->
+    <div class="tc" id="t2">
+      <span class="slbl">Visão da Equipe</span>
+      <div class="ctitle" style="margin-bottom:5px">Matriz de Liderança Situacional da Equipe</div>
+      <div class="csub" style="margin-bottom:14px">Todos os colaboradores avaliados posicionados por Competência e Comprometimento.</div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-dark);margin-bottom:3px"><span>Baixa Competência</span><span>Alta Competência</span></div>
+      <div class="emat" id="emat"></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--gray-dark);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:18px"><span>Alto Comprometimento (topo)</span><span>Baixo Comprometimento (base)</span></div>
+      <table class="etbl"><thead><tr><th>Colaborador</th><th>Cargo</th><th>Competência</th><th>Compromisso</th><th>Desempenho</th><th>Estilo Indicado</th></tr></thead><tbody id="etb"></tbody></table>
+    </div>
+
+    <!-- T3 ROTEIRO -->
+    <div class="tc" id="t3">
+      <span class="slbl">Preparação para a Conversa</span>
+      <div class="ctitle" style="margin-bottom:5px">Roteiro de Feedback 1a1</div>
+      <div class="csub" style="margin-bottom:18px">Escolha o roteiro mais adequado ao momento e ao colaborador. Edite as sugestões de fala antes da conversa.</div>
+      <div class="rsel">
+        <div class="ropt sel" id="ro0" onclick="selRot(0)"><h4>Roteiro A — Desenvolvimento</h4><p>Objetivo · Elogio · Melhoria · Elogio<br>Para conversas de desenvolvimento contínuo</p></div>
+        <div class="ropt" id="ro1" onclick="selRot(1)"><h4>Roteiro B — Diretivo</h4><p>Objetivo · Melhoria · Elogio<br>Para situações que exigem correção mais direta</p></div>
+      </div>
+      <div class="rfl active" id="rfA"></div>
+      <div class="rfl" id="rfB"></div>
+    </div>
+
+    <!-- T4 PDI -->
+    <div class="tc" id="t4">
+      <div class="pst">Plano de Desenvolvimento Individual <span class="pstag col">Colaborador</span></div>
+      <div class="csub" style="margin-bottom:18px">Competências prioritárias baseadas nas dimensões de menor pontuação. Edite conforme sua análise.</div>
+      <div id="pdiC"></div>
+      <div class="sep" style="margin:26px 0"></div>
+      <div class="pst">Plano de Ação do Gestor <span class="pstag ges">Para com este colaborador</span></div>
+      <div class="csub" style="margin-bottom:18px">Como você, como gestor, vai agir de forma diferente com esta pessoa a partir de agora.</div>
+      <div class="gab">
+        <div class="gf"><label>Estilo de Liderança a Adotar</label><textarea id="gEst" placeholder="Ex.: Adotar postura mais diretiva nas atividades de prospecção, sendo prescritivo no roteiro de abordagem..."></textarea></div>
+        <div class="gf"><label>Frequência e Formato das Reuniões 1a1</label><textarea id="gReu" placeholder="Ex.: Reuniões semanais de 30 minutos, às segundas-feiras, para acompanhar o pipeline e identificar dificuldades..."></textarea></div>
+        <div class="gf"><label>Ações de Apoio ao Desenvolvimento</label><textarea id="gApo" placeholder="Ex.: Acompanhar em campo 2 visitas por semana, dar feedback imediato após cada visita..."></textarea></div>
+        <div class="gf"><label>Ações de Direcionamento e Cobrança</label><textarea id="gCob" placeholder="Ex.: Revisão diária do CRM, acompanhamento semanal do funil, reunião quinzenal de pipeline..."></textarea></div>
+        <div class="gf full"><label>Como e Quando Reavaliar Este Colaborador</label><textarea id="gReav" placeholder="Ex.: Reavaliar em 60 dias usando esta ferramenta. Critérios de evolução: indicadores de competência técnica e motivação..."></textarea></div>
+      </div>
+    </div>
+
+  </div><!-- /rcard -->
+
+  <div class="expanel">
+    <p>Prof. Paulo H. Donassolo · Recriar a Gestão Comercial · Ferramenta 3.1</p>
+    <div class="exbtns">
+      <button class="exb" onclick="exp('diag')">Exportar Diagnóstico</button>
+      <button class="exb" onclick="exp('rot')">Exportar Roteiro</button>
+      <button class="exb" onclick="exp('pdi')">Exportar PDI</button>
+      <button class="exb" onclick="exp('eq')">Exportar Equipe</button>
+      <button class="exb all" onclick="expTudo()">Exportar Tudo</button>
+    </div>
+  </div>
+</div><!-- /pgR -->
+
+</div><!-- /wrap -->
+
+<script>
+// ——— ESTADO ———
+const SK='rgc_f3-1';
+let team=[];
+let cur={};
+let cS=1;
+
+// ——— QUESTÕES ———
+const CQ=[
+  {id:'c1',q:'Qual o nível de <strong>experiência prática</strong> do colaborador nas atividades específicas da função?',lo:'Iniciante / sem experiência',hi:'Muito experiente'},
+  {id:'c2',q:'Qual o domínio do <strong>conhecimento técnico</strong> necessário para executar as tarefas com qualidade?',lo:'Conhecimento básico',hi:'Domínio completo'},
+  {id:'c3',q:'Qual a <strong>habilidade de execução autônoma</strong> — realiza as atividades sem supervisão constante?',lo:'Precisa de orientação contínua',hi:'Totalmente autônomo'},
+  {id:'c4',q:'Qual a capacidade de <strong>resolver problemas</strong> e tomar decisões ligadas às suas atividades?',lo:'Dificuldade em resolver sozinho',hi:'Resolve com facilidade'},
+  {id:'c5',q:'Qual o nível de <strong>conhecimento sobre produtos, serviços e processos</strong> da empresa?',lo:'Conhecimento superficial',hi:'Conhecimento profundo'},
+];
+const MQ=[
+  {id:'m1',q:'Qual o nível de <strong>motivação</strong> do colaborador para realizar as atividades da função?',lo:'Desmotivado',hi:'Altamente motivado'},
+  {id:'m2',q:'Qual o grau de <strong>engajamento</strong> com os objetivos e metas da equipe e da empresa?',lo:'Pouco engajado',hi:'Totalmente engajado'},
+  {id:'m3',q:'Qual o <strong>entusiasmo</strong> demonstrado no dia a dia de trabalho?',lo:'Apático / desanimado',hi:'Muito entusiasmado'},
+  {id:'m4',q:'Qual a <strong>autoeficácia</strong> — a confiança do colaborador na própria capacidade de realizar as atividades?',lo:'Inseguro / hesitante',hi:'Muito confiante'},
+  {id:'m5',q:'Qual o nível de <strong>iniciativa e proatividade</strong> demonstrados pelo colaborador?',lo:'Aguarda instruções',hi:'Altamente proativo'},
+];
+const DQ=[
+  {id:'d1',q:'<strong>Execução das atividades-chave</strong> da função (visitas, contatos, follow-ups, propostas, etc.)',lo:'Muito abaixo do esperado',hi:'Muito acima do esperado'},
+  {id:'d2',q:'<strong>Qualidade da Execução</strong> — nível de preparação, postura, apresentação e condução das atividades',lo:'Muito abaixo do esperado',hi:'Muito acima do esperado'},
+  {id:'d3',q:'<strong>Atingimento de metas e resultados</strong> no período de referência',lo:'Muito abaixo da meta',hi:'Muito acima da meta'},
+  {id:'d4',q:'<strong>Consistência</strong> — regularidade e previsibilidade na entrega ao longo do período',lo:'Muito inconsistente',hi:'Totalmente consistente'},
+];
+
+// ——— ESTILOS LIDERANÇA ———
+const ES={
+  s1:{tag:'S1',nm:'Diretivo',cor:'#e05c3a',q:'Baixa Competência · Alto Comprometimento',
+    dc:'O colaborador está desenvolvendo suas competências, mas demonstra engajamento e disposição. Precisa de orientação técnica clara e estruturada, com instruções detalhadas sobre o quê e como fazer.',
+    ac:['Estabeleça expectativas claras e específicas para cada atividade','Demonstre e explique o passo a passo das tarefas prioritárias','Acompanhe de perto o início de novas atividades','Dê feedback imediato e frequente — positivo e corretivo','Comemore as primeiras vitórias para reforçar a confiança']},
+  s2:{tag:'S2',nm:'Orientador',cor:'#d97706',q:'Baixa Competência · Baixo Comprometimento',
+    dc:'O colaborador ainda está desenvolvendo competências e apresenta baixa motivação ou confiança. Combine direção técnica com suporte emocional, explicando o "porquê" de cada atividade.',
+    ac:['Explique o propósito de cada atividade, não apenas o procedimento','Identifique e trabalhe a causa da desmotivação ou insegurança','Estabeleça metas pequenas e alcançáveis para gerar momentum','Combine instrução técnica com conversas sobre expectativas e motivações','Monitore de perto e ofereça apoio emocional junto com direção técnica']},
+  s3:{tag:'S3',nm:'Apoiador',cor:'#059669',q:'Alta Competência · Baixo Comprometimento',
+    dc:'O colaborador tem competência técnica, mas está desmotivado ou inseguro. O foco deve ser no suporte emocional e na investigação das causas da desmotivação, com menos direção técnica.',
+    ac:['Investigue as causas da desmotivação — ouça antes de agir','Reconheça publicamente as competências e conquistas anteriores','Envolva o colaborador nas decisões que afetam seu trabalho','Ofereça novos desafios compatíveis com seu nível técnico','Reduza controle operacional e aumente o espaço de autonomia']},
+  s4:{tag:'S4',nm:'Delegador',cor:'#1d9e8f',q:'Alta Competência · Alto Comprometimento',
+    dc:'O colaborador tem alta competência e alto comprometimento. Delegue responsabilidades com autonomia, reconheça o desempenho e considere este profissional para desafios maiores.',
+    ac:['Delegue projetos e contas estratégicas com autonomia real','Envolva em decisões da equipe e no mentoring de colegas','Discuta objetivos de carreira e plano de crescimento','Reconheça formalmente as contribuições e o nível de performance','Reduza reuniões de acompanhamento — priorize alinhamento estratégico']},
+};
+
+// ——— RECOMENDAÇÕES ———
+const RC={
+  competencia:{
+    fh:'Realiza as atividades sem domínio técnico completo, dependendo de apoio frequente para resolver situações fora do padrão.',
+    fd:'Participar de treinamentos técnicos estruturados, acompanhar visitas com profissionais experientes e criar rotina de estudo semanal sobre produtos e processos.',
+    imp:'Maior autonomia na execução, menos retrabalho e capacidade de lidar com objeções técnicas com mais segurança.',
+    comp:'Desenvolvimento de Competência Técnica Comercial',
+    acao:'Trilha de capacitação em 3 módulos: produto/solução, processo de vendas e gestão de clientes. Acompanhamento de campo uma vez por semana com gestor.',
+    afer:'Avaliação de conhecimento no 30º dia e acompanhamento do indicador de autonomia (% de situações resolvidas sem apoio do gestor).',
+    prazo:'60 dias'},
+  comprometimento:{
+    fh:'Aguarda instruções ou motivação externa para iniciar as atividades, demonstrando baixa proatividade e engajamento com os objetivos da equipe.',
+    fd:'Estabelecer metas pessoais de curto prazo, participar mais ativamente das reuniões de equipe e desenvolver senso de propósito ligado às atividades da função.',
+    imp:'Maior energia e consistência na execução, melhora nos indicadores de atividade e fortalecimento do espírito de equipe.',
+    comp:'Engajamento e Motivação Intrínseca',
+    acao:'Conversa estruturada sobre propósito e expectativas. Definição conjunta de metas de curto prazo com critérios claros. Identificação dos motivadores individuais.',
+    afer:'Observação do nível de iniciativa nas próximas 4 semanas e autoavaliação do colaborador sobre seu engajamento no 30º dia.',
+    prazo:'30 dias'},
+  desempenho:{
+    fh:'Realiza as atividades com inconsistência — bons momentos alternados com períodos de baixa entrega, sem padrão ao longo do período.',
+    fd:'Adotar rotina semanal de planejamento das atividades, usar indicadores de execução como referência diária e revisar semanalmente o realizado versus o planejado.',
+    imp:'Previsibilidade nos resultados, melhora nos indicadores de funil e aumento da confiança do gestor para delegar atividades estratégicas.',
+    comp:'Disciplina de Execução e Planejamento',
+    acao:'Implementar PTG semanal com metas de atividade. Revisão toda sexta-feira dos indicadores da semana. Sprint semanal com 3 prioridades definidas.',
+    afer:'Comparação semanal entre planejado e executado. Meta: 80% de aderência ao PTG em 30 dias.',
+    prazo:'30 dias'},
+  resultados:{
+    fh:'Não consegue converter consistentemente as atividades em resultados — há esforço, mas as metas não são atingidas de forma regular.',
+    fd:'Identificar os gargalos no funil de vendas, trabalhar as competências de negociação e fechamento, e focar nas contas com maior potencial de conversão.',
+    imp:'Melhora no percentual de atingimento de metas, aumento do ticket médio e maior previsibilidade de receita.',
+    comp:'Conversão e Fechamento de Negócios',
+    acao:'Mapeamento do funil individual: onde as oportunidades se perdem. Treinamento em técnicas de negociação e fechamento. Role play semanal com gestor.',
+    afer:'Análise semanal do funil e das taxas de conversão por etapa. Meta de melhora de 15% no fechamento em 60 dias.',
+    prazo:'60 dias'},
+};
+
+// ——— LABELS ———
+const LB={
+  sanguineo:'Sanguíneo',colerico:'Colérico',melancolico:'Melancólico',fleumatico:'Fleumático',
+  insistente:'Insistente',prestativo:'Prestativo',mega_realiz:'Mega Realizador',vitima:'Vítima',
+  mega_rac:'Mega Racional',hiper_vig:'Hiper Vigilante',inquieto:'Inquieto',
+  controlador:'Controlador',esquivo:'Esquivo',critico:'Crítico',
+  ambicao:'Ambição',autonomia:'Autonomia',benevolencia:'Benevolência',seguranca:'Segurança',
+  conformidade:'Conformidade',estimulacao:'Estimulação',poder:'Poder',universalismo:'Universalismo',realizacao:'Realização',
+  agilidade:'Agilidade',competitividade:'Competitividade',atencao_det:'Atenção a Detalhes',
+  or_recompensa:'Or. Recompensa',estabilidade:'Estabilidade',or_resultado:'Or. Resultado',
+  trabalho_eq:'Trabalho em Equipe',aut_est:'Autonomia',aprendizagem:'Aprendizagem',
+};
+
+// ——— INIT ———
+window.onload=function(){
+  bldQs('qC',CQ);
+  bldQs('qM',MQ);
+  bldQs('qD',DQ);
+  loadSt();
+  rTeam();
+  document.getElementById('dataAval').value=new Date().toISOString().split('T')[0];
+};
+
+function bldQs(id,qs){
+  document.getElementById(id).innerHTML=qs.map((q,i)=>`
+    <div class="lb">
+      <div class="lq">${i+1}. ${q.q}</div>
+      <div class="lsc">${[1,2,3,4,5].map(v=>`<div class="lo"><input type="radio" name="${q.id}" id="${q.id}_${v}" value="${v}"><label for="${q.id}_${v}">${v}</label></div>`).join('')}</div>
+      <div class="lrow"><span>${q.lo}</span><span>${q.hi}</span></div>
+    </div>`).join('');
+}
+
+// ——— SLIDER ———
+function sv(k){document.getElementById('v'+k).textContent=document.getElementById('s'+k).value;}
+
+// ——— LIMIT CHECKBOXES ———
+function lim(n,mx,el){if(Array.from(document.querySelectorAll(`input[name="${n}"]:checked`)).length>mx)el.checked=false;}
+
+// ——— HELPERS ———
+function g(id){return(document.getElementById(id)||{}).value||'';}
+function chk(n){return Array.from(document.querySelectorAll(`input[name="${n}"]:checked`)).map(x=>x.value);}
+function rad(qs){return qs.map(q=>{const s=document.querySelector(`input[name="${q.id}"]:checked`);return s?parseInt(s.value):0;});}
+function avg(a){return a.length?(a.reduce((x,y)=>x+y,0)/a.length):0;}
+function niv(v){
+  if(v>=4.2)return{l:'Excelente',bg:'#dcfce7',c:'#16a34a'};
+  if(v>=3.2)return{l:'Bom',bg:'#e8f7f5',c:'#1d9e8f'};
+  if(v>=2.2)return{l:'Regular',bg:'#fffbeb',c:'#d97706'};
+  return{l:'Necessita atenção',bg:'#fef2f0',c:'#e05c3a'};
+}
+
+// ——— NAVEGAÇÃO ———
+function ir(n){
+  document.getElementById('s'+cS).classList.add('hidden');
+  document.getElementById('s'+n).classList.remove('hidden');
+  cS=n;
+  document.querySelectorAll('.sitem').forEach(el=>{
+    const s=parseInt(el.dataset.s);
+    el.classList.remove('active','done');
+    if(s===n)el.classList.add('active');
+    else if(s<n)el.classList.add('done');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function tab(i){
+  document.querySelectorAll('.tc').forEach((t,j)=>t.classList.toggle('active',j===i));
+  document.querySelectorAll('.tbtn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  if(i===2)rEq();
+}
+
+function selRot(i){
+  document.getElementById('ro0').classList.toggle('sel',i===0);
+  document.getElementById('ro1').classList.toggle('sel',i===1);
+  document.getElementById('rfA').classList.toggle('active',i===0);
+  document.getElementById('rfB').classList.toggle('active',i===1);
+}
+
+// ——— GERAR RESULTADOS ———
+function gerar(){
+  const d={
+    gNome:g('gNome'),gEmpresa:g('gEmpresa'),gCargo:g('gCargo'),gEquipe:g('gEquipe'),
+    cNome:g('cNome'),cCargo:g('cCargo'),cTF:g('cTF'),cTE:g('cTE'),
+    periodo:g('periodo'),dataAval:g('dataAval'),contexto:g('contexto'),
+    ve:parseInt(document.getElementById('se').value),
+    vst:parseInt(document.getElementById('sst').value),
+    vag:parseInt(document.getElementById('sag').value),
+    vcu:parseInt(document.getElementById('scu').value),
+    vdi:parseInt(document.getElementById('sdi').value),
+    tmp:chk('tmp'),sab:chk('sab'),val:chk('val'),est:chk('est'),
+    cScores:rad(CQ),mScores:rad(MQ),dScores:rad(DQ),
+    realiz:g('realiz'),dificul:g('dificul'),
+  };
+  if(!d.cNome){alert('Informe o nome do colaborador antes de gerar os resultados.');ir(1);return;}
+  d.sC=avg(d.cScores);
+  d.sM=avg(d.mScores);
+  d.sD=avg(d.dScores.slice(0,2));
+  d.sR=avg(d.dScores.slice(2,4));
+  // Quadrante: C>=3 = alta competência; M>=3 = alto comprometimento
+  const hC=d.sC>=3, hM=d.sM>=3;
+  d.estilo=!hC&&hM?'s1':!hC&&!hM?'s2':hC&&!hM?'s3':'s4';
+  cur=d;
+  // Salvar/atualizar equipe — manter dados anteriores para equipe
+  const idx=team.findIndex(x=>x.cNome===d.cNome);
+  if(idx>=0)team[idx]=d; else if(team.length<10)team.push(d);
+  saveSt();
+  rTeam();
+  rDiag(d);
+  rFaz(d);
+  rRot(d);
+  rPDI(d);
+  document.getElementById('pgQ').classList.remove('active');
+  document.getElementById('pgR').classList.add('active');
+  tab(0);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ——— NOVO COLABORADOR ———
+// Limpa apenas os campos do colaborador atual; mantém dados do gestor e o array team
+function novoColab(){
+  // Preservar gestor
+  const gN=g('gNome'),gE=g('gEmpresa'),gC=g('gCargo'),gQ=g('gEquipe');
+  // Limpar colaborador
+  ['cNome','cCargo','periodo','contexto','realiz','dificul'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['cTF','cTE'].forEach(id=>{const el=document.getElementById(id);if(el)el.selectedIndex=0;});
+  // Sliders → 5
+  ['e','st','ag','cu','di'].forEach(k=>{document.getElementById('s'+k).value=5;document.getElementById('v'+k).textContent='5';});
+  // Checkboxes
+  document.querySelectorAll('input[name="tmp"],input[name="sab"],input[name="val"],input[name="est"]').forEach(x=>x.checked=false);
+  // Radios
+  document.querySelectorAll('input[type="radio"]').forEach(x=>x.checked=false);
+  // Restaurar gestor
+  document.getElementById('gNome').value=gN;
+  document.getElementById('gEmpresa').value=gE;
+  document.getElementById('gCargo').value=gC;
+  document.getElementById('gEquipe').value=gQ;
+  // Data atual
+  document.getElementById('dataAval').value=new Date().toISOString().split('T')[0];
+  // Voltar para pgQ seção 1
+  document.getElementById('pgR').classList.remove('active');
+  document.getElementById('pgQ').classList.add('active');
+  document.querySelectorAll('.sw').forEach((el,i)=>el.classList.toggle('hidden',i>0));
+  cS=1;
+  document.querySelectorAll('.sitem').forEach(el=>{el.classList.remove('active','done');if(parseInt(el.dataset.s)===1)el.classList.add('active');});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ——— VER COLABORADOR DA EQUIPE ———
+function verColab(nome){
+  const p=team.find(x=>x.cNome===nome);
+  if(!p)return;
+  cur=p;
+  rDiag(p);rFaz(p);rRot(p);rPDI(p);
+  document.getElementById('pgQ').classList.remove('active');
+  document.getElementById('pgR').classList.add('active');
+  tab(0);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ——— TEAM BAR ———
+function rTeam(){
+  const ch=document.getElementById('tchips');
+  const cn=document.getElementById('tcnt');
+  if(!team.length){ch.innerHTML='<span style="font-size:12px;color:var(--gray-dark)">Nenhum colaborador avaliado ainda</span>';cn.textContent='';return;}
+  ch.innerHTML=team.map(p=>`<span class="tchip ${p.estilo}" onclick="verColab('${p.cNome}')"><span class="tchip-dot"></span>${p.cNome.split(' ')[0]}</span>`).join('');
+  cn.textContent=team.length+'/10';
+}
+
+// ——— PERSISTÊNCIA ———
+function saveSt(){try{localStorage.setItem(SK,JSON.stringify({team,gestorNome:g('gNome'),gestorEmpresa:g('gEmpresa'),gestorCargo:g('gCargo'),gestorEquipe:g('gEquipe')}));}catch(e){}}
+function loadSt(){try{const raw=localStorage.getItem(SK);if(raw){const d=JSON.parse(raw);team=d.team||[];if(d.gestorNome)document.getElementById('gNome').value=d.gestorNome;if(d.gestorEmpresa)document.getElementById('gEmpresa').value=d.gestorEmpresa;if(d.gestorCargo)document.getElementById('gCargo').value=d.gestorCargo;if(d.gestorEquipe)document.getElementById('gEquipe').value=d.gestorEquipe;}}catch(e){team=[];}}
+
+// ——— ABA 01 DIAGNÓSTICO ———
+function rDiag(d){
+  const e=ES[d.estilo];
+  const diff=Math.abs(d.sC-d.sM);
+  const al=document.getElementById('alrt');
+  if(diff>1.2){al.style.display='block';al.textContent=`Atenção: diferença significativa entre Competência (${d.sC.toFixed(1)}) e Comprometimento (${d.sM.toFixed(1)}). Isso pode indicar um desalinhamento entre capacidade técnica e motivação — ponto importante para a conversa de feedback.`;}
+  else al.style.display='none';
+  // Scores
+  const sc=[{l:'Competência',v:d.sC,cls:'c1'},{l:'Comprometimento',v:d.sM,cls:'c2'},{l:'Desempenho',v:d.sD,cls:'c3'},{l:'Resultados',v:d.sR,cls:'c4'}];
+  document.getElementById('sgrid').innerHTML=sc.map(s=>{const n=niv(s.v);return`<div class="sc ${s.cls}"><div class="sc-d">${s.l}</div><div class="sc-v">${s.v.toFixed(1)}</div><div class="sc-s">${s.l==='Competência'?'Conhecimento técnico':s.l==='Comprometimento'?'Motivação e engajamento':s.l==='Desempenho'?'Execução das atividades':'Metas e entregas'}</div><span class="sc-n" style="background:${n.bg};color:${n.c}">${n.l}</span></div>`;}).join('');
+  // Canvas
+  drawQ(d.sC,d.sM,d.cNome,e.cor);
+  // Liderança card
+  document.getElementById('lcrd').innerHTML=`<span class="lstag" style="background:${e.cor}">${e.tag} — ${e.nm}</span><p style="font-size:10px;color:var(--gray-dark);margin-bottom:4px">${e.q}</p><h3>${d.cNome}</h3><p>${e.dc}</p><div style="margin-top:10px"><div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-dark);margin-bottom:7px">Como liderar este colaborador</div>${e.ac.map(a=>`<div class="lai"><span class="lab"></span><span>${a}</span></div>`).join('')}</div>`;
+  // Perfil
+  const bf=[{n:'Extroversão',v:d.ve},{n:'Est. Emocional',v:d.vst},{n:'Agradabilidade',v:d.vag},{n:'Curiosidade',v:d.vcu},{n:'Diligência',v:d.vdi}];
+  document.getElementById('prow').innerHTML=`
+    <div class="pblk">
+      <h5>Big Five — Personalidade</h5>
+      ${bf.map(t=>`<div class="tbr"><span class="tbn">${t.n}</span><div class="tbt"><div class="tbf" style="width:${t.v*10}%"></div></div><span class="tbv">${t.v}</span></div>`).join('')}
+    </div>
+    <div class="pblk">
+      <h5>Temperamento</h5>
+      <div class="tags">${(d.tmp||[]).map(t=>`<span class="tg tp">${LB[t]||t}</span>`).join('')||'<span style="font-size:11px;color:var(--gray-dark)">Não informado</span>'}</div>
+      <h5 style="margin-top:12px">Sabotadores Identificados</h5>
+      <div class="tags">${(d.sab||[]).map(t=>`<span class="tg ts">${LB[t]||t}</span>`).join('')||'<span style="font-size:11px;color:var(--gray-dark)">Não informado</span>'}</div>
+      <h5 style="margin-top:12px">Valores</h5>
+      <div class="tags">${(d.val||[]).map(t=>`<span class="tg tv">${LB[t]||t}</span>`).join('')||'<span style="font-size:11px;color:var(--gray-dark)">Não informado</span>'}</div>
+      <h5 style="margin-top:12px">Estilo de Trabalho</h5>
+      <div class="tags">${(d.est||[]).map(t=>`<span class="tg te">${LB[t]||t}</span>`).join('')||'<span style="font-size:11px;color:var(--gray-dark)">Não informado</span>'}</div>
+    </div>`;
+  // Narrativa
+  document.getElementById('narr').innerHTML=gerarNarr(d,e);
+}
+
+function drawQ(sC,sM,nome,cor){
+  const cv=document.getElementById('qcv');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height,pad=36,iW=W-pad*2,iH=H-pad*2;
+  ctx.clearRect(0,0,W,H);
+  // Quadrantes
+  const qBg=[['#fff9f0','S2 Orientador','#d97706'],['#f0fdf4','S4 Delegador','#1d9e8f'],['#fef2f0','S1 Diretivo','#e05c3a'],['#ecfdf5','S3 Apoiador','#059669']];
+  [[0,0],[1,0],[0,1],[1,1]].forEach(([x,y],i)=>{
+    ctx.fillStyle=qBg[i][0];
+    ctx.fillRect(pad+x*iW/2,pad+y*iH/2,iW/2,iH/2);
+  });
+  // Bordas
+  ctx.strokeStyle='#e2e8f0';ctx.lineWidth=1;
+  ctx.strokeRect(pad,pad,iW,iH);
+  ctx.beginPath();ctx.moveTo(pad+iW/2,pad);ctx.lineTo(pad+iW/2,pad+iH);ctx.moveTo(pad,pad+iH/2);ctx.lineTo(pad+iW,pad+iH/2);ctx.stroke();
+  // Labels quadrante
+  [[pad+iW/4,pad+16,'S2 Orientador','#d97706'],[pad+3*iW/4,pad+16,'S4 Delegador','#1d9e8f'],[pad+iW/4,pad+iH/2+16,'S1 Diretivo','#e05c3a'],[pad+3*iW/4,pad+iH/2+16,'S3 Apoiador','#059669']].forEach(([x,y,t,c])=>{ctx.fillStyle=c;ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.fillText(t,x,y);});
+  // Eixo X
+  ctx.fillStyle='#a0aec0';ctx.font='9px sans-serif';ctx.textAlign='center';
+  [1,2,3,4,5].forEach(v=>ctx.fillText(v,pad+((v-1)/4)*iW,pad+iH+13));
+  // Ponto
+  const px=pad+((sC-1)/4)*iW;
+  const py=pad+((5-sM)/4)*iH;
+  ctx.shadowColor=cor;ctx.shadowBlur=10;
+  ctx.beginPath();ctx.arc(px,py,9,0,Math.PI*2);ctx.fillStyle=cor;ctx.fill();
+  ctx.shadowBlur=0;
+  // Nome
+  ctx.fillStyle='#1a2744';ctx.font='bold 10px sans-serif';ctx.textAlign='center';
+  ctx.fillText(nome.split(' ')[0],px,py>pad+iH-22?py-14:py+20);
+}
+
+function gerarNarr(d,e){
+  const nm=d.cNome.split(' ')[0];
+  const per=d.periodo||'o período avaliado';
+  let t=`<strong>${d.cNome}</strong> — ${d.cCargo||'função avaliada'} — apresenta no período de <strong>${per}</strong> um perfil de <strong>${e.tag} (${e.nm})</strong>, `;
+  if(d.estilo==='s4')t+=`com alta competência técnica e alto comprometimento. É um profissional que merece espaço de autonomia e desafios maiores. `;
+  else if(d.estilo==='s1')t+=`com comprometimento elevado mas competência ainda em desenvolvimento. A disposição está presente — o que falta é a capacidade técnica para executar com mais independência. `;
+  else if(d.estilo==='s3')t+=`com boa competência técnica, mas com sinais de baixo engajamento ou motivação que precisam ser investigados antes de qualquer intervenção técnica. `;
+  else t+=`com duplo desafio: competência técnica e comprometimento precisam ser desenvolvidos em paralelo, com atenção especial ao propósito e ao suporte emocional. `;
+  t+=`A Competência foi avaliada em <strong>${d.sC.toFixed(1)}/5,0</strong> e o Comprometimento em <strong>${d.sM.toFixed(1)}/5,0</strong>. `;
+  t+=`O Desempenho nas Atividades registrou <strong>${d.sD.toFixed(1)}/5,0</strong> e os Resultados <strong>${d.sR.toFixed(1)}/5,0</strong>. `;
+  if(d.tmp&&d.tmp.length)t+=`Do ponto de vista comportamental, o perfil dominante é <strong>${d.tmp.map(x=>LB[x]||x).join(' e ')}</strong>. `;
+  if(d.sab&&d.sab.length)t+=`Os sabotadores mais presentes — <strong>${d.sab.map(x=>LB[x]||x).join(', ')}</strong> — são pontos de atenção para a conversa de feedback. `;
+  t+=`O estilo de liderança recomendado é <strong>${e.tag} — ${e.nm}</strong>: ${e.dc.split('.')[0]}.`;
+  return t;
+}
+
+// ——— ABA 02 FAZ HOJE ———
+function rFaz(d){
+  const dims=[{k:'competencia',v:d.sC},{k:'comprometimento',v:d.sM},{k:'desempenho',v:d.sD},{k:'resultados',v:d.sR}].sort((a,b)=>a.v-b.v);
+  document.getElementById('ftb').innerHTML=dims.map(dim=>{const r=RC[dim.k];return`<tr><td><textarea rows="3">${r.fh}</textarea></td><td><textarea rows="3">${r.fd}</textarea></td><td><textarea rows="3">${r.imp}</textarea></td></tr>`;}).join('');
+}
+
+// ——— ABA 03 EQUIPE ———
+function rEq(){
+  const Q=[{k:'s1',l:'S1 — Diretivo',cor:'#e05c3a',sub:'Baixa Comp. · Alto Comprom.'},{k:'s4',l:'S4 — Delegador',cor:'#1d9e8f',sub:'Alta Comp. · Alto Comprom.'},{k:'s2',l:'S2 — Orientador',cor:'#d97706',sub:'Baixa Comp. · Baixo Comprom.'},{k:'s3',l:'S3 — Apoiador',cor:'#059669',sub:'Alta Comp. · Baixo Comprom.'}];
+  document.getElementById('emat').innerHTML=Q.map(q=>{const ps=team.filter(p=>p.estilo===q.k);return`<div class="qcell"><div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><span class="qst" style="background:${q.cor}">${q.l.split('—')[0].trim()}</span><span style="font-size:10px;font-weight:700;color:#4a5568">${q.l.split('—')[1]?.trim()}</span></div><div style="font-size:10px;color:var(--gray-dark);margin-bottom:7px">${q.sub}</div><div style="display:flex;flex-wrap:wrap;gap:5px">${ps.length?ps.map(p=>`<span class="qpc" style="background:${q.cor}22;color:${q.cor}">${p.cNome.split(' ')[0]}</span>`).join(''):'<span style="font-size:11px;color:var(--gray-dark)">—</span>'}</div></div>`;}).join('');
+  document.getElementById('etb').innerHTML=team.length?team.map(p=>{const e=ES[p.estilo];return`<tr><td><strong>${p.cNome}</strong></td><td>${p.cCargo||'—'}</td><td style="text-align:center;font-weight:700;color:var(--c1)">${p.sC?.toFixed(1)||'—'}</td><td style="text-align:center;font-weight:700;color:var(--c2)">${p.sM?.toFixed(1)||'—'}</td><td style="text-align:center;font-weight:700;color:var(--c3)">${p.sD?.toFixed(1)||'—'}</td><td><span style="display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:${e.cor}22;color:${e.cor}">${e.tag} — ${e.nm}</span></td></tr>`;}).join(''):`<tr><td colspan="6" style="text-align:center;color:var(--gray-dark);padding:18px">Nenhum colaborador avaliado ainda.</td></tr>`;
+}
+
+// ——— ABA 04 ROTEIRO ———
+function rRot(d){
+  const nm=d.cNome.split(' ')[0];
+  const pF=d.realiz||`consistência nas atividades e disposição para aprender`;
+  const pD=d.dificul||`desenvolvimento das competências — área prioritária de melhora identificada nesta avaliação`;
+  const obj=`Alinhar expectativas, reconhecer o desempenho do período e combinar os próximos passos de desenvolvimento de ${nm}.`;
+  const encA=`Resumir os combinados, confirmar o PDI e reforçar a confiança no potencial de desenvolvimento de ${nm}.`;
+  const encB=`Resumir as mudanças esperadas, definir o prazo de acompanhamento e reforçar o apoio do gestor no processo.`;
+  const bldFlow=(steps)=>steps.map((s,i)=>`${i>0?'<div class="fcon"></div>':''}<div class="fstep"><div class="fsn ${s.tp}">${i+1}</div><div class="fsb"><h5>${s.lb}</h5><textarea rows="3">${s.val}</textarea></div></div>`).join('');
+  document.getElementById('rfA').innerHTML=bldFlow([
+    {tp:'al',lb:'1. Alinhamento do Objetivo',val:obj},
+    {tp:'el',lb:'2. Elogio — O que está indo bem',val:`No período, ${nm} se destacou por: ${pF}.`},
+    {tp:'ml',lb:'3. Melhoria — O que precisa mudar',val:`Um ponto importante de desenvolvimento é: ${pD}.`},
+    {tp:'el',lb:'4. Elogio — Reforço positivo',val:`${nm} tem potencial claro para superar este desafio. O apoio e os recursos necessários estarão disponíveis.`},
+    {tp:'ec',lb:'5. Encerramento e Combinados',val:encA},
+  ]);
+  document.getElementById('rfB').innerHTML=bldFlow([
+    {tp:'al',lb:'1. Alinhamento do Objetivo',val:obj},
+    {tp:'ml',lb:'2. Melhoria — Foco na correção',val:`É necessário ajustar com urgência: ${pD}. Isso impacta diretamente os resultados da equipe.`},
+    {tp:'el',lb:'3. Elogio — Reforço e apoio',val:`Apesar do desafio, ${nm} tem demonstrado ${pF}. Com foco e disciplina, a evolução será rápida.`},
+    {tp:'ec',lb:'4. Encerramento e Combinados',val:encB},
+  ]);
+}
+
+// ——— ABA 05 PDI ———
+function rPDI(d){
+  const dims=[{k:'competencia',v:d.sC,l:'Competência Técnica'},{k:'comprometimento',v:d.sM,l:'Comprometimento e Motivação'},{k:'desempenho',v:d.sD,l:'Desempenho nas Atividades'},{k:'resultados',v:d.sR,l:'Conversão em Resultados'}].sort((a,b)=>a.v-b.v).slice(0,3);
+  document.getElementById('pdiC').innerHTML=dims.map((dim,i)=>{const r=RC[dim.k];return`<div class="pcb"><div class="pch"><div class="pcn">${i+1}</div><div class="pcin"><input type="text" value="${r.comp}"></div></div><div class="pfg"><div class="pf"><label>O que desenvolver</label><textarea rows="3">${r.acao}</textarea></div><div class="pf"><label>Como aferir o desenvolvimento</label><textarea rows="3">${r.afer}</textarea></div></div><div style="margin-top:10px"><label style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-dark);display:block;margin-bottom:5px">Prazo</label><div class="pr">${['30 dias','45 dias','60 dias','90 dias'].map(p=>`<div class="po ${r.prazo===p?'sel':''}" onclick="selP(this)">${p}</div>`).join('')}</div></div></div>`;}).join('');
+  const e=ES[d.estilo];
+  document.getElementById('gEst').value=`Adotar o estilo ${e.tag} — ${e.nm}: ${e.dc.substring(0,130)}...`;
+  document.getElementById('gReu').value=d.estilo==='s4'?'Reuniões quinzenais de 30 minutos, focadas em alinhamento estratégico e novos desafios.':'Reuniões semanais de 30 minutos para acompanhar atividades, identificar dificuldades e dar feedback.';
+  document.getElementById('gApo').value=RC[dims[0].k]?.acao||'';
+  document.getElementById('gCob').value=d.estilo==='s4'?'Delegação com autonomia real. Revisão de resultados a cada quinzena com foco no que foi aprendido e nos próximos desafios.':'Acompanhamento semanal dos indicadores de atividade e resultado. Definição clara das expectativas a cada ciclo.';
+  document.getElementById('gReav').value=`Reavaliar em ${dims[0].v<2?'30':dims[0].v<3?'45':'60'} dias com esta ferramenta. Critérios de evolução: melhora nas dimensões de ${dims.map(x=>x.l).join(', ')}.`;
+}
+
+function selP(el){el.parentElement.querySelectorAll('.po').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');}
+
+// ——— EXPORTAÇÃO ———
+function abrirW(conteudo,titulo){
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${titulo}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @media print{@page{margin:0;size:A4 portrait;}.no-print{display:none!important;}}
+    body{font-family:'Source Sans 3',sans-serif;color:#1a2744;background:white;margin:0;}
+    .pg-wrap{width:210mm;min-height:297mm;padding:18mm 18mm 22mm;box-sizing:border-box;margin:0 auto;}
+    .banner{position:fixed;top:0;left:0;right:0;background:#1a2744;color:white;font-size:11px;padding:9px 20px;text-align:center;z-index:9999;}
+    .ftr{position:running(footer);font-size:9px;color:#718096;display:flex;justify-content:space-between;}
+    h2{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:#1a2744;margin-bottom:4px;}
+    .sdlbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#1d9e8f;margin-bottom:7px;display:block;}
+    table{width:100%;border-collapse:collapse;}
+    th{background:#1a2744;color:white;padding:7px 11px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-align:left;}
+    td{padding:8px 11px;border-bottom:1px solid #e2e8f0;font-size:12px;vertical-align:top;}
+    .tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;color:white;}
+  </style></head><body>
+  <div class="banner no-print">Para salvar como PDF: pressione Ctrl+P → Destino: Salvar como PDF → Margens: Nenhuma → Ativar Gráficos de fundo</div>
+  <div class="pg-wrap">${conteudo}</div>
+  </body></html>`);
+  w.document.close();
+}
+
+function metaHdr(d){return`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:12px 16px;background:#1a2744;color:white;margin:-18mm -18mm 16px -18mm"><div><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:3px">Recriar a Gestão Comercial · Ferramenta 3.1</div><div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600">${d.cNome||'Colaborador'}</div><div style="font-size:10px;color:rgba(255,255,255,.65)">${d.cCargo||''} &nbsp;|&nbsp; ${d.periodo||''} &nbsp;|&nbsp; ${d.dataAval||''}</div></div><div style="text-align:right;font-size:10px;color:rgba(255,255,255,.55)">Gestor: ${d.gNome||''}<br>${d.gEmpresa||''}</div></div>`;}
+
+function exp(tp){
+  if(!cur.cNome){alert('Gere os resultados de um colaborador primeiro.');return;}
+  let html=metaHdr(cur);
+  if(tp==='diag')html+=expDiag(cur);
+  else if(tp==='rot')html+=expRot(cur);
+  else if(tp==='pdi')html+=expPDI(cur);
+  else if(tp==='eq')html+=expEq();
+  abrirW(html,`3.1 — ${tp} — ${cur.cNome}`);
+}
+
+function expTudo(){
+  if(!cur.cNome){alert('Gere os resultados de um colaborador primeiro.');return;}
+  const html=metaHdr(cur)+expDiag(cur)+'<div style="page-break-before:always"></div>'+metaHdr(cur)+expFaz(cur)+'<div style="page-break-before:always"></div>'+metaHdr(cur)+expRot(cur)+'<div style="page-break-before:always"></div>'+metaHdr(cur)+expPDI(cur);
+  abrirW(html,`3.1 — Completo — ${cur.cNome}`);
+}
+
+function expDiag(d){
+  const e=ES[d.estilo];
+  const sc=[{l:'Competência',v:d.sC,c:'#7c3aed'},{l:'Comprometimento',v:d.sM,c:'#059669'},{l:'Desempenho',v:d.sD,c:'#2563eb'},{l:'Resultados',v:d.sR,c:'#d97706'}];
+  const bf=[{n:'Extroversão',v:d.ve},{n:'Est. Emocional',v:d.vst},{n:'Agradabilidade',v:d.vag},{n:'Curiosidade',v:d.vcu},{n:'Diligência',v:d.vdi}];
+  return`<span class="sdlbl">Diagnóstico</span><h2>Avaliação de ${d.cNome}</h2>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:14px 0">
+    ${sc.map(s=>{const n=niv(s.v);return`<div style="border:1px solid #e2e8f0;border-top:3px solid ${s.c};border-radius:4px;padding:11px;text-align:center"><div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#718096;margin-bottom:3px">${s.l}</div><div style="font-size:20px;font-weight:700;color:${s.c}">${s.v.toFixed(1)}</div><div style="font-size:10px;color:${n.c};font-weight:600;margin-top:3px">${n.l}</div></div>`;}).join('')}
+  </div>
+  <div style="border:2px solid ${e.cor};border-radius:4px;padding:13px;margin:12px 0">
+    <span class="tag" style="background:${e.cor};margin-bottom:7px">${e.tag} — ${e.nm}</span>
+    <div style="font-size:12px;color:#4a5568;margin:7px 0">${e.dc}</div>
+    <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#718096;margin-bottom:5px">Como liderar este colaborador</div>
+    ${e.ac.map(a=>`<div style="display:flex;gap:7px;margin-bottom:4px;font-size:11px;color:#4a5568"><span style="color:${e.cor};font-weight:700">—</span><span>${a}</span></div>`).join('')}
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:12px">
+    <div style="background:#f4f6f9;border-radius:4px;padding:11px">
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#718096;margin-bottom:7px">Big Five</div>
+      ${bf.map(t=>`<div style="display:flex;align-items:center;gap:7px;margin-bottom:5px"><span style="font-size:11px;width:95px;flex-shrink:0">${t.n}</span><div style="flex:1;height:4px;background:#e2e8f0;border-radius:2px"><div style="height:100%;width:${t.v*10}%;background:#1d9e8f;border-radius:2px"></div></div><span style="font-size:11px;font-weight:700;color:#1d9e8f;width:16px">${t.v}</span></div>`).join('')}
+    </div>
+    <div style="background:#f4f6f9;border-radius:4px;padding:11px">
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#718096;margin-bottom:5px">Temperamento</div>
+      <div style="margin-bottom:9px">${(d.tmp||[]).map(t=>`<span style="display:inline-block;background:#f3e8ff;color:#7c3aed;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin:2px">${LB[t]||t}</span>`).join('')||'—'}</div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#718096;margin-bottom:5px">Sabotadores</div>
+      <div>${(d.sab||[]).map(t=>`<span style="display:inline-block;background:#fdf1ee;color:#e05c3a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin:2px">${LB[t]||t}</span>`).join('')||'—'}</div>
+    </div>
+  </div>
+  <div style="background:#1a2744;color:rgba(255,255,255,.9);border-radius:4px;padding:15px 18px;font-size:12px;line-height:1.7;margin-top:12px">${gerarNarr(d,e)}</div>`;
+}
+
+function expFaz(d){
+  const dims=[{k:'competencia',v:d.sC},{k:'comprometimento',v:d.sM},{k:'desempenho',v:d.sD},{k:'resultados',v:d.sR}].sort((a,b)=>a.v-b.v);
+  // Capturar valores editados nas textareas da aba
+  const rows=document.querySelectorAll('#ftb tr');
+  return`<span class="sdlbl">Faz Hoje · Fazer Diferente</span><h2>Análise de Comportamento</h2>
+  <table style="margin-top:14px">
+    <thead><tr><th style="width:30%">Faz Hoje</th><th style="width:35%">Fazer Diferente</th><th style="width:35%">Impacto Esperado</th></tr></thead>
+    <tbody>${dims.map((dim,i)=>{const tds=rows[i]?.querySelectorAll('textarea');return`<tr><td>${tds?.[0]?.value||RC[dim.k].fh}</td><td>${tds?.[1]?.value||RC[dim.k].fd}</td><td>${tds?.[2]?.value||RC[dim.k].imp}</td></tr>`;}).join('')}</tbody>
+  </table>`;
+}
+
+function expRot(d){
+  const isA=document.getElementById('ro0').classList.contains('sel');
+  const fl=document.getElementById(isA?'rfA':'rfB');
+  const steps=fl.querySelectorAll('.fstep');
+  const tit=isA?'Roteiro A — Desenvolvimento':'Roteiro B — Diretivo';
+  return`<span class="sdlbl">Roteiro de Feedback</span><h2>${tit}</h2><div style="font-size:12px;color:#718096;margin-bottom:16px">Conversa 1a1 com ${d.cNome}</div>
+  ${Array.from(steps).map((st,i)=>{
+    const tit2=st.querySelector('h5')?.textContent||'';
+    const val=st.querySelector('textarea')?.value||'';
+    const n=st.querySelector('.fsn');
+    const cor=n?.classList.contains('el')?'#1d9e8f':n?.classList.contains('ml')?'#e05c3a':'#1a2744';
+    return`<div style="display:flex;gap:12px;margin-bottom:12px"><div style="width:26px;height:26px;border-radius:50%;background:${cor};color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">${i+1}</div><div style="flex:1;border:1px solid #e2e8f0;border-radius:4px;padding:10px"><div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#718096;margin-bottom:5px">${tit2}</div><div style="font-size:12px;color:#1a2744;line-height:1.6">${val}</div></div></div>`;
+  }).join('')}`;
+}
+
+function expPDI(d){
+  const comps=document.querySelectorAll('#pdiC .pcb');
+  const gEst=document.getElementById('gEst')?.value||'';
+  const gReu=document.getElementById('gReu')?.value||'';
+  const gApo=document.getElementById('gApo')?.value||'';
+  const gCob=document.getElementById('gCob')?.value||'';
+  const gReav=document.getElementById('gReav')?.value||'';
+  let html=`<span class="sdlbl">PDI · Plano de Ação</span><h2>Plano de Desenvolvimento Individual</h2><div style="font-size:12px;color:#718096;margin-bottom:14px">${d.cNome} · ${d.periodo||''}</div>
+  <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#1d9e8f;border-bottom:2px solid #1d9e8f;padding-bottom:5px;margin-bottom:12px">Colaborador</div>`;
+  comps.forEach((bl,i)=>{
+    const nm=bl.querySelector('input')?.value||'';
+    const tas=bl.querySelectorAll('textarea');
+    const acao=tas[0]?.value||'';
+    const afer=tas[1]?.value||'';
+    const prazo=bl.querySelector('.po.sel')?.textContent||'';
+    html+=`<div style="border:1px solid #e2e8f0;border-radius:4px;padding:12px;margin-bottom:10px"><div style="display:flex;gap:9px;align-items:center;margin-bottom:9px"><div style="width:22px;height:22px;border-radius:50%;background:#1a2744;color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div><strong style="font-size:13px">${nm}</strong>${prazo?`<span style="margin-left:auto;background:#e8f7f5;color:#1d9e8f;font-size:9px;font-weight:700;padding:2px 9px;border-radius:20px">${prazo}</span>`:''}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:9px"><div><div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#718096;margin-bottom:3px">O que desenvolver</div><div style="font-size:12px;color:#1a2744;line-height:1.5">${acao}</div></div><div><div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#718096;margin-bottom:3px">Como aferir</div><div style="font-size:12px;color:#1a2744;line-height:1.5">${afer}</div></div></div></div>`;
+  });
+  html+=`<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#e05c3a;border-bottom:2px solid #e05c3a;padding-bottom:5px;margin:18px 0 12px">Plano de Ação do Gestor</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px">
+    ${[{l:'Estilo de Liderança',v:gEst},{l:'Reuniões 1a1',v:gReu},{l:'Ações de Apoio',v:gApo},{l:'Direcionamento e Cobrança',v:gCob}].map(f=>`<div style="border:1px solid #e2e8f0;border-radius:4px;padding:9px"><div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#718096;margin-bottom:3px">${f.l}</div><div style="font-size:12px;color:#1a2744;line-height:1.5">${f.v}</div></div>`).join('')}
+  </div>
+  <div style="border:1px solid #e2e8f0;border-radius:4px;padding:9px"><div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#718096;margin-bottom:3px">Como e Quando Reavaliar</div><div style="font-size:12px;color:#1a2744;line-height:1.5">${gReav}</div></div>`;
+  return html;
+}
+
+function expEq(){
+  return`<span class="sdlbl">Visão da Equipe</span><h2>Matriz de Liderança Situacional</h2>
+  <table style="margin-top:14px"><thead><tr><th>Colaborador</th><th>Cargo</th><th>Competência</th><th>Compromisso</th><th>Desempenho</th><th>Estilo Indicado</th></tr></thead>
+  <tbody>${team.length?team.map(p=>{const e=ES[p.estilo];return`<tr><td><strong>${p.cNome}</strong></td><td>${p.cCargo||'—'}</td><td style="text-align:center;font-weight:700;color:#7c3aed">${p.sC?.toFixed(1)||'—'}</td><td style="text-align:center;font-weight:700;color:#059669">${p.sM?.toFixed(1)||'—'}</td><td style="text-align:center;font-weight:700;color:#2563eb">${p.sD?.toFixed(1)||'—'}</td><td><span class="tag" style="background:${e.cor}">${e.tag} — ${e.nm}</span></td></tr>`;}).join(''):'<tr><td colspan="6" style="text-align:center;color:#718096;padding:16px">Nenhum colaborador avaliado.</td></tr>'}</tbody></table>`;
+}
+</script>
+</body>
+</html>

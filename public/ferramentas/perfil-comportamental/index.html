@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.2 Perfil Comportamental na Função — Recriar a Gestão Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-mid: #253564;
+  --teal: #1d9e8f;
+  --teal-light: #e8f7f5;
+  --coral: #e05c3a;
+  --coral-light: #fdf1ee;
+  --slate: #4a5568;
+  --gray-light: #f4f6f9;
+  --gray-mid: #e2e8f0;
+  --gray-dark: #718096;
+  --COM-color: #2b7de9;
+  --COM-light: #ebf3fd;
+  --EXE-color: #1d9e8f;
+  --EXE-light: #e8f7f5;
+  --ORI-color: #e05c3a;
+  --ORI-light: #fdf1ee;
+  --RES-color: #9b59b6;
+  --RES-light: #f5eefb;
+  --LID-color: #e6a817;
+  --LID-light: #fef9eb;
+  --REL-color: #27ae60;
+  --REL-light: #eafaf1;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--gray-light);
+  color: var(--navy);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ===== LAYOUT ===== */
+.page { display: none; }
+.page.active { display: block; }
+.container { max-width: 960px; margin: 0 auto; padding: 0 20px 60px; }
+
+/* ===== HEADER GLOBAL ===== */
+.tool-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: white;
+  padding: 32px 0 28px;
+  margin-bottom: 32px;
+}
+.tool-header .container { padding-bottom: 0; }
+.header-inner { display: flex; align-items: flex-start; gap: 20px; }
+.badge-tool {
+  background: var(--teal);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-top: 4px;
+}
+.header-text h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.header-text p { font-size: 0.95rem; opacity: 0.75; font-weight: 300; }
+
+/* ===== CARDS ===== */
+.card {
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(26,39,68,0.08);
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gray-mid);
+}
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+  margin-bottom: 8px;
+}
+
+/* ===== PAGE 1 — APRESENTAÇÃO ===== */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.info-box {
+  background: var(--gray-light);
+  border-radius: 6px;
+  padding: 20px;
+}
+.info-box h3 { font-size: 0.9rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.info-box p { font-size: 0.88rem; color: var(--slate); line-height: 1.6; }
+
+.scale-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+.scale-col { text-align: center; }
+.scale-num {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.scale-label { font-size: 0.78rem; color: var(--slate); display: block; margin-bottom: 6px; }
+.scale-bar { height: 4px; border-radius: 2px; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-dark); }
+.form-group input, .form-group select {
+  border: 1.5px solid var(--gray-mid);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.92rem;
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--navy);
+  background: white;
+  transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: var(--teal);
+}
+
+.mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+.mode-card {
+  border: 2px solid var(--gray-mid);
+  border-radius: 6px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.mode-card:hover { border-color: var(--teal); background: var(--teal-light); }
+.mode-card.selected { border-color: var(--teal); background: var(--teal-light); }
+.mode-card h4 { font-size: 0.9rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.mode-card p { font-size: 0.8rem; color: var(--slate); }
+.mode-icon { font-size: 1.4rem; margin-bottom: 8px; }
+
+.funcao-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 8px; }
+.funcao-card {
+  border: 2px solid var(--gray-mid);
+  border-radius: 6px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.funcao-card:hover { border-color: var(--navy-mid); background: var(--gray-light); }
+.funcao-card.selected { border-color: var(--navy); background: #edf0f8; }
+.funcao-card .funcao-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.funcao-card .funcao-icon span { color: white; font-size: 0.8rem; font-weight: 700; }
+.funcao-card h4 { font-size: 0.88rem; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+.funcao-card p { font-size: 0.78rem; color: var(--slate); }
+
+.note-coral {
+  background: var(--coral-light);
+  border-left: 3px solid var(--coral);
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 0.86rem;
+  color: var(--slate);
+  margin-top: 16px;
+}
+
+/* ===== BUTTONS ===== */
+.btn-row { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+.btn {
+  padding: 12px 28px;
+  border-radius: 6px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.btn-primary { background: var(--navy); color: white; }
+.btn-primary:hover { background: var(--navy-mid); }
+.btn-primary:disabled { background: var(--gray-dark); cursor: not-allowed; }
+.btn-secondary { background: white; color: var(--navy); border: 2px solid var(--navy); }
+.btn-secondary:hover { background: var(--gray-light); }
+.btn-teal { background: var(--teal); color: white; }
+.btn-teal:hover { background: #178a7d; }
+
+/* ===== PAGE 2 — QUESTIONÁRIO ===== */
+.progress-bar-wrap {
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(26,39,68,0.08);
+  padding: 18px 24px;
+  margin-bottom: 20px;
+}
+.progress-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.progress-section-name { font-weight: 700; font-size: 0.95rem; color: var(--navy); }
+.progress-count { font-size: 0.82rem; color: var(--gray-dark); }
+.progress-track { height: 6px; background: var(--gray-mid); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; background: var(--teal); transition: width 0.4s ease; }
+.progress-steps { display: flex; gap: 6px; margin-top: 12px; justify-content: center; }
+.progress-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gray-mid);
+  transition: background 0.3s;
+}
+.progress-dot.done { background: var(--teal); }
+.progress-dot.active { background: var(--navy); }
+
+.dim-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.question-item {
+  background: var(--gray-light);
+  border-radius: 6px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+.question-item:last-child { margin-bottom: 0; }
+.q-text { font-size: 0.93rem; color: var(--navy); font-weight: 400; margin-bottom: 14px; line-height: 1.5; }
+.scale-options { display: flex; gap: 8px; }
+.scale-opt {
+  flex: 1;
+  text-align: center;
+  cursor: pointer;
+}
+.scale-opt input { display: none; }
+.scale-opt label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border: 2px solid var(--gray-mid);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+}
+.scale-opt input:checked + label {
+  border-color: var(--teal);
+  background: var(--teal-light);
+}
+.scale-opt label:hover { border-color: var(--navy-mid); }
+.scale-num-opt {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+.scale-text-opt { font-size: 0.68rem; color: var(--slate); line-height: 1.2; text-align: center; }
+.q-num {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 22px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+.q-header { display: flex; align-items: flex-start; }
+
+/* ===== MODO DUPLO — avaliador/avaliado ===== */
+.dual-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.dual-col-header {
+  text-align: center;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.col-gestor { background: #edf0f8; color: var(--navy); }
+.col-auto { background: var(--teal-light); color: #0d7a6e; }
+
+/* ===== PAGE 3 — RESULTADOS ===== */
+.result-tabs {
+  background: var(--navy);
+  border-radius: 6px 6px 0 0;
+  display: flex;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+.result-tab {
+  flex: 1;
+  padding: 14px 8px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+.result-tab.active { background: rgba(255,255,255,0.12); color: white; }
+.result-tab:hover:not(.active) { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.75); }
+.tab-num { display: block; font-size: 1.1rem; font-weight: 700; margin-bottom: 2px; }
+.tab-sub { display: block; font-size: 0.68rem; opacity: 0.75; }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.result-panel {
+  background: white;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 2px 12px rgba(26,39,68,0.08);
+  padding: 28px;
+  margin-bottom: 20px;
+}
+
+/* Hero scores */
+.hero-scores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+.hero-score-card {
+  background: var(--gray-light);
+  border-radius: 6px;
+  padding: 14px 12px;
+  text-align: center;
+}
+.hs-dim { font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+.hs-val { font-size: 1.8rem; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+.hs-bar-track { height: 4px; background: var(--gray-mid); border-radius: 2px; overflow: hidden; margin-bottom: 4px; }
+.hs-bar-fill { height: 100%; border-radius: 2px; }
+.hs-nivel { font-size: 0.72rem; color: var(--gray-dark); }
+
+/* Radar */
+.chart-wrap { display: flex; justify-content: center; margin: 24px 0; }
+canvas#radarChart { max-width: 100%; }
+
+/* Dim detail cards */
+.dim-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+.dim-card {
+  border: 1px solid var(--gray-mid);
+  border-radius: 6px;
+  padding: 16px;
+  border-left-width: 4px;
+}
+.dim-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.dim-card-name { font-size: 0.88rem; font-weight: 700; color: var(--navy); }
+.dim-card-val { font-size: 1rem; font-weight: 700; }
+.dim-card-bar-track { height: 6px; background: var(--gray-mid); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+.dim-card-bar-fill { height: 100%; border-radius: 3px; }
+.dim-card-nivel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  display: inline-block;
+}
+.nivel-excelente { background: #eafaf1; color: #1e8449; }
+.nivel-bom { background: var(--teal-light); color: #0d7a6e; }
+.nivel-regular { background: #fef9eb; color: #b7770d; }
+.nivel-atencao { background: var(--coral-light); color: var(--coral); }
+
+/* Gap comparação */
+.gap-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gray-mid);
+  font-size: 0.85rem;
+}
+.gap-row:last-child { border-bottom: none; }
+.gap-dim-name { flex: 1; font-weight: 600; }
+.gap-actual { width: 40px; text-align: center; font-weight: 700; }
+.gap-vs { color: var(--gray-dark); font-size: 0.78rem; }
+.gap-ideal { width: 40px; text-align: center; font-weight: 700; color: var(--gray-dark); }
+.gap-badge {
+  width: 60px;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.gap-ok { background: var(--teal-light); color: #0d7a6e; }
+.gap-warn { background: #fef9eb; color: #b7770d; }
+.gap-alert { background: var(--coral-light); color: var(--coral); }
+
+/* Perfil interpretado */
+.perfil-box {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: white;
+  border-radius: 6px;
+  padding: 24px;
+  margin: 20px 0;
+}
+.perfil-box-name { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+.perfil-box-desc { font-size: 0.9rem; opacity: 0.85; line-height: 1.7; }
+
+.narrative-box {
+  background: var(--gray-light);
+  border-radius: 6px;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: var(--slate);
+  line-height: 1.8;
+}
+
+.alert-coral {
+  background: var(--coral-light);
+  border-left: 3px solid var(--coral);
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 0.86rem;
+  color: var(--coral);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* Aba 02 — Faz Hoje */
+.table-faz-hoje { width: 100%; border-collapse: collapse; }
+.table-faz-hoje th {
+  background: var(--navy);
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  text-align: left;
+}
+.table-faz-hoje td {
+  padding: 10px 12px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--gray-mid);
+}
+.table-faz-hoje tr:last-child td { border-bottom: none; }
+.table-faz-hoje tr:nth-child(even) td { background: var(--gray-light); }
+.table-faz-hoje textarea {
+  width: 100%;
+  border: 1.5px solid var(--gray-mid);
+  border-radius: 4px;
+  padding: 8px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.84rem;
+  color: var(--navy);
+  resize: vertical;
+  min-height: 70px;
+  background: white;
+}
+.table-faz-hoje textarea:focus { outline: none; border-color: var(--teal); }
+
+/* Aba 03 — PDI */
+.pdi-meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.pdi-meta-item { display: flex; flex-direction: column; gap: 4px; }
+.pdi-meta-item label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-dark); }
+.pdi-meta-item input {
+  border: 1.5px solid var(--gray-mid);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.88rem;
+  color: var(--navy);
+}
+.pdi-meta-item input:focus { outline: none; border-color: var(--teal); }
+
+.pdi-comp-card {
+  border: 1.5px solid var(--gray-mid);
+  border-radius: 6px;
+  padding: 18px;
+  margin-bottom: 14px;
+  border-left-width: 4px;
+}
+.pdi-comp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.pdi-comp-name { font-weight: 700; font-size: 0.95rem; color: var(--navy); }
+.pdi-comp-body { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pdi-field { display: flex; flex-direction: column; gap: 4px; }
+.pdi-field.full { grid-column: 1 / -1; }
+.pdi-field label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray-dark); }
+.pdi-field textarea {
+  border: 1.5px solid var(--gray-mid);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.85rem;
+  color: var(--navy);
+  resize: vertical;
+  min-height: 60px;
+}
+.pdi-field textarea:focus { outline: none; border-color: var(--teal); }
+
+.scale-agora-alvo { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.scale-agora-alvo span { font-size: 0.78rem; color: var(--gray-dark); }
+.scale-pip {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--gray-mid);
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.scale-pip.agora { background: var(--navy); border-color: var(--navy); }
+.scale-pip.alvo { background: var(--teal); border-color: var(--teal); }
+.scale-pip.agora-alvo {
+  background: linear-gradient(135deg, var(--navy) 50%, var(--teal) 50%);
+  border-color: var(--teal);
+}
+
+/* Aba 04 — PDI expandido */
+.pdi-obj-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+
+/* Exportação */
+.export-panel {
+  background: var(--navy);
+  border-radius: 6px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.export-panel p { color: rgba(255,255,255,0.8); font-size: 0.88rem; }
+.export-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-export {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid rgba(255,255,255,0.4);
+  background: transparent;
+  color: white;
+  font-family: 'Source Sans 3', sans-serif;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+.btn-export:hover { background: rgba(255,255,255,0.12); border-color: white; }
+.btn-export.primary-exp { background: var(--teal); border-color: var(--teal); }
+
+/* Footer */
+.tool-footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 0.8rem;
+  color: var(--gray-dark);
+  border-top: 1px solid var(--gray-mid);
+  margin-top: 20px;
+}
+
+/* Responsivo */
+@media (max-width: 640px) {
+  .info-grid, .form-grid, .mode-grid, .funcao-grid,
+  .hero-scores, .dim-cards, .dual-columns,
+  .pdi-comp-body, .pdi-meta-grid { grid-template-columns: 1fr; }
+  .scale-row { grid-template-columns: repeat(5,1fr); gap: 4px; }
+  .result-tab { font-size: 0.68rem; padding: 10px 4px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== PAGE 1: APRESENTAÇÃO ==================== -->
+<div id="page1" class="page active">
+  <div class="tool-header">
+    <div class="container">
+      <div class="header-inner">
+        <div class="badge-tool">3.2</div>
+        <div class="header-text">
+          <h1>Perfil Comportamental na Função</h1>
+          <p>Avaliação de competências comportamentais e gap em relação ao perfil ideal da função</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="card">
+      <div class="card-title">Sobre esta ferramenta</div>
+      <div class="info-grid">
+        <div class="info-box">
+          <h3>Para que serve</h3>
+          <p>Mapeia o perfil comportamental de um profissional comercial em seis dimensões e compara com o benchmark esperado para a sua função. Identifica gaps, pontos fortes e prioridades de desenvolvimento.</p>
+        </div>
+        <div class="info-box">
+          <h3>Como funciona</h3>
+          <p>O gestor avalia o profissional — ou o profissional se autoavalia — em 30 questões organizadas em 6 dimensões. O modo duplo permite as duas perspectivas e gera uma comparação entre gestor e avaliado.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Escala de avaliação</div>
+      <div class="scale-row">
+        <div class="scale-col">
+          <span class="scale-num" style="color:var(--coral)">1</span>
+          <span class="scale-label">Nunca faz</span>
+          <div class="scale-bar" style="background:var(--coral)"></div>
+        </div>
+        <div class="scale-col">
+          <span class="scale-num" style="color:#e88a20">2</span>
+          <span class="scale-label">Raramente</span>
+          <div class="scale-bar" style="background:#e88a20"></div>
+        </div>
+        <div class="scale-col">
+          <span class="scale-num" style="color:var(--LID-color)">3</span>
+          <span class="scale-label">Às vezes</span>
+          <div class="scale-bar" style="background:var(--LID-color)"></div>
+        </div>
+        <div class="scale-col">
+          <span class="scale-num" style="color:var(--EXE-color)">4</span>
+          <span class="scale-label">Frequentemente</span>
+          <div class="scale-bar" style="background:var(--EXE-color)"></div>
+        </div>
+        <div class="scale-col">
+          <span class="scale-num" style="color:#1e8449">5</span>
+          <span class="scale-label">Sempre faz</span>
+          <div class="scale-bar" style="background:#1e8449"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Identificação</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nome do profissional avaliado</label>
+          <input type="text" id="f-nome" placeholder="Nome completo">
+        </div>
+        <div class="form-group">
+          <label>Cargo atual</label>
+          <input type="text" id="f-cargo" placeholder="Ex: Vendedor Externo, Key Account...">
+        </div>
+        <div class="form-group">
+          <label>Empresa</label>
+          <input type="text" id="f-empresa" placeholder="Nome da empresa">
+        </div>
+        <div class="form-group">
+          <label>Tempo na função</label>
+          <select id="f-tempo">
+            <option value="">Selecione</option>
+            <option>Menos de 6 meses</option>
+            <option>6 meses a 1 ano</option>
+            <option>1 a 3 anos</option>
+            <option>3 a 5 anos</option>
+            <option>Mais de 5 anos</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nome do gestor / avaliador</label>
+          <input type="text" id="f-gestor" placeholder="Nome do gestor (se aplicável)">
+        </div>
+        <div class="form-group">
+          <label>Período de referência</label>
+          <input type="text" id="f-periodo" placeholder="Ex: T2 2025 / últimos 90 dias">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Modo de avaliação</div>
+      <div class="section-label">Selecione como esta avaliação será conduzida</div>
+      <div class="mode-grid">
+        <div class="mode-card" id="mode-gestor" onclick="selectMode('gestor')">
+          <div class="mode-icon">&#9711;</div>
+          <h4>Avaliação pelo Gestor</h4>
+          <p>O gestor avalia o comportamento de um membro da equipe com base em sua observação direta.</p>
+        </div>
+        <div class="mode-card" id="mode-auto" onclick="selectMode('auto')">
+          <div class="mode-icon">&#9651;</div>
+          <h4>Autoavaliação</h4>
+          <p>O próprio profissional avalia seus comportamentos e atitudes na função que ocupa.</p>
+        </div>
+        <div class="mode-card" id="mode-duplo" onclick="selectMode('duplo')">
+          <div class="mode-icon">&#9671;</div>
+          <h4>Modo Duplo (180°)</h4>
+          <p>Gestor e profissional respondem separadamente. A ferramenta gera comparação e análise de convergência.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Função avaliada</div>
+      <div class="section-label">Selecione a função que melhor descreve o papel deste profissional</div>
+      <div class="funcao-grid">
+        <div class="funcao-card" id="func-hunter" onclick="selectFuncao('hunter')">
+          <div class="funcao-icon"><span>HU</span></div>
+          <div>
+            <h4>Hunter — Desenvolvimento</h4>
+            <p>Prospecção ativa, abertura de novos clientes e negócios</p>
+          </div>
+        </div>
+        <div class="funcao-card" id="func-farmer" onclick="selectFuncao('farmer')">
+          <div class="funcao-icon"><span>FA</span></div>
+          <div>
+            <h4>Farmer — Relacionamento</h4>
+            <p>Manutenção, expansão e fidelização de carteira ativa</p>
+          </div>
+        </div>
+        <div class="funcao-card" id="func-ambos" onclick="selectFuncao('ambos')">
+          <div class="funcao-icon"><span>AM</span></div>
+          <div>
+            <h4>Híbrido — Hunter + Farmer</h4>
+            <p>Capta novos clientes e mantém carteira simultaneamente</p>
+          </div>
+        </div>
+        <div class="funcao-card" id="func-gestor" onclick="selectFuncao('gestor')">
+          <div class="funcao-icon"><span>GE</span></div>
+          <div>
+            <h4>Gestor Comercial</h4>
+            <p>Liderança de equipe de vendas, gestão de pessoas e resultados</p>
+          </div>
+        </div>
+      </div>
+      <div class="note-coral">
+        Os benchmarks de cada dimensão variam conforme a função selecionada. A comparação entre perfil atual e perfil ideal da função é o principal entregável desta avaliação.
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-start" onclick="startQuiz()" disabled>Iniciar Avaliação</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 2: QUESTIONÁRIO ==================== -->
+<div id="page2" class="page">
+  <div class="tool-header">
+    <div class="container">
+      <div class="header-inner">
+        <div class="badge-tool">3.2</div>
+        <div class="header-text">
+          <h1>Perfil Comportamental na Função</h1>
+          <p id="p2-subtitle">Avaliação — Seção 1 de 6</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="progress-bar-wrap">
+      <div class="progress-top">
+        <span class="progress-section-name" id="progress-section-name">Comunicação</span>
+        <span class="progress-count" id="progress-count">Seção 1 de 6</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:16%"></div></div>
+      <div class="progress-steps" id="progress-steps"></div>
+    </div>
+    <div id="question-container"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="btn-prev-q" onclick="prevSection()">Anterior</button>
+      <button class="btn btn-primary" id="btn-next-q" onclick="nextSection()">Próxima Seção</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 3: RESULTADOS ==================== -->
+<div id="page3" class="page">
+  <div class="tool-header">
+    <div class="container">
+      <div class="header-inner">
+        <div class="badge-tool">3.2</div>
+        <div class="header-text">
+          <h1>Perfil Comportamental na Função</h1>
+          <p id="p3-subtitle">Resultados</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="result-tabs">
+      <button class="result-tab active" onclick="showTab(0)"><span class="tab-num">01</span><span class="tab-sub">Diagnóstico</span></button>
+      <button class="result-tab" onclick="showTab(1)"><span class="tab-num">02</span><span class="tab-sub">Faz Hoje</span></button>
+      <button class="result-tab" onclick="showTab(2)"><span class="tab-num">03</span><span class="tab-sub">PDI</span></button>
+      <button class="result-tab" onclick="showTab(3)"><span class="tab-num">04</span><span class="tab-sub">Plano por Função</span></button>
+    </div>
+
+    <!-- ABA 01 -->
+    <div class="tab-content active result-panel" id="tab0">
+      <div id="alert-gap-duplo" class="alert-coral" style="display:none"></div>
+      <div class="section-label">Scores por dimensão</div>
+      <div class="hero-scores" id="hero-scores"></div>
+      <div class="section-label" style="margin-top:8px">Perfil atual vs. perfil ideal da função</div>
+      <div class="chart-wrap"><canvas id="radarChart" width="400" height="400"></canvas></div>
+      <div class="section-label">Análise por dimensão</div>
+      <div class="dim-cards" id="dim-cards"></div>
+      <div id="gap-table-wrap" style="margin-top:20px">
+        <div class="section-label">Gap: perfil atual vs. benchmark da função</div>
+        <div id="gap-table"></div>
+      </div>
+      <div id="perfil-box-wrap"></div>
+      <div class="section-label" style="margin-top:20px">Análise e orientação estratégica</div>
+      <div class="narrative-box" id="narrative-box"></div>
+    </div>
+
+    <!-- ABA 02 -->
+    <div class="tab-content result-panel" id="tab1">
+      <div class="section-label">Comportamentos a transformar — baseado nas 2 dimensões com maior gap</div>
+      <table class="table-faz-hoje" id="faz-hoje-table">
+        <thead><tr>
+          <th style="width:33%">Faz Hoje</th>
+          <th style="width:33%">Fazer Diferente</th>
+          <th style="width:34%">Impacto Esperado</th>
+        </tr></thead>
+        <tbody id="faz-hoje-body"></tbody>
+      </table>
+    </div>
+
+    <!-- ABA 03 -->
+    <div class="tab-content result-panel" id="tab2">
+      <div class="section-label">Plano de Desenvolvimento Individual</div>
+      <div class="pdi-meta-grid">
+        <div class="pdi-meta-item"><label>Profissional</label><input type="text" id="pdi-nome"></div>
+        <div class="pdi-meta-item"><label>Gestor responsável</label><input type="text" id="pdi-gestor"></div>
+        <div class="pdi-meta-item"><label>Período de desenvolvimento</label><input type="text" id="pdi-periodo" placeholder="Ex: 90 dias / Q3 2025"></div>
+      </div>
+      <div class="pdi-field" style="margin-bottom:20px">
+        <label>Objetivo geral do PDI</label>
+        <textarea id="pdi-objetivo" rows="2" style="width:100%;border:1.5px solid var(--gray-mid);border-radius:4px;padding:8px 10px;font-family:'Source Sans 3',sans-serif;font-size:0.88rem;color:var(--navy)"></textarea>
+      </div>
+      <div id="pdi-comps"></div>
+    </div>
+
+    <!-- ABA 04 -->
+    <div class="tab-content result-panel" id="tab3">
+      <div class="section-label">Plano de desenvolvimento por função — prioridade por gap</div>
+      <div id="plano-funcao"></div>
+    </div>
+
+    <!-- Exportação -->
+    <div class="export-panel">
+      <p>Exporte as seções que deseja imprimir ou salvar como PDF</p>
+      <div class="export-btns">
+        <button class="btn-export" onclick="exportSection(0)">Diagnóstico</button>
+        <button class="btn-export" onclick="exportSection(1)">Faz Hoje</button>
+        <button class="btn-export" onclick="exportSection(2)">PDI</button>
+        <button class="btn-export" onclick="exportSection(3)">Plano</button>
+        <button class="btn-export primary-exp" onclick="exportAll()">Exportar Tudo</button>
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-top:8px">
+      <button class="btn btn-secondary" onclick="resetTool()">Nova Avaliação</button>
+    </div>
+    <div class="tool-footer">Prof. Paulo H. Donassolo · Recriar a Gestão Comercial &nbsp;|&nbsp; Ferramenta 3.2 — Perfil Comportamental na Função</div>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// STATE
+// =====================================================================
+const STATE = {
+  mode: null,
+  funcao: null,
+  nome: '', cargo: '', empresa: '', tempo: '', gestor: '', periodo: '',
+  currentSection: 0,
+  answers: {},    // gestor answers (or single mode)
+  answersAuto: {} // autoavaliação answers (dual mode)
+};
+
+const DIMS = ['COM','EXE','ORI','RES','LID','REL'];
+const DIM_NAMES = {
+  COM: 'Comunicação e Influência',
+  EXE: 'Execução e Disciplina',
+  ORI: 'Orientação ao Cliente e Resultado',
+  RES: 'Resiliência e Atitude',
+  LID: 'Liderança e Protagonismo',
+  REL: 'Relacionamento e Colaboração'
+};
+const DIM_COLORS = {
+  COM: '#2b7de9', EXE: '#1d9e8f', ORI: '#e05c3a', RES: '#9b59b6', LID: '#e6a817', REL: '#27ae60'
+};
+const DIM_LIGHTS = {
+  COM: '#ebf3fd', EXE: '#e8f7f5', ORI: '#fdf1ee', RES: '#f5eefb', LID: '#fef9eb', REL: '#eafaf1'
+};
+
+// Benchmarks por função (score ideal por dimensão 1-5)
+const BENCHMARKS = {
+  hunter: { COM: 4.5, EXE: 4.5, ORI: 3.5, RES: 4.8, LID: 3.5, REL: 4.0 },
+  farmer:  { COM: 4.5, EXE: 3.8, ORI: 4.8, RES: 3.5, LID: 3.0, REL: 4.8 },
+  ambos:   { COM: 4.5, EXE: 4.2, ORI: 4.5, RES: 4.2, LID: 3.5, REL: 4.5 },
+  gestor:  { COM: 4.5, EXE: 4.0, ORI: 3.5, RES: 4.0, LID: 4.8, REL: 4.5 }
+};
+
+const FUNCAO_NAMES = {
+  hunter: 'Hunter — Desenvolvimento de Novos Negócios',
+  farmer: 'Farmer — Relacionamento e Carteira',
+  ambos:  'Híbrido — Hunter + Farmer',
+  gestor: 'Gestor Comercial'
+};
+
+// =====================================================================
+// QUESTÕES (30 = 5 por dimensão)
+// =====================================================================
+const QUESTIONS = {
+  COM: [
+    'Pratica escuta ativa: faz perguntas relevantes, não interrompe e demonstra compreensão do que o outro disse.',
+    'Comunica-se com clareza e adapta a linguagem ao perfil do interlocutor — cliente, colega ou superior.',
+    'Usa histórias, exemplos e analogias para transmitir ideias e conquistar a atenção de quem ouve.',
+    'Conduz reuniões e apresentações de forma estruturada e persuasiva, mantendo o foco do público.',
+    'Comunica-se por escrito (e-mail, proposta, relatório) de forma profissional, objetiva e sem erros.'
+  ],
+  EXE: [
+    'Planeja suas atividades diárias e semanais, definindo prioridades de forma autônoma e estruturada.',
+    'Utiliza dados, indicadores e informações para fundamentar decisões e direcionar suas ações.',
+    'Cumpre prazos e compromissos com disciplina, evitando procrastinação e retrabalho.',
+    'Gerencia o próprio tempo de forma eficiente, equilibrando atividades urgentes e importantes.',
+    'Mantém registros organizados de atividades, clientes, negociações e compromissos (CRM, agenda, pipeline).'
+  ],
+  ORI: [
+    'Prioriza o sucesso do cliente, mesmo que isso implique abrir mão de uma venda no curto prazo.',
+    'Investe tempo em construir relacionamentos duradouros, pensando no valor de longo prazo da conta.',
+    'Mantém foco intenso no fechamento de negócios e geração de pedidos — metas são prioridade.',
+    'Busca entender profundamente as necessidades do cliente antes de apresentar qualquer solução.',
+    'Equilibra com maturidade os objetivos de resultado e os de relacionamento, sem sacrificar nenhum dos dois.'
+  ],
+  RES: [
+    'Mantém atitude positiva e construtiva mesmo diante de dificuldades, rejeições e perdas.',
+    'Demonstra entusiasmo e energia que contagia positivamente o ambiente e as pessoas ao redor.',
+    'Aceita feedback e críticas de forma construtiva, buscando evolução em vez de justificativas.',
+    'Recupera-se rapidamente de fracassos e usa as experiências negativas como aprendizado real.',
+    'Busca ativamente oportunidades de desenvolvimento e investe no próprio crescimento profissional.'
+  ],
+  LID: [
+    'Assume responsabilidade e protagonismo, conduzindo situações de forma proativa sem esperar ordens.',
+    'Inspira e motiva outras pessoas a alcançarem objetivos — cria um ambiente de energia e comprometimento.',
+    'Toma decisões com segurança mesmo em situações de incerteza ou pressão, assumindo riscos calculados.',
+    'Resolve conflitos de forma construtiva, mediando situações e buscando soluções que beneficiem todos.',
+    'Desenvolve e orienta outros profissionais, compartilhando conhecimento e estimulando o crescimento da equipe.'
+  ],
+  REL: [
+    'Demonstra empatia genuína, compreendendo as necessidades, sentimentos e perspectivas dos outros.',
+    'Colabora ativamente com colegas, compartilhando informações, boas práticas e recursos.',
+    'Constrói e mantém relacionamentos de confiança com clientes, colegas e parceiros de negócio.',
+    'Desenvolve e cultiva uma rede de contatos profissionais (networking) de forma estratégica e consistente.',
+    'Adapta seu estilo de relacionamento conforme o perfil de cada pessoa — assertivo, afetivo, analítico ou expressivo.'
+  ]
+};
+
+// =====================================================================
+// RECOMENDAÇÕES por dimensão
+// =====================================================================
+const RECOM = {
+  COM: {
+    fazHoje: 'Comunicação focada em conteúdo técnico e argumentação; pouca atenção à escuta ativa e ao impacto emocional da mensagem.',
+    fazerDif: 'Antes de falar, perguntar. Praticar escuta estruturada: silêncio, confirmação e reformulação. Adequar linguagem ao perfil do interlocutor.',
+    impacto: 'Maior credibilidade, menos retrabalho em negociações, relacionamentos mais sólidos e conversão mais alta.',
+    pdiComp: 'Comunicação Comercial e Escuta Ativa',
+    pdiAcao: 'Praticar técnica de escuta 3:1 (3 perguntas antes de 1 argumento) em reuniões de cliente. Filmar ou gravar uma apresentação e analisar com o gestor.',
+    pdiAferir: 'Feedback de clientes e gestores sobre qualidade das reuniões. Avaliação em simulações (role-play).',
+    pdiPrazo: '45 dias',
+    aba4Acao: 'Participar de pelo menos 2 sessões de role-play orientado a comunicação e escuta',
+    aba4Quando: 'Nas próximas 4 semanas'
+  },
+  EXE: {
+    fazHoje: 'Execução reativa — responde demandas conforme surgem, sem planejamento semanal estruturado. CRM desatualizado.',
+    fazerDif: 'Adotar rotina semanal planejada: bloco de prospecção, bloco de follow-up, bloco administrativo. Atualizar CRM no mesmo dia da atividade.',
+    impacto: 'Mais previsibilidade de resultado, redução de esquecimentos, pipeline mais confiável para o gestor.',
+    pdiComp: 'Planejamento, Disciplina e Gestão da Própria Rotina',
+    pdiAcao: 'Criar e executar plano semanal com blocos de tempo fixos por tipo de atividade. Revisar toda sexta-feira.',
+    pdiAferir: 'Taxa de execução do plano semanal (meta: 80%). Atualização do CRM verificada pelo gestor.',
+    pdiPrazo: '30 dias',
+    aba4Acao: 'Elaborar e compartilhar plano semanal estruturado com o gestor toda segunda-feira',
+    aba4Quando: 'A partir da próxima semana'
+  },
+  ORI: {
+    fazHoje: 'Foco excessivo em fechamento e volume, com pouco investimento em entendimento das necessidades do cliente e construção de relacionamento.',
+    fazerDif: 'Adotar método de diagnóstico consultivo: investigar antes de apresentar. Incluir indicadores de satisfação e qualidade nas metas pessoais.',
+    impacto: 'Maior ticket médio, menor churn, mais indicações e contratos de longo prazo.',
+    pdiComp: 'Venda Consultiva e Orientação ao Sucesso do Cliente',
+    pdiAcao: 'Aplicar roteiro de diagnóstico nas próximas 5 visitas a clientes. Registrar perguntas de investigação utilizadas.',
+    pdiAferir: 'Qualidade dos registros de diagnóstico no CRM. Índice de satisfação de clientes (NPS ou survey simples).',
+    pdiPrazo: '60 dias',
+    aba4Acao: 'Preparar roteiro de diagnóstico consultivo personalizado para os 5 maiores clientes da carteira',
+    aba4Quando: 'Até o final do mês corrente'
+  },
+  RES: {
+    fazHoje: 'Queda de energia diante de rejeições e resultados negativos. Dificuldade em separar o fracasso pontual do valor próprio como profissional.',
+    fazerDif: 'Criar ritual de revisão pós-perda (o que aprendi?). Desenvolver perspectiva de longo prazo. Buscar feedback ativo após negativas.',
+    impacto: 'Mais consistência de performance ao longo do tempo, menor dispersão emocional, maior capacidade de aprendizado acelerado.',
+    pdiComp: 'Resiliência, Autoconhecimento e Mentalidade de Crescimento',
+    pdiAcao: 'Registrar uma lição aprendida após cada perda ou rejeição. Compartilhar com o gestor mensalmente.',
+    pdiAferir: 'Consistência do registro de lições aprendidas. Autoavaliação trimestral de atitude e energia.',
+    pdiPrazo: '60 dias',
+    aba4Acao: 'Iniciar diário de aprendizados comerciais com pelo menos 1 registro semanal',
+    aba4Quando: 'A partir desta semana'
+  },
+  LID: {
+    fazHoje: 'Postura de executor de tarefas, aguardando orientação. Pouco protagonismo em iniciativas e no desenvolvimento de outros.',
+    fazerDif: 'Assumir voluntariamente responsabilidades além do escopo. Mentorear colegas menos experientes. Propor soluções antes de trazer problemas.',
+    impacto: 'Maior visibilidade, aceleração de carreira, preparação para posições de liderança.',
+    pdiComp: 'Liderança, Protagonismo e Desenvolvimento de Pessoas',
+    pdiAcao: 'Assumir liderança de pelo menos uma iniciativa ou projeto da equipe no trimestre. Orientar 1 colega mais júnior.',
+    pdiAferir: 'Iniciativas lideradas registradas. Avaliação do gestor sobre nível de protagonismo no período.',
+    pdiPrazo: '90 dias',
+    aba4Acao: 'Apresentar ao gestor uma proposta de melhoria de processo ou resultado com plano de execução',
+    aba4Quando: 'Até o final do próximo mês'
+  },
+  REL: {
+    fazHoje: 'Relacionamentos superficiais e funcionais — interação limitada ao necessário para fechar negócio ou executar tarefa.',
+    fazerDif: 'Investir em conversas de interesse genuíno (além do negócio). Manter contato com clientes fora do ciclo de compra. Ampliar rede interna e externa.',
+    impacto: 'Maior fidelização, mais indicações, acesso a oportunidades antes do mercado e suporte em momentos críticos.',
+    pdiComp: 'Construção e Manutenção de Relacionamentos Estratégicos',
+    pdiAcao: 'Mapear os 10 relacionamentos mais importantes (clientes + internos). Criar agenda de contatos regulares não transacionais.',
+    pdiAferir: 'Frequência de contatos de relacionamento registrados. Qualidade percebida pelos clientes (feedback qualitativo).',
+    pdiPrazo: '45 dias',
+    aba4Acao: 'Criar mapa de relacionamentos estratégicos e planejar 2 contatos não transacionais por semana',
+    aba4Quando: 'A partir desta semana'
+  }
+};
+
+// =====================================================================
+// UI HELPERS
+// =====================================================================
+function selectMode(m) {
+  STATE.mode = m;
+  ['gestor','auto','duplo'].forEach(x => document.getElementById('mode-'+x).classList.remove('selected'));
+  document.getElementById('mode-'+m).classList.add('selected');
+  checkReady();
+}
+
+function selectFuncao(f) {
+  STATE.funcao = f;
+  ['hunter','farmer','ambos','gestor'].forEach(x => document.getElementById('func-'+x).classList.remove('selected'));
+  document.getElementById('func-'+f).classList.add('selected');
+  checkReady();
+}
+
+function checkReady() {
+  const nome = document.getElementById('f-nome').value.trim();
+  const ok = nome && STATE.mode && STATE.funcao;
+  document.getElementById('btn-start').disabled = !ok;
+}
+
+document.getElementById('f-nome').addEventListener('input', checkReady);
+
+// =====================================================================
+// QUIZ
+// =====================================================================
+let currentSection = 0;
+let isDualPhase = 'gestor'; // 'gestor' then 'auto' in dual mode
+
+function startQuiz() {
+  STATE.nome = document.getElementById('f-nome').value.trim();
+  STATE.cargo = document.getElementById('f-cargo').value.trim();
+  STATE.empresa = document.getElementById('f-empresa').value.trim();
+  STATE.tempo = document.getElementById('f-tempo').value;
+  STATE.gestor = document.getElementById('f-gestor').value.trim();
+  STATE.periodo = document.getElementById('f-periodo').value.trim();
+  currentSection = 0;
+  isDualPhase = 'gestor';
+  STATE.answers = {};
+  STATE.answersAuto = {};
+  showPage('page2');
+  renderSection();
+}
+
+function renderSection() {
+  const dim = DIMS[currentSection];
+  const name = DIM_NAMES[dim];
+  const color = DIM_COLORS[dim];
+  const isDual = STATE.mode === 'duplo';
+  const phaseLabel = isDual ? (isDualPhase === 'gestor' ? ' — Avaliação do Gestor' : ' — Autoavaliação') : '';
+
+  document.getElementById('progress-section-name').textContent = name;
+  document.getElementById('progress-count').textContent = `Seção ${currentSection + 1} de 6${phaseLabel}`;
+  document.getElementById('p2-subtitle').textContent = `Avaliação${phaseLabel} — Seção ${currentSection + 1} de 6`;
+  document.getElementById('progress-fill').style.width = `${((currentSection + 1) / 6) * 100}%`;
+
+  // dots
+  const stepsEl = document.getElementById('progress-steps');
+  stepsEl.innerHTML = DIMS.map((d, i) => {
+    let cls = i < currentSection ? 'done' : (i === currentSection ? 'active' : '');
+    return `<div class="progress-dot ${cls}"></div>`;
+  }).join('');
+
+  const qs = QUESTIONS[dim];
+  const answersRef = (isDual && isDualPhase === 'auto') ? STATE.answersAuto : STATE.answers;
+
+  let html = `<div class="card">
+    <div class="card-title">
+      <span class="dim-tag" style="background:${DIM_COLORS[dim]}22;color:${DIM_COLORS[dim]}">${dim}</span>
+      ${name}
+    </div>`;
+
+  if (isDual) {
+    const colLabel = isDualPhase === 'gestor'
+      ? 'Avaliação do Gestor — como você observa este comportamento no profissional'
+      : 'Autoavaliação — como você avalia seu próprio comportamento';
+    const colCls = isDualPhase === 'gestor' ? 'col-gestor' : 'col-auto';
+    html += `<div class="dual-col-header ${colCls}">${colLabel}</div>`;
+  }
+
+  qs.forEach((q, i) => {
+    const qkey = `${dim}_${i}`;
+    const val = answersRef[qkey] || 0;
+    const labels = ['','Nunca faz','Raramente','Às vezes','Frequentemente','Sempre faz'];
+    html += `<div class="question-item">
+      <div class="q-header">
+        <span class="q-num">${i+1}</span>
+        <p class="q-text">${q}</p>
+      </div>
+      <div class="scale-options">`;
+    for (let v = 1; v <= 5; v++) {
+      html += `<div class="scale-opt">
+        <input type="radio" name="${qkey}" id="${qkey}_${v}" value="${v}" ${val == v ? 'checked' : ''} onchange="saveAnswer('${qkey}',${v})">
+        <label for="${qkey}_${v}">
+          <span class="scale-num-opt" style="color:${v<=2?'var(--coral)':v<=3?'var(--LID-color)':'var(--teal)'}">${v}</span>
+          <span class="scale-text-opt">${labels[v]}</span>
+        </label>
+      </div>`;
+    }
+    html += `</div></div>`;
+  });
+  html += `</div>`;
+  document.getElementById('question-container').innerHTML = html;
+  document.getElementById('btn-prev-q').style.display = (currentSection === 0 && isDualPhase === 'gestor') ? 'none' : '';
+}
+
+function saveAnswer(key, val) {
+  const isDual = STATE.mode === 'duplo';
+  if (isDual && isDualPhase === 'auto') {
+    STATE.answersAuto[key] = val;
+  } else {
+    STATE.answers[key] = val;
+  }
+  saveLS();
+}
+
+function nextSection() {
+  const dim = DIMS[currentSection];
+  const isDual = STATE.mode === 'duplo';
+  const answersRef = (isDual && isDualPhase === 'auto') ? STATE.answersAuto : STATE.answers;
+  const allAnswered = QUESTIONS[dim].every((_, i) => answersRef[`${dim}_${i}`]);
+  if (!allAnswered) {
+    alert('Por favor, responda todas as questões desta seção antes de avançar.');
+    return;
+  }
+  if (currentSection < 5) {
+    currentSection++;
+    renderSection();
+  } else {
+    // end of one phase
+    if (isDual && isDualPhase === 'gestor') {
+      isDualPhase = 'auto';
+      currentSection = 0;
+      renderSection();
+    } else {
+      generateResults();
+    }
+  }
+}
+
+function prevSection() {
+  const isDual = STATE.mode === 'duplo';
+  if (currentSection > 0) {
+    currentSection--;
+    renderSection();
+  } else if (isDual && isDualPhase === 'auto') {
+    isDualPhase = 'gestor';
+    currentSection = 5;
+    renderSection();
+  }
+}
+
+// =====================================================================
+// SCORES
+// =====================================================================
+function calcScores(answers) {
+  const scores = {};
+  DIMS.forEach(d => {
+    let sum = 0, count = 0;
+    QUESTIONS[d].forEach((_, i) => {
+      const v = answers[`${d}_${i}`];
+      if (v) { sum += parseInt(v); count++; }
+    });
+    scores[d] = count > 0 ? sum / count : 0;
+  });
+  return scores;
+}
+
+function getNivel(s) {
+  if (s >= 4.5) return { label: 'Excelente', cls: 'nivel-excelente' };
+  if (s >= 3.5) return { label: 'Bom', cls: 'nivel-bom' };
+  if (s >= 2.5) return { label: 'Regular', cls: 'nivel-regular' };
+  return { label: 'Necessita atenção', cls: 'nivel-atencao' };
+}
+
+// =====================================================================
+// GERAR RESULTADOS
+// =====================================================================
+function generateResults() {
+  const scores = calcScores(STATE.answers);
+  const scoresAuto = STATE.mode === 'duplo' ? calcScores(STATE.answersAuto) : null;
+  const bench = BENCHMARKS[STATE.funcao];
+
+  // gaps ordenados
+  const gaps = DIMS.map(d => ({ d, gap: bench[d] - scores[d] })).sort((a,b) => b.gap - a.gap);
+  const top2 = gaps.slice(0, 2).map(x => x.d);
+
+  // perfil interpretado
+  const maxDim = DIMS.reduce((a,b) => scores[a] > scores[b] ? a : b);
+  const minDim = DIMS.reduce((a,b) => scores[a] < scores[b] ? a : b);
+  const avg = DIMS.reduce((s,d) => s + scores[d], 0) / 6;
+
+  // Aba 01: hero scores
+  let heroHTML = DIMS.map(d => {
+    const s = scores[d];
+    const n = getNivel(s);
+    return `<div class="hero-score-card">
+      <div class="hs-dim" style="color:${DIM_COLORS[d]}">${d}</div>
+      <div class="hs-val" style="color:${DIM_COLORS[d]}">${s.toFixed(1)}</div>
+      <div class="hs-bar-track"><div class="hs-bar-fill" style="width:${s/5*100}%;background:${DIM_COLORS[d]}"></div></div>
+      <div class="hs-nivel">${n.label}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('hero-scores').innerHTML = heroHTML;
+
+  // dim cards
+  let dimHTML = DIMS.map(d => {
+    const s = scores[d];
+    const n = getNivel(s);
+    return `<div class="dim-card" style="border-left-color:${DIM_COLORS[d]}">
+      <div class="dim-card-header">
+        <span class="dim-card-name">${DIM_NAMES[d]}</span>
+        <span class="dim-card-val" style="color:${DIM_COLORS[d]}">${s.toFixed(1)}<span style="font-size:0.72rem;color:var(--gray-dark)"> / 5,0</span></span>
+      </div>
+      <div class="dim-card-bar-track"><div class="dim-card-bar-fill" style="width:${s/5*100}%;background:${DIM_COLORS[d]}"></div></div>
+      <span class="dim-card-nivel ${n.cls}">${n.label}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('dim-cards').innerHTML = dimHTML;
+
+  // gap table
+  let gapHTML = DIMS.map(d => {
+    const s = scores[d];
+    const b = bench[d];
+    const gap = b - s;
+    let badgeCls = gap <= 0 ? 'gap-ok' : gap <= 0.8 ? 'gap-warn' : 'gap-alert';
+    let badgeTxt = gap <= 0 ? 'No alvo' : gap <= 0.8 ? 'Atenção' : 'Prioridade';
+    return `<div class="gap-row">
+      <span class="gap-dim-name"><span class="dim-tag" style="background:${DIM_COLORS[d]}22;color:${DIM_COLORS[d]};padding:2px 8px;border-radius:20px;font-size:0.7rem;font-weight:700">${d}</span> ${DIM_NAMES[d]}</span>
+      <span class="gap-actual" style="color:${DIM_COLORS[d]}">${s.toFixed(1)}</span>
+      <span class="gap-vs">vs</span>
+      <span class="gap-ideal">${b.toFixed(1)}</span>
+      <span class="gap-badge ${badgeCls}">${badgeTxt}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('gap-table').innerHTML = gapHTML;
+
+  // alerta dual mode
+  if (STATE.mode === 'duplo' && scoresAuto) {
+    let maxDiff = 0, maxDiffDim = '';
+    DIMS.forEach(d => {
+      const diff = Math.abs(scores[d] - scoresAuto[d]);
+      if (diff > maxDiff) { maxDiff = diff; maxDiffDim = d; }
+    });
+    if (maxDiff > 0.8) {
+      document.getElementById('alert-gap-duplo').style.display = '';
+      document.getElementById('alert-gap-duplo').textContent =
+        `Divergência significativa identificada na dimensão ${DIM_NAMES[maxDiffDim]} (diferença de ${maxDiff.toFixed(1)} pontos entre a visão do gestor e a autoavaliação). Recomenda-se uma conversa de alinhamento sobre expectativas e percepções nesta dimensão.`;
+    }
+  }
+
+  // perfil box
+  const perfilNome = getPerfilNome(scores, STATE.funcao);
+  const perfilDesc = getPerfilDesc(scores, STATE.funcao, avg, maxDim, minDim);
+  document.getElementById('perfil-box-wrap').innerHTML = `
+    <div class="perfil-box">
+      <div class="perfil-box-name">${perfilNome}</div>
+      <div class="perfil-box-desc">${perfilDesc}</div>
+    </div>`;
+
+  // narrative
+  document.getElementById('narrative-box').innerHTML = generateNarrative(scores, bench, STATE.funcao, top2, avg);
+
+  // Radar
+  setTimeout(() => drawRadar(scores, bench, scoresAuto), 100);
+
+  // Aba 02
+  buildFazHoje(top2, scores);
+
+  // Aba 03
+  buildPDI(top2, scores);
+
+  // Aba 04
+  buildPlanoFuncao(gaps, scores, bench);
+
+  showPage('page3');
+  saveLS();
+}
+
+// =====================================================================
+// RADAR
+// =====================================================================
+function drawRadar(scores, bench, scoresAuto) {
+  const canvas = document.getElementById('radarChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2;
+  const R = Math.min(W,H)*0.38;
+  const n = 6;
+  ctx.clearRect(0,0,W,H);
+
+  const angles = DIMS.map((_,i) => (Math.PI*2*i/n) - Math.PI/2);
+
+  // grid
+  for (let lvl = 1; lvl <= 5; lvl++) {
+    ctx.beginPath();
+    angles.forEach((a, i) => {
+      const r = R * lvl / 5;
+      const x = cx + r * Math.cos(a);
+      const y = cy + r * Math.sin(a);
+      i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.closePath();
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    if (lvl < 5) {
+      ctx.fillStyle = 'rgba(244,246,249,0.3)';
+      ctx.fill();
+    }
+  }
+
+  // spokes
+  angles.forEach((a, i) => {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a));
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // labels
+    const lx = cx + (R+30) * Math.cos(a);
+    const ly = cy + (R+30) * Math.sin(a);
+    ctx.fillStyle = '#4a5568';
+    ctx.font = 'bold 11px Source Sans 3, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(DIMS[i], lx, ly);
+  });
+
+  // benchmark polygon
+  ctx.beginPath();
+  angles.forEach((a, i) => {
+    const r = R * bench[DIMS[i]] / 5;
+    const x = cx + r * Math.cos(a);
+    const y = cy + r * Math.sin(a);
+    i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.strokeStyle = 'rgba(26,39,68,0.4)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6,4]);
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(26,39,68,0.05)';
+  ctx.fill();
+  ctx.setLineDash([]);
+
+  // scores polygon
+  ctx.beginPath();
+  angles.forEach((a, i) => {
+    const r = R * scores[DIMS[i]] / 5;
+    const x = cx + r * Math.cos(a);
+    const y = cy + r * Math.sin(a);
+    i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.strokeStyle = '#1d9e8f';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(29,158,143,0.18)';
+  ctx.fill();
+
+  // auto scores polygon (dual)
+  if (scoresAuto) {
+    ctx.beginPath();
+    angles.forEach((a, i) => {
+      const r = R * scoresAuto[DIMS[i]] / 5;
+      const x = cx + r * Math.cos(a);
+      const y = cy + r * Math.sin(a);
+      i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.closePath();
+    ctx.strokeStyle = '#e05c3a';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4,3]);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(224,92,58,0.1)';
+    ctx.fill();
+    ctx.setLineDash([]);
+  }
+
+  // dots
+  angles.forEach((a, i) => {
+    const r = R * scores[DIMS[i]] / 5;
+    const x = cx + r * Math.cos(a);
+    const y = cy + r * Math.sin(a);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI*2);
+    ctx.fillStyle = '#1d9e8f';
+    ctx.fill();
+  });
+
+  // legenda
+  const ly2 = H - 20;
+  ctx.font = '11px Source Sans 3, sans-serif';
+  ctx.fillStyle = '#1d9e8f';
+  ctx.fillRect(W/2 - 120, ly2-8, 14, 3);
+  ctx.fillStyle = '#4a5568';
+  ctx.textAlign = 'left';
+  ctx.fillText('Perfil atual', W/2 - 102, ly2);
+  ctx.strokeStyle = 'rgba(26,39,68,0.4)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5,4]);
+  ctx.beginPath();
+  ctx.moveTo(W/2 - 10, ly2-6);
+  ctx.lineTo(W/2 + 4, ly2-6);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#4a5568';
+  ctx.fillText('Benchmark', W/2 + 8, ly2);
+
+  if (scoresAuto) {
+    ctx.strokeStyle = '#e05c3a';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4,3]);
+    ctx.beginPath();
+    ctx.moveTo(W/2 + 90, ly2-6);
+    ctx.lineTo(W/2 + 106, ly2-6);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#4a5568';
+    ctx.fillText('Autoavaliação', W/2 + 110, ly2);
+  }
+}
+
+// =====================================================================
+// PERFIL INTERPRETADO
+// =====================================================================
+function getPerfilNome(scores, funcao) {
+  const avg = DIMS.reduce((s,d) => s+scores[d],0)/6;
+  const lidH = scores['LID'] >= 4;
+  const relH = scores['REL'] >= 4;
+  const exeH = scores['EXE'] >= 4;
+  const resH = scores['RES'] >= 4;
+  const oriH = scores['ORI'] >= 4;
+  if (funcao === 'gestor') {
+    if (lidH && relH) return 'Líder Desenvolvedor';
+    if (lidH && exeH) return 'Gestor Orientado a Resultado';
+    if (relH && !lidH) return 'Gestor Relacional';
+    return 'Gestor em Desenvolvimento';
+  }
+  if (funcao === 'hunter') {
+    if (resH && exeH) return 'Hunter de Alta Performance';
+    if (resH && !exeH) return 'Hunter Motivado — Execução a Desenvolver';
+    return 'Hunter em Formação';
+  }
+  if (funcao === 'farmer') {
+    if (oriH && relH) return 'Farmer Consultivo';
+    if (relH && !oriH) return 'Farmer Relacional — Visão Consultiva a Desenvolver';
+    return 'Farmer em Desenvolvimento';
+  }
+  // ambos
+  if (avg >= 4) return 'Profissional Comercial Completo';
+  if (avg >= 3) return 'Profissional Comercial em Evolução';
+  return 'Profissional Comercial em Desenvolvimento';
+}
+
+function getPerfilDesc(scores, funcao, avg, maxDim, minDim) {
+  const bn = BENCHMARKS[funcao];
+  const funcNome = FUNCAO_NAMES[funcao];
+  const maxName = DIM_NAMES[maxDim];
+  const minName = DIM_NAMES[minDim];
+  const gap = bn[minDim] - scores[minDim];
+  let gapStr = gap > 0 ? `A dimensão que mais demanda atenção é ${minName}, com um gap de ${gap.toFixed(1)} pontos em relação ao benchmark para a função.` : `O perfil está bem alinhado ao benchmark da função.`;
+  return `Profissional avaliado para a função de ${funcNome}. Sua maior força comportamental está em ${maxName} (${scores[maxDim].toFixed(1)}), dimensão em que se destaca acima da média do seu perfil. ${gapStr} A média geral das seis dimensões é ${avg.toFixed(1)}, indicando ${avg>=4?'um profissional com perfil comportamental sólido e alinhado à função':avg>=3?'um profissional com boa base e oportunidades claras de crescimento':'um profissional em fase de desenvolvimento que demanda atenção estruturada do gestor'}.`;
+}
+
+function generateNarrative(scores, bench, funcao, top2, avg) {
+  const funcNome = FUNCAO_NAMES[funcao];
+  const priDim = top2[0] ? DIM_NAMES[top2[0]] : '-';
+  const secDim = top2[1] ? DIM_NAMES[top2[1]] : '-';
+  let rec = RECOM[top2[0]];
+  let rec2 = RECOM[top2[1]];
+  let str = `Esta avaliação foi realizada para o perfil de <strong>${funcNome}</strong>. Com base nos scores obtidos, as prioridades de desenvolvimento identificadas são <strong>${priDim}</strong> e <strong>${secDim}</strong> — as dimensões com maior gap em relação ao benchmark esperado para esta função.<br><br>`;
+  if (rec) str += `Em <strong>${priDim}</strong>: ${rec.fazerDif} O impacto esperado com essa mudança é: ${rec.impacto}<br><br>`;
+  if (rec2) str += `Em <strong>${secDim}</strong>: ${rec2.fazerDif} O impacto esperado com essa mudança é: ${rec2.impacto}<br><br>`;
+  str += `A orientação estratégica para este profissional é investir primeiro nas competências com maior gap em relação ao perfil da função, sem ignorar a manutenção das dimensões de maior pontuação. O gestor tem papel fundamental em criar as condições de prática e feedback necessárias para que o desenvolvimento aconteça de forma acelerada e sustentada.`;
+  return str;
+}
+
+// =====================================================================
+// ABA 02 — FAZ HOJE
+// =====================================================================
+function buildFazHoje(top2, scores) {
+  let rows = '';
+  top2.forEach(d => {
+    const r = RECOM[d];
+    rows += `<tr>
+      <td><textarea>${r.fazHoje}</textarea></td>
+      <td><textarea>${r.fazerDif}</textarea></td>
+      <td><textarea>${r.impacto}</textarea></td>
+    </tr>`;
+  });
+  // terceira linha: força principal
+  const best = DIMS.reduce((a,b) => scores[a]>scores[b]?a:b);
+  rows += `<tr>
+    <td><textarea>Mantém consistência em ${DIM_NAMES[best]}, que é sua principal força comportamental.</textarea></td>
+    <td><textarea>Usar esta força como alavanca para desenvolver as dimensões prioritárias: modelar e compartilhar as práticas que fazem a diferença.</textarea></td>
+    <td><textarea>Aceleração do desenvolvimento das áreas de gap ao usar o que já domina como suporte às competências em evolução.</textarea></td>
+  </tr>`;
+  document.getElementById('faz-hoje-body').innerHTML = rows;
+}
+
+// =====================================================================
+// ABA 03 — PDI
+// =====================================================================
+function buildPDI(top2, scores) {
+  document.getElementById('pdi-nome').value = STATE.nome;
+  document.getElementById('pdi-gestor').value = STATE.gestor;
+  document.getElementById('pdi-periodo').value = STATE.periodo || '90 dias';
+  const funcNome = FUNCAO_NAMES[STATE.funcao];
+  document.getElementById('pdi-objetivo').value =
+    `Desenvolver as competências comportamentais prioritárias para a função de ${funcNome}, reduzindo o gap identificado nas dimensões de ${top2.map(d=>DIM_NAMES[d]).join(' e ')}, com impacto direto nos resultados e na qualidade de atuação.`;
+
+  let html = '';
+  top2.forEach((d, idx) => {
+    const r = RECOM[d];
+    const col = DIM_COLORS[d];
+    const s = scores[d];
+    const b = BENCHMARKS[STATE.funcao][d];
+    html += `<div class="pdi-comp-card" style="border-left-color:${col}">
+      <div class="pdi-comp-header">
+        <span class="pdi-comp-name"><span class="dim-tag" style="background:${DIM_LIGHTS[d]};color:${col};padding:2px 8px;border-radius:20px;font-size:0.7rem">${d}</span> ${r.pdiComp}</span>
+        <span style="font-size:0.78rem;color:var(--gray-dark)">Prazo: ${r.pdiPrazo}</span>
+      </div>
+      <div class="pdi-comp-body">
+        <div class="pdi-field full">
+          <label>O que desenvolver</label>
+          <textarea>${r.pdiComp} — foco em reduzir o gap de ${(b-s).toFixed(1)} pontos em relação ao benchmark da função.</textarea>
+        </div>
+        <div class="pdi-field">
+          <label>Como desenvolver</label>
+          <textarea>${r.pdiAcao}</textarea>
+        </div>
+        <div class="pdi-field">
+          <label>Como aferir o desenvolvimento</label>
+          <textarea>${r.pdiAferir}</textarea>
+        </div>
+        <div class="pdi-field full">
+          <label>Escala: Agora vs. Alvo</label>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+            <span style="font-size:0.78rem;color:var(--gray-dark)">Agora</span>
+            ${[1,2,3,4,5].map(v => {
+              const isCurrent = Math.round(s) === v;
+              const isTarget = Math.round(b) === v;
+              let cls = isCurrent && isTarget ? 'agora-alvo' : isCurrent ? 'agora' : isTarget ? 'alvo' : '';
+              return `<div class="scale-pip ${cls}" title="${v}"></div>`;
+            }).join('')}
+            <span style="font-size:0.78rem;color:var(--gray-dark)">Alvo</span>
+            <span style="font-size:0.72rem;color:var(--teal);margin-left:4px">Agora: ${s.toFixed(1)} — Alvo: ${b.toFixed(1)}</span>
+          </div>
+        </div>
+        <div class="pdi-field full">
+          <label>Apoio do gestor</label>
+          <textarea>Criar condições de prática: definir situações reais onde o profissional possa exercitar esta competência. Fornecer feedback estruturado após cada atividade de desenvolvimento registrada.</textarea>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('pdi-comps').innerHTML = html;
+}
+
+// =====================================================================
+// ABA 04 — PLANO POR FUNÇÃO
+// =====================================================================
+function buildPlanoFuncao(gaps, scores, bench) {
+  const funcNome = FUNCAO_NAMES[STATE.funcao];
+  let html = `<div style="background:var(--gray-light);border-radius:6px;padding:16px;margin-bottom:16px;font-size:0.88rem;color:var(--slate)">
+    <strong>Função:</strong> ${funcNome} &nbsp;|&nbsp; <strong>Profissional:</strong> ${STATE.nome || '—'} &nbsp;|&nbsp; <strong>Período:</strong> ${STATE.periodo || '—'}
+  </div>`;
+
+  html += `<table style="width:100%;border-collapse:collapse;font-size:0.84rem">
+    <thead><tr>
+      <th style="background:var(--navy);color:white;padding:10px 12px;text-align:left;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase">Dimensão</th>
+      <th style="background:var(--navy);color:white;padding:10px 12px;text-align:center;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase">Atual</th>
+      <th style="background:var(--navy);color:white;padding:10px 12px;text-align:center;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase">Benchmark</th>
+      <th style="background:var(--navy);color:white;padding:10px 12px;text-align:center;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase">Gap</th>
+      <th style="background:var(--navy);color:white;padding:10px 12px;text-align:left;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase">Ação prioritária</th>
+      <th style="background:var(--navy);color:white;padding:10px 12px;text-align:left;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase">Prazo</th>
+    </tr></thead><tbody>`;
+
+  gaps.forEach((item, idx) => {
+    const { d, gap } = item;
+    const r = RECOM[d];
+    const col = DIM_COLORS[d];
+    const bg = idx % 2 === 0 ? 'white' : 'var(--gray-light)';
+    const gapColor = gap > 1 ? 'var(--coral)' : gap > 0 ? 'var(--LID-color)' : '#1e8449';
+    html += `<tr style="background:${bg}">
+      <td style="padding:10px 12px;border-bottom:1px solid var(--gray-mid)">
+        <span class="dim-tag" style="background:${DIM_LIGHTS[d]};color:${col};padding:2px 8px;border-radius:20px;font-size:0.7rem;font-weight:700">${d}</span>
+        <span style="color:var(--navy);font-weight:600"> ${DIM_NAMES[d]}</span>
+      </td>
+      <td style="padding:10px 12px;text-align:center;border-bottom:1px solid var(--gray-mid);font-weight:700;color:${col}">${scores[d].toFixed(1)}</td>
+      <td style="padding:10px 12px;text-align:center;border-bottom:1px solid var(--gray-mid);color:var(--gray-dark)">${bench[d].toFixed(1)}</td>
+      <td style="padding:10px 12px;text-align:center;border-bottom:1px solid var(--gray-mid);font-weight:700;color:${gapColor}">${gap > 0 ? '+' : ''}${gap.toFixed(1)}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid var(--gray-mid)">
+        <textarea style="width:100%;border:1.5px solid var(--gray-mid);border-radius:4px;padding:6px 8px;font-family:'Source Sans 3',sans-serif;font-size:0.82rem;color:var(--navy);resize:vertical;min-height:52px;background:white">${gap > 0 ? r.aba4Acao : 'Manter e modelar — esta dimensão está no alvo. Usar como referência para o desenvolvimento das demais.'}</textarea>
+      </td>
+      <td style="padding:10px 12px;border-bottom:1px solid var(--gray-mid)">
+        <textarea style="width:100%;border:1.5px solid var(--gray-mid);border-radius:4px;padding:6px 8px;font-family:'Source Sans 3',sans-serif;font-size:0.82rem;color:var(--navy);resize:vertical;min-height:52px;background:white">${gap > 0 ? r.aba4Quando : 'Contínuo'}</textarea>
+      </td>
+    </tr>`;
+  });
+  html += `</tbody></table>`;
+  document.getElementById('plano-funcao').innerHTML = html;
+}
+
+// =====================================================================
+// TABS
+// =====================================================================
+function showTab(n) {
+  document.querySelectorAll('.tab-content').forEach((el,i) => el.classList.toggle('active', i===n));
+  document.querySelectorAll('.result-tab').forEach((el,i) => el.classList.toggle('active', i===n));
+}
+
+// =====================================================================
+// EXPORT
+// =====================================================================
+function buildExportHeader(section) {
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @page { margin:0; size:A4 portrait; }
+    @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+    body { font-family:'Source Sans 3',sans-serif; width:210mm; min-height:297mm; padding:18mm 18mm 22mm; color:#1a2744; font-size:11pt; }
+    .print-banner { position:fixed; top:0; left:0; right:0; background:#1a2744; color:white; padding:10px 18px; font-size:9pt; z-index:100; }
+    @media print { .print-banner { display:none; } }
+    .print-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:12px; border-bottom:2px solid #1a2744; }
+    .print-badge { background:#1d9e8f; color:white; font-size:8pt; font-weight:700; padding:3px 10px; border-radius:4px; letter-spacing:1px; }
+    .print-title { font-family:'Playfair Display',serif; font-size:16pt; font-weight:700; }
+    .print-meta { font-size:9pt; color:#718096; margin-top:4px; }
+    .print-section { font-size:8pt; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#718096; margin:16px 0 8px; }
+    .print-footer { position:fixed; bottom:12mm; left:18mm; right:18mm; display:flex; justify-content:space-between; font-size:8pt; color:#718096; border-top:1px solid #e2e8f0; padding-top:6px; }
+    @media print { .print-footer { display:flex; } }
+    table { width:100%; border-collapse:collapse; font-size:9pt; }
+    th { background:#1a2744; color:white; padding:8px 10px; text-align:left; font-size:7.5pt; letter-spacing:1px; text-transform:uppercase; }
+    td { padding:8px 10px; border-bottom:1px solid #e2e8f0; vertical-align:top; }
+    tr:nth-child(even) td { background:#f4f6f9; }
+    .dim-tag { display:inline-block; padding:2px 8px; border-radius:20px; font-size:7pt; font-weight:700; }
+    .card-p { background:#f4f6f9; border-radius:4px; padding:12px; margin-bottom:8px; }
+    .perfil-box { background:#1a2744; color:white; padding:16px; border-radius:4px; margin:12px 0; }
+    h2 { font-family:'Playfair Display',serif; font-size:13pt; margin-bottom:8px; }
+    h3 { font-size:10pt; font-weight:700; margin-bottom:6px; color:#1a2744; }
+    p { margin-bottom:8px; line-height:1.6; }
+    textarea { width:100%; font-family:'Source Sans 3',sans-serif; font-size:9pt; border:1px solid #e2e8f0; padding:6px; }
+  </style></head><body>
+  <div class="print-banner">Para salvar como PDF: Ctrl+P → Destino: Salvar como PDF → Margens: Nenhuma → Ativar Gráficos de fundo</div>
+  <div class="print-header">
+    <div><span class="print-badge">3.2</span>
+      <div class="print-title">Perfil Comportamental na Função</div>
+      <div class="print-meta">${STATE.nome || '—'} &nbsp;|&nbsp; ${STATE.cargo || '—'} &nbsp;|&nbsp; ${FUNCAO_NAMES[STATE.funcao] || '—'} &nbsp;|&nbsp; ${STATE.periodo || '—'}</div>
+    </div>
+    <div style="text-align:right;font-size:8pt;color:#718096">Seção: ${section}</div>
+  </div>`;
+}
+
+function buildExportFooter() {
+  return `<div class="print-footer"><span>Prof. Paulo H. Donassolo · Recriar a Gestão Comercial</span><span>Ferramenta 3.2 — Perfil Comportamental na Função</span></div></body></html>`;
+}
+
+function exportSection(n) {
+  const sections = ['Diagnóstico','Faz Hoje / Fazer Diferente','PDI','Plano por Função'];
+  let content = '';
+  if (n === 0) {
+    const scores = calcScores(STATE.answers);
+    const bench = BENCHMARKS[STATE.funcao];
+    const heroRows = DIMS.map(d => {
+      const s = scores[d];
+      const b = bench[d];
+      const gap = b - s;
+      return `<tr><td><span class="dim-tag" style="background:${DIM_LIGHTS[d]};color:${DIM_COLORS[d]}">${d}</span> ${DIM_NAMES[d]}</td><td>${s.toFixed(1)}</td><td>${b.toFixed(1)}</td><td>${gap>0?'+'+gap.toFixed(1):gap.toFixed(1)}</td></tr>`;
+    }).join('');
+    const perfil = document.getElementById('perfil-box-wrap').innerHTML;
+    const narr = document.getElementById('narrative-box').innerHTML;
+    content = `<div class="print-section">Scores e Gap por Dimensão</div>
+    <table><thead><tr><th>Dimensão</th><th>Atual</th><th>Benchmark</th><th>Gap</th></tr></thead><tbody>${heroRows}</tbody></table>
+    ${perfil}
+    <div class="print-section">Análise e Orientação Estratégica</div>
+    <div class="card-p">${narr}</div>`;
+  } else if (n === 1) {
+    const rows = Array.from(document.querySelectorAll('#faz-hoje-body tr')).map(tr => {
+      const tds = tr.querySelectorAll('textarea');
+      return `<tr><td>${tds[0].value}</td><td>${tds[1].value}</td><td>${tds[2].value}</td></tr>`;
+    }).join('');
+    content = `<div class="print-section">Comportamentos a Transformar</div>
+    <table><thead><tr><th>Faz Hoje</th><th>Fazer Diferente</th><th>Impacto Esperado</th></tr></thead><tbody>${rows}</tbody></table>`;
+  } else if (n === 2) {
+    const obj = document.getElementById('pdi-objetivo').value;
+    const comps = Array.from(document.querySelectorAll('#pdi-comps .pdi-comp-card')).map(card => {
+      const name = card.querySelector('.pdi-comp-name').textContent.trim();
+      const txts = Array.from(card.querySelectorAll('textarea')).map(t => t.value);
+      return `<div class="card-p"><h3>${name}</h3>
+        <p><strong>O que desenvolver:</strong> ${txts[0]}</p>
+        <p><strong>Como desenvolver:</strong> ${txts[1]}</p>
+        <p><strong>Como aferir:</strong> ${txts[2]}</p>
+        <p><strong>Apoio do gestor:</strong> ${txts[3]}</p>
+      </div>`;
+    }).join('');
+    content = `<div class="print-section">PDI — Plano de Desenvolvimento Individual</div>
+    <p><strong>Profissional:</strong> ${STATE.nome} &nbsp;|&nbsp; <strong>Gestor:</strong> ${STATE.gestor || '—'} &nbsp;|&nbsp; <strong>Período:</strong> ${STATE.periodo || '—'}</p>
+    <p><strong>Objetivo geral:</strong> ${obj}</p>${comps}`;
+  } else {
+    const plano = document.getElementById('plano-funcao').innerHTML;
+    content = `<div class="print-section">Plano de Desenvolvimento por Função</div>${plano}`;
+  }
+  const w = window.open('', '_blank');
+  w.document.write(buildExportHeader(sections[n]) + content + buildExportFooter());
+  w.document.close();
+}
+
+function exportAll() {
+  const scores = calcScores(STATE.answers);
+  const bench = BENCHMARKS[STATE.funcao];
+  const heroRows = DIMS.map(d => {
+    const s = scores[d];
+    const b = bench[d];
+    const gap = b - s;
+    return `<tr><td><span class="dim-tag" style="background:${DIM_LIGHTS[d]};color:${DIM_COLORS[d]}">${d}</span> ${DIM_NAMES[d]}</td><td>${s.toFixed(1)}</td><td>${b.toFixed(1)}</td><td>${gap>0?'+'+gap.toFixed(1):gap.toFixed(1)}</td></tr>`;
+  }).join('');
+  const perfil = document.getElementById('perfil-box-wrap').innerHTML;
+  const narr = document.getElementById('narrative-box').innerHTML;
+  const fhRows = Array.from(document.querySelectorAll('#faz-hoje-body tr')).map(tr => {
+    const tds = tr.querySelectorAll('textarea');
+    return `<tr><td>${tds[0].value}</td><td>${tds[1].value}</td><td>${tds[2].value}</td></tr>`;
+  }).join('');
+  const obj = document.getElementById('pdi-objetivo').value;
+  const comps = Array.from(document.querySelectorAll('#pdi-comps .pdi-comp-card')).map(card => {
+    const name = card.querySelector('.pdi-comp-name').textContent.trim();
+    const txts = Array.from(card.querySelectorAll('textarea')).map(t => t.value);
+    return `<div class="card-p"><h3>${name}</h3>
+      <p><strong>O que desenvolver:</strong> ${txts[0]}</p>
+      <p><strong>Como desenvolver:</strong> ${txts[1]}</p>
+      <p><strong>Como aferir:</strong> ${txts[2]}</p>
+      <p><strong>Apoio do gestor:</strong> ${txts[3]}</p>
+    </div>`;
+  }).join('');
+  const plano = document.getElementById('plano-funcao').innerHTML;
+
+  const content = `
+    <h2 style="font-family:'Playfair Display',serif;font-size:14pt;margin-bottom:16px">Relatório Completo — Perfil Comportamental na Função</h2>
+    <div class="print-section">01 · Diagnóstico — Scores e Gap por Dimensão</div>
+    <table><thead><tr><th>Dimensão</th><th>Atual</th><th>Benchmark</th><th>Gap</th></tr></thead><tbody>${heroRows}</tbody></table>
+    ${perfil}
+    <div class="print-section">Análise e Orientação Estratégica</div>
+    <div class="card-p">${narr}</div>
+    <div style="page-break-before:always"></div>
+    <div class="print-section">02 · Faz Hoje / Fazer Diferente</div>
+    <table><thead><tr><th>Faz Hoje</th><th>Fazer Diferente</th><th>Impacto Esperado</th></tr></thead><tbody>${fhRows}</tbody></table>
+    <div class="print-section" style="margin-top:24px">03 · PDI — Plano de Desenvolvimento Individual</div>
+    <p><strong>Profissional:</strong> ${STATE.nome} &nbsp;|&nbsp; <strong>Gestor:</strong> ${STATE.gestor||'—'} &nbsp;|&nbsp; <strong>Período:</strong> ${STATE.periodo||'—'}</p>
+    <p><strong>Objetivo geral:</strong> ${obj}</p>${comps}
+    <div style="page-break-before:always"></div>
+    <div class="print-section">04 · Plano de Desenvolvimento por Função</div>${plano}`;
+
+  const w = window.open('', '_blank');
+  w.document.write(buildExportHeader('Relatório Completo') + content + buildExportFooter());
+  w.document.close();
+}
+
+// =====================================================================
+// NAVEGAÇÃO E PERSISTÊNCIA
+// =====================================================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function resetTool() {
+  if (!confirm('Deseja iniciar uma nova avaliação? Os dados atuais serão perdidos.')) return;
+  localStorage.removeItem('rgc_f32');
+  location.reload();
+}
+
+function saveLS() {
+  try {
+    localStorage.setItem('rgc_f32', JSON.stringify({
+      mode: STATE.mode, funcao: STATE.funcao,
+      nome: STATE.nome, cargo: STATE.cargo, empresa: STATE.empresa,
+      tempo: STATE.tempo, gestor: STATE.gestor, periodo: STATE.periodo,
+      answers: STATE.answers, answersAuto: STATE.answersAuto
+    }));
+  } catch(e) {}
+}
+
+window.addEventListener('load', () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem('rgc_f32'));
+    if (saved && saved.nome) {
+      Object.assign(STATE, saved);
+      ['nome','cargo','empresa','gestor','periodo'].forEach(k => {
+        const el = document.getElementById('f-'+k);
+        if (el && saved[k]) el.value = saved[k];
+      });
+      if (saved.tempo) document.getElementById('f-tempo').value = saved.tempo;
+      if (saved.mode) selectMode(saved.mode);
+      if (saved.funcao) selectFuncao(saved.funcao);
+    }
+  } catch(e) {}
+});
+</script>
+</body>
+</html>

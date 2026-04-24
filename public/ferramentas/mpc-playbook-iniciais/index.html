@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferramenta 6.1 — MPC · Playbook Comercial: Primeiros Passos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-mid: #253564;
+  --teal: #1d9e8f;
+  --teal-light: #e8f7f5;
+  --coral: #e05c3a;
+  --coral-light: #fdf1ee;
+  --slate: #4a5568;
+  --gray-light: #f4f6f9;
+  --gray-mid: #e2e8f0;
+  --gray-dark: #718096;
+  --white: #ffffff;
+  --text: #1a2744;
+  --B1-color: #1a2744; --B1-light: #eef0f5;
+  --B2-color: #1d9e8f; --B2-light: #e8f7f5;
+  --B3-color: #2563a8; --B3-light: #eff6ff;
+  --B4-color: #7c3aed; --B4-light: #f3e8ff;
+  --B5-color: #b45309; --B5-light: #fef3c7;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Source Sans 3', sans-serif;
+  --shadow: 0 2px 12px rgba(26,39,68,0.08);
+  --shadow-md: 0 4px 24px rgba(26,39,68,0.12);
+  --radius: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--gray-light); color: var(--text); font-size: 15px; line-height: 1.6; }
+
+.app-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* HEADER */
+.tool-header {
+  background: var(--navy);
+  color: white;
+  padding: 40px 48px;
+  border-radius: var(--radius);
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.tool-header::before {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 220px; height: 100%;
+  background: linear-gradient(135deg, transparent 40%, rgba(29,158,143,0.18));
+}
+.tool-header .badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--teal); border: 1px solid var(--teal);
+  padding: 3px 10px; border-radius: 2px; margin-bottom: 14px;
+}
+.tool-header h1 { font-family: var(--font-display); font-size: 28px; font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+.tool-header p { color: rgba(255,255,255,0.7); font-size: 14px; max-width: 560px; }
+
+/* CARD */
+.card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px; margin-bottom: 20px; }
+.card-sm { padding: 24px; }
+
+/* SECTION LABEL */
+.sec-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gray-dark); margin-bottom: 20px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--gray-mid);
+  display: flex; align-items: center; gap: 10px;
+}
+
+/* FIELDS */
+.fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field-group { display: flex; flex-direction: column; gap: 6px; }
+.field-group label { font-size: 11px; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: 0.5px; }
+.field-group input, .field-group select, .field-group textarea {
+  border: 1px solid var(--gray-mid); border-radius: var(--radius);
+  padding: 10px 14px; font-family: var(--font-body); font-size: 14px;
+  color: var(--text); transition: border-color 0.2s; background: white;
+}
+.field-group input:focus, .field-group select:focus, .field-group textarea:focus { outline: none; border-color: var(--teal); }
+.field-group textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.field-group.full { grid-column: 1 / -1; }
+.field-hint { font-size: 11px; color: var(--gray-dark); margin-top: 4px; font-style: italic; }
+
+/* WELCOME CARDS */
+.welcome-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+.info-card { background: white; border: 1px solid var(--gray-mid); border-radius: var(--radius); padding: 20px; }
+.info-card .ic-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+.info-card p, .info-card li { font-size: 13px; line-height: 1.7; color: var(--slate); }
+.info-card ul { padding-left: 16px; }
+
+/* BLOCOS STEP */
+.bloco-nav {
+  display: flex; gap: 6px; margin-bottom: 28px; overflow-x: auto; padding-bottom: 4px;
+}
+.bloco-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 10px 14px; border-radius: var(--radius);
+  border: 1.5px solid var(--gray-mid); background: white;
+  color: var(--gray-dark); cursor: pointer; font-family: var(--font-body);
+  transition: all 0.2s; text-align: center; white-space: nowrap; min-width: 110px;
+}
+.bloco-btn .bn { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; }
+.bloco-btn .bl { font-size: 12px; font-weight: 600; line-height: 1.2; }
+.bloco-btn.active { background: var(--navy); border-color: var(--navy); color: white; }
+.bloco-btn.done { border-color: var(--teal); color: var(--teal); background: var(--teal-light); }
+.bloco-btn.done .bn { color: var(--teal); }
+.bloco-btn.active .bn { color: rgba(255,255,255,0.6); }
+
+/* PROGRESS */
+.progress-bar { background: var(--gray-mid); height: 4px; border-radius: 2px; margin-bottom: 8px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--navy)); border-radius: 2px; transition: width 0.4s ease; }
+.progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.progress-info .sec-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+.progress-info .step-count { font-size: 12px; color: var(--gray-dark); }
+
+/* BLOCO HEADER */
+.bloco-header {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 20px 24px; border-radius: var(--radius);
+  margin-bottom: 24px;
+}
+.bloco-num {
+  font-size: 32px; font-weight: 700; font-family: var(--font-display);
+  opacity: 0.15; line-height: 1;
+}
+.bloco-info .bloco-tag {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 2px; display: inline-block; margin-bottom: 6px;
+}
+.bloco-info h3 { font-family: var(--font-display); font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.bloco-info p { font-size: 13px; line-height: 1.6; }
+
+.bloco-b1 { background: var(--B1-light); border-left: 3px solid var(--B1-color); }
+.bloco-b1 .bloco-tag { background: var(--B1-light); color: var(--B1-color); border: 1px solid rgba(26,39,68,0.2); }
+.bloco-b1 .bloco-num, .bloco-b1 .bloco-info h3 { color: var(--B1-color); }
+.bloco-b2 { background: var(--B2-light); border-left: 3px solid var(--B2-color); }
+.bloco-b2 .bloco-tag { background: var(--B2-light); color: var(--B2-color); border: 1px solid rgba(29,158,143,0.3); }
+.bloco-b2 .bloco-num, .bloco-b2 .bloco-info h3 { color: var(--B2-color); }
+.bloco-b3 { background: var(--B3-light); border-left: 3px solid var(--B3-color); }
+.bloco-b3 .bloco-tag { background: var(--B3-light); color: var(--B3-color); border: 1px solid rgba(37,99,168,0.3); }
+.bloco-b3 .bloco-num, .bloco-b3 .bloco-info h3 { color: var(--B3-color); }
+.bloco-b4 { background: var(--B4-light); border-left: 3px solid var(--B4-color); }
+.bloco-b4 .bloco-tag { background: var(--B4-light); color: var(--B4-color); border: 1px solid rgba(124,58,237,0.3); }
+.bloco-b4 .bloco-num, .bloco-b4 .bloco-info h3 { color: var(--B4-color); }
+.bloco-b5 { background: var(--B5-light); border-left: 3px solid var(--B5-color); }
+.bloco-b5 .bloco-tag { background: var(--B5-light); color: var(--B5-color); border: 1px solid rgba(180,83,9,0.3); }
+.bloco-b5 .bloco-num, .bloco-b5 .bloco-info h3 { color: var(--B5-color); }
+
+/* BOTÕES */
+.btn {
+  font-family: var(--font-body); font-size: 13px; font-weight: 600;
+  letter-spacing: 0.5px; padding: 12px 28px; border-radius: var(--radius);
+  border: none; cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase;
+}
+.btn-primary { background: var(--navy); color: white; }
+.btn-primary:hover { background: var(--navy-mid); }
+.btn-teal { background: var(--teal); color: white; }
+.btn-teal:hover { background: #178577; }
+.btn-outline { background: transparent; color: var(--navy); border: 1px solid var(--navy); }
+.btn-outline:hover { background: var(--gray-light); }
+.btn-sm { padding: 8px 16px; font-size: 12px; }
+.btn-row { display: flex; gap: 12px; align-items: center; margin-top: 28px; flex-wrap: wrap; }
+.btn-row.between { justify-content: space-between; }
+
+/* NOTA CORAL */
+.nota-coral {
+  background: var(--coral-light); border-left: 3px solid var(--coral);
+  padding: 14px 18px; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 13px; color: #7c2d12; margin: 16px 0;
+}
+.nota-coral strong { display: block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+
+/* COMPLETUDE VISUAL */
+.completude-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 20px 0; }
+.comp-item {
+  padding: 12px; border-radius: var(--radius); border: 1.5px solid var(--gray-mid);
+  text-align: center; background: white;
+}
+.comp-item .ci-num { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.comp-item .ci-name { font-size: 11px; color: var(--slate); line-height: 1.3; margin-bottom: 8px; }
+.comp-item .ci-bar { height: 4px; border-radius: 2px; background: var(--gray-mid); overflow: hidden; }
+.comp-item .ci-fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+.comp-item.done { border-color: var(--teal); background: var(--teal-light); }
+.comp-item.done .ci-num { color: var(--teal); }
+.comp-item.partial { border-color: #f59e0b; background: #fffbeb; }
+
+/* ABAS DE RESULTADO */
+.tabs-nav {
+  background: var(--navy); border-radius: var(--radius) var(--radius) 0 0;
+  padding: 16px 20px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+}
+.tab-btn {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 12px 8px; border-radius: var(--radius) var(--radius) 0 0;
+  border: none; border-bottom: 3px solid transparent;
+  background: transparent; color: rgba(255,255,255,0.55);
+  cursor: pointer; font-family: var(--font-body); transition: all 0.2s;
+}
+.tab-btn:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.06); }
+.tab-btn.active { color: white; border-bottom-color: var(--teal); background: rgba(255,255,255,0.06); }
+.tab-btn .tn { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; }
+.tab-btn.active .tn { color: var(--teal); }
+.tab-btn .tl { font-size: 13px; font-weight: 700; line-height: 1.2; }
+.tab-btn .ts { font-size: 11px; opacity: 0.65; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.tabs-body { background: white; border-radius: 0 0 var(--radius) var(--radius); padding: 32px; box-shadow: var(--shadow); }
+
+/* PLAYBOOK DOCUMENT */
+.pb-section {
+  border: 1px solid var(--gray-mid); border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 20px;
+}
+.pb-section-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px;
+}
+.pb-section-header .ps-tag {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 2px; white-space: nowrap;
+}
+.pb-section-header h4 { font-size: 15px; font-weight: 600; flex: 1; }
+.pb-section-header .ps-pct { font-size: 12px; font-weight: 600; white-space: nowrap; }
+.pb-section-body { padding: 0; }
+.pb-field { padding: 14px 20px; border-bottom: 1px solid var(--gray-mid); }
+.pb-field:last-child { border-bottom: none; }
+.pb-field label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); display: block; margin-bottom: 6px; }
+.pb-field textarea {
+  width: 100%; border: 1px solid var(--gray-mid); border-radius: 4px;
+  padding: 10px 12px; font-family: var(--font-body); font-size: 13px;
+  line-height: 1.6; resize: vertical; min-height: 70px;
+  background: white; color: var(--text); transition: border-color 0.2s;
+}
+.pb-field textarea:focus { outline: none; border-color: var(--teal); }
+.pb-field .empty-alert { font-size: 12px; color: var(--coral); margin-top: 4px; display: none; }
+
+.pb-b1 .pb-section-header { background: var(--B1-light); }
+.pb-b1 .pb-section-header h4 { color: var(--B1-color); }
+.pb-b1 .ps-tag { background: var(--B1-light); color: var(--B1-color); border: 1px solid rgba(26,39,68,0.2); }
+.pb-b2 .pb-section-header { background: var(--B2-light); }
+.pb-b2 .pb-section-header h4 { color: var(--B2-color); }
+.pb-b2 .ps-tag { background: var(--B2-light); color: var(--B2-color); border: 1px solid rgba(29,158,143,0.3); }
+.pb-b3 .pb-section-header { background: var(--B3-light); }
+.pb-b3 .pb-section-header h4 { color: var(--B3-color); }
+.pb-b3 .ps-tag { background: var(--B3-light); color: var(--B3-color); border: 1px solid rgba(37,99,168,0.3); }
+.pb-b4 .pb-section-header { background: var(--B4-light); }
+.pb-b4 .pb-section-header h4 { color: var(--B4-color); }
+.pb-b4 .ps-tag { background: var(--B4-light); color: var(--B4-color); border: 1px solid rgba(124,58,237,0.3); }
+.pb-b5 .pb-section-header { background: var(--B5-light); }
+.pb-b5 .pb-section-header h4 { color: var(--B5-color); }
+.pb-b5 .ps-tag { background: var(--B5-light); color: var(--B5-color); border: 1px solid rgba(180,83,9,0.3); }
+
+/* PONTOS DE ATENCAO */
+.atencao-item {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 14px 16px; border-radius: var(--radius);
+  border: 1px solid var(--gray-mid); margin-bottom: 10px; background: white;
+}
+.atencao-item .ai-icon {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; flex-shrink: 0; font-family: var(--font-display);
+}
+.atencao-item .ai-body h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.atencao-item .ai-body p { font-size: 12px; color: var(--slate); line-height: 1.5; }
+.atencao-item.critico { border-color: var(--coral); background: var(--coral-light); }
+.atencao-item.critico .ai-icon { background: var(--coral); color: white; }
+.atencao-item.aviso { border-color: #f59e0b; background: #fffbeb; }
+.atencao-item.aviso .ai-icon { background: #f59e0b; color: white; }
+.atencao-item.ok { border-color: var(--teal); background: var(--teal-light); }
+.atencao-item.ok .ai-icon { background: var(--teal); color: white; }
+
+/* SINTESE EXECUTIVA */
+.sintese-box {
+  border: 1px solid var(--gray-mid); border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 16px;
+}
+.sintese-box .sb-header {
+  background: var(--navy); color: white; padding: 12px 20px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+}
+.sintese-box .sb-body { padding: 16px 20px; }
+.sintese-box textarea {
+  width: 100%; border: 1px solid var(--gray-mid); border-radius: 4px;
+  padding: 10px 12px; font-family: var(--font-body); font-size: 13px;
+  line-height: 1.6; resize: vertical; min-height: 80px; background: white; color: var(--text);
+}
+.sintese-box textarea:focus { outline: none; border-color: var(--teal); }
+
+/* PROXIMO PASSO */
+.pp-fase {
+  border: 1px solid var(--gray-mid); border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 16px;
+}
+.pp-fase-header {
+  display: grid; grid-template-columns: 80px 1fr;
+  align-items: center;
+}
+.pp-fase-header .pp-prazo {
+  background: var(--navy); color: white; padding: 16px;
+  font-family: var(--font-display); font-size: 20px; font-weight: 700;
+  text-align: center; line-height: 1;
+}
+.pp-fase-header .pp-titulo {
+  padding: 12px 16px;
+  font-size: 13px; font-weight: 600; color: var(--navy);
+  border-bottom: 1px solid var(--gray-mid);
+}
+.pp-acoes { padding: 0; }
+.pp-acao-row {
+  display: grid; grid-template-columns: 1fr 150px;
+  gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--gray-mid);
+  align-items: start;
+}
+.pp-acao-row:last-child { border-bottom: none; }
+.pp-acao-row textarea {
+  width: 100%; border: 1px solid var(--gray-mid); border-radius: 4px;
+  padding: 8px 10px; font-family: var(--font-body); font-size: 13px;
+  resize: vertical; min-height: 52px; background: white; color: var(--text);
+}
+.pp-acao-row textarea:focus { outline: none; border-color: var(--teal); }
+.pp-acao-row input {
+  width: 100%; border: 1px solid var(--gray-mid); border-radius: 4px;
+  padding: 8px 10px; font-family: var(--font-body); font-size: 13px;
+  background: white; color: var(--text);
+}
+.pp-acao-row input:focus { outline: none; border-color: var(--teal); }
+.pp-col-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); margin-bottom: 6px; }
+
+/* EXPORT */
+.export-panel {
+  background: var(--navy); border-radius: var(--radius);
+  padding: 24px 28px; color: white; margin-top: 28px;
+}
+.export-panel h3 { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; opacity: 0.7; }
+.export-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+.export-btn {
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  color: white; padding: 9px 16px; border-radius: var(--radius);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  font-family: var(--font-body); transition: all 0.2s; letter-spacing: 0.5px;
+}
+.export-btn:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
+.export-btn.primary-export { background: var(--teal); border-color: var(--teal); }
+.export-btn.primary-export:hover { background: #178577; }
+.print-note { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 10px; }
+
+/* INTEGRAÇÃO 6.2 BANNER */
+.integracao-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  border-radius: var(--radius); padding: 20px 24px;
+  color: white; margin-top: 20px;
+  display: flex; align-items: center; gap: 20px;
+}
+.ib-icon { font-size: 32px; opacity: 0.6; }
+.ib-body h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.ib-body p { font-size: 12px; color: rgba(255,255,255,0.65); line-height: 1.5; }
+.ib-badge {
+  font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--teal); border: 1px solid var(--teal); padding: 3px 8px; border-radius: 2px;
+  margin-bottom: 8px; display: inline-block;
+}
+
+/* FOOTER */
+.tool-footer { text-align: center; padding: 24px; font-size: 12px; color: var(--gray-dark); margin-top: 20px; }
+
+/* SOLIDEZ INDICATOR */
+.solidez-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  border-radius: var(--radius); padding: 28px 32px; color: white; margin-bottom: 20px;
+}
+.solidez-hero h2 { font-family: var(--font-display); font-size: 22px; margin-bottom: 6px; }
+.solidez-hero .meta { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 20px; }
+.solidez-score-wrap { display: flex; align-items: center; gap: 20px; }
+.solidez-num { font-size: 52px; font-weight: 700; font-family: var(--font-display); color: var(--teal); line-height: 1; }
+.solidez-label { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+.solidez-bar-wrap { flex: 1; }
+.solidez-bar-bg { background: rgba(255,255,255,0.15); height: 10px; border-radius: 5px; overflow: hidden; }
+.solidez-bar-fill { height: 100%; border-radius: 5px; background: var(--teal); transition: width 0.8s; }
+.solidez-desc { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 6px; }
+
+@media (max-width: 640px) {
+  .tool-header { padding: 28px 24px; }
+  .fields-grid, .welcome-grid { grid-template-columns: 1fr; }
+  .completude-grid { grid-template-columns: repeat(3, 1fr); }
+  .tabs-nav { grid-template-columns: repeat(2, 1fr); }
+  .bloco-nav { flex-wrap: wrap; }
+  .bloco-btn { min-width: 80px; }
+  .pp-acao-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app-wrap">
+
+<!-- ═══════════════════════════════════════════
+     PÁGINA 1 — APRESENTAÇÃO
+═══════════════════════════════════════════ -->
+<div id="page-apresentacao" class="page active">
+  <div class="tool-header">
+    <div class="badge">Ferramenta 6.1 · MPC — Manual de Processos Comerciais</div>
+    <h1>Playbook Comercial<br>Primeiros Passos</h1>
+    <p>Construa o núcleo estratégico da sua operação comercial — quem você é, para quem vende, o que oferece e como vende.</p>
+  </div>
+
+  <div class="card">
+    <div class="welcome-grid">
+      <div class="info-card">
+        <div class="ic-label">Para que serve</div>
+        <p>Esta ferramenta guia você na construção dos 5 blocos fundamentais de um Playbook Comercial funcional. Ao final, você terá um documento vivo — editável, imprimível e imediatamente utilizável pela sua equipe de vendas.</p>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Como funciona</div>
+        <ul>
+          <li>5 blocos temáticos com 3 a 4 campos cada</li>
+          <li>Cada campo tem um guia de preenchimento</li>
+          <li>Dados salvos automaticamente</li>
+          <li>Documento gerado em 4 formatos de saída</li>
+          <li>Tempo estimado: 20 a 30 minutos</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="completude-grid" style="margin-bottom:0;">
+      <div class="comp-item" id="ci-b1">
+        <div class="ci-num" style="color:var(--B1-color);">B1</div>
+        <div class="ci-name">Empresa e Proposta de Valor</div>
+        <div class="ci-bar"><div class="ci-fill" id="cf-b1" style="width:0%;background:var(--B1-color);"></div></div>
+      </div>
+      <div class="comp-item" id="ci-b2">
+        <div class="ci-num" style="color:var(--B2-color);">B2</div>
+        <div class="ci-name">Cliente Ideal e Segmentação</div>
+        <div class="ci-bar"><div class="ci-fill" id="cf-b2" style="width:0%;background:var(--B2-color);"></div></div>
+      </div>
+      <div class="comp-item" id="ci-b3">
+        <div class="ci-num" style="color:var(--B3-color);">B3</div>
+        <div class="ci-name">Portfólio e Diferenciais</div>
+        <div class="ci-bar"><div class="ci-fill" id="cf-b3" style="width:0%;background:var(--B3-color);"></div></div>
+      </div>
+      <div class="comp-item" id="ci-b4">
+        <div class="ci-num" style="color:var(--B4-color);">B4</div>
+        <div class="ci-name">Processo de Vendas</div>
+        <div class="ci-bar"><div class="ci-fill" id="cf-b4" style="width:0%;background:var(--B4-color);"></div></div>
+      </div>
+      <div class="comp-item" id="ci-b5">
+        <div class="ci-num" style="color:var(--B5-color);">B5</div>
+        <div class="ci-name">Perfil e Responsabilidades</div>
+        <div class="ci-bar"><div class="ci-fill" id="cf-b5" style="width:0%;background:var(--B5-color);"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sec-label">Identificação</div>
+    <div class="fields-grid">
+      <div class="field-group">
+        <label>Nome do Gestor *</label>
+        <input type="text" id="id-nome" placeholder="Seu nome completo">
+      </div>
+      <div class="field-group">
+        <label>Cargo / Função *</label>
+        <input type="text" id="id-cargo" placeholder="Ex: Diretor Comercial, Gerente de Vendas">
+      </div>
+      <div class="field-group">
+        <label>Empresa *</label>
+        <input type="text" id="id-empresa" placeholder="Nome da empresa">
+      </div>
+      <div class="field-group">
+        <label>Setor / Segmento</label>
+        <input type="text" id="id-setor" placeholder="Ex: Indústria, Serviços, Tecnologia B2B">
+      </div>
+      <div class="field-group">
+        <label>Tamanho da equipe comercial</label>
+        <select id="id-equipe">
+          <option value="">Selecione</option>
+          <option value="1 a 3 vendedores">1 a 3 vendedores</option>
+          <option value="4 a 8 vendedores">4 a 8 vendedores</option>
+          <option value="9 a 15 vendedores">9 a 15 vendedores</option>
+          <option value="Mais de 15 vendedores">Mais de 15 vendedores</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Data de criação / atualização</label>
+        <input type="text" id="id-data" placeholder="Ex: Janeiro 2025 · 1ª versão">
+      </div>
+    </div>
+  </div>
+
+  <div class="nota-coral">
+    <strong>Orientação de preenchimento</strong>
+    Cada campo tem um guia de exemplo. Use-os como referência para o nível de detalhe esperado. Campos incompletos são sinalizados nos resultados como pontos de atenção. Feito é melhor que perfeito — preencha o que souber agora e refine com o tempo.
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-teal" onclick="irParaBlocos()">Construir o Playbook &rarr;</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PÁGINA 2 — BLOCOS DE PREENCHIMENTO
+═══════════════════════════════════════════ -->
+<div id="page-blocos" class="page">
+  <div class="tool-header">
+    <div class="badge">Ferramenta 6.1 · MPC</div>
+    <h1>Construção do Playbook</h1>
+    <p>Preencha cada bloco com as informações da sua operação comercial. Seus dados são salvos automaticamente.</p>
+  </div>
+
+  <div class="card" style="padding:20px 24px;">
+    <div class="progress-info">
+      <span class="sec-name" id="prog-nome">Bloco 1 de 5</span>
+      <span class="step-count" id="prog-pct">0% preenchido</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-bar" style="width:0%"></div></div>
+    <div class="bloco-nav">
+      <button class="bloco-btn active" id="bb-1" onclick="mudarBloco(1)">
+        <span class="bn" style="color:var(--B1-color);">B1</span>
+        <span class="bl">Empresa</span>
+      </button>
+      <button class="bloco-btn" id="bb-2" onclick="mudarBloco(2)">
+        <span class="bn" style="color:var(--B2-color);">B2</span>
+        <span class="bl">Cliente Ideal</span>
+      </button>
+      <button class="bloco-btn" id="bb-3" onclick="mudarBloco(3)">
+        <span class="bn" style="color:var(--B3-color);">B3</span>
+        <span class="bl">Portfólio</span>
+      </button>
+      <button class="bloco-btn" id="bb-4" onclick="mudarBloco(4)">
+        <span class="bn" style="color:var(--B4-color);">B4</span>
+        <span class="bl">Processo</span>
+      </button>
+      <button class="bloco-btn" id="bb-5" onclick="mudarBloco(5)">
+        <span class="bn" style="color:var(--B5-color);">B5</span>
+        <span class="bl">Perfil</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- BLOCO 1 -->
+  <div id="bloco-1" class="bloco-panel">
+    <div class="bloco-header bloco-b1">
+      <div class="bloco-num">01</div>
+      <div class="bloco-info">
+        <span class="bloco-tag">B1 · Identidade</span>
+        <h3>Empresa e Proposta de Valor</h3>
+        <p>Defina quem é a empresa, por que ela existe e o que a torna relevante para o mercado.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="fields-grid">
+        <div class="field-group full">
+          <label>Quem somos — história e posicionamento</label>
+          <textarea id="b1-historia" rows="4" placeholder="Ex: A Metalúrgica Progresso foi fundada em 1998 em São Paulo e atende indústrias de médio porte com soluções de estamparia e usinagem. Somos referência regional em prazo e qualidade de acabamento."></textarea>
+          <span class="field-hint">Descreva a origem, o que a empresa faz e como se posiciona no mercado. 3 a 5 linhas.</span>
+        </div>
+        <div class="field-group full">
+          <label>Missão — razão de existir da empresa</label>
+          <textarea id="b1-missao" rows="3" placeholder="Ex: Garantir que nossos clientes entreguem mais com menos — combinando velocidade de produção, qualidade de acabamento e total confiabilidade no prazo."></textarea>
+          <span class="field-hint">Uma frase ou parágrafo curto que responde: por que existimos?</span>
+        </div>
+        <div class="field-group full">
+          <label>Proposta de Valor — o que entregamos ao cliente</label>
+          <textarea id="b1-cvp" rows="3" placeholder="Ex: Reduzimos o custo de retrabalho dos nossos clientes em até 30% com processos rastreados, materiais certificados e entrega pontual. Nosso diferencial é a equipe técnica que atende do projeto ao pós-venda."></textarea>
+          <span class="field-hint">O que o cliente ganha ao trabalhar com você? Seja específico — evite frases genéricas como "qualidade e atendimento".</span>
+        </div>
+        <div class="field-group full">
+          <label>Valores — princípios que guiam o comportamento da equipe</label>
+          <textarea id="b1-valores" rows="3" placeholder="Ex: Honestidade técnica — nunca vendemos o que não podemos entregar. Agilidade — 24h para orçamento, sem exceção. Parceria — o problema do cliente é o nosso problema."></textarea>
+          <span class="field-hint">Liste 3 a 5 valores com uma frase de aplicação prática para cada um. Evite listas genéricas.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 2 -->
+  <div id="bloco-2" class="bloco-panel" style="display:none;">
+    <div class="bloco-header bloco-b2">
+      <div class="bloco-num">02</div>
+      <div class="bloco-info">
+        <span class="bloco-tag">B2 · Mercado</span>
+        <h3>Cliente Ideal e Segmentação</h3>
+        <p>Defina com precisão para quem você vende — o cliente que mais cresce, mais compra e mais indica.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="fields-grid">
+        <div class="field-group full">
+          <label>ICP — Perfil do Cliente Ideal (Ideal Customer Profile)</label>
+          <textarea id="b2-icp" rows="4" placeholder="Ex: Indústrias de manufatura, faturamento entre R$ 15M e R$ 80M/ano, com equipe de compras estruturada. Setores: metal-mecânico, plástico e embalagens. Decisor: Diretor de Operações ou Gerente de Compras. Localização: interior de SP e sul do Brasil."></textarea>
+          <span class="field-hint">Descreva o perfil das empresas que se tornam seus melhores clientes: porte, setor, perfil do decisor, localização, situação típica que os faz buscar você.</span>
+        </div>
+        <div class="field-group full">
+          <label>Dores e desafios que levam o cliente a comprar</label>
+          <textarea id="b2-dores" rows="3" placeholder="Ex: Fornecedores que não cumprem prazo, gerando parada de linha. Peças com retrabalho que aumentam custo. Falta de rastreabilidade nos processos. Dificuldade em encontrar fornecedor que atenda lotes pequenos com qualidade."></textarea>
+          <span class="field-hint">Quais problemas concretos fazem o cliente buscar uma solução como a sua? Seja específico — evite dores genéricas.</span>
+        </div>
+        <div class="field-group full">
+          <label>Jornada de compra — do primeiro contato ao fechamento</label>
+          <textarea id="b2-jornada" rows="3" placeholder="Ex: 1. Indicação ou contato via LinkedIn / site. 2. Reunião técnica para levantamento de necessidades (30 min). 3. Envio de proposta em até 24h. 4. Negociação: 1 a 3 rodadas, foco em prazo e volume. 5. Fechamento com contrato. Ciclo médio: 20 a 45 dias."></textarea>
+          <span class="field-hint">Descreva as etapas que o cliente percorre — do momento que reconhece o problema até assinar o contrato. Inclua o ciclo médio de vendas.</span>
+        </div>
+        <div class="field-group full">
+          <label>Perfis que NÃO são nosso cliente ideal</label>
+          <textarea id="b2-nao-icp" rows="2" placeholder="Ex: Empresas que compram apenas pelo menor preço, sem considerar qualidade. Compradores de volume muito baixo (abaixo de R$ 5.000/pedido). Clientes que exigem prazo menor que 5 dias úteis como padrão."></textarea>
+          <span class="field-hint">Definir quem NÃO é seu cliente ajuda a equipe a não desperdiçar energia com oportunidades que não fecham ou geram retrabalho.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 3 -->
+  <div id="bloco-3" class="bloco-panel" style="display:none;">
+    <div class="bloco-header bloco-b3">
+      <div class="bloco-num">03</div>
+      <div class="bloco-info">
+        <span class="bloco-tag">B3 · Oferta</span>
+        <h3>Portfólio e Diferenciais Competitivos</h3>
+        <p>Documente o que você vende, como posiciona cada solução e o que faz você ser preferido ao concorrente.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="fields-grid">
+        <div class="field-group full">
+          <label>Portfólio — principais produtos e serviços</label>
+          <textarea id="b3-portfolio" rows="4" placeholder="Ex: Linha 1 – Estamparia de precisão (peças de 0,5mm a 6mm). Linha 2 – Usinagem CNC (tolerância ±0,01mm). Linha 3 – Tratamento superficial (zincagem, fosfatização). Serviço adicional: projeto e prototipagem técnica. Tickes médios: R$ 8.000 (estamparia) a R$ 35.000 (usinagem complexa)."></textarea>
+          <span class="field-hint">Liste os produtos e serviços com uma descrição objetiva de cada um. Inclua ticket médio ou faixa de preço quando possível.</span>
+        </div>
+        <div class="field-group full">
+          <label>Diferenciais competitivos — por que o cliente nos escolhe</label>
+          <textarea id="b3-diferenciais" rows="3" placeholder="Ex: 1. Única empresa da região com laboratório de qualidade próprio. 2. Prazo 30% menor que a média do mercado local. 3. Equipe técnica com certificação ISO 9001. 4. Portal do cliente com rastreamento de pedido em tempo real."></textarea>
+          <span class="field-hint">Liste 3 a 5 diferenciais concretos — não opiniões, mas fatos verificáveis. Para cada diferencial, o vendedor deve conseguir provar com dados ou exemplos.</span>
+        </div>
+        <div class="field-group full">
+          <label>Argumentos de venda — o que dizer quando o cliente compara com o concorrente</label>
+          <textarea id="b3-argumentos" rows="3" placeholder="Ex: Quando o cliente diz que o concorrente é mais barato: 'Entendo. Nosso preço inclui inspeção 100% das peças e reposição garantida em 48h em caso de não conformidade — o que economiza custo de retrabalho na sua linha. Posso mostrar o custo total comparado?'"></textarea>
+          <span class="field-hint">Escreva 2 a 3 argumentos prontos para quando o vendedor for desafiado na negociação. Inclua a objeção e a resposta recomendada.</span>
+        </div>
+        <div class="field-group full">
+          <label>Estratégia de preço e condições comerciais</label>
+          <textarea id="b3-preco" rows="2" placeholder="Ex: Preço posicionado na faixa intermediária-alta do mercado. Desconto máximo sem aprovação: 5%. Parcelamento: 28/35/42 dias padrão. Para contratos acima de R$ 50k: condições especiais mediante aprovação da diretoria."></textarea>
+          <span class="field-hint">Defina a política de preço e os limites de negociação que o vendedor pode exercer sem escalar para a gestão.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 4 -->
+  <div id="bloco-4" class="bloco-panel" style="display:none;">
+    <div class="bloco-header bloco-b4">
+      <div class="bloco-num">04</div>
+      <div class="bloco-info">
+        <span class="bloco-tag">B4 · Processo</span>
+        <h3>Processo de Vendas</h3>
+        <p>Documente como sua equipe vende — do primeiro contato ao fechamento e pós-venda.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="fields-grid">
+        <div class="field-group full">
+          <label>Etapas do processo de vendas</label>
+          <textarea id="b4-etapas" rows="5" placeholder="Ex:&#10;1. Prospecção — identificar empresas no perfil ICP via LinkedIn, indicação ou visita técnica. Meta: 5 novos contatos/semana por vendedor.&#10;2. Qualificação — ligação ou reunião de 20 min para confirmar necessidade, prazo e orçamento disponível.&#10;3. Proposta técnica — enviada em até 24h após visita ou reunião de levantamento.&#10;4. Negociação — máximo 2 rodadas de ajuste. Envolver gestão se desconto > 5%.&#10;5. Fechamento e pedido — contrato assinado + pedido no sistema. Ativar equipe técnica.&#10;6. Pós-venda — contato em 7 dias após entrega para aferir satisfação."></textarea>
+          <span class="field-hint">Liste cada etapa com: nome, o que acontece, quem faz, prazo ou meta esperada. Seja descritivo o suficiente para que um vendedor novo consiga seguir sem perguntar.</span>
+        </div>
+        <div class="field-group full">
+          <label>Metodologia e abordagem de vendas</label>
+          <textarea id="b4-metodologia" rows="3" placeholder="Ex: Venda consultiva com foco em diagnóstico técnico. Nas primeiras reuniões, priorizamos entender o processo produtivo do cliente antes de apresentar qualquer solução. Usamos perguntas de implicação (estilo SPIN) para revelar o custo dos problemas atuais. Nunca enviamos proposta sem antes visitar a planta ou fazer uma reunião técnica de 30 min."></textarea>
+          <span class="field-hint">Qual é a filosofia de venda da equipe? Como o vendedor deve se comportar em cada interação com o cliente?</span>
+        </div>
+        <div class="field-group full">
+          <label>Ferramentas e canais de vendas</label>
+          <textarea id="b4-ferramentas" rows="2" placeholder="Ex: CRM: Pipedrive (obrigatório para todos os negócios acima de R$ 5.000). WhatsApp Business para comunicação ágil. LinkedIn Sales Navigator para prospecção ativa. Visitas presenciais para negócios estratégicos (acima de R$ 20.000)."></textarea>
+          <span class="field-hint">Liste as ferramentas que a equipe deve usar e em quais situações cada canal é indicado.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 5 -->
+  <div id="bloco-5" class="bloco-panel" style="display:none;">
+    <div class="bloco-header bloco-b5">
+      <div class="bloco-num">05</div>
+      <div class="bloco-info">
+        <span class="bloco-tag">B5 · Pessoas</span>
+        <h3>Perfil do Vendedor e Responsabilidades</h3>
+        <p>Defina quem é o vendedor ideal para a sua operação — o que sabe, o que faz e o que se espera dele.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="fields-grid">
+        <div class="field-group full">
+          <label>Perfil ideal do vendedor</label>
+          <textarea id="b5-perfil" rows="4" placeholder="Ex: Profissional com experiência em vendas B2B de ciclo médio (30 a 60 dias), preferencialmente no setor industrial. Sabe conduzir reuniões técnicas e tem desenvoltura para conversar com engenheiros e compradores. Formação: técnico ou superior em áreas industriais ou comerciais. Habilidades essenciais: negociação, organização de pipeline, comunicação escrita clara."></textarea>
+          <span class="field-hint">Descreva as características, competências e experiência que o vendedor ideal deve ter. Use este perfil também no recrutamento.</span>
+        </div>
+        <div class="field-group full">
+          <label>Responsabilidades e atividades do dia a dia</label>
+          <textarea id="b5-responsabilidades" rows="4" placeholder="Ex: Diariamente: atualizar CRM com registro de interações, enviar propostas pendentes, fazer follow-up de negócios em aberto. Semanalmente: 5 novas prospecções ativas, participar da reunião de pipeline (seg, 9h). Mensalmente: atingir meta de novos clientes (mín. 2) e taxa de conversão acima de 25%."></textarea>
+          <span class="field-hint">Detalhe as atividades esperadas por periodicidade: diário, semanal, mensal. Quanto mais concreto, menos ambiguidade para a equipe.</span>
+        </div>
+        <div class="field-group full">
+          <label>O que a empresa espera — expectativas de resultado</label>
+          <textarea id="b5-expectativas" rows="3" placeholder="Ex: Meta mensal individual: R$ 120.000 em faturamento. Taxa mínima de conversão: 25% de propostas enviadas. Carteira ativa mínima: 30 clientes. Novos clientes por mês: mínimo 2. Participação nas reuniões semanais é obrigatória."></textarea>
+          <span class="field-hint">Defina as metas e os padrões mínimos de desempenho. O vendedor precisa saber exatamente como será avaliado.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row between">
+    <button class="btn btn-outline" onclick="irParaApresentacao()">&larr; Identificação</button>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-outline btn-sm" id="btn-prev-bloco" onclick="blocoAnterior()" style="display:none;">&larr; Anterior</button>
+      <button class="btn btn-primary btn-sm" id="btn-next-bloco" onclick="proximoBloco()">Próximo Bloco &rarr;</button>
+      <button class="btn btn-teal" id="btn-gerar" onclick="gerarResultados()" style="display:none;">Ver Playbook &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PÁGINA 3 — RESULTADOS
+═══════════════════════════════════════════ -->
+<div id="page-resultados" class="page">
+  <div class="tool-header">
+    <div class="badge">Ferramenta 6.1 · MPC</div>
+    <h1>Playbook Comercial<br>Primeiros Passos</h1>
+    <p id="res-meta-header">Documento gerado para a equipe comercial.</p>
+  </div>
+
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="mudarAba(1)">
+      <span class="tn">01</span>
+      <span class="tl">Playbook</span>
+      <span class="ts">Documento gerado</span>
+    </button>
+    <button class="tab-btn" onclick="mudarAba(2)">
+      <span class="tn">02</span>
+      <span class="tl">Pontos de Atenção</span>
+      <span class="ts">O que ainda falta</span>
+    </button>
+    <button class="tab-btn" onclick="mudarAba(3)">
+      <span class="tn">03</span>
+      <span class="tl">Síntese Executiva</span>
+      <span class="ts">Resumo 1 página</span>
+    </button>
+    <button class="tab-btn" onclick="mudarAba(4)">
+      <span class="tn">04</span>
+      <span class="tl">Próximos Passos</span>
+      <span class="ts">Plano 30 dias</span>
+    </button>
+  </div>
+  <div class="tabs-body">
+
+    <!-- ABA 01 — PLAYBOOK GERADO -->
+    <div id="tab-1" class="tab-content active">
+      <div class="solidez-hero" id="solidez-hero">
+        <h2 id="solidez-empresa-nome">Playbook Comercial</h2>
+        <div class="meta" id="solidez-meta">—</div>
+        <div class="solidez-score-wrap">
+          <div>
+            <div class="solidez-num" id="solidez-pct">0%</div>
+            <div class="solidez-label">Solidez do Playbook</div>
+          </div>
+          <div class="solidez-bar-wrap">
+            <div class="solidez-bar-bg"><div class="solidez-bar-fill" id="solidez-bar" style="width:0%"></div></div>
+            <div class="solidez-desc" id="solidez-desc">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAYBOOK FIELDS — Bloco 1 -->
+      <div class="pb-section pb-b1">
+        <div class="pb-section-header">
+          <span class="ps-tag">B1 · Identidade</span>
+          <h4>Empresa e Proposta de Valor</h4>
+          <span class="ps-pct" id="pct-b1-res">0%</span>
+        </div>
+        <div class="pb-section-body">
+          <div class="pb-field">
+            <label>Quem somos — história e posicionamento</label>
+            <textarea id="res-b1-historia" rows="4"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>Missão</label>
+            <textarea id="res-b1-missao" rows="3"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>Proposta de Valor</label>
+            <textarea id="res-b1-cvp" rows="3"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>Valores</label>
+            <textarea id="res-b1-valores" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAYBOOK FIELDS — Bloco 2 -->
+      <div class="pb-section pb-b2">
+        <div class="pb-section-header">
+          <span class="ps-tag">B2 · Mercado</span>
+          <h4>Cliente Ideal e Segmentação</h4>
+          <span class="ps-pct" id="pct-b2-res">0%</span>
+        </div>
+        <div class="pb-section-body">
+          <div class="pb-field">
+            <label>ICP — Perfil do Cliente Ideal</label>
+            <textarea id="res-b2-icp" rows="4"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>Dores e desafios que levam o cliente a comprar</label>
+            <textarea id="res-b2-dores" rows="3"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>Jornada de compra</label>
+            <textarea id="res-b2-jornada" rows="3"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>Perfis que NÃO são nosso cliente ideal</label>
+            <textarea id="res-b2-nao-icp" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAYBOOK FIELDS — Bloco 3 -->
+      <div class="pb-section pb-b3">
+        <div class="pb-section-header">
+          <span class="ps-tag">B3 · Oferta</span>
+          <h4>Portfólio e Diferenciais Competitivos</h4>
+          <span class="ps-pct" id="pct-b3-res">0%</span>
+        </div>
+        <div class="pb-section-body">
+          <div class="pb-field">
+            <label>Portfólio — produtos e serviços</label>
+            <textarea id="res-b3-portfolio" rows="4"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>Diferenciais competitivos</label>
+            <textarea id="res-b3-diferenciais" rows="3"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>Argumentos de venda</label>
+            <textarea id="res-b3-argumentos" rows="3"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>Estratégia de preço e condições comerciais</label>
+            <textarea id="res-b3-preco" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAYBOOK FIELDS — Bloco 4 -->
+      <div class="pb-section pb-b4">
+        <div class="pb-section-header">
+          <span class="ps-tag">B4 · Processo</span>
+          <h4>Processo de Vendas</h4>
+          <span class="ps-pct" id="pct-b4-res">0%</span>
+        </div>
+        <div class="pb-section-body">
+          <div class="pb-field">
+            <label>Etapas do processo de vendas</label>
+            <textarea id="res-b4-etapas" rows="6"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>Metodologia e abordagem</label>
+            <textarea id="res-b4-metodologia" rows="3"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>Ferramentas e canais de vendas</label>
+            <textarea id="res-b4-ferramentas" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAYBOOK FIELDS — Bloco 5 -->
+      <div class="pb-section pb-b5">
+        <div class="pb-section-header">
+          <span class="ps-tag">B5 · Pessoas</span>
+          <h4>Perfil do Vendedor e Responsabilidades</h4>
+          <span class="ps-pct" id="pct-b5-res">0%</span>
+        </div>
+        <div class="pb-section-body">
+          <div class="pb-field">
+            <label>Perfil ideal do vendedor</label>
+            <textarea id="res-b5-perfil" rows="4"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>Responsabilidades e atividades do dia a dia</label>
+            <textarea id="res-b5-responsabilidades" rows="4"></textarea>
+          </div>
+          <div class="pb-field">
+            <label>O que a empresa espera — expectativas de resultado</label>
+            <textarea id="res-b5-expectativas" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="export-panel">
+        <h3>Exportar Playbook</h3>
+        <div class="export-buttons">
+          <button class="export-btn primary-export" onclick="exportarSecao('playbook')">Exportar Playbook Completo</button>
+          <button class="export-btn" onclick="exportarSecao('sintese')">Exportar Síntese Executiva</button>
+          <button class="export-btn" onclick="exportarSecao('proximos')">Exportar Plano de Ação</button>
+          <button class="export-btn" onclick="exportarSecao('todos')">Exportar Tudo</button>
+        </div>
+        <div class="print-note">Para salvar como PDF: Ctrl+P → Destino: Salvar como PDF → Margens: Nenhuma → Ativar Gráficos de fundo</div>
+      </div>
+    </div>
+
+    <!-- ABA 02 — PONTOS DE ATENÇÃO -->
+    <div id="tab-2" class="tab-content">
+      <div class="sec-label" style="margin-bottom:16px;">Solidez do Playbook por Bloco</div>
+      <div class="completude-grid" id="comp-resultado"></div>
+
+      <div class="sec-label" style="margin-top:24px;">Análise Detalhada</div>
+      <div id="atencao-lista"></div>
+
+      <div class="nota-coral" style="margin-top:20px;">
+        <strong>Orientação</strong>
+        Campos em branco não invalidam o Playbook — eles indicam onde investir atenção nas próximas semanas. Priorize os blocos com menor solidez. Um Playbook de 60% preenchido com consistência é mais útil do que um Playbook de 95% preenchido com frases genéricas.
+      </div>
+    </div>
+
+    <!-- ABA 03 — SÍNTESE EXECUTIVA -->
+    <div id="tab-3" class="tab-content">
+      <div class="sec-label">Síntese Executiva — versão para compartilhar com a equipe</div>
+      <div class="nota-coral">
+        <strong>Como usar</strong>
+        Esta síntese é a versão de 1 página do seu Playbook. Compartilhe com novos vendedores no onboarding, use em reuniões de alinhamento ou afixe no espaço da equipe. Edite os campos conforme necessário.
+      </div>
+
+      <div class="sintese-box">
+        <div class="sb-header">Quem somos e o que entregamos</div>
+        <div class="sb-body">
+          <textarea id="sint-empresa" rows="3" placeholder="Resumo da empresa e proposta de valor em 2 a 3 linhas."></textarea>
+        </div>
+      </div>
+      <div class="sintese-box">
+        <div class="sb-header">Para quem vendemos — perfil do cliente ideal</div>
+        <div class="sb-body">
+          <textarea id="sint-cliente" rows="3" placeholder="Descrição objetiva do ICP."></textarea>
+        </div>
+      </div>
+      <div class="sintese-box">
+        <div class="sb-header">O que vendemos — portfólio e diferenciais principais</div>
+        <div class="sb-body">
+          <textarea id="sint-portfolio" rows="3" placeholder="Portfólio resumido e 3 diferenciais essenciais."></textarea>
+        </div>
+      </div>
+      <div class="sintese-box">
+        <div class="sb-header">Como vendemos — processo resumido</div>
+        <div class="sb-body">
+          <textarea id="sint-processo" rows="3" placeholder="As etapas do processo de vendas em formato de lista curta."></textarea>
+        </div>
+      </div>
+      <div class="sintese-box">
+        <div class="sb-header">O que esperamos do vendedor</div>
+        <div class="sb-body">
+          <textarea id="sint-vendedor" rows="3" placeholder="Perfil, responsabilidades e expectativas resumidas."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABA 04 — PRÓXIMOS PASSOS -->
+    <div id="tab-4" class="tab-content">
+      <div class="sec-label">Plano de Implementação — 30 dias</div>
+      <div class="nota-coral">
+        <strong>Seu Playbook está vivo</strong>
+        Um Playbook não termina quando você o cria — ele começa aqui. Use este plano para implementar, comunicar e refinar o documento nas próximas semanas.
+      </div>
+
+      <div class="pp-fase">
+        <div class="pp-fase-header">
+          <div class="pp-prazo">Dias<br>1–7</div>
+          <div class="pp-titulo">Comunicação e alinhamento com a equipe</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 150px;gap:0;padding:10px 16px 4px;">
+          <div class="pp-col-label">O que fazer</div>
+          <div class="pp-col-label">Quando / Responsável</div>
+        </div>
+        <div class="pp-acoes" id="pp-fase1"></div>
+      </div>
+
+      <div class="pp-fase">
+        <div class="pp-fase-header">
+          <div class="pp-prazo">Dias<br>8–20</div>
+          <div class="pp-titulo">Aplicação com a equipe e primeiros ajustes</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 150px;gap:0;padding:10px 16px 4px;">
+          <div class="pp-col-label">O que fazer</div>
+          <div class="pp-col-label">Quando / Responsável</div>
+        </div>
+        <div class="pp-acoes" id="pp-fase2"></div>
+      </div>
+
+      <div class="pp-fase">
+        <div class="pp-fase-header">
+          <div class="pp-prazo">Dias<br>21–30</div>
+          <div class="pp-titulo">Revisão, complementação e expansão para o MPC completo</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 150px;gap:0;padding:10px 16px 4px;">
+          <div class="pp-col-label">O que fazer</div>
+          <div class="pp-col-label">Quando / Responsável</div>
+        </div>
+        <div class="pp-acoes" id="pp-fase3"></div>
+      </div>
+
+      <div class="integracao-banner">
+        <div class="ib-icon">&#9654;</div>
+        <div class="ib-body">
+          <div class="ib-badge">Próxima Ferramenta</div>
+          <h4>Ferramenta 6.2 — MPC: Manual de Processos Comerciais · Jornada Completa</h4>
+          <p>Após consolidar este Playbook, evolua para o MPC Completo: estrutura comercial, objetivos e KPIs, análise de concorrência, pipeline, scripts e objeções, onboarding e rituais de gestão. A Ferramenta 6.2 importa automaticamente os dados preenchidos aqui.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tabs-body -->
+
+  <div class="btn-row">
+    <button class="btn btn-outline" onclick="voltarParaBlocos()">&larr; Editar Playbook</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="tool-footer">
+  Prof. Paulo H. Donassolo &middot; Recriar a Gestão Comercial &middot; Ferramenta 6.1 — MPC Playbook Primeiros Passos
+</div>
+
+</div><!-- /app-wrap -->
+
+<script>
+// ══════════════════════════════════════════════
+// DADOS E ESTADO
+// ══════════════════════════════════════════════
+const KEY = 'rgc_f61';
+let blocoAtual = 1;
+
+const CAMPOS = {
+  b1: ['b1-historia','b1-missao','b1-cvp','b1-valores'],
+  b2: ['b2-icp','b2-dores','b2-jornada','b2-nao-icp'],
+  b3: ['b3-portfolio','b3-diferenciais','b3-argumentos','b3-preco'],
+  b4: ['b4-etapas','b4-metodologia','b4-ferramentas'],
+  b5: ['b5-perfil','b5-responsabilidades','b5-expectativas']
+};
+
+const SOLIDEZ_DESC = {
+  0: 'Playbook em branco — inicie o preenchimento',
+  20: 'Início da construção — muito a desenvolver',
+  40: 'Base formada — 3 blocos precisam de atenção',
+  60: 'Playbook funcional — adequado para uso inicial',
+  80: 'Playbook sólido — pequenos ajustes restantes',
+  100: 'Playbook completo — pronto para implementação'
+};
+
+const PP_ACOES = {
+  fase1: [
+    { acao: 'Apresentar o Playbook à equipe em reunião dedicada (30 min)', quando: 'Dia 2 — Gestor' },
+    { acao: 'Compartilhar a Síntese Executiva com todos os vendedores', quando: 'Dia 3 — Gestor' },
+    { acao: 'Solicitar feedback da equipe sobre cada bloco (o que está correto, o que falta)', quando: 'Dias 3 a 5 — Equipe' }
+  ],
+  fase2: [
+    { acao: 'Usar o ICP como critério de qualificação nas próximas prospecções', quando: 'A partir do dia 8' },
+    { acao: 'Revisar o processo de vendas com cada vendedor individualmente', quando: 'Semana 2 — Gestor' },
+    { acao: 'Atualizar os campos do Playbook com base no feedback da equipe', quando: 'Dia 14 — Gestor' }
+  ],
+  fase3: [
+    { acao: 'Realizar reunião de revisão do Playbook após 30 dias de uso', quando: 'Dia 28 — Gestor' },
+    { acao: 'Identificar os 3 campos mais importantes a aprofundar na próxima versão', quando: 'Dia 28 — Gestor' },
+    { acao: 'Iniciar a construção do MPC Completo com a Ferramenta 6.2', quando: 'Dia 30 — Gestor' }
+  ]
+};
+
+// ══════════════════════════════════════════════
+// PERSISTÊNCIA
+// ══════════════════════════════════════════════
+function salvar() {
+  const data = { perfil: getPerfil() };
+  [...CAMPOS.b1,...CAMPOS.b2,...CAMPOS.b3,...CAMPOS.b4,...CAMPOS.b5].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) data[id] = el.value;
+  });
+  ['id-nome','id-cargo','id-empresa','id-setor','id-equipe','id-data'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) data[id] = el.value;
+  });
+  // síntese e próximos passos
+  ['sint-empresa','sint-cliente','sint-portfolio','sint-processo','sint-vendedor'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) data[id] = el.value;
+  });
+  // res fields
+  Object.values(CAMPOS).flat().forEach(id => {
+    const el = document.getElementById('res-' + id);
+    if (el) data['res-' + id] = el.value;
+  });
+  localStorage.setItem(KEY, JSON.stringify(data));
+}
+
+function restaurar() {
+  const raw = localStorage.getItem(KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    Object.keys(data).forEach(k => {
+      const el = document.getElementById(k);
+      if (el) el.value = data[k];
+    });
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════
+// NAVEGAÇÃO
+// ══════════════════════════════════════════════
+function irParaApresentacao() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-apresentacao').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function irParaBlocos() {
+  const nome = document.getElementById('id-nome').value.trim();
+  const empresa = document.getElementById('id-empresa').value.trim();
+  if (!nome || !empresa) {
+    alert('Preencha ao menos o nome do gestor e a empresa para continuar.');
+    return;
+  }
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-blocos').classList.add('active');
+  mudarBloco(1);
+  atualizarCompletude();
+  window.scrollTo(0,0);
+}
+
+function voltarParaBlocos() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-blocos').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function mudarBloco(num) {
+  blocoAtual = num;
+  document.querySelectorAll('.bloco-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('bloco-' + num).style.display = 'block';
+  document.querySelectorAll('.bloco-btn').forEach((b,i) => {
+    b.classList.toggle('active', i+1 === num);
+  });
+  const total = 5;
+  document.getElementById('prog-nome').textContent = 'Bloco ' + num + ' de ' + total;
+  atualizarCompletude();
+
+  document.getElementById('btn-prev-bloco').style.display = num > 1 ? '' : 'none';
+  document.getElementById('btn-next-bloco').style.display = num < total ? '' : 'none';
+  document.getElementById('btn-gerar').style.display = num === total ? '' : 'none';
+  window.scrollTo(0,0);
+}
+
+function proximoBloco() { if (blocoAtual < 5) mudarBloco(blocoAtual + 1); }
+function blocoAnterior() { if (blocoAtual > 1) mudarBloco(blocoAtual - 1); }
+
+function mudarAba(num) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i+1===num));
+  document.querySelectorAll('.tab-content').forEach((t,i) => t.classList.toggle('active', i+1===num));
+}
+
+// ══════════════════════════════════════════════
+// COMPLETUDE
+// ══════════════════════════════════════════════
+function calcPct(campos, prefix) {
+  const ids = prefix ? campos.map(c => prefix + c) : campos;
+  const preenchidos = ids.filter(id => {
+    const el = document.getElementById(id);
+    return el && el.value.trim().length > 20;
+  }).length;
+  return Math.round((preenchidos / ids.length) * 100);
+}
+
+function atualizarCompletude() {
+  const blocos = ['b1','b2','b3','b4','b5'];
+  let totalPct = 0;
+  blocos.forEach(b => {
+    const pct = calcPct(CAMPOS[b], '');
+    totalPct += pct;
+    const fill = document.getElementById('cf-' + b);
+    if (fill) {
+      fill.style.width = pct + '%';
+      const ci = document.getElementById('ci-' + b);
+      if (ci) {
+        ci.classList.toggle('done', pct >= 75);
+        ci.classList.toggle('partial', pct >= 25 && pct < 75);
+      }
+    }
+    const bb = document.getElementById('bb-' + b.replace('b',''));
+    if (bb && pct >= 25) bb.classList.add('done');
+    if (bb && bb.classList.contains('active')) bb.classList.remove('done');
+  });
+  const geral = Math.round(totalPct / blocos.length);
+  const progBar = document.getElementById('prog-bar');
+  if (progBar) progBar.style.width = geral + '%';
+  const progPct = document.getElementById('prog-pct');
+  if (progPct) progPct.textContent = geral + '% preenchido';
+  return geral;
+}
+
+// ══════════════════════════════════════════════
+// GERAR RESULTADOS
+// ══════════════════════════════════════════════
+function getPerfil() {
+  return {
+    nome: document.getElementById('id-nome').value,
+    cargo: document.getElementById('id-cargo').value,
+    empresa: document.getElementById('id-empresa').value,
+    setor: document.getElementById('id-setor').value,
+    equipe: document.getElementById('id-equipe').value,
+    data: document.getElementById('id-data').value
+  };
+}
+
+function gerarResultados() {
+  const p = getPerfil();
+  salvar();
+
+  // Header
+  document.getElementById('res-meta-header').textContent =
+    p.empresa + (p.setor ? ' · ' + p.setor : '') + (p.data ? ' · ' + p.data : '');
+
+  // Transferir campos para resultado
+  Object.values(CAMPOS).flat().forEach(id => {
+    const src = document.getElementById(id);
+    const dst = document.getElementById('res-' + id);
+    if (src && dst && !dst.value) dst.value = src.value;
+  });
+
+  // Solidez
+  const blocos = ['b1','b2','b3','b4','b5'];
+  let totalPct = 0;
+  const pcts = {};
+  blocos.forEach(b => {
+    const pct = calcPct(CAMPOS[b], '');
+    pcts[b] = pct;
+    totalPct += pct;
+    const el = document.getElementById('pct-' + b + '-res');
+    if (el) el.textContent = pct + '%';
+  });
+  const geral = Math.round(totalPct / blocos.length);
+
+  document.getElementById('solidez-pct').textContent = geral + '%';
+  document.getElementById('solidez-bar').style.width = geral + '%';
+  document.getElementById('solidez-empresa-nome').textContent = 'Playbook Comercial — ' + (p.empresa || 'sua empresa');
+  document.getElementById('solidez-meta').textContent =
+    (p.nome || '—') + (p.cargo ? ' · ' + p.cargo : '') + (p.data ? ' · ' + p.data : '');
+
+  const descKey = Object.keys(SOLIDEZ_DESC).reverse().find(k => geral >= parseInt(k));
+  document.getElementById('solidez-desc').textContent = SOLIDEZ_DESC[descKey] || '—';
+
+  // Pontos de Atenção
+  gerarAtencao(pcts);
+
+  // Síntese executiva (pré-preencher)
+  const sintEmpresa = document.getElementById('sint-empresa');
+  if (sintEmpresa && !sintEmpresa.value) {
+    const h = document.getElementById('b1-historia').value;
+    const c = document.getElementById('b1-cvp').value;
+    sintEmpresa.value = [h,c].filter(Boolean).join(' | ').substring(0,300);
+  }
+  const sintCliente = document.getElementById('sint-cliente');
+  if (sintCliente && !sintCliente.value) {
+    sintCliente.value = document.getElementById('b2-icp').value.substring(0,250);
+  }
+  const sintPort = document.getElementById('sint-portfolio');
+  if (sintPort && !sintPort.value) {
+    const port = document.getElementById('b3-portfolio').value;
+    const dif = document.getElementById('b3-diferenciais').value;
+    sintPort.value = [port,dif].filter(Boolean).join(' | ').substring(0,300);
+  }
+  const sintProc = document.getElementById('sint-processo');
+  if (sintProc && !sintProc.value) {
+    sintProc.value = document.getElementById('b4-etapas').value.substring(0,300);
+  }
+  const sintVend = document.getElementById('sint-vendedor');
+  if (sintVend && !sintVend.value) {
+    const perf = document.getElementById('b5-perfil').value;
+    const exp = document.getElementById('b5-expectativas').value;
+    sintVend.value = [perf,exp].filter(Boolean).join(' | ').substring(0,300);
+  }
+
+  // Próximos Passos
+  gerarProximosPassos();
+
+  // Ir para resultados
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-resultados').classList.add('active');
+  mudarAba(1);
+  salvar();
+  window.scrollTo(0,0);
+}
+
+function gerarAtencao(pcts) {
+  const lista = document.getElementById('atencao-lista');
+  const comp = document.getElementById('comp-resultado');
+  if (!lista || !comp) return;
+
+  // Completude cards
+  const blocoNomes = {
+    b1: 'Empresa e Valor', b2: 'Cliente Ideal',
+    b3: 'Portfólio', b4: 'Processo', b5: 'Perfil'
+  };
+  const blocoColors = {
+    b1:'var(--B1-color)',b2:'var(--B2-color)',b3:'var(--B3-color)',b4:'var(--B4-color)',b5:'var(--B5-color)'
+  };
+  comp.innerHTML = Object.entries(pcts).map(([b,pct]) => `
+    <div class="comp-item ${pct>=75?'done':pct>=25?'partial':''}">
+      <div class="ci-num" style="color:${blocoColors[b]};">${b.toUpperCase()}</div>
+      <div class="ci-name">${blocoNomes[b]}</div>
+      <div style="font-size:16px;font-weight:700;font-family:var(--font-display);margin:4px 0;color:${blocoColors[b]};">${pct}%</div>
+      <div class="ci-bar"><div class="ci-fill" style="width:${pct}%;background:${blocoColors[b]};"></div></div>
+    </div>
+  `).join('');
+
+  // Análise
+  const itens = [];
+  const checks = {
+    b1: { campos: CAMPOS.b1, nome: 'Identidade e Proposta de Valor', impacto: 'Sem uma proposta de valor clara, a equipe improvisa argumentos em cada negociação — perda de consistência e poder de persuasão.' },
+    b2: { campos: CAMPOS.b2, nome: 'Perfil do Cliente Ideal', impacto: 'Sem ICP definido, a equipe prospecta sem critério — leads que não fecham, ciclo longo e taxa de conversão baixa.' },
+    b3: { campos: CAMPOS.b3, nome: 'Portfólio e Diferenciais', impacto: 'Sem diferenciais documentados, o vendedor competirá sempre por preço — margem comprimida e clientes sem lealdade.' },
+    b4: { campos: CAMPOS.b4, nome: 'Processo de Vendas', impacto: 'Sem processo definido, cada vendedor vende de um jeito — resultado imprevisível, difícil de replicar e de treinar novos profissionais.' },
+    b5: { campos: CAMPOS.b5, nome: 'Perfil e Responsabilidades', impacto: 'Sem expectativas claras, o vendedor não sabe como será avaliado — desmotivação e gestão reativa.' }
+  };
+
+  Object.entries(pcts).forEach(([b, pct]) => {
+    const info = checks[b];
+    if (pct === 0) {
+      itens.push({ tipo:'critico', icone:'!', titulo: info.nome + ' — bloco vazio', texto: 'Nenhum campo deste bloco foi preenchido. ' + info.impacto });
+    } else if (pct < 50) {
+      itens.push({ tipo:'aviso', icone:'~', titulo: info.nome + ' — preenchimento parcial (' + pct + '%)', texto: 'Alguns campos estão em branco ou com pouco detalhe. ' + info.impacto });
+    } else if (pct >= 75) {
+      itens.push({ tipo:'ok', icone:'✓', titulo: info.nome + ' — bloco consistente (' + pct + '%)', texto: 'Este bloco está bem estruturado. Revise periodicamente para manter a relevância.' });
+    } else {
+      itens.push({ tipo:'aviso', icone:'~', titulo: info.nome + ' — bom início (' + pct + '%)', texto: 'Bloco funcional, mas com espaço para aprofundamento. Priorize os campos mais estratégicos.' });
+    }
+  });
+
+  lista.innerHTML = itens.map(i => `
+    <div class="atencao-item ${i.tipo}">
+      <div class="ai-icon">${i.icone}</div>
+      <div class="ai-body">
+        <h5>${i.titulo}</h5>
+        <p>${i.texto}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function gerarProximosPassos() {
+  ['fase1','fase2','fase3'].forEach(fase => {
+    const cont = document.getElementById('pp-' + fase);
+    if (!cont || cont.children.length > 0) return;
+    PP_ACOES[fase].forEach(a => {
+      const row = document.createElement('div');
+      row.className = 'pp-acao-row';
+      row.innerHTML = `
+        <div>
+          <textarea rows="2">${a.acao}</textarea>
+        </div>
+        <div>
+          <input type="text" value="${a.quando}">
+        </div>
+      `;
+      cont.appendChild(row);
+    });
+  });
+}
+
+// ══════════════════════════════════════════════
+// EXPORTAÇÃO
+// ══════════════════════════════════════════════
+function getMetaInfo() {
+  const p = getPerfil();
+  return [p.nome, p.cargo, p.empresa, p.setor, p.data].filter(Boolean).join(' · ');
+}
+
+function buildA4(titulo, conteudo, badge) {
+  return `<div style="width:210mm;min-height:297mm;padding:18mm 18mm 28mm;background:white;position:relative;font-family:'Source Sans 3',sans-serif;margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7mm;padding-bottom:5mm;border-bottom:2px solid #1a2744;">
+      <div>
+        <div style="font-size:8pt;letter-spacing:2px;text-transform:uppercase;color:#1d9e8f;margin-bottom:3px;">${badge||'MPC · Playbook Comercial — Primeiros Passos'}</div>
+        <div style="font-size:15pt;font-weight:700;color:#1a2744;font-family:'Playfair Display',serif;">${titulo}</div>
+      </div>
+      <div style="text-align:right;font-size:8pt;color:#718096;line-height:1.6;">${getMetaInfo()}</div>
+    </div>
+    ${conteudo}
+    <div style="position:absolute;bottom:10mm;left:18mm;right:18mm;display:flex;justify-content:space-between;font-size:7pt;color:#a0aec0;border-top:1px solid #e2e8f0;padding-top:4px;">
+      <span>Prof. Paulo H. Donassolo · Recriar a Gestão Comercial</span>
+      <span>Ferramenta 6.1 · MPC — Playbook Primeiros Passos</span>
+    </div>
+  </div>`;
+}
+
+function buildCampoHTML(label, valor, cor) {
+  if (!valor || !valor.trim()) return '';
+  return `<div style="margin-bottom:10px;">
+    <div style="font-size:7.5pt;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${cor||'#718096'};margin-bottom:3px;">${label}</div>
+    <div style="font-size:9pt;line-height:1.7;color:#1a2744;white-space:pre-line;">${valor}</div>
+  </div>`;
+}
+
+function buildBlocoHTML(num, titulo, campos, cor, corLight) {
+  const camposHTML = campos.map(c => buildCampoHTML(c.label, document.getElementById('res-' + c.id) ? document.getElementById('res-' + c.id).value : document.getElementById(c.id) ? document.getElementById(c.id).value : '', cor)).join('');
+  if (!camposHTML.trim()) return '';
+  return `<div style="border:1px solid #e2e8f0;border-radius:4px;margin-bottom:12px;overflow:hidden;">
+    <div style="background:${cor};color:white;padding:8px 14px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:7pt;letter-spacing:1.5px;text-transform:uppercase;background:rgba(255,255,255,0.2);padding:2px 6px;border-radius:2px;">B${num}</span>
+      <span style="font-size:10pt;font-weight:700;">${titulo}</span>
+    </div>
+    <div style="padding:12px 14px;background:${corLight};">
+      ${camposHTML}
+    </div>
+  </div>`;
+}
+
+function exportarSecao(tipo) {
+  const p = getPerfil();
+  let pages = '';
+
+  const blocosDef = [
+    { num:1, titulo:'Empresa e Proposta de Valor', cor:'#1a2744', corLight:'#f7f8fb',
+      campos: [{id:'b1-historia',label:'Quem somos'},{id:'b1-missao',label:'Missão'},{id:'b1-cvp',label:'Proposta de Valor'},{id:'b1-valores',label:'Valores'}]},
+    { num:2, titulo:'Cliente Ideal e Segmentação', cor:'#1d9e8f', corLight:'#f0faf9',
+      campos: [{id:'b2-icp',label:'ICP — Perfil do Cliente Ideal'},{id:'b2-dores',label:'Dores e desafios'},{id:'b2-jornada',label:'Jornada de compra'},{id:'b2-nao-icp',label:'Quem NÃO é nosso cliente'}]},
+    { num:3, titulo:'Portfólio e Diferenciais', cor:'#2563a8', corLight:'#f0f6ff',
+      campos: [{id:'b3-portfolio',label:'Portfólio'},{id:'b3-diferenciais',label:'Diferenciais competitivos'},{id:'b3-argumentos',label:'Argumentos de venda'},{id:'b3-preco',label:'Estratégia de preço'}]},
+    { num:4, titulo:'Processo de Vendas', cor:'#7c3aed', corLight:'#faf5ff',
+      campos: [{id:'b4-etapas',label:'Etapas do processo'},{id:'b4-metodologia',label:'Metodologia e abordagem'},{id:'b4-ferramentas',label:'Ferramentas e canais'}]},
+    { num:5, titulo:'Perfil do Vendedor', cor:'#b45309', corLight:'#fffbf0',
+      campos: [{id:'b5-perfil',label:'Perfil ideal'},{id:'b5-responsabilidades',label:'Responsabilidades'},{id:'b5-expectativas',label:'Expectativas de resultado'}]}
+  ];
+
+  if (tipo === 'playbook' || tipo === 'todos') {
+    let html = '';
+    blocosDef.forEach(b => {
+      html += buildBlocoHTML(b.num, b.titulo, b.campos, b.cor, b.corLight);
+    });
+    pages += buildA4('Playbook Comercial — Fundamentos', html, 'B1 a B5 · Documento Completo');
+  }
+
+  if (tipo === 'sintese' || tipo === 'todos') {
+    const campos = [
+      {label:'Quem somos e o que entregamos', id:'sint-empresa'},
+      {label:'Para quem vendemos', id:'sint-cliente'},
+      {label:'O que vendemos', id:'sint-portfolio'},
+      {label:'Como vendemos', id:'sint-processo'},
+      {label:'O que esperamos do vendedor', id:'sint-vendedor'}
+    ];
+    let html = `<div style="background:#1a2744;color:white;padding:14px 18px;border-radius:4px;margin-bottom:14px;font-size:10pt;font-weight:600;font-family:'Playfair Display',serif;">Síntese Executiva — documento para compartilhar com a equipe</div>`;
+    campos.forEach(c => {
+      const el = document.getElementById(c.id);
+      const val = el ? el.value : '';
+      if (val.trim()) {
+        html += `<div style="margin-bottom:12px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:4px;">
+          <div style="font-size:7.5pt;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1d9e8f;margin-bottom:4px;">${c.label}</div>
+          <div style="font-size:9pt;line-height:1.7;white-space:pre-line;">${val}</div>
+        </div>`;
+      }
+    });
+    pages += buildA4('Síntese Executiva do Playbook', html, 'Versão Resumida · 1 Página');
+  }
+
+  if (tipo === 'proximos' || tipo === 'todos') {
+    const fases = [
+      { id:'pp-fase1', titulo:'Dias 1 a 7 — Comunicação e alinhamento' },
+      { id:'pp-fase2', titulo:'Dias 8 a 20 — Aplicação e primeiros ajustes' },
+      { id:'pp-fase3', titulo:'Dias 21 a 30 — Revisão e expansão' }
+    ];
+    let html = '';
+    fases.forEach(f => {
+      const cont = document.getElementById(f.id);
+      if (!cont) return;
+      let rows = '';
+      cont.querySelectorAll('.pp-acao-row').forEach((row, i) => {
+        const ta = row.querySelector('textarea') ? row.querySelector('textarea').value : '';
+        const inp = row.querySelector('input') ? row.querySelector('input').value : '';
+        if (ta.trim()) {
+          rows += `<tr style="border-bottom:1px solid #f4f6f9;${i%2?'background:#f9fafc':''}">
+            <td style="padding:7px 12px;font-size:9pt;line-height:1.5;white-space:pre-line;">${ta}</td>
+            <td style="padding:7px 12px;font-size:8.5pt;color:#4a5568;white-space:nowrap;">${inp}</td>
+          </tr>`;
+        }
+      });
+      if (rows) {
+        html += `<div style="margin-bottom:14px;">
+          <div style="background:#1a2744;color:white;padding:8px 14px;border-radius:4px 4px 0 0;font-size:9pt;font-weight:600;">${f.titulo}</div>
+          <table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 4px 4px;">
+            <thead><tr style="background:#f4f6f9;"><th style="padding:6px 12px;text-align:left;font-size:8pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;width:70%;">Ação</th><th style="padding:6px 12px;text-align:left;font-size:8pt;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:#718096;">Quando / Responsável</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+      }
+    });
+    pages += buildA4('Plano de Implementação — 30 Dias', html, 'Próximos Passos');
+  }
+
+  if (!pages) { alert('Não há conteúdo suficiente para exportar. Preencha ao menos um bloco.'); return; }
+
+  const fullHTML = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+    <title>MPC Playbook · ${p.empresa||'Exportação'}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0;}
+      body{background:white;font-family:'Source Sans 3',sans-serif;}
+      @media print{body{margin:0;}@page{margin:0;size:A4 portrait;}}
+      @media screen{body{background:#888;padding:20px;} div[style*="210mm"]{margin:0 auto 20px;box-shadow:0 4px 20px rgba(0,0,0,0.3);}}
+    </style>
+  </head><body>
+    <div style="display:none;background:#1a2744;color:white;padding:12px 20px;font-size:12px;text-align:center;position:fixed;top:0;left:0;right:0;z-index:999;" id="pb">
+      Para salvar como PDF: <strong>Ctrl+P</strong> (Win) ou <strong>Cmd+P</strong> (Mac) &rarr; Destino: <strong>Salvar como PDF</strong> &rarr; Margens: <strong>Nenhuma</strong> &rarr; Ativar <strong>Gráficos de fundo</strong>
+    </div>
+    <script>document.getElementById('pb').style.display='block';<\/script>
+    ${pages}
+  </body></html>`;
+
+  const win = window.open('','_blank');
+  if (!win) { alert('Pop-up bloqueado. Permita pop-ups para este site e tente novamente.'); return; }
+  win.document.write(fullHTML);
+  win.document.close();
+}
+
+// ══════════════════════════════════════════════
+// AUTO-SAVE
+// ══════════════════════════════════════════════
+function setupAutoSave() {
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('input', () => {
+      salvar();
+      atualizarCompletude();
+    });
+    el.addEventListener('change', () => salvar());
+  });
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+window.onload = function() {
+  restaurar();
+  setupAutoSave();
+  atualizarCompletude();
+  mudarBloco(1);
+
+  // Pré-preencher data se vazio
+  const dataEl = document.getElementById('id-data');
+  if (dataEl && !dataEl.value) {
+    const now = new Date();
+    const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    dataEl.value = meses[now.getMonth()] + ' ' + now.getFullYear() + ' · 1ª versão';
+  }
+};
+</script>
+</body>
+</html>
