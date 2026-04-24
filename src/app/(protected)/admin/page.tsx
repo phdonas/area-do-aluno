@@ -238,6 +238,7 @@ export default async function AdminDashboardPage({
       items: [
         { label: 'Cadastro de Professores', href: '/admin/professores', icon: UserPlus, color: 'bg-blue-600/50' },
         { label: 'Gestão de Equipe', href: '/admin/usuarios', icon: ShieldCheck, color: 'bg-indigo-600/50' },
+        { label: 'Telemetria de Uso', href: '/admin/telemetria', icon: Activity, color: 'bg-blue-500/50' },
         { label: 'Auditoria & Logs', href: '/admin/auditoria', icon: HistoryIcon, color: 'bg-slate-600/50' },
       ]
     },

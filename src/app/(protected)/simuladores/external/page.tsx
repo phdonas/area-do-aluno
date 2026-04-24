@@ -3,6 +3,7 @@
 import React, { Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ChevronLeft, Loader2, ExternalLink, X } from 'lucide-react'
+import { logFerramentaUsage } from '../actions'
 
 function ExternalSimulatorContent() {
   const router = useRouter()
@@ -11,6 +12,15 @@ function ExternalSimulatorContent() {
   const url = searchParams.get('url')
   const titulo = searchParams.get('titulo') || 'Ferramenta Externa'
   const tipo = searchParams.get('tipo') || 'Simulador Interativo'
+
+  React.useEffect(() => {
+    if (url) {
+      logFerramentaUsage({
+        ferramentaNome: titulo,
+        urlAcessada: url
+      })
+    }
+  }, [url, titulo])
 
   if (!url) {
     return (

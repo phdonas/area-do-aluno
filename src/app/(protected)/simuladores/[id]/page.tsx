@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeft, ExternalLink, Download, Monitor, Loader2, X } from 'lucide-react'
+import { logFerramentaUsage } from '../actions'
 
 export default function SimuladorPlayerPage() {
   const params = useParams()
@@ -31,6 +32,12 @@ export default function SimuladorPlayerPage() {
           setError('Recurso não encontrado')
         } else {
           setRecurso(data)
+          // Registrar uso na telemetria (sem aguardar para não travar a UI)
+          logFerramentaUsage({
+            ferramentaId: data.id,
+            ferramentaNome: data.titulo,
+            urlAcessada: data.arquivo_url
+          })
         }
       } catch (err) {
         setError('Erro ao carregar recurso')
