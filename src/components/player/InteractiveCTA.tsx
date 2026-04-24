@@ -3,6 +3,7 @@
 import React from 'react'
 import { Play, FileCode, CheckCircle2, Bot, ArrowRight } from 'lucide-react'
 import { toggleAulaConcluida } from '../../app/(protected)/player/actions'
+import { logFerramentaUsage } from '../../app/(protected)/simuladores/actions'
 
 interface InteractiveCTAProps {
   url: string
@@ -11,6 +12,7 @@ interface InteractiveCTAProps {
   metadata?: string
   aulaId?: string
   cursoId?: string
+  usuarioEmail?: string // Adicionado para facilitar log se necessário
 }
 
 export const InteractiveCTA: React.FC<InteractiveCTAProps> = ({ 
@@ -23,8 +25,17 @@ export const InteractiveCTA: React.FC<InteractiveCTAProps> = ({
 }) => {
   if (!url) return null
 
-  const handleAction = async () => {
-    // Rastreamento e Auto-conclusão (Desativado p/ Ferramentas)
+  const handleAction = async (e: React.MouseEvent) => {
+    // 1. Registra a telemetria antes de abrir (segurança extra)
+    if (tipo === 'ferramenta' || tipo === 'simulador') {
+      logFerramentaUsage({
+        ferramentaId: aulaId, // Usamos o ID da aula se não tiver o do recurso
+        ferramentaNome: titulo,
+        urlAcessada: url
+      }).catch(err => console.error('Erro ao registrar log no clique:', err))
+    }
+
+    // 2. Rastreamento e Auto-conclusão (Desativado p/ Ferramentas)
     if (aulaId && cursoId && tipo !== 'ferramenta') {
       try {
         await toggleAulaConcluida(aulaId, true, cursoId)
@@ -70,12 +81,20 @@ export const InteractiveCTA: React.FC<InteractiveCTAProps> = ({
   const s = getStyle()
   const isExternal = url.startsWith('http')
   const isWrapped = url.includes('/simuladores/') || url.includes('/simuladores/external')
-  const target = (tipo === 'ferramenta' && isWrapped) ? "_self" : (isExternal ? "_blank" : "_self")
+  
+  // Forçar o wrapping se for ferramenta e estiver apontando direto para o HTML externo
+  const finalUrl = (tipo === 'ferramenta' || tipo === 'simulador') && !isWrapped && isExternal
+    ? `/simuladores/external?url=${encodeURIComponent(url)}&titulo=${encodeURIComponent(titulo)}&tipo=${encodeURIComponent(tipo)}`
+    : url;
+
+  // Se agora está envelopado ou é interno, usamos _self
+  const isNowWrapped = finalUrl.includes('/simuladores/')
+  const target = (tipo === 'ferramenta' && isNowWrapped) ? "_self" : (isExternal && !isNowWrapped ? "_blank" : "_self")
 
   return (
     <div className="my-8 group">
       <a 
-        href={url} 
+        href={finalUrl} 
         target={target}
         rel={target === "_blank" ? "noopener noreferrer" : ""}
         onClick={handleAction}

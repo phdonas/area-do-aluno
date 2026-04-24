@@ -324,8 +324,20 @@ export default async function PlayerPage({
                             </div>
                             {materiais && materiais.length > 0 ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {materiais.map((mat: any) => (
-                                        <a key={mat.id} href={mat.arquivo_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-white/60 dark:bg-white/10 border border-amber-500/10 dark:border-amber-200/20 hover:border-amber-500/40 transition-all p-5 rounded-2xl group shadow-sm">
+                                    {materiais.map((mat: any) => {
+                                        const isHtml = mat.arquivo_url?.toLowerCase().endsWith('.html') || mat.tipo === 'link';
+                                        const finalUrl = isHtml 
+                                          ? `/simuladores/external?url=${encodeURIComponent(mat.arquivo_url)}&titulo=${encodeURIComponent(mat.titulo)}&tipo=${encodeURIComponent('Recurso de Apoio')}`
+                                          : mat.arquivo_url;
+
+                                        return (
+                                          <a 
+                                            key={mat.id} 
+                                            href={finalUrl} 
+                                            target={isHtml ? "_self" : "_blank"} 
+                                            rel={isHtml ? "" : "noopener noreferrer"} 
+                                            className="flex items-center gap-4 bg-white/60 dark:bg-white/10 border border-amber-500/10 dark:border-amber-200/20 hover:border-amber-500/40 transition-all p-5 rounded-2xl group shadow-sm"
+                                          >
                                             <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-all">
                                                 <FileText className="w-5 h-5" />
                                             </div>
@@ -333,8 +345,9 @@ export default async function PlayerPage({
                                                 <span className="text-sm font-black text-text-primary dark:text-amber-950 line-clamp-1">{mat.titulo}</span>
                                                 <span className="text-[9px] text-text-muted dark:text-amber-900 uppercase font-black tracking-widest">{mat.tipo || 'PDF'}</span>
                                             </div>
-                                        </a>
-                                    ))}
+                                          </a>
+                                        );
+                                    })}
                                 </div>
                             ) : (
                                 <div className="p-10 bg-black/5 dark:bg-white/5 border-2 border-dashed border-amber-500/20 dark:border-amber-200/10 rounded-[32px] text-center flex flex-col items-center justify-center gap-3 mt-4">
