@@ -308,73 +308,89 @@ export default function ResumoPedidoPage() {
                          )}
                       </AnimatePresence>
 
-                      <div className="pt-4 mt-4">
-                         <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted">TOTAL:</span>
-                            <div className="text-right">
-                               <span className="text-4xl md:text-5xl font-black text-white tracking-tighter bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent italic">
-                                  {region === 'BR' ? 'R$' : '€'} {precoFinal.toLocaleString(region === 'BR' ? 'pt-BR' : 'pt-PT', { minimumFractionDigits: 2 })}
-                               </span>
-                            </div>
-                         </div>
-                      </div>
+                       <div className="pt-4 mt-4">
+                          <div className="flex justify-between items-center">
+                             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted">TOTAL:</span>
+                             <div className="text-right">
+                                <span className="text-4xl md:text-5xl font-black text-white tracking-tighter bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent italic">
+                                   {precoFinal === 0 ? (
+                                     <span className="text-primary">GRÁTIS</span>
+                                   ) : (
+                                     <>
+                                       {region === 'BR' ? 'R$' : '€'} {precoFinal.toLocaleString(region === 'BR' ? 'pt-BR' : 'pt-PT', { minimumFractionDigits: 2 })}
+                                     </>
+                                   )}
+                                </span>
+                             </div>
+                          </div>
+                       </div>
                    </div>
 
                    <div className="py-8 min-h-[140px]">
-                      {payMethod === 'manual' ? (
-                        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                          <div className="p-5 bg-amber-500/10 border border-amber-500/20 rounded-3xl space-y-3">
-                             <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-500">Dados para Pagamento Direto:</h4>
-                             {region === 'BR' ? (
-                               <div className="space-y-2">
-                                  <p className="text-xs text-text-primary font-bold">Resgate via PIX (Chave):</p>
-                                  <div className="p-3 bg-black/40 rounded-xl border border-white/5 text-[11px] font-mono break-all text-amber-200 select-all">
-                                    {finConfig?.chave_pix_br}
-                                  </div>
-                                  <p className="text-[9px] text-text-muted font-medium uppercase tracking-tight">Favorecido: {finConfig?.favorecido_br}</p>
-                               </div>
-                             ) : (
-                               <div className="space-y-2">
-                                  <p className="text-xs text-text-primary font-bold">Resgate via MBWay:</p>
-                                  <div className="p-3 bg-black/40 rounded-xl border border-white/5 text-[11px] font-mono text-amber-200 select-all">
-                                    {finConfig?.mbway_telemovel_pt}
-                                  </div>
-                                  {finConfig?.iban_pt && (
-                                    <>
-                                      <p className="text-xs text-text-primary font-bold mt-3">Ou Transferência (IBAN):</p>
-                                      <div className="p-3 bg-black/40 rounded-xl border border-white/5 text-[10px] font-mono break-all text-amber-200 select-all">
-                                        {finConfig?.iban_pt}
-                                      </div>
-                                    </>
-                                  )}
-                                  <p className="text-[9px] text-text-muted font-medium uppercase tracking-tight">Favorecido: {finConfig?.favorecido_pt}</p>
-                               </div>
-                             )}
+                      {precoFinal > 0 && (
+                        payMethod === 'manual' ? (
+                          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                            <div className="p-5 bg-amber-500/10 border border-amber-500/20 rounded-3xl space-y-3">
+                               <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-500">Dados para Pagamento Direto:</h4>
+                               {region === 'BR' ? (
+                                 <div className="space-y-2">
+                                    <p className="text-xs text-text-primary font-bold">Resgate via PIX (Chave):</p>
+                                    <div className="p-3 bg-black/40 rounded-xl border border-white/5 text-[11px] font-mono break-all text-amber-200 select-all">
+                                      {finConfig?.chave_pix_br}
+                                    </div>
+                                    <p className="text-[9px] text-text-muted font-medium uppercase tracking-tight">Favorecido: {finConfig?.favorecido_br}</p>
+                                 </div>
+                               ) : (
+                                 <div className="space-y-2">
+                                    <p className="text-xs text-text-primary font-bold">Resgate via MBWay:</p>
+                                    <div className="p-3 bg-black/40 rounded-xl border border-white/5 text-[11px] font-mono text-amber-200 select-all">
+                                      {finConfig?.mbway_telemovel_pt}
+                                    </div>
+                                    {finConfig?.iban_pt && (
+                                      <>
+                                        <p className="text-xs text-text-primary font-bold mt-3">Ou Transferência (IBAN):</p>
+                                        <div className="p-3 bg-black/40 rounded-xl border border-white/5 text-[10px] font-mono break-all text-amber-200 select-all">
+                                          {finConfig?.iban_pt}
+                                        </div>
+                                      </>
+                                    )}
+                                    <p className="text-[9px] text-text-muted font-medium uppercase tracking-tight">Favorecido: {finConfig?.favorecido_pt}</p>
+                                 </div>
+                               )}
+                            </div>
+                            <p className="text-[9px] text-center text-text-muted italic">Após pagar, clique abaixo para nos avisar. Liberaremos seu acesso manualmente em instantes.</p>
                           </div>
-                          <p className="text-[9px] text-center text-text-muted italic">Após pagar, clique abaixo para nos avisar. Liberaremos seu acesso manualmente em instantes.</p>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                           <div className="flex justify-between items-center px-1">
-                             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Promo Code</label>
-                             {couponStatus.valid && <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest animate-pulse">✓ Aplicado</span>}
-                           </div>
-                           <div className="relative group">
-                              <input 
-                                 type="text" 
-                                 placeholder="CÓDIGO DE ELITE"
-                                 className="w-full h-16 pl-6 pr-32 bg-black/40 border-2 border-white/5 rounded-2xl text-[12px] font-black uppercase tracking-[0.3em] focus:border-primary/50 outline-none transition-all placeholder:text-white/20"
-                                 value={couponCode}
-                                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                              />
-                              <button 
-                                 onClick={handleApplyCoupon}
-                                 disabled={validatingCoupon || !couponCode}
-                                 className="absolute right-2 top-2 bottom-2 px-6 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white hover:border-transparent transition-all disabled:opacity-30 disabled:hover:bg-white/5"
-                              >
-                                 {validatingCoupon ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Validar'}
-                              </button>
-                           </div>
+                        ) : (
+                          <div className="space-y-4">
+                             <div className="flex justify-between items-center px-1">
+                               <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Promo Code</label>
+                               {couponStatus.valid && <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest animate-pulse">✓ Aplicado</span>}
+                             </div>
+                             <div className="relative group">
+                                <input 
+                                   type="text" 
+                                   placeholder="CÓDIGO DE ELITE"
+                                   className="w-full h-16 pl-6 pr-32 bg-black/40 border-2 border-white/5 rounded-2xl text-[12px] font-black uppercase tracking-[0.3em] focus:border-primary/50 outline-none transition-all placeholder:text-white/20"
+                                   value={couponCode}
+                                   onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                />
+                                <button 
+                                   onClick={handleApplyCoupon}
+                                   disabled={validatingCoupon || !couponCode}
+                                   className="absolute right-2 top-2 bottom-2 px-6 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white hover:border-transparent transition-all disabled:opacity-30 disabled:hover:bg-white/5"
+                                >
+                                   {validatingCoupon ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Validar'}
+                                </button>
+                             </div>
+                          </div>
+                        )
+                      )}
+                      {precoFinal === 0 && (
+                        <div className="p-6 bg-primary/5 border border-primary/20 rounded-3xl text-center">
+                           <CheckCircle2 className="w-8 h-8 text-primary mx-auto mb-3" />
+                           <p className="text-[10px] font-black text-text-primary uppercase tracking-widest leading-relaxed">
+                             Esta oferta é totalmente gratuita.<br/>Clique abaixo para liberar seu acesso!
+                           </p>
                         </div>
                       )}
                    </div>
@@ -382,12 +398,12 @@ export default function ResumoPedidoPage() {
                    <button 
                       onClick={handleCheckout}
                       disabled={checkingOut}
-                      className={`group w-full h-18 py-6 rounded-2xl font-black text-[11px] md:text-xs uppercase tracking-[0.1em] flex items-center justify-center gap-2 shadow-2xl transition-all hover:scale-[1.01] active:scale-95 disabled:opacity-50 relative overflow-hidden italic ${payMethod === 'manual' ? 'bg-amber-600 hover:bg-amber-500 text-white' : 'bg-primary hover:bg-primary-dark text-white'}`}
+                      className={`group w-full h-18 py-6 rounded-2xl font-black text-[11px] md:text-xs uppercase tracking-[0.1em] flex items-center justify-center gap-2 shadow-2xl transition-all hover:scale-[1.01] active:scale-95 disabled:opacity-50 relative overflow-hidden italic ${precoFinal === 0 ? 'bg-primary text-white' : (payMethod === 'manual' ? 'bg-amber-600 hover:bg-amber-500 text-white' : 'bg-primary hover:bg-primary-dark text-white')}`}
                    >
                       <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                       {checkingOut ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                         <>
-                          {payMethod === 'manual' ? 'Já realizei o Pagamento Direto' : 'Ativar Minha Matrícula Agora'} 
+                          {precoFinal === 0 ? 'Ativar Meu Acesso Gratuito Agora' : (payMethod === 'manual' ? 'Já realizei o Pagamento Direto' : 'Ativar Minha Matrícula Agora')} 
                           <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
                         </>
                       )}

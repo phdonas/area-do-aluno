@@ -82,9 +82,11 @@ export default function GestaoPlanosPage() {
   }
 
   const handleVincular = async (cursoId: string, planoId: string) => {
-    const valor = prompt('Digite o valor de venda deste curso para este plano (Ex: 197.00):')
-    if (!valor || isNaN(Number(valor))) {
-      if (valor !== null) alert('Valor inválido!')
+    const valor = prompt('Digite o valor de venda deste curso para este plano (Ex: 197.00 ou 0 para Grátis):')
+    if (valor === null) return // Cancelou o prompt
+    
+    if (valor.trim() === '' || isNaN(Number(valor))) {
+      alert('Por favor, digite um valor numérico válido!')
       return
     }
 
