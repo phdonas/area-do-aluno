@@ -7,15 +7,32 @@ export async function listarUsoFerramentas(filters: { email?: string, ferramenta
   const limit = 50
   const offset = ((filters.page || 1) - 1) * limit
 
+  let targetUserIds: string[] = []
+
+  // 1. Se houver filtro de aluno (nome ou email), buscamos os UUIDs primeiro
+  if (filters.email) {
+    const { data: users } = await supabase
+      .from('usuarios')
+      .select('id')
+      .or(`email.ilike.%${filters.email}%,nome.ilike.%${filters.email}%`)
+    
+    if (users && users.length > 0) {
+      targetUserIds = users.map(u => u.id)
+    } else {
+      // Se buscou por alguém e não achou ninguém, retornamos vazio direto
+      return { logs: [], total: 0 }
+    }
+  }
+
+  // 2. Agora buscamos os logs filtrando pelos IDs encontrados (se houver filtro)
   let query = supabase
     .from('log_uso_ferramentas')
-    .select('*, usuarios!left(email)', { count: 'exact' })
+    .select('*, usuarios(nome, email)', { count: 'exact' })
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
-  if (filters.email) {
-    // Busca por email usando o join left
-    query = query.ilike('usuarios.email', `%${filters.email.toLowerCase()}%`)
+  if (targetUserIds.length > 0) {
+    query = query.in('usuario_id', targetUserIds)
   }
 
   if (filters.ferramenta) {

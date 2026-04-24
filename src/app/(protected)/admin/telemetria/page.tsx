@@ -107,7 +107,7 @@ export default function TelemetriaPage() {
                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
                <input 
                  type="text" 
-                 placeholder="Email do aluno..." 
+                 placeholder="Nome ou e-mail..." 
                  value={filters.email}
                  onChange={(e) => setFilters(prev => ({ ...prev, email: e.target.value, page: 1 }))}
                  className="w-full pl-12 pr-4 h-14 bg-background border border-border-custom rounded-2xl text-[10px] font-black uppercase tracking-widest focus:ring-2 focus:ring-blue-600 outline-none transition-all"
@@ -183,7 +183,9 @@ export default function TelemetriaPage() {
                         <td className="px-10 py-6">
                            <div className="flex items-center gap-3">
                               <Users className="w-4 h-4 text-text-muted" />
-                              <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">{log.usuarios?.email || 'Desconhecido'}</p>
+                              <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">
+                                {log.usuarios?.nome || log.usuarios?.email || 'Desconhecido'}
+                              </p>
                            </div>
                         </td>
                         <td className="px-10 py-6 text-right">
