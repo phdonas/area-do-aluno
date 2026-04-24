@@ -24,7 +24,7 @@ export async function listarUsoFerramentas(filters: { email?: string, ferramenta
     }
   }
 
-  // 2. Agora buscamos os logs puros (sem JOIN) para garantir que apareçam
+  // 2. Buscar os logs puros
   let query = supabase
     .from('log_uso_ferramentas')
     .select('*', { count: 'exact' })
@@ -39,17 +39,36 @@ export async function listarUsoFerramentas(filters: { email?: string, ferramenta
     query = query.ilike('ferramenta_nome', `%${filters.ferramenta}%`)
   }
 
-  const { data, error, count } = await query
+  const { data: logs, error, count } = await query
 
   if (error) {
-    console.error('❌ ERRO CRÍTICO NA TELEMETRIA:', error.message, error.details)
+    console.error('❌ ERRO NA TELEMETRIA:', error.message)
     return { logs: [], total: 0 }
   }
 
-  console.log('✅ Logs recuperados:', data?.length || 0)
+  if (!logs || logs.length === 0) {
+    return { logs: [], total: 0 }
+  }
+
+  // 3. "Join Manual": Buscar nomes/emails dos usuários envolvidos nestes logs
+  const userIds = Array.from(new Set(logs.map(l => l.usuario_id).filter(Boolean)))
+  
+  const { data: profiles } = await supabase
+    .from('usuarios')
+    .select('id, nome, email')
+    .in('id', userIds)
+
+  // 4. Fundir os dados
+  const logsComUsuarios = logs.map(log => {
+    const profile = profiles?.find(p => p.id === log.usuario_id)
+    return {
+      ...log,
+      usuarios: profile || null
+    }
+  })
 
   return { 
-    logs: data || [], 
+    logs: logsComUsuarios, 
     total: count || 0 
   }
 }
