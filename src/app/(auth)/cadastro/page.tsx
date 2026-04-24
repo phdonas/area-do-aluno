@@ -78,10 +78,6 @@ export default async function CadastroPage({ searchParams }: CadastroPageProps) 
           )}
         </div>
 
-        <p className="mt-8 text-center text-sm text-text-muted font-medium">
-          Ao prosseguir, você concorda com nossos <br className="sm:hidden" />
-          <a href="#" className="underline hover:text-text-secondary">Termos de Serviço</a>
-        </p>
       </div>
     </main>
   )

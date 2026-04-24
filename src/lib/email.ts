@@ -60,3 +60,52 @@ export async function sendWelcomeEmail({
     return { success: false, error };
   }
 }
+
+export async function sendAdminNotification({
+  event,
+  userData
+}: {
+  event: 'novo_cadastro' | 'nova_matricula';
+  userData: any;
+}) {
+  const adminEmail = process.env.ADMIN_EMAIL || 'contato@phdonassolo.com'; // E-mail que receberá os alertas
+  
+  const title = event === 'novo_cadastro' ? '🟢 Novo Usuário Cadastrado' : '💰 Nova Matrícula Confirmada';
+  
+  const detailsHtml = Object.entries(userData)
+    .map(([key, value]) => `<li><strong>${key}:</strong> ${value}</li>`)
+    .join('');
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'Sistema PHD Academy <onboarding@resend.dev>', // Ou seu domínio verificado
+      to: [adminEmail],
+      subject: `Alerta do Sistema: ${title}`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+          <div style="background-color: #1e293b; padding: 20px; text-align: center;">
+            <h2 style="color: #ffffff; margin: 0;">${title}</h2>
+          </div>
+          <div style="padding: 24px;">
+            <p>Um novo evento foi registrado no sistema. Abaixo estão os detalhes:</p>
+            <ul style="background-color: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; list-style-type: none;">
+              ${detailsHtml}
+            </ul>
+            <div style="text-align: center; margin-top: 30px;">
+              <a href="https://phdonassolo.com/admin" style="background-color: #4f46e5; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">Ver no Painel Admin</a>
+            </div>
+          </div>
+        </div>
+      `
+    });
+
+    if (error) {
+      console.error('Erro ao enviar notificação admin:', error);
+      return { success: false, error };
+    }
+    return { success: true, data };
+  } catch (error) {
+    console.error('Falha crítica na notificação admin:', error);
+    return { success: false, error };
+  }
+}

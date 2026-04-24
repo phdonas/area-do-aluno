@@ -11,10 +11,16 @@ export async function cadastrarUsuario(prevState: any, formData: FormData) {
   const password = formData.get('password') as string
   const confirmPassword = formData.get('confirmPassword') as string
   const token = formData.get('token') as string // Do convite
+  const aceitaTermos = formData.get('aceitaTermos') as string
+  const aceitaMarketing = formData.get('aceitaMarketing') as string
 
   // Validações Básicas
   if (!nome || !email || !password) {
     return { error: 'Preencha todos os campos obrigatórios' }
+  }
+
+  if (!aceitaTermos) {
+    return { error: 'Você precisa aceitar os Termos de Serviço' }
   }
 
   if (password !== confirmPassword) {
@@ -36,6 +42,8 @@ export async function cadastrarUsuario(prevState: any, formData: FormData) {
       data: {
         full_name: nome,
         needs_password_change: false, // Se o próprio aluno está criando, já sabe a senha
+        aceita_termos: true,
+        aceita_marketing: aceitaMarketing === 'on'
       },
     },
   })

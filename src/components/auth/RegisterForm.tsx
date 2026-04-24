@@ -104,6 +104,49 @@ export function RegisterForm({ initialEmail = '', token = '' }: RegisterFormProp
         </div>
       </div>
 
+      <div className="space-y-4 mt-6">
+        {/* Checkbox Termos (Obrigatório) */}
+        <div className="flex items-start gap-3">
+          <div className="flex items-center h-5">
+            <input
+              id="aceitaTermos"
+              name="aceitaTermos"
+              type="checkbox"
+              required
+              disabled={isPending}
+              className="w-4 h-4 rounded border-border-custom text-primary focus:ring-primary/20 bg-background/50 transition-colors cursor-pointer"
+            />
+          </div>
+          <div className="text-sm">
+            <label htmlFor="aceitaTermos" className="font-medium text-text-primary cursor-pointer">
+              Eu concordo com os{' '}
+              <a href="/termos" target="_blank" className="text-primary hover:underline">
+                Termos de Serviço e Política de Privacidade
+              </a>
+              *
+            </label>
+          </div>
+        </div>
+
+        {/* Checkbox Marketing (Opcional) */}
+        <div className="flex items-start gap-3">
+          <div className="flex items-center h-5">
+            <input
+              id="aceitaMarketing"
+              name="aceitaMarketing"
+              type="checkbox"
+              disabled={isPending}
+              className="w-4 h-4 rounded border-border-custom text-primary focus:ring-primary/20 bg-background/50 transition-colors cursor-pointer"
+            />
+          </div>
+          <div className="text-sm">
+            <label htmlFor="aceitaMarketing" className="text-text-secondary cursor-pointer">
+              Aceito receber e-mails sobre novos cursos, ferramentas e dicas da PHD Academy.
+            </label>
+          </div>
+        </div>
+      </div>
+
       <button
         type="submit"
         disabled={isPending}
