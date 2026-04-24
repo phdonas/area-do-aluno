@@ -135,8 +135,19 @@ export function CatalogClient({ cursos, pacotes, pilares, idsAcessos }: CatalogC
             {filteredCursos.map((curso) => {
               const enrolled = idsAcessos.includes(curso.id);
               const free = curso.is_gratis;
+              
+              // Lógica de Preço Dinâmico (Múltiplos Planos)
+              const offers = curso.planos_cursos || []
+              const prices = offers.map((o: any) => o.valor_venda).filter((p: any) => p !== null)
+              const minPrice = prices.length > 0 ? Math.min(...prices) : (curso.preco || 0)
+              const firstPlanoId = offers[0]?.plano_id
+
               const link = enrolled ? `/player/${curso.id}` : `/loja/curso/${curso.slug || curso.id}`;
-              const checkout = free ? '#' : `/checkout/${curso.id}`;
+              const checkout = free ? '#' : `/checkout/${curso.id}${firstPlanoId ? `?plano=${firstPlanoId}` : ''}`;
+
+              const formatPreco = (val: number) => {
+                return (val || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+              }
 
               return (
                 <div key={curso.id} className="group relative bg-surface border border-border-custom rounded-[40px] overflow-hidden hover:border-primary/50 transition-all duration-500 flex flex-col hover:shadow-2xl">
@@ -189,10 +200,13 @@ export function CatalogClient({ cursos, pacotes, pilares, idsAcessos }: CatalogC
                             ) : free ? (
                               <span className="text-xl font-black text-amber-500 tracking-tighter italic">GRÁTIS</span>
                             ) : (
-                              <span className="text-xl font-black text-text-primary tracking-tighter italic">R$ {curso.planos_cursos?.[0]?.planos?.preco_mensal || curso.preco || '997'}</span>
+                              <div className="flex flex-col">
+                                {offers.length > 1 && <span className="text-[8px] font-black text-text-muted uppercase tracking-widest">A partir de</span>}
+                                <span className="text-xl font-black text-text-primary tracking-tighter italic">R$ {formatPreco(minPrice)}</span>
+                              </div>
                             )}
                          </div>
-                                                  <Link 
+                         <Link 
                             href={enrolled ? link : checkout}
                             onClick={free && !enrolled ? (e) => { e.preventDefault(); handleFreeEnrollment(curso, enrolled); } : undefined}
                             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all ${
@@ -207,7 +221,7 @@ export function CatalogClient({ cursos, pacotes, pilares, idsAcessos }: CatalogC
                              {enrolled ? <PlayCircle className="w-3.5 h-3.5" /> : free ? <Sparkles className="w-3.5 h-3.5" /> : <CreditCard className="w-3.5 h-3.5" />}
                           </Link>
                       </div>
-                   </div>
+                    </div>
                 </div>
               );
             })}

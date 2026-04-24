@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { validarCupom, registrarUsoCupom } from '@/lib/cupons'
 
-export async function simularCompraMatricula(cursoId: string, cupomCodigo?: string) {
+export async function simularCompraMatricula(cursoId: string, cupomCodigo?: string, selectedPlanoId?: string) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -39,18 +39,37 @@ export async function simularCompraMatricula(cursoId: string, cupomCodigo?: stri
       }
     }
 
-    // 2. Buscar o plano vinculado a este curso (seleciona o primeiro disponível)
-    const { data: planoCurso } = await supabaseAdmin
-      .from('planos_cursos')
-      .select('plano_id, planos(duracao_meses)')
-      .eq('curso_id', realCursoId)
-      .limit(1)
-      .single()
+    // 2. Buscar o plano vinculado a este curso
+    let finalPlanoId = selectedPlanoId
+    let duracaoMeses = 12
+    let valorVenda = 0
 
-    let finalPlanoId = planoCurso?.plano_id
-    let duracaoMeses = (planoCurso?.planos as any)?.duracao_meses ?? 12
+    if (finalPlanoId) {
+      const { data: pc } = await supabaseAdmin
+        .from('planos_cursos')
+        .select('valor_venda, planos(duracao_meses)')
+        .eq('curso_id', realCursoId)
+        .eq('plano_id', finalPlanoId)
+        .single()
+      
+      if (pc) {
+        duracaoMeses = (pc.planos as any)?.duracao_meses ?? 12
+        valorVenda = pc.valor_venda
+      }
+    } else {
+      const { data: planoCurso } = await supabaseAdmin
+        .from('planos_cursos')
+        .select('plano_id, valor_venda, planos(duracao_meses)')
+        .eq('curso_id', realCursoId)
+        .limit(1)
+        .single()
 
-    // Se não houver plano direto, tentamos buscar um plano global
+      finalPlanoId = planoCurso?.plano_id
+      duracaoMeses = (planoCurso?.planos as any)?.duracao_meses ?? 12
+      valorVenda = planoCurso?.valor_venda || 0
+    }
+
+    // Se ainda não houver plano direto, tentamos buscar um plano global
     if (!finalPlanoId) {
         const { data: planoGlobal } = await supabaseAdmin
             .from('planos')
@@ -85,6 +104,7 @@ export async function simularCompraMatricula(cursoId: string, cupomCodigo?: stri
           simulacao: true, 
           canal: 'checkout_fix', 
           duracao_original: duracaoMeses,
+          valor_venda: valorVenda,
           cupom_utilizado: cupomCodigo || null,
           cupom_id: appliedCupomId,
           curso_titulo: cursoTitulo

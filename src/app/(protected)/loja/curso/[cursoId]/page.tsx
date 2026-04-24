@@ -21,7 +21,7 @@ import {
   TrendingUp,
   PlayCircle
 } from 'lucide-react'
-import CheckoutButton from '@/components/CheckoutButton'
+import { PriceCard } from './PriceCard'
 import { VideoPlayer } from '@/components/video-player'
 import * as motion from 'framer-motion/client'
 import { FormattedText, ExpandableContent, SoftCard } from '@/components/CourseContent'
@@ -50,75 +50,6 @@ function FAQAccordion({ faq }: { faq: any | null }) {
   )
 }
 
-function PriceCard({ curso, userEmail }: { curso: any, userEmail: string }) {
-  const numPrice = typeof curso.preco === 'string' ? parseFloat(curso.preco) : curso.preco;
-  // Apenas considera GRÁTIS se o preço for explicitamente 0 ou 0.00. 
-  // Valores nulos ou vazios não devem disparar o estado grátis se o usuário diz que tem preço.
-  const isFree = curso.preco !== null && curso.preco !== undefined && numPrice === 0;
-
-  const formatPreco = (val: number | string) => {
-    const num = typeof val === 'string' ? parseFloat(val) : val
-    return (num || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  }
-
-  return (
-    <div className="flex flex-col md:flex-row items-center gap-12 p-16 bg-background border-2 border-border-custom rounded-[4rem] shadow-2xl relative overflow-hidden group">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl transition-all group-hover:scale-150" />
-      
-      <div className="flex-1 space-y-6">
-        <div className="flex items-center gap-2">
-           <div className={`w-2 h-2 rounded-full animate-pulse ${isFree ? 'bg-primary' : 'bg-emerald-500'}`} />
-           <span className={`text-xs font-black uppercase tracking-[0.5em] ${isFree ? 'text-primary' : 'text-emerald-500'}`}>
-             {isFree ? 'Oferta Exclusiva: Acesso Gratuito' : 'Inscrição com Acesso Imediato'}
-           </span>
-        </div>
-
-        <div className="flex flex-col justify-center min-h-[140px]">
-          {isFree ? (
-            <div className="space-y-4">
-              <div className="text-6xl md:text-7xl font-black text-primary tracking-tighter italic leading-none">
-                GRÁTIS
-              </div>
-              <div className="inline-block px-4 py-2 bg-primary/10 border border-primary/20 rounded-2xl">
-                 <span className="text-xs font-black text-primary uppercase tracking-widest italic">Totalmente Grátis</span>
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-baseline gap-2">
-              <span className="text-xl font-bold text-text-muted">R$</span>
-              <span className="text-5xl md:text-7xl font-black text-text-primary tracking-tighter italic leading-none bg-gradient-to-r from-text-primary to-primary bg-clip-text text-transparent">
-                {formatPreco(curso.preco)}
-              </span>
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-wrap gap-4 items-center pt-2">
-          {!isFree && (
-            <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] flex items-center gap-3 italic">
-              <CreditCard className="w-4 h-4 text-primary" /> {curso.formas_pagamento || 'Cartão ou Pix em até 12x'}
-            </p>
-          )}
-          <div className="px-3 py-1 bg-rose-500/10 border border-rose-500/20 rounded-full flex items-center gap-2">
-             <Zap className="w-3 h-3 text-rose-500 fill-rose-500 animate-pulse" />
-             <span className="text-[9px] font-black text-rose-600 uppercase tracking-widest">Vagas limitadas para este lote</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-5 w-full md:w-fit min-w-[340px] relative z-10">
-        <CheckoutButton 
-          cursoId={curso.id} 
-          userEmail={userEmail} 
-          label={isFree ? "QUERO ME INSCREVER AGORA" : "QUERO GARANTIR MINHA VAGA"}
-        />
-        <div className="flex items-center justify-center gap-3 text-[9px] font-black uppercase tracking-widest text-text-muted italic bg-surface/50 py-4 rounded-3xl border border-border-custom">
-          <ShieldCheck className="w-4 h-4 text-emerald-500" /> Transação 100% Segura
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export default async function SalesPagePH({
   params,
@@ -131,7 +62,7 @@ export default async function SalesPagePH({
   const { data: { user } } = await supabase.auth.getUser()
 
   const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cursoId)
-  const query = supabase.from('cursos').select('*')
+  const query = supabase.from('cursos').select('*, planos_cursos(*, planos(*))')
   
   if (isUUID) {
     query.or(`id.eq.${cursoId},slug.eq.${cursoId}`)

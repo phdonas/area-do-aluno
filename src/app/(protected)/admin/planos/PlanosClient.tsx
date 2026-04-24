@@ -14,10 +14,12 @@ import {
   Clock,
   Globe,
   ChevronRight,
-  MonitorPlay
+  MonitorPlay,
+  Pencil,
+  Trash2
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { vincularCursoAoPlano, removerVinculoPlano } from './actions'
+import { vincularCursoAoPlano, removerVinculoPlano, atualizarPlano, excluirPlano, criarNovoPlano } from './actions'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 
@@ -29,6 +31,7 @@ export default function GestaoPlanosPage() {
   
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [editingPlanoId, setEditingPlanoId] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     nome: '',
     preco_mensal: '',
@@ -43,13 +46,13 @@ export default function GestaoPlanosPage() {
     // Busca Planos
     const { data: planosData } = await supabase
       .from('planos')
-      .select('*, planos_cursos(curso_id)')
+      .select('*, planos_cursos(curso_id, valor_venda)')
       .order('created_at', { ascending: false })
     
     // Busca Cursos e seus planos atuais
     const { data: cursosData } = await supabase
       .from('cursos')
-      .select('*, planos_cursos(plano_id, planos(nome))')
+      .select('*, planos_cursos(plano_id, valor_venda, valor_original, planos(nome))')
       .order('titulo')
     
     setPlanos(planosData || [])
@@ -61,8 +64,31 @@ export default function GestaoPlanosPage() {
     fetchData()
   }, [])
 
+  const handleOpenCreateModal = () => {
+    setEditingPlanoId(null)
+    setFormData({ nome: '', preco_mensal: '', duracao_meses: 12, is_vitalicio: false })
+    setIsModalOpen(true)
+  }
+
+  const handleOpenEditModal = (plano: any) => {
+    setEditingPlanoId(plano.id)
+    setFormData({
+      nome: plano.nome,
+      preco_mensal: plano.preco_mensal?.toString() || '',
+      duracao_meses: plano.duracao_meses || 12,
+      is_vitalicio: plano.duracao_meses === 0
+    })
+    setIsModalOpen(true)
+  }
+
   const handleVincular = async (cursoId: string, planoId: string) => {
-    const res = await vincularCursoAoPlano(cursoId, planoId)
+    const valor = prompt('Digite o valor de venda deste curso para este plano (Ex: 197.00):')
+    if (!valor || isNaN(Number(valor))) {
+      if (valor !== null) alert('Valor inválido!')
+      return
+    }
+
+    const res = await vincularCursoAoPlano(cursoId, planoId, Number(valor))
     if (res.success) {
       fetchData()
     } else {
@@ -78,24 +104,38 @@ export default function GestaoPlanosPage() {
     }
   }
 
-  const handleCreatePlano = async (e: React.FormEvent) => {
+  const handleExcluir = async (id: string) => {
+    if(!confirm('Tem certeza que deseja excluir este plano? Esta ação não pode ser desfeita.')) return
+    const res = await excluirPlano(id)
+    if (res.success) {
+      fetchData()
+      if(selectedPlano === id) setSelectedPlano(null)
+    } else {
+      alert(res.error)
+    }
+  }
+
+  const handleSavePlano = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSaving(true)
     
-    const { criarNovoPlano } = await import('./actions')
-    const res = await criarNovoPlano({
+    const payload = {
       nome: formData.nome,
       preco_mensal: Number(formData.preco_mensal),
       duracao_meses: formData.is_vitalicio ? 0 : formData.duracao_meses,
       ativo: true
-    })
+    }
+
+    const res = editingPlanoId 
+      ? await atualizarPlano(editingPlanoId, payload)
+      : await criarNovoPlano(payload)
 
     if (res.success) {
       setIsModalOpen(false)
       setFormData({ nome: '', preco_mensal: '', duracao_meses: 12, is_vitalicio: false })
       fetchData()
     } else {
-      alert(`Erro ao criar plano: ${res.error}`)
+      alert(`Erro ao salvar plano: ${res.error}`)
     }
     setIsSaving(false)
   }
@@ -113,7 +153,7 @@ export default function GestaoPlanosPage() {
            <p className="text-text-muted text-sm font-medium">Configure preços, durações e planos para os seus treinamentos.</p>
         </div>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleOpenCreateModal}
           className="px-6 py-4 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all flex items-center gap-2 group shadow-xl shadow-primary/20"
         >
            <Plus className="w-4 h-4 text-white group-hover:scale-125 transition-transform" />
@@ -136,33 +176,50 @@ export default function GestaoPlanosPage() {
                 </div>
               )}
               {planos.map(plano => (
-                <button 
-                  key={plano.id}
-                  onClick={() => setSelectedPlano(plano.id === selectedPlano ? null : plano.id)}
-                  className={`w-full text-left p-6 rounded-[2rem] border transition-all relative overflow-hidden group ${selectedPlano === plano.id ? 'bg-primary/10 border-primary shadow-xl shadow-primary/10' : 'bg-surface border-border-custom hover:border-white/20'}`}
-                >
-                   {plano.is_global && (
-                     <div className="absolute top-4 right-4 p-1.5 bg-indigo-500 rounded-full shadow-lg">
-                        <Globe className="w-3 h-3 text-white" />
-                     </div>
-                   )}
-                   <div className="flex items-center gap-4 mb-4">
-                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${selectedPlano === plano.id ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-white/5 text-text-muted transition-colors group-hover:text-primary'}`}>
-                        <DollarSign className="w-6 h-6" />
+                <div key={plano.id} className="relative group">
+                  <button 
+                    onClick={() => setSelectedPlano(plano.id === selectedPlano ? null : plano.id)}
+                    className={`w-full text-left p-6 rounded-[2rem] border transition-all relative overflow-hidden ${selectedPlano === plano.id ? 'bg-primary/10 border-primary shadow-xl shadow-primary/10' : 'bg-surface border-border-custom hover:border-white/20'}`}
+                  >
+                    {plano.is_global && (
+                      <div className="absolute top-4 right-4 p-1.5 bg-indigo-500 rounded-full shadow-lg">
+                          <Globe className="w-3 h-3 text-white" />
                       </div>
-                      <div>
-                         <h4 className="font-ex-black text-text-primary uppercase tracking-tight leading-none text-lg italic">{plano.nome}</h4>
-                         <span className="text-[10px] font-black text-primary uppercase tracking-widest mt-1 block">
-                            R$ {Number(plano.preco_mensal || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                         </span>
-                      </div>
-                   </div>
-                   <div className="flex items-center gap-3 text-[9px] font-black text-text-muted uppercase tracking-widest">
-                      <Clock className="w-3.5 h-3.5" />
-                      <span>{plano.duracao_meses === 0 ? 'Acesso Vitalício' : `${plano.duracao_meses} Meses`}</span>
-                      <span className="ml-auto bg-white/5 px-2 py-1 rounded-lg border border-white/5">{plano.planos_cursos?.length || 0} Vinculados</span>
-                   </div>
-                </button>
+                    )}
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${selectedPlano === plano.id ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-white/5 text-text-muted transition-colors group-hover:text-primary'}`}>
+                          <DollarSign className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <h4 className="font-ex-black text-text-primary uppercase tracking-tight leading-none text-lg italic">{plano.nome}</h4>
+                          <span className="text-[10px] font-black text-primary uppercase tracking-widest mt-1 block">
+                              Base: R$ {Number(plano.preco_mensal || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          </span>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3 text-[9px] font-black text-text-muted uppercase tracking-widest">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>{plano.duracao_meses === 0 ? 'Acesso Vitalício' : `${plano.duracao_meses} Meses`}</span>
+                        <span className="ml-auto bg-white/5 px-2 py-1 rounded-lg border border-white/5">{plano.planos_cursos?.length || 0} Vinculados</span>
+                    </div>
+                  </button>
+                  
+                  {/* ACTIONS OVERLAY */}
+                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleOpenEditModal(plano); }}
+                      className="p-2 bg-white/10 hover:bg-white/20 rounded-lg text-white transition-colors backdrop-blur-md border border-white/10"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); handleExcluir(plano.id); }}
+                      className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-red-500 transition-colors backdrop-blur-md border border-red-500/10"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
               ))}
            </div>
         </div>
@@ -177,7 +234,7 @@ export default function GestaoPlanosPage() {
                  <thead>
                     <tr className="bg-white/5 border-b border-border-custom text-[9px] font-black uppercase tracking-[0.2em] text-text-muted">
                        <th className="px-8 py-6">Treinamento</th>
-                       <th className="px-8 py-6">Plano de Venda</th>
+                       <th className="px-8 py-6">Oferta Ativa</th>
                        <th className="px-8 py-6 text-right">Ação</th>
                     </tr>
                  </thead>
@@ -185,6 +242,7 @@ export default function GestaoPlanosPage() {
                     {cursos.map(curso => {
                       const hasPlano = curso.planos_cursos && curso.planos_cursos.length > 0
                       const currentPlano = hasPlano ? curso.planos_cursos[0].planos : null
+                      const valorVenda = hasPlano ? curso.planos_cursos[0].valor_venda : 0
                       
                       return (
                         <tr key={curso.id} className="group hover:bg-white/[0.02] transition-colors">
@@ -198,14 +256,19 @@ export default function GestaoPlanosPage() {
                            </td>
                            <td className="px-8 py-6">
                               {hasPlano ? (
-                                <div className="flex items-center gap-2">
-                                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                   <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{currentPlano.nome}</span>
+                                <div className="space-y-1">
+                                   <div className="flex items-center gap-2">
+                                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                      <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{currentPlano.nome}</span>
+                                   </div>
+                                   <div className="text-[11px] font-black text-text-primary pl-4">
+                                      R$ {Number(valorVenda || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                   </div>
                                 </div>
                               ) : (
                                 <div className="flex items-center gap-2 bg-amber-500/5 px-3 py-1.5 rounded-full border border-amber-500/10 w-fit">
                                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                                   <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest italic opacity-80">Venda Inativa / S. Plano</span>
+                                   <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest italic opacity-80">Sem Plano Ativo</span>
                                 </div>
                               )}
                            </td>
@@ -216,7 +279,7 @@ export default function GestaoPlanosPage() {
                                   disabled={hasPlano && curso.planos_cursos[0].plano_id === selectedPlano}
                                   className={`px-5 py-3 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all ${hasPlano && curso.planos_cursos[0].plano_id === selectedPlano ? 'bg-emerald-500/10 text-emerald-500 opacity-50 cursor-not-allowed border border-emerald-500/20' : 'bg-primary text-white hover:scale-105 shadow-xl shadow-primary/30'}`}
                                 >
-                                   {hasPlano && curso.planos_cursos[0].plano_id === selectedPlano ? 'VINCULADO' : 'VINCULAR AO SELECIONADO'}
+                                   {hasPlano && curso.planos_cursos[0].plano_id === selectedPlano ? 'VINCULADO' : 'VINCULAR / ALTERAR VALOR'}
                                 </button>
                               ) : (
                                 hasPlano && (
@@ -238,7 +301,7 @@ export default function GestaoPlanosPage() {
         </div>
       </div>
 
-      {/* CREATE PLAN MODAL */}
+      {/* CREATE / EDIT PLAN MODAL */}
       <AnimatePresence>
          {isModalOpen && (
            <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
@@ -257,15 +320,15 @@ export default function GestaoPlanosPage() {
               >
                  <div className="flex items-center gap-4 mb-10">
                     <div className="w-16 h-16 rounded-[1.5rem] bg-primary/10 flex items-center justify-center border border-primary/20">
-                       <Plus className="w-8 h-8 text-primary" />
+                       {editingPlanoId ? <Pencil className="w-8 h-8 text-primary" /> : <Plus className="w-8 h-8 text-primary" />}
                     </div>
                     <div>
-                       <h2 className="text-3xl font-black text-text-primary tracking-tighter italic uppercase">Novo <span className="text-primary">Plano</span></h2>
-                       <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mt-1">Defina as bases financeiras do produto</p>
+                       <h2 className="text-3xl font-black text-text-primary tracking-tighter italic uppercase">{editingPlanoId ? 'Editar' : 'Novo'} <span className="text-primary">Plano</span></h2>
+                       <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mt-1">{editingPlanoId ? 'Atualize as configurações do plano' : 'Defina as bases financeiras do produto'}</p>
                     </div>
                  </div>
 
-                 <form onSubmit={handleCreatePlano} className="space-y-8">
+                 <form onSubmit={handleSavePlano} className="space-y-8">
                     <div className="space-y-6">
                        <div className="space-y-2">
                           <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted px-2">Nome do Plano</label>
@@ -281,7 +344,7 @@ export default function GestaoPlanosPage() {
 
                        <div className="grid grid-cols-2 gap-6">
                           <div className="space-y-2">
-                             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted px-2">Preço (BRL)</label>
+                             <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted px-2">Preço Sugerido (BRL)</label>
                              <div className="relative">
                                 <DollarSign className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
                                 <input 
@@ -344,7 +407,7 @@ export default function GestaoPlanosPage() {
                          disabled={isSaving}
                          className="flex-1 py-5 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/30 flex items-center justify-center gap-2"
                        >
-                          {isSaving ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <>Salvar Configuração <CheckCircle className="w-4 h-4" /></>}
+                          {isSaving ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <>Salvar Alterações <CheckCircle className="w-4 h-4" /></>}
                        </button>
                     </div>
                  </form>

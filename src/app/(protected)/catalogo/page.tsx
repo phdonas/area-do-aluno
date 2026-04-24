@@ -15,7 +15,7 @@ export default async function UnifiedCatalogoPage() {
   // 1. Buscar todos os cursos publicados com seus pilares
   const { data: cursosRaw } = await supabase
     .from('cursos')
-    .select('*, cursos_pilares(pilares(id, slug, nome))')
+    .select('*, cursos_pilares(pilares(id, slug, nome)), planos_cursos(valor_venda)')
     .eq('status', 'publicado')
     .order('created_at', { ascending: false })
 

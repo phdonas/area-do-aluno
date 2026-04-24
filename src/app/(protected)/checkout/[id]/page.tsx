@@ -7,13 +7,16 @@ import {
   Tag, Loader2, AlertCircle, ShoppingCart, Lock
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { simularCompraMatricula } from './actions'
 
 export default function ResumoPedidoPage() {
   const { id } = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const planoId = searchParams.get('plano')
+  
   const [loading, setLoading] = useState(true)
   const [checkingOut, setCheckingOut] = useState(false)
   const [produto, setProduto] = useState<any>(null)
@@ -30,7 +33,7 @@ export default function ResumoPedidoPage() {
       const supabase = createClient()
       
       const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id as string)
-      const query = supabase.from('cursos').select('*, planos_cursos(planos(*))')
+      const query = supabase.from('cursos').select('*, planos_cursos(*, planos(*))')
       
       if (isUUID) {
         query.or(`id.eq.${id},slug.eq.${id}`)
@@ -88,13 +91,18 @@ export default function ResumoPedidoPage() {
     }
   }
 
+  // Determinar a oferta (plano) selecionada
+  const ofertaSelecionada = planoId 
+    ? produto?.planos_cursos?.find((pc: any) => pc.plano_id === planoId)
+    : produto?.planos_cursos?.[0]
+
   const handleManualNotification = async () => {
     setCheckingOut(true)
     try {
       const { notificarPagamentoManual } = await import('./manual-actions')
       const res = await notificarPagamentoManual({
         cursoId: produto.id,
-        planoId: produto.planos_cursos?.[0]?.plano_id,
+        planoId: ofertaSelecionada?.plano_id,
         metodo: region === 'BR' ? 'pix_direto' : (region === 'PT' ? 'mbway_direto' : 'transferencia'),
         pais: region,
         valor: precoFinal,
@@ -122,7 +130,8 @@ export default function ResumoPedidoPage() {
     try {
       const result = await simularCompraMatricula(
         id as string, 
-        couponStatus.valid ? couponCode : undefined
+        couponStatus.valid ? couponCode : undefined,
+        ofertaSelecionada?.plano_id
       )
       
       if (result.success) {
@@ -147,7 +156,7 @@ export default function ResumoPedidoPage() {
     )
   }
 
-  const precoOriginalBRL = Number(produto.planos_cursos?.[0]?.planos?.preco_mensal || produto.preco || 0)
+  const precoOriginalBRL = Number(ofertaSelecionada?.valor_venda || 0)
   // Taxa de conversão estimada para demonstração (pode ser configurável no futuro)
   const precoOriginal = region === 'BR' ? precoOriginalBRL : Math.round(precoOriginalBRL / 6)
   
