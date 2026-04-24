@@ -43,13 +43,13 @@ export default function GestaoPlanosPage() {
     setLoading(true)
     const supabase = createClient()
     
-    // Busca Planos
+    // Busca Planos e seus cursos vinculados com títulos
     const { data: planosData } = await supabase
       .from('planos')
-      .select('*, planos_cursos(curso_id, valor_venda)')
+      .select('*, planos_cursos(curso_id, valor_venda, valor_original, cursos(titulo))')
       .order('created_at', { ascending: false })
     
-    // Busca Cursos e seus planos atuais
+    // Busca Cursos e todos os seus planos atuais
     const { data: cursosData } = await supabase
       .from('cursos')
       .select('*, planos_cursos(plano_id, valor_venda, valor_original, planos(nome))')
@@ -231,8 +231,8 @@ export default function GestaoPlanosPage() {
            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 px-2 flex items-center gap-2">
               <MonitorPlay className="w-4 h-4" /> Status dos Treinamentos
            </h3>
-           <div className="bg-surface border border-border-custom rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-3xl">
-              <table className="w-full text-left border-collapse">
+           <div className="bg-surface border border-border-custom rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-3xl overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[600px]">
                  <thead>
                     <tr className="bg-white/5 border-b border-border-custom text-[9px] font-black uppercase tracking-[0.2em] text-text-muted">
                        <th className="px-8 py-6">Treinamento</th>
@@ -330,7 +330,7 @@ export default function GestaoPlanosPage() {
                     </div>
                  </div>
 
-                 <form onSubmit={handleSavePlano} className="space-y-8">
+                                   <form onSubmit={handleSavePlano} className="space-y-8">
                     <div className="space-y-6">
                        <div className="space-y-2">
                           <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted px-2">Nome do Plano</label>
@@ -395,6 +395,40 @@ export default function GestaoPlanosPage() {
                             />
                          </motion.div>
                        )}
+
+                        {/* SEÇÃO DE CURSOS VINCULADOS (APENAS EDIÇÃO) */}
+                        {editingPlanoId && (
+                           <div className="space-y-4 pt-4 border-t border-white/5">
+                              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80 px-2 flex items-center gap-2">
+                                 <MonitorPlay className="w-3 h-3" /> Cursos Vinculados a este Plano
+                              </label>
+                              
+                              <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                                 {planos.find(p => p.id === editingPlanoId)?.planos_cursos?.length > 0 ? (
+                                    planos.find(p => p.id === editingPlanoId).planos_cursos.map((pc: any) => (
+                                       <div key={pc.curso_id} className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-xl group hover:border-primary/30 transition-all">
+                                          <div className="flex flex-col">
+                                             <span className="text-[10px] font-black text-text-primary uppercase tracking-tight">{pc.cursos?.titulo}</span>
+                                             <span className="text-[9px] font-bold text-primary">R$ {Number(pc.valor_venda || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                                          </div>
+                                          <button 
+                                             type="button"
+                                             onClick={() => handleDesvincular(pc.curso_id, editingPlanoId)}
+                                             className="p-2 text-text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                                             title="Desvincular curso"
+                                          >
+                                             <Unlink className="w-3.5 h-3.5" />
+                                          </button>
+                                       </div>
+                                    ))
+                                 ) : (
+                                    <div className="p-4 border border-dashed border-white/10 rounded-xl text-center">
+                                       <span className="text-[9px] font-black text-text-muted uppercase tracking-widest">Nenhum curso vinculado a este plano.</span>
+                                    </div>
+                                 )}
+                              </div>
+                           </div>
+                        )}
                     </div>
 
                     <div className="flex gap-4 pt-6">
