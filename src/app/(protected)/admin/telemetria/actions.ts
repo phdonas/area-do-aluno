@@ -9,12 +9,13 @@ export async function listarUsoFerramentas(filters: { email?: string, ferramenta
 
   let query = supabase
     .from('log_uso_ferramentas')
-    .select('*, usuarios!left(email)', { count: 'exact' })
+    .select('*, usuarios(email)', { count: 'exact' })
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
   if (filters.email) {
-    query = query.ilike('usuarios.email', `%${filters.email}%`)
+    // Filtra pelo email do aluno via join ou campo de fallback
+    query = query.ilike('usuarios.email', `%${filters.email.toLowerCase()}%`)
   }
 
   if (filters.ferramenta) {
