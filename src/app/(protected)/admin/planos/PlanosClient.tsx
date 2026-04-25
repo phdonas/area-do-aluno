@@ -67,6 +67,10 @@ export default function GestaoPlanosPage() {
   const [bindingData, setBindingData] = useState({
     valor_venda: '',
     valor_original: '',
+    valor_venda_eur: '',
+    valor_original_eur: '',
+    valor_venda_usd: '',
+    valor_original_usd: '',
     is_featured: false,
     ativo: true
   })
@@ -77,12 +81,12 @@ export default function GestaoPlanosPage() {
     
     const { data: planosData } = await supabase
       .from('planos')
-      .select('*, planos_cursos(curso_id, valor_venda, valor_original, is_featured, ativo, cursos(titulo, thumb_url))')
+      .select('*, planos_cursos(curso_id, valor_venda, valor_original, valor_venda_eur, valor_original_eur, valor_venda_usd, valor_original_usd, is_featured, ativo, cursos(titulo, thumb_url))')
       .order('created_at', { ascending: false })
     
     const { data: cursosData } = await supabase
       .from('cursos')
-      .select('*, planos_cursos(plano_id, valor_venda, valor_original, is_featured, ativo, planos(nome))')
+      .select('*, planos_cursos(plano_id, valor_venda, valor_original, valor_venda_eur, valor_original_eur, valor_venda_usd, valor_original_usd, is_featured, ativo, planos(nome))')
       .order('titulo')
     
     setPlanos(planosData || [])
@@ -126,6 +130,10 @@ export default function GestaoPlanosPage() {
     setBindingData({
       valor_venda: currentBinding?.valor_venda?.toString() || '',
       valor_original: currentBinding?.valor_original?.toString() || '',
+      valor_venda_eur: currentBinding?.valor_venda_eur?.toString() || '',
+      valor_original_eur: currentBinding?.valor_original_eur?.toString() || '',
+      valor_venda_usd: currentBinding?.valor_venda_usd?.toString() || '',
+      valor_original_usd: currentBinding?.valor_original_usd?.toString() || '',
       is_featured: currentBinding?.is_featured || false,
       ativo: currentBinding?.ativo ?? true
     })
@@ -146,7 +154,11 @@ export default function GestaoPlanosPage() {
       Number(bindingData.valor_venda),
       Number(bindingData.valor_original),
       bindingData.is_featured,
-      bindingData.ativo
+      bindingData.ativo,
+      bindingData.valor_venda_eur ? Number(bindingData.valor_venda_eur) : undefined,
+      bindingData.valor_original_eur ? Number(bindingData.valor_original_eur) : undefined,
+      bindingData.valor_venda_usd ? Number(bindingData.valor_venda_usd) : undefined,
+      bindingData.valor_original_usd ? Number(bindingData.valor_original_usd) : undefined
     )
 
     if (res.success) {
@@ -674,7 +686,7 @@ export default function GestaoPlanosPage() {
                   <form onSubmit={handleSaveBinding} className="space-y-6">
                       <div className="grid grid-cols-2 gap-6">
                          <div className="space-y-2">
-                            <label className="text-[9px] font-black uppercase tracking-widest text-text-muted ml-2">Preço de Venda (Oferta)</label>
+                            <label className="text-[9px] font-black uppercase tracking-widest text-text-muted ml-2">Preço de Venda (BRL)</label>
                             <div className="relative">
                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 font-black text-xs">R$</div>
                                <input 
@@ -688,7 +700,7 @@ export default function GestaoPlanosPage() {
                             </div>
                          </div>
                          <div className="space-y-2">
-                            <label className="text-[9px] font-black uppercase tracking-widest text-text-muted ml-2">Preço Original (De:)</label>
+                            <label className="text-[9px] font-black uppercase tracking-widest text-text-muted ml-2">Preço Original (BRL)</label>
                             <div className="relative">
                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted font-black text-xs">R$</div>
                                <input 
@@ -697,6 +709,35 @@ export default function GestaoPlanosPage() {
                                   className="w-full h-14 pl-10 pr-4 bg-surface border-2 border-slate-300 focus:border-primary/50 rounded-2xl outline-none transition-all font-black text-sm text-text-muted"
                                   value={bindingData.valor_original}
                                   onChange={(e) => setBindingData({...bindingData, valor_original: e.target.value})}
+                               />
+                            </div>
+                         </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-6">
+                         <div className="space-y-2">
+                            <label className="text-[9px] font-black uppercase tracking-widest text-text-muted ml-2">Preço de Venda (EUR)</label>
+                            <div className="relative">
+                               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-indigo-500 font-black text-xs">€</div>
+                               <input 
+                                  type="number" 
+                                  step="0.01"
+                                  className="w-full h-14 pl-10 pr-4 bg-surface border-2 border-slate-300 focus:border-indigo-500 rounded-2xl outline-none transition-all font-black text-sm text-text-primary"
+                                  value={bindingData.valor_venda_eur}
+                                  onChange={(e) => setBindingData({...bindingData, valor_venda_eur: e.target.value})}
+                               />
+                            </div>
+                         </div>
+                         <div className="space-y-2">
+                            <label className="text-[9px] font-black uppercase tracking-widest text-text-muted ml-2">Preço de Venda (USD)</label>
+                            <div className="relative">
+                               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500 font-black text-xs">$</div>
+                               <input 
+                                  type="number" 
+                                  step="0.01"
+                                  className="w-full h-14 pl-10 pr-4 bg-surface border-2 border-slate-300 focus:border-amber-500 rounded-2xl outline-none transition-all font-black text-sm text-text-primary"
+                                  value={bindingData.valor_venda_usd}
+                                  onChange={(e) => setBindingData({...bindingData, valor_venda_usd: e.target.value})}
                                />
                             </div>
                          </div>

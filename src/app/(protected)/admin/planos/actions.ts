@@ -12,7 +12,11 @@ export async function vincularCursoAoPlano(
   valorVenda: number, 
   valorOriginal?: number,
   isFeatured: boolean = false,
-  ativo: boolean = true
+  ativo: boolean = true,
+  valorVendaEur?: number,
+  valorOriginalEur?: number,
+  valorVendaUsd?: number,
+  valorOriginalUsd?: number
 ) {
   const supabase = createAdminClient()
   
@@ -31,6 +35,10 @@ export async function vincularCursoAoPlano(
       plano_id: planoId,
       valor_venda: valorVenda,
       valor_original: valorOriginal || valorVenda,
+      valor_venda_eur: valorVendaEur,
+      valor_original_eur: valorOriginalEur || valorVendaEur,
+      valor_venda_usd: valorVendaUsd,
+      valor_original_usd: valorOriginalUsd || valorVendaUsd,
       is_featured: isFeatured,
       ativo: ativo
     }, { onConflict: 'curso_id,plano_id' })

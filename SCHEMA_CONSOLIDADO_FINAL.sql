@@ -100,14 +100,30 @@ CREATE TABLE IF NOT EXISTS public.revisoes_aula (
 
 CREATE TABLE IF NOT EXISTS public.logs_matriculas (
   id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-  usuario_id UUID,
-  admin_id UUID,
+  usuario_id UUID REFERENCES public.usuarios(id) ON DELETE SET NULL,
+  admin_id UUID REFERENCES public.usuarios(id) ON DELETE SET NULL,
   evento TEXT NOT NULL,
-  curso_id UUID,
-  plano_id UUID,
+  curso_id UUID REFERENCES public.cursos(id) ON DELETE SET NULL,
+  plano_id UUID REFERENCES public.planos(id) ON DELETE SET NULL,
   origem TEXT,
   detalhes JSONB,
-  created_at TIMESTAMPTZ
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS public.logs_transacoes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    usuario_id UUID REFERENCES public.usuarios(id) ON DELETE SET NULL,
+    curso_id UUID REFERENCES public.cursos(id) ON DELETE SET NULL,
+    plano_id UUID REFERENCES public.planos(id) ON DELETE SET NULL,
+    provider TEXT NOT NULL, -- 'stripe', 'mercado_pago', 'manual'
+    external_id TEXT, -- ID da sessão ou transação no provedor
+    status_anterior TEXT,
+    status_novo TEXT,
+    valor_total DECIMAL(10,2),
+    moeda TEXT,
+    payload_bruto JSONB,
+    metadata JSONB
 );
 
 CREATE TABLE IF NOT EXISTS public.ferramentas_saas (
@@ -189,8 +205,20 @@ CREATE TABLE IF NOT EXISTS public.convites_matricula (
 );
 
 CREATE TABLE IF NOT EXISTS public.planos_cursos (
-  plano_id UUID NOT NULL,
-  curso_id UUID NOT NULL
+  plano_id UUID NOT NULL REFERENCES public.planos(id) ON DELETE CASCADE,
+  curso_id UUID NOT NULL REFERENCES public.cursos(id) ON DELETE CASCADE,
+  valor_venda DECIMAL(10,2),
+  valor_original DECIMAL(10,2),
+  valor_venda_eur DECIMAL(10,2),
+  valor_original_eur DECIMAL(10,2),
+  valor_venda_usd DECIMAL(10,2),
+  valor_original_usd DECIMAL(10,2),
+  stripe_price_id_brl TEXT,
+  stripe_price_id_eur TEXT,
+  stripe_price_id_usd TEXT,
+  is_featured BOOLEAN DEFAULT FALSE,
+  ativo BOOLEAN DEFAULT TRUE,
+  PRIMARY KEY (plano_id, curso_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.certificados_config (
@@ -465,7 +493,7 @@ CREATE TABLE IF NOT EXISTS public.assinaturas (
   curso_id UUID,
   metodo_pagamento TEXT,
   status_pagamento TEXT,
-  valor_pago TEXT,
+  valor_pago DECIMAL(10,2),
   moeda TEXT,
   comprovante_url TEXT,
   data_pagamento TIMESTAMPTZ,
@@ -569,7 +597,8 @@ RETURNS BOOLEAN AS $$
 BEGIN
     RETURN EXISTS (
         SELECT 1 FROM public.usuarios 
-        WHERE id = auth.uid() AND (is_admin = TRUE OR role = 'admin' OR is_staff = TRUE)
+        WHERE id = auth.uid() 
+        AND (is_admin = TRUE OR role = 'admin' OR is_staff = TRUE)
     );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -593,29 +622,32 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Função vital para o Dashboard e Player (Versão Corrigida)
-CREATE OR REPLACE FUNCTION public.get_modulos_curso(p_curso_id uuid) 
+CREATE OR REPLACE FUNCTION public.get_modulos_curso(p_curso_id UUID)
 RETURNS TABLE (
-  id uuid, 
-  titulo text, 
-  descricao text, 
-  tipo text, 
-  ui_layout text, 
-  ordem int
-) AS $$ 
-BEGIN 
-  RETURN QUERY 
-  SELECT DISTINCT
-    m.id, 
-    m.titulo, 
-    m.descricao, 
-    m.tipo, 
-    m.ui_layout, 
-    COALESCE(cm.ordem, m.ordem)::int
-  FROM public.modulos m 
-  LEFT JOIN public.cursos_modulos cm ON cm.modulo_id = m.id 
-  WHERE m.curso_id = p_curso_id OR cm.id IS NOT NULL -- Suporta vínculo direto ou via tabela de junção
-  ORDER BY 6 ASC;
-END; $$ LANGUAGE plpgsql SECURITY DEFINER;
+  id UUID,
+  titulo VARCHAR(255),
+  descricao TEXT,
+  ordem INTEGER,
+  is_biblioteca BOOLEAN,
+  ui_layout VARCHAR(50)
+) AS $$
+BEGIN
+  RETURN QUERY
+  -- Módulos diretos do curso
+  SELECT m.id, m.titulo, m.descricao, m.ordem, FALSE as is_biblioteca, m.ui_layout
+  FROM public.modulos m
+  WHERE m.curso_id = p_curso_id
+  
+  UNION ALL
+  
+  -- Módulos puxados da biblioteca (pivot cursos_modulos)
+  SELECT m.id, m.titulo, m.descricao, cm.ordem, TRUE as is_biblioteca, m.ui_layout
+  FROM public.modulos m
+  JOIN public.cursos_modulos cm ON m.id = cm.modulo_id
+  WHERE cm.curso_id = p_curso_id
+  ORDER BY ordem ASC;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- 4. RELACIONAMENTOS (FOREIGN KEYS)
 ALTER TABLE public.aulas DROP CONSTRAINT IF EXISTS aulas_modulo_id_fkey;
@@ -707,6 +739,20 @@ CREATE POLICY "Courses_Read_Public" ON public.cursos FOR SELECT USING (status = 
 CREATE POLICY "Student_Read_Assigned_Modules" ON public.modulos FOR SELECT USING (public.tem_acesso_curso(auth.uid(), curso_id));
 CREATE POLICY "Student_Read_Assigned_Lessons" ON public.aulas FOR SELECT USING (EXISTS (SELECT 1 FROM public.modulos WHERE id = modulo_id AND public.tem_acesso_curso(auth.uid(), curso_id)));
 CREATE POLICY "Student_Manage_Own_Progress" ON public.progresso_aulas FOR ALL USING (usuario_id = auth.uid());
+
+-- Segurança para Logs de Transações
+ALTER TABLE public.logs_transacoes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Gestores podem ver todos os logs" ON public.logs_transacoes;
+CREATE POLICY "Gestores podem ver todos os logs" 
+ON public.logs_transacoes FOR SELECT 
+TO authenticated 
+USING ( 
+    EXISTS (
+        SELECT 1 FROM usuarios 
+        WHERE id = auth.uid() 
+        AND (is_staff = true OR is_admin = true)
+    )
+);
 
 -- 6. CAMADA DE COMPATIBILIDADE LEGADA
 -- Criada para suportar códigos que ainda referenciam a tabela 'profiles'

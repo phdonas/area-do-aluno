@@ -65,24 +65,90 @@ export async function criarConvite(data: { email: string; curso_id?: string; pla
   return { success: true, token }
 }
 
+export async function criarLoteConvites(data: { emails: string[]; curso_id?: string; origem: string }) {
+  const supabase = createAdminClient()
+  let successCount = 0
+  const errors: string[] = []
+
+  // 1. Buscar nome do curso para o e-mail (uma única vez)
+  let cursoNome = ''
+  if (data.curso_id) {
+    const { data: curso } = await supabase.from('cursos').select('titulo').eq('id', data.curso_id).single()
+    cursoNome = curso?.titulo || ''
+  }
+
+  // 2. Processar cada e-mail
+  for (const emailRaw of data.emails) {
+    const email = emailRaw.toLowerCase().trim()
+    
+    // Verifica duplicidade básica no banco
+    const { data: existente } = await supabase
+      .from('convites_matricula')
+      .select('id')
+      .eq('email', email)
+      .eq('usado', false)
+      .maybeSingle()
+
+    if (existente) {
+      errors.push(`${email}: Já possui um convite pendente.`)
+      continue
+    }
+
+    const token = crypto.randomUUID()
+    
+    // Inserir no banco
+    const { error: dbError } = await supabase.from('convites_matricula').insert({
+      email,
+      curso_id: data.curso_id || null,
+      plano_tipo: 'venda_direta',
+      origem: data.origem,
+      token,
+      usado: false
+    })
+
+    if (dbError) {
+      errors.push(`${email}: Falha ao gravar no banco.`)
+      continue
+    }
+
+    // Enviar E-mail
+    const { error: mailError } = await enviarEmailComunicacao({
+      email,
+      token,
+      cursoNome,
+      tipo: 'convite'
+    })
+
+    if (mailError) {
+      errors.push(`${email}: Convite criado, mas falha ao enviar e-mail.`)
+    }
+
+    // Log individual
+    await supabase.from('logs_matriculas').insert({
+      evento: 'convite_massa_aluno',
+      curso_id: data.curso_id || null,
+      origem: 'bulk_action',
+      detalhes: { email_aluno: email, token, mail_sent: !mailError }
+    })
+
+    successCount++
+  }
+
+  revalidatePath('/admin/convites')
+  return { success: true, successCount, errors }
+}
+
 export async function importarCSVContatos(formData: FormData) {
   const file = formData.get('file') as File
   if (!file) return { error: 'Arquivo CSV ausente.' }
 
   const text = await file.text()
-  const lines = text.split('\n').map(l => l.trim()).filter(l => l.includes('@'))
+  const emails = text.split('\n')
+    .map(l => l.trim())
+    .filter(l => l.includes('@'))
   
-  const supabase = createAdminClient()
-  let successCount = 0
-
-  for (const emailRaw of lines) {
-    const res = await criarConvite({
-      email: emailRaw,
-      origem: 'importacao_csv'
-    })
-    if (!res.error) successCount++
-  }
-
-  revalidatePath('/admin/convites')
-  return { success: true, successCount }
+  return criarLoteConvites({
+    emails,
+    origem: 'importacao_csv'
+  })
 }

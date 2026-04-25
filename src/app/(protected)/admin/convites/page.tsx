@@ -6,7 +6,7 @@ import {
   ChevronRight, ArrowLeft, MoreHorizontal, UserPlus, FileSpreadsheet
 } from 'lucide-react'
 import InviteModal from '@/components/admin/InviteModal'
-import ImportCsvButton from '@/components/admin/ImportCsvButton'
+import BulkInviteModal from '@/components/admin/BulkInviteModal'
 
 export const metadata = {
   title: 'Gestão de Convites | Admin',
@@ -49,7 +49,7 @@ export default async function ConvitesAdminPage() {
          </div>
 
          <div className="flex flex-wrap items-center gap-4 relative z-10">
-            <ImportCsvButton />
+            <BulkInviteModal cursos={cursos || []} />
             <InviteModal cursos={cursos || []} />
          </div>
       </header>
