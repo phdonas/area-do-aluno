@@ -38,7 +38,7 @@ export default async function VitrinePage() {
   // 2. Buscar cursos em destaque
   const { data: cursos } = await supabase
     .from('cursos')
-    .select('*')
+    .select('*, planos_cursos(valor_venda, valor_original, is_featured, ativo, planos(nome))')
     .eq('destaque_vitrine', true)
     .limit(6)
 
@@ -148,24 +148,59 @@ export default async function VitrinePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {cursos?.map((curso) => (
-              <Link key={curso.id} href={`/loja/curso/${curso.id}`} className="group relative bg-surface border border-border-custom rounded-[48px] overflow-hidden hover:border-primary/50 transition-all duration-500 flex flex-col hover:shadow-2xl">
-                <div className="h-64 relative bg-black/20 overflow-hidden">
-                  <img src={curso.thumb_url || 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000'} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={curso.titulo} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-8">
-                     <span className="px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/10 text-white rounded-full text-[9px] font-black uppercase tracking-widest">Premium</span>
+            {cursos?.map((curso) => {
+              const offers = (curso.planos_cursos || [])
+                .filter((o: any) => o.ativo !== false)
+                .sort((a: any, b: any) => (a.valor_venda || 0) - (b.valor_venda || 0));
+
+              const minOffer = offers[0] || null;
+              const featuredOffer = offers.find((o: any) => o.is_featured);
+              const minPrice = minOffer ? minOffer.valor_venda : (curso.preco || 0);
+              const isFree = minPrice === 0 && (minOffer || curso.is_gratis);
+
+              const formatPreco = (val: number) => {
+                return (val || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+              }
+
+              return (
+                <Link key={curso.id} href={`/loja/curso/${curso.id}`} className="group relative bg-surface border border-border-custom rounded-[48px] overflow-hidden hover:border-primary/50 transition-all duration-500 flex flex-col hover:shadow-2xl">
+                  <div className="h-64 relative bg-black/20 overflow-hidden">
+                    <img src={curso.thumb_url || 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000'} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={curso.titulo} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-8 gap-2">
+                       {featuredOffer && (
+                         <span className="px-3 py-1 bg-primary text-white rounded-full text-[7px] font-black uppercase tracking-widest shadow-lg shadow-primary/20">Recomendado</span>
+                       )}
+                       <span className="px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/10 text-white rounded-full text-[9px] font-black uppercase tracking-widest">Premium</span>
+                    </div>
                   </div>
-                </div>
-                <div className="p-8 space-y-4 flex-1 flex flex-col">
-                   <h3 className="text-2xl font-black text-text-primary tracking-tight leading-tight group-hover:text-primary transition-colors italic uppercase">{curso.titulo}</h3>
-                   <p className="text-sm text-text-secondary font-medium line-clamp-2 opacity-80 flex-1">{curso.descricao}</p>
-                   <div className="pt-6 border-t border-border-custom flex items-center justify-between">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-primary">Explorar Treinamento</span>
-                      <ArrowRight className="w-4 h-4 text-primary" />
-                   </div>
-                </div>
-              </Link>
-            ))}
+                  <div className="p-8 space-y-4 flex-1 flex flex-col">
+                     <h3 className="text-2xl font-black text-text-primary tracking-tight leading-tight group-hover:text-primary transition-colors italic uppercase">{curso.titulo}</h3>
+                     <p className="text-sm text-text-secondary font-medium line-clamp-2 opacity-80 flex-1">{curso.descricao}</p>
+                     
+                     <div className="pt-6 border-t border-border-custom flex items-center justify-between">
+                        <div className="flex flex-col">
+                           {isFree ? (
+                             <span className="text-xl font-black text-primary tracking-tighter italic">GRÁTIS</span>
+                           ) : (
+                             <>
+                               <span className="text-[8px] font-black text-text-muted uppercase tracking-widest">
+                                 {offers.length > 1 ? 'A partir de' : (minOffer?.planos?.nome || 'Inscrição')}
+                                </span>
+                                <div className="flex items-baseline gap-1">
+                                  <span className="text-[10px] font-bold text-text-muted">R$</span>
+                                  <span className="text-xl font-black text-text-primary tracking-tighter italic">{formatPreco(minPrice)}</span>
+                                </div>
+                             </>
+                           )}
+                        </div>
+                        <div className="w-10 h-10 bg-primary/10 rounded-2xl flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                           <ArrowRight className="w-5 h-5" />
+                        </div>
+                     </div>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>

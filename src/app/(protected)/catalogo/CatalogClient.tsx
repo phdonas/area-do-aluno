@@ -137,10 +137,19 @@ export function CatalogClient({ cursos, pacotes, pilares, idsAcessos }: CatalogC
               const free = curso.is_gratis;
               
               // Lógica de Preço Dinâmico (Múltiplos Planos)
-              const offers = curso.planos_cursos || []
-              const prices = offers.map((o: any) => o.valor_venda).filter((p: any) => p !== null)
-              const minPrice = prices.length > 0 ? Math.min(...prices) : (curso.preco || 0)
-              const firstPlanoId = offers[0]?.plano_id
+              const offers = (curso.planos_cursos || [])
+                .filter((o: any) => o.ativo !== false)
+                .sort((a: any, b: any) => (a.valor_venda || 0) - (b.valor_venda || 0));
+
+              const minOffer = offers[0] || null;
+              const featuredOffer = offers.find((o: any) => o.is_featured);
+              
+              // Se houver plano de destaque, usamos o preço dele? 
+              // O usuário disse "menor preço com o indicativo do plano".
+              // Então mostramos o menor preço.
+              
+              const minPrice = minOffer ? minOffer.valor_venda : (curso.preco || 0);
+              const firstPlanoId = featuredOffer?.plano_id || minOffer?.plano_id;
 
               const link = enrolled ? `/player/${curso.id}` : `/loja/curso/${curso.slug || curso.id}`;
               const checkout = free ? '#' : `/checkout/${curso.id}${firstPlanoId ? `?plano=${firstPlanoId}` : ''}`;
@@ -171,9 +180,14 @@ export function CatalogClient({ cursos, pacotes, pilares, idsAcessos }: CatalogC
                         />
                       </Link>
                       <div className="absolute top-4 right-4 flex flex-wrap gap-2 justify-end max-w-[80%]">
+                         {featuredOffer && (
+                           <span className="px-3 py-1 bg-primary text-white rounded-full text-[7px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-1">
+                             <Zap className="w-2.5 h-2.5 fill-white" /> Recomendado
+                           </span>
+                         )}
                          {(curso.pilar_nomes && curso.pilar_nomes.length > 0) ? (
                            curso.pilar_nomes.map((nome: string, i: number) => (
-                             <span key={i} className="px-3 py-1 bg-primary text-white rounded-full text-[7px] font-black uppercase tracking-widest shadow-lg shadow-primary/20">
+                             <span key={i} className="px-3 py-1 bg-surface/50 backdrop-blur-md border border-white/10 text-text-primary rounded-full text-[7px] font-black uppercase tracking-widest">
                                {nome}
                              </span>
                            ))
@@ -187,7 +201,7 @@ export function CatalogClient({ cursos, pacotes, pilares, idsAcessos }: CatalogC
 
                     <div className="p-8 space-y-4 flex-1 flex flex-col">
                        <Link href={link}>
-                          <h3 className="text-xl font-black text-text-primary tracking-tight leading-tight group-hover:text-primary transition-colors">{curso.titulo}</h3>
+                          <h3 className="text-xl font-black text-text-primary tracking-tight leading-tight group-hover:text-primary transition-colors italic uppercase">{curso.titulo}</h3>
                        </Link>
                        <p className="text-sm text-text-secondary font-medium line-clamp-2 leading-relaxed flex-1 opacity-80">
                          {cleanDescription(curso.descricao)}
@@ -201,8 +215,18 @@ export function CatalogClient({ cursos, pacotes, pilares, idsAcessos }: CatalogC
                               <span className="text-xl font-black text-amber-500 tracking-tighter italic">GRÁTIS</span>
                             ) : (
                               <div className="flex flex-col">
-                                {offers.length > 1 && <span className="text-[8px] font-black text-text-muted uppercase tracking-widest">A partir de</span>}
-                                <span className="text-xl font-black text-text-primary tracking-tighter italic">R$ {formatPreco(minPrice)}</span>
+                                <span className="text-[8px] font-black text-text-muted uppercase tracking-widest">
+                                  {offers.length > 1 ? 'A partir de' : (minOffer?.planos?.nome || 'Inscrição')}
+                                </span>
+                                <div className="flex items-baseline gap-1">
+                                  <span className="text-[10px] font-bold text-text-muted">R$</span>
+                                  <span className="text-xl font-black text-text-primary tracking-tighter italic">{formatPreco(minPrice)}</span>
+                                </div>
+                                {offers.length > 1 && (
+                                  <span className="text-[7px] font-black text-primary uppercase tracking-widest mt-0.5">
+                                    + planos disponíveis
+                                  </span>
+                                )}
                               </div>
                             )}
                          </div>
@@ -217,7 +241,7 @@ export function CatalogClient({ cursos, pacotes, pilares, idsAcessos }: CatalogC
                                 : 'bg-text-primary text-background hover:bg-primary hover:text-white shadow-lg'
                             }`}
                           >
-                             {enrolled ? 'Assistir' : free ? 'Ativar Agora' : 'Comprar'}
+                             {enrolled ? 'Assistir' : free ? 'Ativar' : 'Comprar'}
                              {enrolled ? <PlayCircle className="w-3.5 h-3.5" /> : free ? <Sparkles className="w-3.5 h-3.5" /> : <CreditCard className="w-3.5 h-3.5" />}
                           </Link>
                       </div>

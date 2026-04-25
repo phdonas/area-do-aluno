@@ -10,12 +10,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ valid: false, error: 'Dados incompletos.' }, { status: 400 })
     }
 
-    const { valid, cupom, error } = await validarCupom(codigo)
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    const { valid, cupom, error } = await validarCupom(codigo, user?.id)
     if (!valid || !cupom) {
       return NextResponse.json({ valid: false, error: error || 'Cupom inválido.' })
     }
 
-    const supabase = await createClient()
     const { data: curso } = await supabase
       .from('cursos')
       .select('*, planos_cursos(planos(*))')

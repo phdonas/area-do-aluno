@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/notificar-expiracao?secret=NovoTrabalho2026@fim",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}

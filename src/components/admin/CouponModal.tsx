@@ -27,14 +27,14 @@ export default function CouponModal() {
     data_inicio: new Date().toISOString().split('T')[0],
     data_fim: '',
     limite_uso: 0,
-    ativo: true
+    ativo: true,
+    apenas_para_alunos: false
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     
-    // Garantir que os dados enviados são congruentes com a action
     const res = await criarCupom({
       codigo: formData.codigo,
       tipo: formData.tipo,
@@ -42,7 +42,8 @@ export default function CouponModal() {
       data_inicio: formData.data_inicio || undefined,
       data_fim: formData.data_fim || undefined,
       limite_uso: formData.limite_uso > 0 ? Number(formData.limite_uso) : undefined,
-      ativo: formData.ativo
+      ativo: formData.ativo,
+      apenas_para_alunos: formData.apenas_para_alunos
     })
 
     if (res.error) {
@@ -56,7 +57,8 @@ export default function CouponModal() {
         data_inicio: new Date().toISOString().split('T')[0],
         data_fim: '',
         limite_uso: 0,
-        ativo: true
+        ativo: true,
+        apenas_para_alunos: false
       })
     }
     setLoading(false)
@@ -160,7 +162,7 @@ export default function CouponModal() {
 
                      {/* Limite de Uso */}
                      <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Capacidade Máxima (Opcional)</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Capacidade Máxima</label>
                         <div className="relative">
                            <input 
                               type="number" 
@@ -171,6 +173,24 @@ export default function CouponModal() {
                               onChange={e => setFormData({...formData, limite_uso: e.target.valueAsNumber})}
                            />
                         </div>
+                     </div>
+
+                     {/* Restrição de Aluno (NOVO) */}
+                     <div className="md:col-span-2 p-6 bg-black/20 border border-border-custom rounded-3xl flex items-center justify-between group hover:border-amber-500/30 transition-all">
+                        <div className="space-y-1">
+                           <p className="text-[10px] font-black uppercase tracking-widest text-text-primary">Apenas para Alunos (Fidelidade)</p>
+                           <p className="text-[10px] text-text-muted font-bold">Bloqueia o uso para quem nunca comprou nada na plataforma</p>
+                        </div>
+                        <button 
+                           type="button"
+                           onClick={() => setFormData({...formData, apenas_para_alunos: !formData.apenas_para_alunos})}
+                           className={`w-14 h-8 rounded-full relative transition-all ${formData.apenas_para_alunos ? 'bg-amber-500' : 'bg-background border border-border-custom'}`}
+                        >
+                           <motion.div 
+                              animate={{ x: formData.apenas_para_alunos ? 24 : 4 }}
+                              className={`absolute top-1 w-6 h-6 rounded-full shadow-md ${formData.apenas_para_alunos ? 'bg-white' : 'bg-text-muted'}`} 
+                           />
+                        </button>
                      </div>
 
                      {/* Data Início */}
@@ -189,7 +209,7 @@ export default function CouponModal() {
 
                      {/* Data Fim */}
                      <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Expiração em (Opcional)</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Expiração em</label>
                         <div className="relative">
                            <CalendarIcon className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
                            <input 

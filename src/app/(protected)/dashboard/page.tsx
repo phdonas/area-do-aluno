@@ -27,7 +27,7 @@ export default async function DashboardPage() {
    const results = await Promise.all([
     supabaseAdmin.from('assinaturas').select('curso_id, plano_id, created_at, cursos(*), planos!left(is_global)').eq('usuario_id', user.id).in('status', ['ativa', 'ativo', 'Ativa', 'Ativo']),
     supabaseAdmin.from('progresso_aulas').select('aula_id, concluida, ultima_visualizacao, curso_id').eq('usuario_id', user.id),
-    supabaseAdmin.from('cursos').select('*').eq('status', 'publicado'),
+    supabaseAdmin.from('cursos').select('*, planos_cursos(valor_venda, is_featured, ativo, planos(nome))').eq('status', 'publicado'),
     supabaseAdmin.from('progresso_aulas')
       .select('ultima_visualizacao, curso_id')
       .eq('usuario_id', user.id)
@@ -326,12 +326,40 @@ export default async function DashboardPage() {
                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[80px] rounded-full" />
                <div className="relative z-10 space-y-6"><div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center"><Target className="w-7 h-7 text-primary-light" /></div><h3 className="text-2xl font-black text-white">Explorar Todos os Pilares</h3></div>
             </Link>
-            {vitrineCursos.slice(0, 2).map((item: any) => (
-               <Link key={item.id} href={`/loja/curso/${item.id}`} className="group bg-card border border-border/50 rounded-xl overflow-hidden hover:shadow-2xl hover:border-primary/30 transition-all duration-500 h-full flex flex-col shadow-sm">
-                  <div className="aspect-video relative overflow-hidden bg-white/5">{item.thumb_url && <img src={item.thumb_url} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt={item.titulo} />}</div>
-                  <div className="p-8"><h4 className="font-extrabold text-lg text-text-primary leading-tight line-clamp-2 group-hover:text-primary transition-colors">{cleanTitle(item.titulo, prefixes)}</h4></div>
-               </Link>
-            ))}
+            {vitrineCursos.slice(0, 2).map((item: any) => {
+               const offers = (item.planos_cursos || [])
+                 .filter((o: any) => o.ativo !== false)
+                 .sort((a: any, b: any) => (a.valor_venda || 0) - (b.valor_venda || 0));
+
+               const minOffer = offers[0] || null;
+               const featuredOffer = offers.find((o: any) => o.is_featured);
+               const minPrice = minOffer ? minOffer.valor_venda : 0;
+
+               const formatPreco = (val: number) => {
+                 return (val || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+               }
+
+               return (
+                 <Link key={item.id} href={`/loja/curso/${item.id}`} className="group bg-card border border-border/50 rounded-xl overflow-hidden hover:shadow-2xl hover:border-primary/30 transition-all duration-500 h-full flex flex-col shadow-sm">
+                    <div className="aspect-video relative overflow-hidden bg-white/5">
+                      {item.thumb_url && <img src={item.thumb_url} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt={item.titulo} />}
+                      {featuredOffer && (
+                        <div className="absolute top-4 left-4 z-20 px-3 py-1 bg-primary text-white rounded-full text-[8px] font-black uppercase tracking-widest shadow-xl">Recomendado</div>
+                      )}
+                    </div>
+                    <div className="p-8 flex-1 flex flex-col justify-between gap-4">
+                      <h4 className="font-extrabold text-lg text-text-primary leading-tight line-clamp-2 group-hover:text-primary transition-colors">{cleanTitle(item.titulo, prefixes)}</h4>
+                      <div className="pt-4 border-t border-border/10 flex items-center justify-between">
+                         <div className="flex flex-col">
+                            <span className="text-[8px] font-black text-text-muted uppercase tracking-widest">{offers.length > 1 ? 'A partir de' : (minOffer?.planos?.nome || 'Inscrição')}</span>
+                            <span className="text-lg font-black text-text-primary tracking-tighter italic">R$ {formatPreco(minPrice)}</span>
+                         </div>
+                         <ArrowRight className="w-4 h-4 text-primary group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </div>
+                 </Link>
+               )
+            })}
          </div>
       </section>
 

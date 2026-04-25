@@ -5,9 +5,17 @@ import { AlertCircle, CreditCard, Zap, PlayCircle, ShieldCheck } from 'lucide-re
 import Link from 'next/link'
 
 export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string }) {
-  const [selectedPlanoIdx, setSelectedPlanoIdx] = useState(0)
+  // Filtrar apenas planos ativos
+  const offers = (curso.planos_cursos || [])
+    .filter((off: any) => off.ativo !== false)
+    .sort((a: any, b: any) => (a.valor_venda || 0) - (b.valor_venda || 0));
+
+  // Determinar o plano inicial (Destaque ou o mais barato)
+  const featuredIdx = offers.findIndex((off: any) => off.is_featured);
+  const initialIdx = featuredIdx !== -1 ? featuredIdx : 0;
+
+  const [selectedPlanoIdx, setSelectedPlanoIdx] = useState(initialIdx)
   
-  const offers = curso.planos_cursos || []
   const currentOffer = offers[selectedPlanoIdx] || null
   
   if (!currentOffer) return (
@@ -28,16 +36,31 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
     <div className="space-y-8">
       {/* SELETOR DE PLANOS (Se houver mais de um) */}
       {offers.length > 1 && (
-        <div className="flex flex-wrap gap-4 justify-center">
-           {offers.map((off: any, idx: number) => (
-             <button 
-               key={idx}
-               onClick={() => setSelectedPlanoIdx(idx)}
-               className={`px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all ${selectedPlanoIdx === idx ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' : 'bg-surface text-text-muted border-border-custom hover:border-white/20'}`}
-             >
-                {off.planos?.nome}
-             </button>
-           ))}
+        <div className="flex flex-col items-center gap-4">
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-text-muted">Escolha o seu plano</span>
+          <div className="flex flex-wrap gap-4 justify-center">
+             {offers.map((off: any, idx: number) => (
+               <button 
+                 key={idx}
+                 onClick={() => setSelectedPlanoIdx(idx)}
+                 className={`px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all relative flex flex-col items-center gap-1 ${
+                   selectedPlanoIdx === idx 
+                     ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' 
+                     : 'bg-surface text-text-muted border-border-custom hover:border-white/20'
+                 }`}
+               >
+                  {off.is_featured && (
+                    <span className={`absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest shadow-sm ${
+                      selectedPlanoIdx === idx ? 'bg-white text-primary' : 'bg-primary text-white'
+                    }`}>
+                      Recomendado
+                    </span>
+                  )}
+                  <span>{off.planos?.nome}</span>
+                  <span className="opacity-60 text-[8px]">R$ {formatPreco(off.valor_venda)}</span>
+               </button>
+             ))}
+          </div>
         </div>
       )}
 
@@ -45,11 +68,17 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl transition-all group-hover:scale-150" />
         
         <div className="flex-1 space-y-6">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className={`w-2 h-2 rounded-full animate-pulse ${isFree ? 'bg-primary' : 'bg-emerald-500'}`} />
             <span className={`text-xs font-black uppercase tracking-[0.5em] ${isFree ? 'text-primary' : 'text-emerald-500'}`}>
-              {isFree ? 'Oferta Exclusiva: Acesso Gratuito' : `Inscrição: ${currentOffer.planos?.nome}`}
+              {isFree ? 'Oferta Exclusiva: Acesso Gratuito' : `Plano: ${currentOffer.planos?.nome}`}
             </span>
+            {currentOffer.is_featured && (
+              <div className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-full flex items-center gap-2 ml-2">
+                <Zap className="w-3 h-3 text-primary fill-primary" />
+                <span className="text-[9px] font-black text-primary uppercase tracking-widest italic">Melhor Custo Benefício</span>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col justify-center min-h-[140px]">
@@ -64,7 +93,7 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
               </div>
             ) : (
               <div className="space-y-2">
-                {currentOffer.valor_original > currentOffer.valor_venda && (
+                {(currentOffer.valor_original > currentOffer.valor_venda) && (
                   <span className="text-sm font-black text-text-muted line-through uppercase tracking-widest opacity-50">
                     De R$ {formatPreco(currentOffer.valor_original)}
                   </span>
@@ -103,6 +132,11 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
           <div className="flex items-center justify-center gap-3 text-[9px] font-black uppercase tracking-widest text-text-muted italic bg-surface/50 py-4 rounded-3xl border border-border-custom">
             <ShieldCheck className="w-4 h-4 text-emerald-500" /> Transação 100% Segura
           </div>
+          {offers.length > 1 && (
+            <p className="text-center text-[9px] text-text-muted font-bold uppercase tracking-widest italic">
+              Consulte outros planos acima
+            </p>
+          )}
         </div>
       </div>
     </div>

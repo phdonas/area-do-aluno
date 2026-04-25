@@ -26,6 +26,7 @@ export async function criarCupom(data: {
   data_fim?: string; 
   limite_uso?: number;
   ativo?: boolean;
+  apenas_para_alunos?: boolean;
 }) {
   const supabase = createAdminClient()
   
@@ -37,6 +38,7 @@ export async function criarCupom(data: {
     validade_fim: data.data_fim || null,
     limite_uso: data.limite_uso || null,
     ativo: data.ativo ?? true,
+    apenas_para_alunos: data.apenas_para_alunos ?? false,
     uso_atual: 0
   })
 

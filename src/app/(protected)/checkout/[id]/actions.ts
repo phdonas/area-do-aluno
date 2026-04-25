@@ -33,7 +33,7 @@ export async function simularCompraMatricula(cursoId: string, cupomCodigo?: stri
     // 1. Processar Cupom se fornecido
     let appliedCupomId = null
     if (cupomCodigo) {
-      const { valid, cupom } = await validarCupom(cupomCodigo)
+      const { valid, cupom } = await validarCupom(cupomCodigo, user.id)
       if (valid && cupom) {
         appliedCupomId = cupom.id
       }

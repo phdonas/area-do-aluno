@@ -1,6 +1,6 @@
 import { createAdminClient } from './supabase/admin'
 
-export async function validarCupom(codigo: string) {
+export async function validarCupom(codigo: string, usuarioId?: string) {
   const supabase = createAdminClient()
   
   const { data: cupom, error } = await supabase
@@ -14,17 +14,35 @@ export async function validarCupom(codigo: string) {
     return { valid: false, error: 'Cupom inválido ou inexistente.' }
   }
 
-  // Verificar Data de Início
+  // 1. Verificar Restrição de Aluno (Exclusividade de Renovação)
+  if (cupom.apenas_para_alunos) {
+    if (!usuarioId) {
+      return { valid: false, error: 'Este cupom é exclusivo para alunos da plataforma.' }
+    }
+
+    const { data: assinatura, error: errAss } = await supabase
+      .from('assinaturas')
+      .select('id')
+      .eq('usuario_id', usuarioId)
+      .limit(1)
+      .maybeSingle()
+
+    if (errAss || !assinatura) {
+      return { valid: false, error: 'Cupom reservado apenas para quem já possui matrículas anteriores.' }
+    }
+  }
+
+  // 2. Verificar Data de Início
   if (new Date(cupom.validade_inicio) > new Date()) {
     return { valid: false, error: 'Cupom ainda não está ativo.' }
   }
 
-  // Verificar Data de Expiração
+  // 3. Verificar Data de Expiração
   if (cupom.validade_fim && new Date(cupom.validade_fim) < new Date()) {
     return { valid: false, error: 'Cupom expirado.' }
   }
 
-  // Verificar Limite de Uso
+  // 4. Verificar Limite de Uso
   if (cupom.limite_uso && cupom.uso_atual >= cupom.limite_uso) {
     return { valid: false, error: 'Limite de uso atingido.' }
   }
