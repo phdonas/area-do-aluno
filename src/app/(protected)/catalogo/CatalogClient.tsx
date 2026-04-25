@@ -231,7 +231,7 @@ export function CatalogClient({ cursos, pacotes, pilares, idsAcessos }: CatalogC
                             )}
                          </div>
                          <Link 
-                            href={enrolled ? link : checkout}
+                            href={link}
                             onClick={free && !enrolled ? (e) => { e.preventDefault(); handleFreeEnrollment(curso, enrolled); } : undefined}
                             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all ${
                               enrolled 
@@ -277,7 +277,7 @@ export function CatalogClient({ cursos, pacotes, pilares, idsAcessos }: CatalogC
                      <div className="mt-8 pt-8 border-t border-border-custom flex items-center justify-between">
                         <p className="text-3xl font-black text-text-primary tracking-tighter italic">R$ {pacote.preco}</p>
                         <Link 
-                          href={`/checkout/pacote/${pacote.id}`}
+                          href={`/loja/pacote/${pacote.id}`}
                           className="px-8 py-4 bg-text-primary text-background rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all shadow-xl flex items-center gap-2"
                         >
                            Ver Ofertas <ShoppingBag className="w-4 h-4" />

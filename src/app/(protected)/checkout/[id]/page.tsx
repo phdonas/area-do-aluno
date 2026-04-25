@@ -290,12 +290,19 @@ export default function ResumoPedidoPage() {
                    </div>
                    
                    <div className="space-y-6 pb-8 border-b border-border-custom">
-                      <div className="flex justify-between items-center group">
-                         <span className="text-[11px] font-black uppercase tracking-[0.2em] text-text-muted group-hover:text-text-primary transition-colors">Acesso Ilimitado</span>
-                         <span className="text-base font-black text-text-primary italic">
-                            {region === 'BR' ? 'R$' : '€'} {precoOriginal.toLocaleString(region === 'BR' ? 'pt-BR' : 'pt-PT', { minimumFractionDigits: 2 })}
-                         </span>
-                      </div>
+                       <div className="flex justify-between items-start group">
+                          <div className="flex flex-col">
+                             <span className="text-[11px] font-black uppercase tracking-[0.2em] text-text-muted group-hover:text-text-primary transition-colors">Acesso Ilimitado</span>
+                             {ofertaSelecionada?.planos?.nome && (
+                               <span className="text-[9px] font-black uppercase tracking-[0.1em] text-primary mt-1 italic">
+                                 {ofertaSelecionada.planos.nome}
+                               </span>
+                             )}
+                          </div>
+                          <span className="text-base font-black text-text-primary italic">
+                             {region === 'BR' ? 'R$' : '€'} {precoOriginal.toLocaleString(region === 'BR' ? 'pt-BR' : 'pt-PT', { minimumFractionDigits: 2 })}
+                          </span>
+                       </div>
                       
                       <AnimatePresence>
                          {couponStatus.valid && (
@@ -323,6 +330,11 @@ export default function ResumoPedidoPage() {
                                      </>
                                    )}
                                 </span>
+                                {ofertaSelecionada?.planos?.nome && (
+                                   <p className="text-[9px] font-black text-primary uppercase tracking-widest mt-1 mr-4 italic">
+                                     Plano: {ofertaSelecionada.planos.nome}
+                                   </p>
+                                 )}
                              </div>
                           </div>
                        </div>

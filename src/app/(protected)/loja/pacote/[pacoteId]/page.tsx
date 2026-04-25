@@ -82,10 +82,13 @@ export default async function SalesPacotePage({
                      <h4 className="text-3xl font-black text-text-primary">Torne-se Aluno VIP</h4>
                   </div>
                   
-                  <button className="w-full py-4 px-6 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl flex items-center justify-center gap-3 transition-colors shadow-lg shadow-primary/20 text-lg">
-                     <ShoppingCart className="w-6 h-6" />
-                     Adquirir Pacote
-                  </button>
+                  <Link 
+                     href={`/checkout/pacote/${pacote.id}`}
+                     className="w-full py-4 px-6 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl flex items-center justify-center gap-3 transition-colors shadow-lg shadow-primary/20 text-lg"
+                   >
+                      <ShoppingCart className="w-6 h-6" />
+                      Adquirir Pacote
+                   </Link>
                   <p className="text-xs text-center text-text-muted mt-4">
                      Pagamento seguro via Mercado Pago. Acesso liberado no mesmo instante.
                   </p>
