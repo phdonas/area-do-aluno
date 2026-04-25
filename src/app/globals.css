@@ -2,7 +2,7 @@
 
 :root {
   /* NOVA VERSÃO (HSL) - Moderna e Flexível */
-  --background: 210 40% 98%;
+  --background: 210 20% 96%;
   --foreground: 222 47% 11%;
   
   --primary: 217 91% 21%;    /* Navy */
@@ -12,7 +12,7 @@
   --accent: 12 90% 60%;     /* Coral */
   
   --card: 0 0% 100%;
-  --border: 214 32% 91%;
+  --border: 214 32% 85%;
   
   --radius-base: 0.75rem; /* 12px (rounded-lms) */
   --radius-large: 1rem;
@@ -38,7 +38,7 @@
   --accent: 12 90% 70%;
   
   --card: 222 47% 15%;
-  --border: 217 32% 17%;
+  --border: 217 32% 25%;
 }
 
 @theme inline {

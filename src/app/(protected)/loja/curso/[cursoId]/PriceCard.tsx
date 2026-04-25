@@ -100,7 +100,7 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
                 )}
                 <div className="flex items-baseline gap-2 overflow-visible">
                   <span className="text-xl font-bold text-text-muted">R$</span>
-                  <span className="text-3xl md:text-5xl font-black text-text-primary tracking-tight italic leading-none bg-gradient-to-r from-text-primary to-primary bg-clip-text text-transparent pr-4">
+                  <span className="text-3xl md:text-5xl font-black text-text-primary tracking-tight italic leading-none bg-gradient-to-r from-text-primary to-primary bg-clip-text text-transparent px-4 py-2">
                     {formatPreco(numPrice)}
                   </span>
                 </div>

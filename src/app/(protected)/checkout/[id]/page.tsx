@@ -93,7 +93,7 @@ export default function ResumoPedidoPage() {
 
   // Determinar a oferta (plano) selecionada
   const ofertaSelecionada = planoId 
-    ? produto?.planos_cursos?.find((pc: any) => pc.plano_id === planoId)
+    ? produto?.planos_cursos?.find((pc: any) => pc.plano_id.toString() === planoId.toString())
     : produto?.planos_cursos?.[0]
 
   const handleManualNotification = async () => {
@@ -163,7 +163,7 @@ export default function ResumoPedidoPage() {
   const precoFinal = couponStatus.valid ? Math.max(0, precoOriginal - (couponStatus.discount || 0)) : precoOriginal
 
   return (
-    <main className="min-h-screen bg-[#050505] text-text-primary selection:bg-primary/30 py-4 md:py-16 px-4 md:px-12 lg:px-24 relative overflow-x-hidden font-sans">
+    <main className="min-h-screen bg-background text-text-primary selection:bg-primary/30 py-4 md:py-16 px-4 md:px-12 lg:px-24 relative overflow-x-hidden font-sans">
        <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-primary/20 rounded-full blur-[160px] pointer-events-none animate-pulse" />
        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none" />
        
@@ -193,9 +193,9 @@ export default function ResumoPedidoPage() {
                   className="space-y-6"
                 >
                    <div className="flex flex-wrap items-center gap-3">
-                      <span className="px-4 py-1.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-500 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-amber-500/30 shadow-lg shadow-amber-500/5">
-                        {checkoutConfig?.badge_topo || 'Acesso Elite • Vitalício'}
-                      </span>
+                       <span className="px-4 py-1.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-500 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-amber-500/30 shadow-lg shadow-amber-500/5">
+                         {ofertaSelecionada?.planos?.nome ? `Acesso ${ofertaSelecionada.planos.nome}` : (checkoutConfig?.badge_topo || 'Acesso Premium')}
+                       </span>
                       <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full border border-white/10">
                          <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
                          <span className="text-[9px] font-black text-text-muted uppercase tracking-wider">
@@ -204,14 +204,14 @@ export default function ResumoPedidoPage() {
                       </div>
                    </div>
 
-                   <h1 className="text-3xl md:text-5xl lg:text-7xl font-black tracking-tighter leading-[0.95] text-white max-w-3xl italic">
+                   <h1 className="text-3xl md:text-5xl lg:text-7xl font-black tracking-tighter leading-[0.95] text-text-primary max-w-3xl italic">
                      {produto.titulo}
                    </h1>
 
-                   <div className="flex items-center gap-4 p-5 bg-white/[0.02] border border-white/5 rounded-3xl backdrop-blur-sm max-w-xl">
+                   <div className="flex items-center gap-4 p-5 bg-surface border border-border-custom rounded-3xl backdrop-blur-sm max-w-xl">
                       <Zap className="w-6 h-6 text-primary shrink-0" />
                       <p className="text-sm text-text-muted font-medium leading-relaxed">
-                        {checkoutConfig?.texto_intro || 'Prepare-se para uma transformação profunda. Você está prestes a ingressar na elite do conhecimento técnico.'}
+                        {checkoutConfig?.texto_intro || 'Prepare-se para o novo conhecimento. Você está prestes a ingressar na elite do conhecimento técnico com o ecossistema PH Donassolo.'}
                       </p>
                    </div>
                 </motion.div>
@@ -239,15 +239,15 @@ export default function ResumoPedidoPage() {
                     />
                 </div>
 
-                <div className="rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl relative group aspect-video">
+                <div className="rounded-[2.5rem] overflow-hidden border border-border-custom shadow-2xl relative group aspect-video">
                    <img src={produto.thumb_url || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop"} alt="Course Preview" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
-                   <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+                   <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
                    <div className="absolute bottom-6 left-8 right-8 flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-primary/20 backdrop-blur-xl border border-primary/30 flex items-center justify-center">
                           <CheckCircle2 className="w-5 h-5 text-primary" />
                         </div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-white shadow-sm">Garantia de Satisfação: 7 dias para cancelar sem custos</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-text-primary shadow-sm">Garantia de Satisfação: 7 dias para cancelar sem custos</span>
                       </div>
                    </div>
                 </div>
@@ -258,9 +258,9 @@ export default function ResumoPedidoPage() {
                    initial={{ opacity: 0, x: 20 }}
                    animate={{ opacity: 1, x: 0 }}
                    transition={{ delay: 0.2 }}
-                   className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 p-4 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl lg:sticky lg:top-12"
+                   className="bg-surface/50 backdrop-blur-3xl border border-border-custom p-4 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl lg:sticky lg:top-12"
                 >
-                   <div className="flex gap-2 mb-8 p-1 bg-black/40 rounded-2xl border border-white/5">
+                   <div className="flex gap-2 mb-8 p-1 bg-surface/80 rounded-2xl border border-border-custom">
                       <button 
                         onClick={() => setPayMethod('auto')}
                         className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${payMethod === 'auto' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-text-muted hover:text-white'}`}
@@ -282,15 +282,15 @@ export default function ResumoPedidoPage() {
                           {region === 'Global' ? 'International Checkout' : 'Sua jornada começa aqui'}
                         </p>
                       </div>
-                      <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-2xl bg-surface border border-border-custom flex items-center justify-center">
                         <ShoppingCart className="w-6 h-6 text-primary" />
                       </div>
                    </div>
                    
-                   <div className="space-y-6 pb-8 border-b border-white/5">
+                   <div className="space-y-6 pb-8 border-b border-border-custom">
                       <div className="flex justify-between items-center group">
-                         <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white/50 group-hover:text-white transition-colors">Acesso Ilimitado</span>
-                         <span className="text-base font-black text-white italic">
+                         <span className="text-[11px] font-black uppercase tracking-[0.2em] text-text-muted group-hover:text-text-primary transition-colors">Acesso Ilimitado</span>
+                         <span className="text-base font-black text-text-primary italic">
                             {region === 'BR' ? 'R$' : '€'} {precoOriginal.toLocaleString(region === 'BR' ? 'pt-BR' : 'pt-PT', { minimumFractionDigits: 2 })}
                          </span>
                       </div>
@@ -312,7 +312,7 @@ export default function ResumoPedidoPage() {
                           <div className="flex justify-between items-center">
                              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted">TOTAL:</span>
                              <div className="text-right pr-6">
-                                <span className="text-4xl md:text-5xl font-black text-white tracking-tighter bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent italic">
+                                <span className="text-4xl md:text-5xl font-black text-text-primary tracking-tighter bg-gradient-to-r from-text-primary to-text-muted bg-clip-text text-transparent italic">
                                    {precoFinal === 0 ? (
                                      <span className="text-primary">GRÁTIS</span>
                                    ) : (
@@ -335,7 +335,7 @@ export default function ResumoPedidoPage() {
                                {region === 'BR' ? (
                                  <div className="space-y-2">
                                     <p className="text-xs text-text-primary font-bold">Resgate via PIX (Chave):</p>
-                                    <div className="p-3 bg-black/40 rounded-xl border border-white/5 text-[11px] font-mono break-all text-amber-200 select-all">
+                                    <div className="p-3 bg-surface rounded-xl border border-border-custom text-[11px] font-mono break-all text-amber-500/90 select-all">
                                       {finConfig?.chave_pix_br}
                                     </div>
                                     <p className="text-[9px] text-text-muted font-medium uppercase tracking-tight">Favorecido: {finConfig?.favorecido_br}</p>
@@ -343,13 +343,13 @@ export default function ResumoPedidoPage() {
                                ) : (
                                  <div className="space-y-2">
                                     <p className="text-xs text-text-primary font-bold">Resgate via MBWay:</p>
-                                    <div className="p-3 bg-black/40 rounded-xl border border-white/5 text-[11px] font-mono text-amber-200 select-all">
+                                    <div className="p-3 bg-surface rounded-xl border border-border-custom text-[11px] font-mono text-amber-500/90 select-all">
                                       {finConfig?.mbway_telemovel_pt}
                                     </div>
                                     {finConfig?.iban_pt && (
                                       <>
                                         <p className="text-xs text-text-primary font-bold mt-3">Ou Transferência (IBAN):</p>
-                                        <div className="p-3 bg-black/40 rounded-xl border border-white/5 text-[10px] font-mono break-all text-amber-200 select-all">
+                                        <div className="p-3 bg-surface rounded-xl border border-border-custom text-[10px] font-mono break-all text-amber-500/90 select-all">
                                           {finConfig?.iban_pt}
                                         </div>
                                       </>
@@ -370,14 +370,14 @@ export default function ResumoPedidoPage() {
                                 <input 
                                    type="text" 
                                    placeholder="CÓDIGO DE ELITE"
-                                   className="w-full h-16 pl-6 pr-32 bg-black/40 border-2 border-white/5 rounded-2xl text-[12px] font-black uppercase tracking-[0.3em] focus:border-primary/50 outline-none transition-all placeholder:text-white/20"
+                                   className="w-full h-16 pl-6 pr-32 bg-surface border-2 border-border-custom rounded-2xl text-[12px] font-black uppercase tracking-[0.3em] focus:border-primary/50 outline-none transition-all placeholder:text-text-muted/30 text-text-primary"
                                    value={couponCode}
                                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                                 />
                                 <button 
                                    onClick={handleApplyCoupon}
                                    disabled={validatingCoupon || !couponCode}
-                                   className="absolute right-2 top-2 bottom-2 px-6 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white hover:border-transparent transition-all disabled:opacity-30 disabled:hover:bg-white/5"
+                                   className="absolute right-2 top-2 bottom-2 px-6 bg-surface border border-border-custom rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white hover:border-transparent transition-all disabled:opacity-30 disabled:hover:bg-surface"
                                 >
                                    {validatingCoupon ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Validar'}
                                 </button>
@@ -398,7 +398,7 @@ export default function ResumoPedidoPage() {
                    <button 
                       onClick={handleCheckout}
                       disabled={checkingOut}
-                      className={`group w-full min-h-[4.5rem] py-6 px-4 rounded-2xl font-black text-[11px] md:text-xs uppercase tracking-[0.1em] flex items-center justify-center gap-2 shadow-2xl transition-all hover:scale-[1.01] active:scale-95 disabled:opacity-50 relative overflow-hidden italic whitespace-normal text-center ${precoFinal === 0 ? 'bg-primary text-white' : (payMethod === 'manual' ? 'bg-amber-600 hover:bg-amber-500 text-white' : 'bg-primary hover:bg-primary-dark text-white')}`}
+                      className={`group w-full min-h-[5rem] py-5 px-6 rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-[0.1em] flex items-center justify-center gap-2 shadow-2xl transition-all hover:scale-[1.01] active:scale-95 disabled:opacity-50 relative overflow-hidden italic whitespace-normal text-center leading-tight ${precoFinal === 0 ? 'bg-primary text-white' : (payMethod === 'manual' ? 'bg-amber-600 hover:bg-amber-500 text-white' : 'bg-primary hover:bg-primary-dark text-white')}`}
                    >
                       <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                       {checkingOut ? <Loader2 className="w-5 h-5 animate-spin" /> : (
@@ -440,13 +440,13 @@ export default function ResumoPedidoPage() {
 
 function BenefitCard({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) {
   return (
-    <div className="flex gap-4 p-5 rounded-2xl border border-white/5 hover:bg-white/[0.03] transition-colors group">
-      <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+    <div className="flex gap-4 p-5 rounded-2xl border border-border-custom hover:bg-surface transition-colors group">
+      <div className="w-10 h-10 rounded-xl bg-surface border border-border-custom flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
         {icon}
       </div>
       <div>
-         <h3 className="text-[11px] md:text-xs font-black text-white uppercase tracking-wider">{title}</h3>
-        <p className="text-[10px] md:text-xs text-gray-400 font-medium mt-1 leading-tight">{desc}</p>
+         <h3 className="text-[11px] md:text-xs font-black text-text-primary uppercase tracking-wider">{title}</h3>
+        <p className="text-[10px] md:text-xs text-text-muted font-medium mt-1 leading-tight">{desc}</p>
       </div>
     </div>
   )
