@@ -100,7 +100,7 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
                 )}
                 <div className="flex items-baseline gap-2">
                   <span className="text-xl font-bold text-text-muted">R$</span>
-                  <span className="text-4xl md:text-6xl font-black text-text-primary tracking-tighter italic leading-none bg-gradient-to-r from-text-primary to-primary bg-clip-text text-transparent">
+                  <span className="text-3xl md:text-5xl font-black text-text-primary tracking-tighter italic leading-none bg-gradient-to-r from-text-primary to-primary bg-clip-text text-transparent">
                     {formatPreco(numPrice)}
                   </span>
                 </div>
