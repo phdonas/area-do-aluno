@@ -163,11 +163,11 @@ export default function ResumoPedidoPage() {
   const precoFinal = couponStatus.valid ? Math.max(0, precoOriginal - (couponStatus.discount || 0)) : precoOriginal
 
   return (
-    <main className="min-h-screen bg-background text-text-primary selection:bg-primary/30 py-4 md:py-16 px-4 md:px-12 lg:px-24 relative overflow-x-hidden font-sans">
+    <main className="min-h-screen bg-background text-text-primary selection:bg-primary/30 py-4 md:py-8 px-4 md:px-6 lg:px-4 relative overflow-x-hidden font-sans">
        <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-primary/20 rounded-full blur-[160px] pointer-events-none animate-pulse" />
        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none" />
        
-       <div className="max-w-7xl mx-auto relative z-10">
+       <div className="max-w-6xl mx-auto relative z-10">
           <div className="flex items-center justify-between mb-16">
             <Link href="/catalogo" className="group flex items-center gap-3 text-text-muted hover:text-primary transition-all text-[11px] font-black uppercase tracking-[0.25em]">
               <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center group-hover:border-primary/50 transition-colors">
@@ -184,7 +184,7 @@ export default function ResumoPedidoPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-24 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
              
              <div className="lg:col-span-8 space-y-12 lg:pr-12">
                 <motion.div 
@@ -204,14 +204,16 @@ export default function ResumoPedidoPage() {
                       </div>
                    </div>
 
-                   <h1 className="text-3xl md:text-5xl lg:text-7xl font-black tracking-tighter leading-[0.95] text-text-primary max-w-3xl italic">
+                   <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter leading-[0.95] text-text-primary max-w-3xl italic">
                      {produto.titulo}
                    </h1>
 
                    <div className="flex items-center gap-4 p-5 bg-surface border border-border-custom rounded-3xl backdrop-blur-sm max-w-xl">
                       <Zap className="w-6 h-6 text-primary shrink-0" />
                       <p className="text-sm text-text-muted font-medium leading-relaxed">
-                        {checkoutConfig?.texto_intro || 'Prepare-se para o novo conhecimento. Você está prestes a ingressar na elite do conhecimento técnico com o ecossistema PH Donassolo.'}
+                        {checkoutConfig?.texto_intro && !checkoutConfig.texto_intro.includes('transformação profunda') 
+                          ? checkoutConfig.texto_intro 
+                          : 'Prepare-se para o novo conhecimento. Você está prestes a ingressar na elite do conhecimento técnico com o ecossistema PH Donassolo.'}
                       </p>
                    </div>
                 </motion.div>
@@ -311,8 +313,8 @@ export default function ResumoPedidoPage() {
                        <div className="pt-4 mt-4">
                           <div className="flex justify-between items-center">
                              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted">TOTAL:</span>
-                             <div className="text-right pr-6">
-                                <span className="text-4xl md:text-5xl font-black text-text-primary tracking-tighter bg-gradient-to-r from-text-primary to-text-muted bg-clip-text text-transparent italic">
+                             <div className="text-right">
+                                <span className="text-4xl md:text-5xl font-black text-text-primary tracking-tighter bg-gradient-to-r from-text-primary to-text-muted bg-clip-text text-transparent italic px-4 py-2 inline-block overflow-visible">
                                    {precoFinal === 0 ? (
                                      <span className="text-primary">GRÁTIS</span>
                                    ) : (

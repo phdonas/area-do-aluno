@@ -78,10 +78,10 @@ export default function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row">
+    <div className="min-h-screen bg-background flex flex-col md:flex-row overflow-x-hidden">
       <Sidebar hasAccess={hasAccess} hasSubscription={hasSubscription} userEmail={user?.email} />
 
-      <div className="flex-1 flex flex-col min-h-screen md:h-screen md:overflow-y-auto relative">
+      <div className="flex-1 flex flex-col min-h-screen md:h-screen md:overflow-y-auto md:overflow-x-hidden relative">
         <header className="h-16 border-b border-border-custom bg-surface/50 apple-blur sticky top-0 z-10 flex items-center justify-end px-8">
           <div className="flex items-center gap-4">
             <ThemeToggle />
