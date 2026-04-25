@@ -11,7 +11,8 @@ export async function vincularCursoAoPlano(
   planoId: string, 
   valorVenda: number, 
   valorOriginal?: number,
-  isFeatured: boolean = false
+  isFeatured: boolean = false,
+  ativo: boolean = true
 ) {
   const supabase = createAdminClient()
   
@@ -31,7 +32,7 @@ export async function vincularCursoAoPlano(
       valor_venda: valorVenda,
       valor_original: valorOriginal || valorVenda,
       is_featured: isFeatured,
-      ativo: true
+      ativo: ativo
     }, { onConflict: 'curso_id,plano_id' })
     
   if (error) return { error: error.message }

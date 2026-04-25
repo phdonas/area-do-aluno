@@ -60,6 +60,17 @@ export default function GestaoPlanosPage() {
     ativo: true
   })
 
+  // Novo estado para gestão de vínculos
+  const [isBindingModalOpen, setIsBindingModalOpen] = useState(false)
+  const [bindingItem, setBindingItem] = useState<any>(null)
+  const [spreadsheetSearch, setSpreadsheetSearch] = useState('')
+  const [bindingData, setBindingData] = useState({
+    valor_venda: '',
+    valor_original: '',
+    is_featured: false,
+    ativo: true
+  })
+
   const fetchData = async () => {
     setLoading(true)
     const supabase = createClient()
@@ -110,18 +121,41 @@ export default function GestaoPlanosPage() {
     setIsModalOpen(true)
   }
 
-  const handleVincular = async (cursoId: string, planoId: string) => {
-    const valor = prompt('Digite o valor de venda (Ex: 197.00 ou 0 para Grátis):')
-    if (valor === null) return
-    
-    if (valor.trim() === '' || isNaN(Number(valor))) {
-      alert('Valor inválido!')
-      return
-    }
+  const handleOpenBindingModal = (item: any, currentBinding?: any) => {
+    setBindingItem(item)
+    setBindingData({
+      valor_venda: currentBinding?.valor_venda?.toString() || '',
+      valor_original: currentBinding?.valor_original?.toString() || '',
+      is_featured: currentBinding?.is_featured || false,
+      ativo: currentBinding?.ativo ?? true
+    })
+    setIsBindingModalOpen(true)
+  }
 
-    const res = await vincularCursoAoPlano(cursoId, planoId, Number(valor))
-    if (res.success) fetchData()
-    else alert(`Erro: ${res.error}`)
+  const handleSaveBinding = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedId || !bindingItem) return
+    
+    setIsSaving(true)
+    const cursoId = viewMode === 'por-plano' ? bindingItem.id : selectedId
+    const planoId = viewMode === 'por-plano' ? selectedId : bindingItem.id
+
+    const res = await vincularCursoAoPlano(
+      cursoId, 
+      planoId, 
+      Number(bindingData.valor_venda),
+      Number(bindingData.valor_original),
+      bindingData.is_featured,
+      bindingData.ativo
+    )
+
+    if (res.success) {
+      setIsBindingModalOpen(false)
+      fetchData()
+    } else {
+      alert(`Erro: ${res.error}`)
+    }
+    setIsSaving(false)
   }
 
   const handleToggleDestaque = async (cursoId: string, planoId: string, current: boolean) => {
@@ -328,95 +362,136 @@ export default function GestaoPlanosPage() {
                      </div>
                   </div>
 
-                  {/* LISTA DE VÍNCULOS */}
-                  <div className="space-y-6">
-                     <div className="flex items-center justify-between px-4">
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 flex items-center gap-2">
-                           {viewMode === 'por-plano' ? <MonitorPlay className="w-4 h-4" /> : <Tag className="w-4 h-4" />} 
-                           {viewMode === 'por-plano' ? 'Cursos neste Plano' : 'Planos com este Curso'}
-                        </h3>
-                        <button 
-                          onClick={() => {
-                            // Abre modal de vinculação rápida
-                            const otherId = prompt(`ID do ${viewMode === 'por-plano' ? 'Curso' : 'Plano'} para vincular:`)
-                            if (otherId) handleVincular(viewMode === 'por-plano' ? otherId : selectedId!, viewMode === 'por-plano' ? selectedId! : otherId)
-                          }}
-                          className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-primary hover:underline"
-                        >
-                          <Plus className="w-3 h-3" /> Adicionar Novo Vínculo
-                        </button>
+                  {/* LISTA DE VÍNCULOS - FORMATO PLANILHA */}
+                  <div className="bg-surface border border-border-custom rounded-[2.5rem] overflow-hidden shadow-2xl">
+                     <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+                        <div>
+                           <h3 className="text-lg font-black text-text-primary uppercase tracking-tighter italic">
+                              {viewMode === 'por-plano' ? 'Treinamentos Disponíveis' : 'Planos de Venda Disponíveis'}
+                           </h3>
+                           <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mt-1">Gerencie preços e visibilidade de forma individual</p>
+                        </div>
+                        <div className="relative w-64">
+                           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-3 h-3 text-text-muted" />
+                           <input 
+                              type="text" 
+                              placeholder="Filtrar na lista..."
+                              className="w-full h-10 pl-10 pr-4 bg-white/5 border border-white/10 rounded-xl outline-none focus:border-primary/30 transition-all text-[10px] font-bold"
+                              value={spreadsheetSearch}
+                              onChange={(e) => setSpreadsheetSearch(e.target.value)}
+                           />
+                        </div>
                      </div>
 
-                     <div className="grid grid-cols-1 gap-4">
-                        {currentSelection?.planos_cursos?.length > 0 ? (
-                          currentSelection.planos_cursos.map((pc: any) => {
-                             const itemDisplay = viewMode === 'por-plano' ? pc.cursos : pc.planos
-                             return (
-                               <div key={pc.curso_id + pc.plano_id} className={`p-6 rounded-[2rem] border bg-surface transition-all flex items-center gap-6 group ${!pc.ativo ? 'opacity-50 grayscale' : 'hover:border-primary/30'}`}>
-                                  {viewMode === 'por-plano' && (
-                                     <div className="w-16 h-16 rounded-2xl overflow-hidden border border-white/5 shrink-0 shadow-lg">
-                                        <img src={itemDisplay?.thumb_url || "/placeholder.png"} className="w-full h-full object-cover" />
-                                     </div>
-                                  )}
-                                  
-                                  <div className="flex-1 min-w-0">
-                                     <div className="flex items-center gap-3 mb-1">
-                                        <h4 className="font-black text-text-primary uppercase tracking-tight truncate italic">{itemDisplay?.titulo || itemDisplay?.nome}</h4>
-                                        {pc.is_featured && (
-                                           <div className="flex items-center gap-1 bg-amber-500/10 text-amber-500 text-[8px] font-black px-2 py-0.5 rounded-full border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
-                                              <Star className="w-2.5 h-2.5 fill-current" /> DESTAQUE
-                                           </div>
-                                        )}
-                                     </div>
-                                     <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-1.5">
-                                           <span className="text-[8px] font-black text-text-muted uppercase tracking-tighter">Valor Oferta:</span>
-                                           <span className="text-sm font-black text-emerald-500 italic">R$ {Number(pc.valor_venda || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                                        </div>
-                                        <div className={`flex items-center gap-1 text-[8px] font-black uppercase ${pc.ativo ? 'text-emerald-500/60' : 'text-red-500/60'}`}>
-                                           {pc.ativo ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
-                                           {pc.ativo ? 'Venda Ativa' : 'Venda Inativa'}
-                                        </div>
-                                     </div>
-                                  </div>
+                     <div className="overflow-x-auto">
+                        <table className="w-full border-collapse">
+                           <thead>
+                              <tr className="bg-white/[0.01] text-[9px] font-black uppercase tracking-widest text-text-muted text-left">
+                                 <th className="px-8 py-5 border-b border-white/5">{viewMode === 'por-plano' ? 'Curso' : 'Plano'}</th>
+                                 <th className="px-4 py-5 border-b border-white/5">Status</th>
+                                 <th className="px-4 py-5 border-b border-white/5">Preço Venda</th>
+                                 <th className="px-4 py-5 border-b border-white/5">Destaque</th>
+                                 <th className="px-4 py-5 border-b border-white/5">Visibilidade</th>
+                                 <th className="px-8 py-5 border-b border-white/5 text-right">Ações</th>
+                              </tr>
+                           </thead>
+                           <tbody className="divide-y divide-white/5">
+                              {(viewMode === 'por-plano' ? cursos : planos)
+                                 .filter(item => (item.titulo || item.nome).toLowerCase().includes(spreadsheetSearch.toLowerCase()))
+                                 .map(item => {
+                                    const binding = currentSelection?.planos_cursos?.find((pc: any) => 
+                                       (viewMode === 'por-plano' ? pc.curso_id === item.id : pc.plano_id === item.id)
+                                    )
+                                    const isLinked = !!binding
 
-                                  <div className="flex items-center gap-2">
-                                     <button 
-                                        onClick={() => handleToggleDestaque(pc.curso_id, pc.plano_id, pc.is_featured)}
-                                        className={`p-3 rounded-xl border transition-all ${pc.is_featured ? 'bg-amber-500/10 border-amber-500 text-amber-500 shadow-lg shadow-amber-500/10' : 'bg-white/5 border-white/5 text-text-muted hover:text-amber-500'}`}
-                                        title={pc.is_featured ? "Remover destaque" : "Tornar plano de destaque para este curso"}
-                                     >
-                                        <Star className={`w-4 h-4 ${pc.is_featured ? 'fill-current' : ''}`} />
-                                     </button>
-                                     <button 
-                                        onClick={() => handleToggleAtivoVinculo(pc.curso_id, pc.plano_id, pc.ativo)}
-                                        className={`p-3 rounded-xl border transition-all ${pc.ativo ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/20' : 'bg-red-500/10 border-red-500/20 text-red-500 hover:bg-red-500/20'}`}
-                                        title={pc.ativo ? "Inativar venda" : "Reativar venda"}
-                                     >
-                                        {pc.ativo ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                                     </button>
-                                     <button 
-                                        onClick={() => handleDesvincular(pc.curso_id, pc.plano_id)}
-                                        className="p-3 bg-white/5 border border-white/5 rounded-xl text-text-muted hover:text-red-500 hover:bg-red-500/10 transition-all"
-                                        title="Remover vínculo"
-                                     >
-                                        <Unlink className="w-4 h-4" />
-                                     </button>
-                                  </div>
-                               </div>
-                             )
-                          })
-                        ) : (
-                          <div className="p-20 border-2 border-dashed border-white/5 rounded-[3rem] text-center space-y-6">
-                             <div className="w-20 h-20 bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto">
-                                <Plus className="w-8 h-8 text-white/10" />
-                             </div>
-                             <div className="space-y-2">
-                                <p className="text-lg font-black text-text-primary uppercase tracking-tighter italic">Nenhum vínculo encontrado</p>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-text-muted max-w-[200px] mx-auto">Comece vinculando este item a {viewMode === 'por-plano' ? 'um treinamento' : 'um plano de venda'}.</p>
-                             </div>
-                          </div>
-                        )}
+                                    return (
+                                       <tr key={item.id} className={`group transition-colors ${isLinked ? 'bg-primary/[0.02]' : 'opacity-60 hover:opacity-100'}`}>
+                                          <td className="px-8 py-5">
+                                             <div className="flex items-center gap-4">
+                                                {viewMode === 'por-plano' && (
+                                                   <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/5 shrink-0">
+                                                      <img src={item.thumb_url || "/placeholder.png"} className="w-full h-full object-cover" />
+                                                   </div>
+                                                )}
+                                                <div>
+                                                   <p className="font-black text-text-primary uppercase tracking-tight text-xs italic">{item.titulo || item.nome}</p>
+                                                   <p className="text-[8px] font-bold text-text-muted uppercase tracking-widest">ID: {item.id.split('-')[0]}...</p>
+                                                </div>
+                                             </div>
+                                          </td>
+                                          <td className="px-4 py-5">
+                                             {isLinked ? (
+                                                <span className="flex items-center gap-1.5 text-[8px] font-black text-emerald-500 uppercase bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20 w-fit">
+                                                   <CheckCircle className="w-2.5 h-2.5" /> Vinculado
+                                                </span>
+                                             ) : (
+                                                <span className="flex items-center gap-1.5 text-[8px] font-black text-text-muted uppercase bg-white/5 px-2 py-1 rounded-full border border-white/5 w-fit">
+                                                   <X className="w-2.5 h-2.5" /> Disponível
+                                                </span>
+                                             )}
+                                          </td>
+                                          <td className="px-4 py-5 font-black text-xs italic">
+                                             {isLinked ? (
+                                                <div className="flex flex-col">
+                                                   <span className="text-emerald-500">R$ {Number(binding.valor_venda || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                                                   {binding.valor_original > 0 && <span className="text-[8px] text-text-muted line-through">R$ {Number(binding.valor_original).toLocaleString('pt-BR')}</span>}
+                                                </div>
+                                             ) : (
+                                                <span className="text-text-muted/30">--</span>
+                                             )}
+                                          </td>
+                                          <td className="px-4 py-5">
+                                             {isLinked ? (
+                                                <button 
+                                                   onClick={() => handleToggleDestaque(viewMode === 'por-plano' ? item.id : selectedId!, viewMode === 'por-plano' ? selectedId! : item.id, binding.is_featured)}
+                                                   className={`p-2 rounded-lg border transition-all ${binding.is_featured ? 'bg-amber-500/10 border-amber-500/30 text-amber-500' : 'bg-white/5 border-white/5 text-text-muted hover:text-amber-500'}`}
+                                                >
+                                                   <Star className={`w-3.5 h-3.5 ${binding.is_featured ? 'fill-current' : ''}`} />
+                                                </button>
+                                             ) : '--'}
+                                          </td>
+                                          <td className="px-4 py-5">
+                                             {isLinked ? (
+                                                <button 
+                                                   onClick={() => handleToggleAtivoVinculo(viewMode === 'por-plano' ? item.id : selectedId!, viewMode === 'por-plano' ? selectedId! : item.id, binding.ativo)}
+                                                   className={`p-2 rounded-lg border transition-all ${binding.ativo ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}
+                                                >
+                                                   {binding.ativo ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                                                </button>
+                                             ) : '--'}
+                                          </td>
+                                          <td className="px-8 py-5 text-right">
+                                             <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                {isLinked ? (
+                                                   <>
+                                                      <button 
+                                                         onClick={() => handleOpenBindingModal(item, binding)}
+                                                         className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-[9px] font-black uppercase tracking-widest text-text-muted hover:text-primary transition-colors"
+                                                      >
+                                                         Editar
+                                                      </button>
+                                                      <button 
+                                                         onClick={() => handleDesvincular(viewMode === 'por-plano' ? item.id : selectedId!, viewMode === 'por-plano' ? selectedId! : item.id)}
+                                                         className="p-2 bg-red-500/5 border border-red-500/10 rounded-lg text-red-500/50 hover:text-red-500 transition-colors"
+                                                      >
+                                                         <Unlink className="w-3.5 h-3.5" />
+                                                      </button>
+                                                   </>
+                                                ) : (
+                                                   <button 
+                                                      onClick={() => handleOpenBindingModal(item)}
+                                                      className="px-4 py-2 bg-primary text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20 flex items-center gap-2"
+                                                   >
+                                                      <Plus className="w-3 h-3" /> Vincular
+                                                   </button>
+                                                )}
+                                             </div>
+                                          </td>
+                                       </tr>
+                                    )
+                                 })}
+                           </tbody>
+                        </table>
                      </div>
                   </div>
                 </motion.div>
@@ -473,7 +548,7 @@ export default function GestaoPlanosPage() {
                             required
                             type="text" 
                             placeholder="EX: ACESSO ELITE VITALÍCIO"
-                            className="w-full h-20 px-8 bg-white/5 border border-white/10 rounded-3xl outline-none focus:border-primary/50 transition-all font-black uppercase tracking-widest text-sm"
+                            className="w-full h-20 px-8 bg-surface border border-slate-300 focus:border-primary rounded-3xl outline-none transition-all font-black uppercase tracking-widest text-sm text-text-primary placeholder:text-text-muted/50 shadow-sm"
                             value={formData.nome}
                             onChange={(e) => setFormData({...formData, nome: e.target.value})}
                           />
@@ -488,7 +563,7 @@ export default function GestaoPlanosPage() {
                                   required
                                   type="number" 
                                   placeholder="0.00"
-                                  className="w-full h-20 pl-16 pr-8 bg-white/5 border border-white/10 rounded-3xl outline-none focus:border-primary/50 transition-all font-black text-xl"
+                                  className="w-full h-20 pl-16 pr-8 bg-surface border border-slate-300 focus:border-primary rounded-3xl outline-none transition-all font-black text-xl text-text-primary shadow-sm"
                                   value={formData.preco_mensal}
                                   onChange={(e) => setFormData({...formData, preco_mensal: e.target.value})}
                                 />
@@ -564,6 +639,123 @@ export default function GestaoPlanosPage() {
                  </form>
               </motion.div>
            </div>
+         )}
+      </AnimatePresence>
+
+      {/* BINDING CONFIG MODAL (Novo!) */}
+      <AnimatePresence>
+         {isBindingModalOpen && (
+            <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
+               <motion.div 
+                 initial={{ opacity: 0 }}
+                 animate={{ opacity: 1 }}
+                 exit={{ opacity: 0 }}
+                 onClick={() => setIsBindingModalOpen(false)}
+                 className="absolute inset-0 bg-[#050505]/95 backdrop-blur-2xl"
+               />
+               <motion.div 
+                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                 animate={{ opacity: 1, scale: 1, y: 0 }}
+                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                 className="relative w-full max-w-lg bg-surface border border-white/10 rounded-[3rem] p-10 shadow-[0_0_100px_rgba(0,0,0,0.9)] z-10"
+               >
+                  <div className="flex items-center gap-4 mb-8">
+                     <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                        <ArrowRightLeft className="w-6 h-6 text-primary" />
+                     </div>
+                     <div>
+                        <h2 className="text-xl font-black text-text-primary uppercase tracking-tighter italic">Configurar Vínculo</h2>
+                        <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+                           {viewMode === 'por-plano' ? `Curso: ${bindingItem?.titulo}` : `Plano: ${bindingItem?.nome}`}
+                        </p>
+                     </div>
+                  </div>
+
+                  <form onSubmit={handleSaveBinding} className="space-y-6">
+                     <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                           <label className="text-[9px] font-black uppercase tracking-widest text-text-muted ml-2">Preço de Venda (Oferta)</label>
+                           <div className="relative">
+                              <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
+                              <input 
+                                 required
+                                 type="number" 
+                                 step="0.01"
+                                 className="w-full h-14 pl-10 pr-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:border-primary/50 transition-all font-black text-sm"
+                                 value={bindingData.valor_venda}
+                                 onChange={(e) => setBindingData({...bindingData, valor_venda: e.target.value})}
+                              />
+                           </div>
+                        </div>
+                        <div className="space-y-2">
+                           <label className="text-[9px] font-black uppercase tracking-widest text-text-muted ml-2">Preço Original (De:)</label>
+                           <div className="relative">
+                              <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+                              <input 
+                                 type="number" 
+                                 step="0.01"
+                                 className="w-full h-14 pl-10 pr-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:border-primary/50 transition-all font-black text-sm text-text-muted"
+                                 value={bindingData.valor_original}
+                                 onChange={(e) => setBindingData({...bindingData, valor_original: e.target.value})}
+                              />
+                           </div>
+                        </div>
+                     </div>
+
+                     <div className="space-y-4">
+                        <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+                           <div className="flex items-center gap-3">
+                              <Star className={`w-4 h-4 ${bindingData.is_featured ? 'text-amber-500 fill-current' : 'text-text-muted'}`} />
+                              <div>
+                                 <p className="text-[10px] font-black uppercase text-text-primary">Destaque de Venda</p>
+                                 <p className="text-[8px] font-bold text-text-muted">Aparece com selo especial na vitrine</p>
+                              </div>
+                           </div>
+                           <button 
+                              type="button"
+                              onClick={() => setBindingData({...bindingData, is_featured: !bindingData.is_featured})}
+                              className={`w-12 h-6 rounded-full transition-all relative p-1 ${bindingData.is_featured ? 'bg-amber-500' : 'bg-white/10'}`}
+                           >
+                              <div className={`w-4 h-4 bg-white rounded-full transition-all ${bindingData.is_featured ? 'ml-6' : 'ml-0'}`} />
+                           </button>
+                        </div>
+
+                        <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+                           <div className="flex items-center gap-3">
+                              <Eye className={`w-4 h-4 ${bindingData.ativo ? 'text-emerald-500' : 'text-red-500'}`} />
+                              <div>
+                                 <p className="text-[10px] font-black uppercase text-text-primary">Venda Ativa</p>
+                                 <p className="text-[8px] font-bold text-text-muted">Se desativado, o curso some deste plano</p>
+                              </div>
+                           </div>
+                           <button 
+                              type="button"
+                              onClick={() => setBindingData({...bindingData, ativo: !bindingData.ativo})}
+                              className={`w-12 h-6 rounded-full transition-all relative p-1 ${bindingData.ativo ? 'bg-emerald-500' : 'bg-red-500'}`}
+                           >
+                              <div className={`w-4 h-4 bg-white rounded-full transition-all ${bindingData.ativo ? 'ml-6' : 'ml-0'}`} />
+                           </button>
+                        </div>
+                     </div>
+
+                     <div className="flex gap-4 pt-4">
+                        <button 
+                           type="button"
+                           onClick={() => setIsBindingModalOpen(false)}
+                           className="flex-1 py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest border border-white/10 hover:bg-white/5 transition-all text-text-muted"
+                        >
+                           Cancelar
+                        </button>
+                        <button 
+                           disabled={isSaving}
+                           className="flex-1 py-4 bg-primary text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20"
+                        >
+                           {isSaving ? 'Salvando...' : 'Confirmar Vínculo'}
+                        </button>
+                     </div>
+                  </form>
+               </motion.div>
+            </div>
          )}
       </AnimatePresence>
     </div>

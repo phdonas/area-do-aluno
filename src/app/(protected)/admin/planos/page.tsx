@@ -25,34 +25,8 @@ export default async function GestaoPlanosPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <div className="lg:col-span-3">
-          <PlanosClient />
-        </div>
-        
-        <aside className="mt-28 space-y-6">
-          <AdminTutorialCard 
-            role={role}
-            moduleTitle="Guia de Vendas"
-            steps={[
-              {
-                title: "Planos vs Cursos",
-                description: "Crie um plano (ex: 'Elite 12 meses') e depois selecione-o na lista para vincular quais cursos ele libera."
-              },
-              {
-                title: "Vínculo Direto",
-                description: "Ao selecionar um plano na esquerda, os botões na direita mudam para 'Vincular'. Um curso pode ter apenas um plano ativo."
-              },
-              {
-                title: "Acesso Vitalício",
-                description: "Marque vitalício para que o aluno nunca perca o acesso, ou defina meses específicos para expiração automática."
-              }
-            ]}
-            color="indigo"
-          />
-        </aside>
-      </div>
+    <div className="max-w-[1600px] mx-auto px-4">
+      <PlanosClient />
     </div>
   )
 }
