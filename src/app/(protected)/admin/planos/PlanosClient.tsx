@@ -352,7 +352,7 @@ export default function GestaoPlanosPage() {
                            <div className="flex flex-wrap gap-6 text-[10px] font-black uppercase tracking-widest text-text-muted">
                               {viewMode === 'por-plano' && (
                                 <>
-                                  <div className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-emerald-500" /> Base: R$ {Number(currentSelection?.preco_mensal || 0).toLocaleString('pt-BR')}</div>
+                                  <div className="flex items-center gap-2"><span className="text-emerald-500 font-bold">R$</span> Base: {Number(currentSelection?.preco_mensal || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                                   <div className="flex items-center gap-2"><Clock className="w-4 h-4" /> {currentSelection?.duracao_meses === 0 ? 'Vitalício' : `${currentSelection?.duracao_meses} Meses`}</div>
                                 </>
                               )}
@@ -558,12 +558,12 @@ export default function GestaoPlanosPage() {
                           <div className="space-y-3">
                              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted px-2">Preço Base (BRL)</label>
                              <div className="relative">
-                                <DollarSign className="absolute left-8 top-1/2 -translate-y-1/2 w-5 h-5 text-primary" />
+                                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-primary font-black text-sm">R$</div>
                                 <input 
                                   required
                                   type="number" 
                                   placeholder="0.00"
-                                  className="w-full h-20 pl-16 pr-8 bg-surface border border-slate-300 focus:border-primary rounded-3xl outline-none transition-all font-black text-xl text-text-primary shadow-sm"
+                                  className="w-full h-20 pl-14 pr-8 bg-surface border-2 border-slate-300 focus:border-primary rounded-3xl outline-none transition-all font-black text-xl text-text-primary shadow-sm"
                                   value={formData.preco_mensal}
                                   onChange={(e) => setFormData({...formData, preco_mensal: e.target.value})}
                                 />
@@ -672,35 +672,35 @@ export default function GestaoPlanosPage() {
                   </div>
 
                   <form onSubmit={handleSaveBinding} className="space-y-6">
-                     <div className="grid grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                           <label className="text-[9px] font-black uppercase tracking-widest text-text-muted ml-2">Preço de Venda (Oferta)</label>
-                           <div className="relative">
-                              <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
-                              <input 
-                                 required
-                                 type="number" 
-                                 step="0.01"
-                                 className="w-full h-14 pl-10 pr-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:border-primary/50 transition-all font-black text-sm"
-                                 value={bindingData.valor_venda}
-                                 onChange={(e) => setBindingData({...bindingData, valor_venda: e.target.value})}
-                              />
-                           </div>
-                        </div>
-                        <div className="space-y-2">
-                           <label className="text-[9px] font-black uppercase tracking-widest text-text-muted ml-2">Preço Original (De:)</label>
-                           <div className="relative">
-                              <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
-                              <input 
-                                 type="number" 
-                                 step="0.01"
-                                 className="w-full h-14 pl-10 pr-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:border-primary/50 transition-all font-black text-sm text-text-muted"
-                                 value={bindingData.valor_original}
-                                 onChange={(e) => setBindingData({...bindingData, valor_original: e.target.value})}
-                              />
-                           </div>
-                        </div>
-                     </div>
+                      <div className="grid grid-cols-2 gap-6">
+                         <div className="space-y-2">
+                            <label className="text-[9px] font-black uppercase tracking-widest text-text-muted ml-2">Preço de Venda (Oferta)</label>
+                            <div className="relative">
+                               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-500 font-black text-xs">R$</div>
+                               <input 
+                                  required
+                                  type="number" 
+                                  step="0.01"
+                                  className="w-full h-14 pl-10 pr-4 bg-surface border-2 border-slate-300 focus:border-emerald-500 rounded-2xl outline-none transition-all font-black text-sm text-text-primary"
+                                  value={bindingData.valor_venda}
+                                  onChange={(e) => setBindingData({...bindingData, valor_venda: e.target.value})}
+                               />
+                            </div>
+                         </div>
+                         <div className="space-y-2">
+                            <label className="text-[9px] font-black uppercase tracking-widest text-text-muted ml-2">Preço Original (De:)</label>
+                            <div className="relative">
+                               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted font-black text-xs">R$</div>
+                               <input 
+                                  type="number" 
+                                  step="0.01"
+                                  className="w-full h-14 pl-10 pr-4 bg-surface border-2 border-slate-300 focus:border-primary/50 rounded-2xl outline-none transition-all font-black text-sm text-text-muted"
+                                  value={bindingData.valor_original}
+                                  onChange={(e) => setBindingData({...bindingData, valor_original: e.target.value})}
+                               />
+                            </div>
+                         </div>
+                      </div>
 
                      <div className="space-y-4">
                         <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">

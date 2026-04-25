@@ -31,13 +31,13 @@ export default async function CheckoutSucessoPage({
                {isManual ? <Clock className="w-12 h-12 text-amber-500" /> : <CheckCircle2 className="w-12 h-12 text-emerald-500" />}
             </div>
 
-            <div className="space-y-4">
+             <div className="space-y-4">
                <h1 className="text-4xl md:text-5xl font-black text-text-primary tracking-tighter italic">
-                 {isManual ? 'Quase lá!' : 'Seja Bem-vindo!'}
+                 {isManual ? 'Aguarde' : 'Seja Bem-vindo!'}
                </h1>
                <p className="text-lg text-text-muted font-medium max-w-sm mx-auto">
                  {isManual 
-                   ? `Recebemos seu aviso de pagamento para o curso "${cursoNome}".`
+                   ? 'Estamos apenas conferindo o seu pagamento.'
                    : `Sua matrícula no curso "${cursoNome}" foi confirmada com sucesso.`
                  }
                </p>
@@ -46,14 +46,22 @@ export default async function CheckoutSucessoPage({
             <div className={`bg-black/5 border border-border-custom px-6 py-4 rounded-3xl inline-block`}>
                <p className="text-[10px] font-black uppercase tracking-widest text-text-muted flex items-center gap-2">
                   <span className={`w-2 h-2 ${isManual ? 'bg-amber-500' : 'bg-emerald-500'} rounded-full animate-pulse`} />
-                  {isManual ? 'Aguardando Conferência Bancária' : 'Acesso Liberado Imediatamente'}
+                  {isManual ? 'Conferência em andamento' : 'Acesso Liberado Imediatamente'}
                </p>
             </div>
 
             {isManual && (
-               <p className="text-sm text-text-muted font-medium bg-white/5 p-6 rounded-3xl">
-                 Assim que confirmarmos o recebimento em nossa conta (PIX/MBWay/Transf), você receberá um e-mail com o acesso liberado. Isso costuma levar poucos minutos dentro do horário comercial.
-               </p>
+               <div className="space-y-6 text-sm text-text-muted font-medium bg-white/5 p-8 rounded-[2.5rem] border border-white/5">
+                  <p>
+                    Dentro de poucos minutos seu acesso estará liberado. Isso pode demorar alguns minutos.
+                  </p>
+                  <p>
+                    Volte para o dashboard e conheça outros cursos ou as ferramentas gratuitas para começar a usar já.
+                  </p>
+                  <p className="text-primary font-black uppercase text-[10px] tracking-widest">
+                    Iremos informar você via e-mail assim que a sua matrícula estiver concluída.
+                  </p>
+               </div>
             )}
 
             <div className="flex flex-col gap-4 pt-8">

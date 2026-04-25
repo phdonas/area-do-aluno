@@ -219,7 +219,7 @@ export default function ResumoPedidoPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <BenefitCard 
                       icon={<CheckCircle2 className="w-5 h-5 text-emerald-500" />} 
-                      title={checkoutConfig?.beneficio_1_titulo || 'Certificado Gold'} 
+                      title={checkoutConfig?.beneficio_1_titulo || 'Curso com Certificado'} 
                       desc={checkoutConfig?.beneficio_1_desc || 'Válido em todo território nacional'} 
                     />
                     <BenefitCard 
@@ -234,8 +234,8 @@ export default function ResumoPedidoPage() {
                     />
                     <BenefitCard 
                       icon={<ShieldCheck className="w-5 h-5 text-blue-500" />} 
-                      title={checkoutConfig?.beneficio_4_titulo || 'Suporte VIP'} 
-                      desc={checkoutConfig?.beneficio_4_desc || 'Tire dúvidas direto com o mestre'} 
+                      title={checkoutConfig?.beneficio_4_titulo || 'Suporte Especializado'} 
+                      desc={checkoutConfig?.beneficio_4_desc || 'Tire dúvidas direto com o professor'} 
                     />
                 </div>
 

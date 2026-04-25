@@ -43,9 +43,9 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
                <button 
                  key={idx}
                  onClick={() => setSelectedPlanoIdx(idx)}
-                 className={`px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all relative flex flex-col items-center gap-1 ${
+                 className={`px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all relative flex flex-col items-center gap-1 hover:scale-105 active:scale-95 ${
                    selectedPlanoIdx === idx 
-                     ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' 
+                     ? 'bg-primary text-white border-primary shadow-xl shadow-primary/30 ring-2 ring-primary/20' 
                      : 'bg-surface text-text-muted border-border-custom hover:border-white/20'
                  }`}
                >
@@ -100,7 +100,7 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
                 )}
                 <div className="flex items-baseline gap-2">
                   <span className="text-xl font-bold text-text-muted">R$</span>
-                  <span className="text-5xl md:text-7xl font-black text-text-primary tracking-tighter italic leading-none bg-gradient-to-r from-text-primary to-primary bg-clip-text text-transparent">
+                  <span className="text-4xl md:text-6xl font-black text-text-primary tracking-tighter italic leading-none bg-gradient-to-r from-text-primary to-primary bg-clip-text text-transparent">
                     {formatPreco(numPrice)}
                   </span>
                 </div>
