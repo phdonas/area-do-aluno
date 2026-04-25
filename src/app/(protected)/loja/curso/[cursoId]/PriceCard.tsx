@@ -43,10 +43,10 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
                <button 
                  key={idx}
                  onClick={() => setSelectedPlanoIdx(idx)}
-                 className={`px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all relative flex flex-col items-center gap-1 hover:scale-105 active:scale-95 ${
+                 className={`px-6 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest border-4 transition-all relative flex flex-col items-center gap-2 hover:scale-105 active:scale-95 ${
                    selectedPlanoIdx === idx 
-                     ? 'bg-primary text-white border-primary shadow-xl shadow-primary/30 ring-2 ring-primary/20' 
-                     : 'bg-surface text-text-muted border-border-custom hover:border-white/20'
+                     ? 'bg-primary text-white border-primary shadow-[0_0_40px_rgba(59,130,246,0.6)] ring-4 ring-primary/30 scale-110 z-10' 
+                     : 'bg-surface text-text-muted border-white/5 hover:border-white/20'
                  }`}
                >
                   {off.is_featured && (
@@ -64,7 +64,7 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
         </div>
       )}
 
-      <div className="flex flex-col md:flex-row items-center gap-12 p-16 bg-background border-2 border-border-custom rounded-[4rem] shadow-2xl relative overflow-hidden group">
+      <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 p-6 md:p-16 bg-background border-2 border-border-custom rounded-[3rem] md:rounded-[4rem] shadow-2xl relative group">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl transition-all group-hover:scale-150" />
         
         <div className="flex-1 space-y-6">
@@ -98,9 +98,9 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
                     De R$ {formatPreco(currentOffer.valor_original)}
                   </span>
                 )}
-                <div className="flex items-baseline gap-2">
+                <div className="flex items-baseline gap-2 overflow-visible">
                   <span className="text-xl font-bold text-text-muted">R$</span>
-                  <span className="text-3xl md:text-5xl font-black text-text-primary tracking-tighter italic leading-none bg-gradient-to-r from-text-primary to-primary bg-clip-text text-transparent">
+                  <span className="text-3xl md:text-5xl font-black text-text-primary tracking-tight italic leading-none bg-gradient-to-r from-text-primary to-primary bg-clip-text text-transparent pr-4">
                     {formatPreco(numPrice)}
                   </span>
                 </div>

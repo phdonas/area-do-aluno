@@ -30,8 +30,6 @@ export const viewport = {
   themeColor: "#0A0F1E",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 import { AppProviders } from "@/providers/app-providers";

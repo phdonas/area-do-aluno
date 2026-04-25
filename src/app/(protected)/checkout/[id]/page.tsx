@@ -163,7 +163,7 @@ export default function ResumoPedidoPage() {
   const precoFinal = couponStatus.valid ? Math.max(0, precoOriginal - (couponStatus.discount || 0)) : precoOriginal
 
   return (
-    <main className="min-h-screen bg-[#050505] text-text-primary px-6 py-12 md:px-12 lg:px-24 relative overflow-hidden font-sans">
+    <main className="min-h-screen bg-[#050505] text-text-primary selection:bg-primary/30 py-4 md:py-16 px-4 md:px-12 lg:px-24 relative overflow-x-hidden font-sans">
        <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-primary/20 rounded-full blur-[160px] pointer-events-none animate-pulse" />
        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none" />
        
@@ -184,7 +184,7 @@ export default function ResumoPedidoPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-24 items-start">
              
              <div className="lg:col-span-8 space-y-12 lg:pr-12">
                 <motion.div 
@@ -247,7 +247,7 @@ export default function ResumoPedidoPage() {
                         <div className="w-10 h-10 rounded-full bg-primary/20 backdrop-blur-xl border border-primary/30 flex items-center justify-center">
                           <CheckCircle2 className="w-5 h-5 text-primary" />
                         </div>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-white shadow-sm">Garantia total de satisfação</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white shadow-sm">Garantia de Satisfação: 7 dias para cancelar sem custos</span>
                       </div>
                    </div>
                 </div>
@@ -258,7 +258,7 @@ export default function ResumoPedidoPage() {
                    initial={{ opacity: 0, x: 20 }}
                    animate={{ opacity: 1, x: 0 }}
                    transition={{ delay: 0.2 }}
-                   className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 p-6 md:p-8 rounded-[2.5rem] shadow-2xl lg:sticky lg:top-12"
+                   className="bg-white/[0.03] backdrop-blur-3xl border border-white/10 p-4 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl lg:sticky lg:top-12"
                 >
                    <div className="flex gap-2 mb-8 p-1 bg-black/40 rounded-2xl border border-white/5">
                       <button 
@@ -311,7 +311,7 @@ export default function ResumoPedidoPage() {
                        <div className="pt-4 mt-4">
                           <div className="flex justify-between items-center">
                              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-muted">TOTAL:</span>
-                             <div className="text-right">
+                             <div className="text-right pr-6">
                                 <span className="text-4xl md:text-5xl font-black text-white tracking-tighter bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent italic">
                                    {precoFinal === 0 ? (
                                      <span className="text-primary">GRÁTIS</span>
@@ -398,7 +398,7 @@ export default function ResumoPedidoPage() {
                    <button 
                       onClick={handleCheckout}
                       disabled={checkingOut}
-                      className={`group w-full h-18 py-6 rounded-2xl font-black text-[11px] md:text-xs uppercase tracking-[0.1em] flex items-center justify-center gap-2 shadow-2xl transition-all hover:scale-[1.01] active:scale-95 disabled:opacity-50 relative overflow-hidden italic ${precoFinal === 0 ? 'bg-primary text-white' : (payMethod === 'manual' ? 'bg-amber-600 hover:bg-amber-500 text-white' : 'bg-primary hover:bg-primary-dark text-white')}`}
+                      className={`group w-full min-h-[4.5rem] py-6 px-4 rounded-2xl font-black text-[11px] md:text-xs uppercase tracking-[0.1em] flex items-center justify-center gap-2 shadow-2xl transition-all hover:scale-[1.01] active:scale-95 disabled:opacity-50 relative overflow-hidden italic whitespace-normal text-center ${precoFinal === 0 ? 'bg-primary text-white' : (payMethod === 'manual' ? 'bg-amber-600 hover:bg-amber-500 text-white' : 'bg-primary hover:bg-primary-dark text-white')}`}
                    >
                       <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                       {checkingOut ? <Loader2 className="w-5 h-5 animate-spin" /> : (

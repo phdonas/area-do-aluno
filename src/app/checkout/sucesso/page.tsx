@@ -32,15 +32,15 @@ export default async function CheckoutSucessoPage({
             </div>
 
              <div className="space-y-4">
-               <h1 className="text-4xl md:text-5xl font-black text-text-primary tracking-tighter italic">
-                 {isManual ? 'Aguarde' : 'Seja Bem-vindo!'}
-               </h1>
-               <p className="text-lg text-text-muted font-medium max-w-sm mx-auto">
-                 {isManual 
-                   ? 'Estamos apenas conferindo o seu pagamento.'
-                   : `Sua matrícula no curso "${cursoNome}" foi confirmada com sucesso.`
-                 }
-               </p>
+                <h1 className="text-3xl md:text-5xl font-black text-text-primary tracking-tighter italic leading-tight">
+                  {isManual ? 'Aguarde: estamos apenas conferindo o seu pagamento' : 'Seja Bem-vindo!'}
+                </h1>
+                <p className="text-lg text-text-muted font-medium max-w-lg mx-auto">
+                  {isManual 
+                    ? 'Dentro de poucos minutos seu acesso estará liberado. Isso pode demorar alguns minutos.'
+                    : `Sua matrícula no curso "${cursoNome}" foi confirmada com sucesso.`
+                  }
+                </p>
             </div>
 
             <div className={`bg-black/5 border border-border-custom px-6 py-4 rounded-3xl inline-block`}>
@@ -53,12 +53,9 @@ export default async function CheckoutSucessoPage({
             {isManual && (
                <div className="space-y-6 text-sm text-text-muted font-medium bg-white/5 p-8 rounded-[2.5rem] border border-white/5">
                   <p>
-                    Dentro de poucos minutos seu acesso estará liberado. Isso pode demorar alguns minutos.
-                  </p>
-                  <p>
                     Volte para o dashboard e conheça outros cursos ou as ferramentas gratuitas para começar a usar já.
                   </p>
-                  <p className="text-primary font-black uppercase text-[10px] tracking-widest">
+                  <p className="text-primary font-black uppercase text-[10px] tracking-widest leading-relaxed">
                     Iremos informar você via e-mail assim que a sua matrícula estiver concluída.
                   </p>
                </div>
