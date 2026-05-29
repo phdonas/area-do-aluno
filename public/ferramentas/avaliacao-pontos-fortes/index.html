@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferramenta 6.1 — Autoavaliação de Pontos Fortes · Recriar a Gestão Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-mid: #253564;
+  --teal: #1d9e8f;
+  --teal-light: #e8f7f5;
+  --coral: #e05c3a;
+  --coral-light: #fdf1ee;
+  --slate: #4a5568;
+  --gray-light: #f4f6f9;
+  --gray-mid: #e2e8f0;
+  --gray-dark: #718096;
+  --white: #ffffff;
+  --text: #1a2744;
+  --EX-color: #2563a8;
+  --EX-light: #eff6ff;
+  --IN-color: #e05c3a;
+  --IN-light: #fdf1ee;
+  --RE-color: #1d9e8f;
+  --RE-light: #e8f7f5;
+  --PE-color: #7c3aed;
+  --PE-light: #f5f3ff;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Source Sans 3', sans-serif;
+  --shadow: 0 2px 12px rgba(26,39,68,0.08);
+  --shadow-md: 0 4px 24px rgba(26,39,68,0.12);
+  --radius: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--gray-light); color: var(--text); font-size: 15px; line-height: 1.6; }
+.app-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* HEADER */
+.tool-header { background: var(--navy); color: white; padding: 40px 48px; border-radius: var(--radius); margin-bottom: 32px; position: relative; overflow: hidden; }
+.tool-header::before { content: ''; position: absolute; top: 0; right: 0; width: 260px; height: 100%; background: linear-gradient(135deg, transparent 40%, rgba(29,158,143,0.2)); }
+.tool-header .badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); border: 1px solid var(--teal); padding: 3px 10px; border-radius: 2px; margin-bottom: 14px; }
+.tool-header h1 { font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+.tool-header p { color: rgba(255,255,255,0.7); font-size: 14px; max-width: 560px; }
+.pilar-tag { display: inline-block; margin-top: 14px; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.5); border-left: 2px solid var(--teal); padding-left: 10px; }
+
+/* CARDS */
+.card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px; margin-bottom: 20px; }
+.card-sm { padding: 24px; }
+
+/* SECTION LABELS */
+.section-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-dark); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--gray-mid); }
+
+/* INFO CARDS */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.info-card { background: var(--gray-light); border-radius: var(--radius); padding: 20px; }
+.ic-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); margin-bottom: 10px; }
+.ic-text { font-size: 13px; color: var(--slate); line-height: 1.6; }
+
+/* ESCALA VISUAL */
+.scale-preview { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-bottom: 8px; }
+.scale-col { text-align: center; background: var(--gray-light); border-radius: var(--radius); padding: 12px 6px; }
+.scale-col .sc-num { font-size: 22px; font-weight: 700; font-family: var(--font-display); }
+.scale-col .sc-label { font-size: 10px; color: var(--slate); margin-top: 4px; font-weight: 500; }
+
+/* FORM */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.field { margin-bottom: 0; }
+.field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--slate); margin-bottom: 6px; }
+.field input, .field select { width: 100%; padding: 10px 14px; border: 1px solid var(--gray-mid); border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; color: var(--text); background: var(--white); outline: none; transition: border 0.2s; }
+.field input:focus, .field select:focus { border-color: var(--teal); }
+.important-note { background: var(--coral-light); border-left: 3px solid var(--coral); border-radius: var(--radius); padding: 14px 18px; font-size: 13px; color: var(--slate); margin-top: 20px; }
+
+/* BUTTONS */
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 24px; border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.btn-navy { background: var(--navy); color: white; }
+.btn-navy:hover { background: var(--navy-mid); }
+.btn-teal { background: var(--teal); color: white; }
+.btn-teal:hover { background: #178a7c; }
+.btn-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--navy); }
+.btn-outline:hover { background: var(--gray-light); }
+.btn-sm { padding: 8px 16px; font-size: 13px; }
+.btn-row { display: flex; gap: 12px; margin-top: 28px; }
+.btn-row.between { justify-content: space-between; }
+.btn-row.right { justify-content: flex-end; }
+
+/* PROGRESS */
+.progress-wrap { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 28px; margin-bottom: 20px; }
+.progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.section-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+.step-count { font-size: 12px; color: var(--gray-dark); }
+.progress-bar { height: 4px; background: var(--gray-mid); border-radius: 2px; }
+.progress-fill { height: 100%; background: var(--teal); border-radius: 2px; transition: width 0.4s; }
+
+/* QUESTIONS */
+.question-block { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px 28px; margin-bottom: 14px; }
+.q-tag { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; margin-bottom: 10px; }
+.tag-EX { background: var(--EX-light); color: var(--EX-color); }
+.tag-IN { background: var(--IN-light); color: var(--IN-color); }
+.tag-RE { background: var(--RE-light); color: var(--RE-color); }
+.tag-PE { background: var(--PE-light); color: var(--PE-color); }
+.q-text { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 16px; line-height: 1.5; }
+.q-scale { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; }
+.q-opt { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; padding: 10px 4px; border: 1.5px solid var(--gray-mid); border-radius: var(--radius); transition: all 0.15s; }
+.q-opt:hover { border-color: var(--teal); background: var(--teal-light); }
+.q-opt.selected { border-color: var(--teal); background: var(--teal-light); }
+.q-opt .opt-num { font-size: 18px; font-weight: 700; font-family: var(--font-display); color: var(--gray-dark); }
+.q-opt.selected .opt-num { color: var(--teal); }
+.q-opt .opt-label { font-size: 10px; color: var(--gray-dark); text-align: center; line-height: 1.3; }
+
+/* PAGE 2B — TALENT CARDS */
+.domain-section { margin-bottom: 32px; }
+.domain-header { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-radius: var(--radius); margin-bottom: 16px; }
+.domain-header.EX { background: var(--EX-light); border-left: 4px solid var(--EX-color); }
+.domain-header.IN { background: var(--IN-light); border-left: 4px solid var(--IN-color); }
+.domain-header.RE { background: var(--RE-light); border-left: 4px solid var(--RE-color); }
+.domain-header.PE { background: var(--PE-light); border-left: 4px solid var(--PE-color); }
+.domain-badge { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; }
+.domain-badge.EX { background: var(--EX-color); color: white; }
+.domain-badge.IN { background: var(--IN-color); color: white; }
+.domain-badge.RE { background: var(--RE-color); color: white; }
+.domain-badge.PE { background: var(--PE-color); color: white; }
+.domain-title { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
+.domain-desc { font-size: 12px; color: var(--slate); margin-left: auto; }
+.talents-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.talent-card { background: var(--gray-light); border: 1.5px solid var(--gray-mid); border-radius: var(--radius); padding: 14px 16px; cursor: pointer; transition: all 0.2s; position: relative; }
+.talent-card:hover { border-color: var(--teal); box-shadow: 0 2px 8px rgba(29,158,143,0.15); }
+.talent-card.selected { border-color: var(--teal); background: var(--teal-light); }
+.talent-card.selected::after { content: '\2713'; position: absolute; top: 10px; right: 12px; color: var(--teal); font-weight: 700; font-size: 14px; }
+.talent-card.commercial { border-color: #c7d9f5; background: #f0f6ff; }
+.talent-card.commercial.selected { border-color: var(--teal); background: var(--teal-light); }
+.tc-name { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.tc-pt { font-size: 11px; color: var(--gray-dark); margin-bottom: 8px; }
+.tc-desc { font-size: 11px; color: var(--slate); line-height: 1.4; }
+.commercial-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; background: var(--EX-light); color: var(--EX-color); padding: 1px 6px; border-radius: 2px; margin-bottom: 6px; }
+.talent-count-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-top: 1px solid var(--gray-mid); margin-top: 4px; }
+.talent-count-msg { font-size: 13px; color: var(--slate); }
+.talent-count-num { font-size: 22px; font-weight: 700; font-family: var(--font-display); color: var(--teal); }
+
+/* PAGE 2C — AUTOEFICACIA */
+.eficacia-scale { display: flex; gap: 6px; flex-wrap: wrap; margin: 16px 0; }
+.ef-opt { min-width: 44px; text-align: center; padding: 10px 6px; border: 1.5px solid var(--gray-mid); border-radius: var(--radius); cursor: pointer; font-size: 14px; font-weight: 700; color: var(--gray-dark); transition: all 0.15s; }
+.ef-opt:hover { border-color: var(--teal); }
+.ef-opt.selected { border-color: var(--teal); background: var(--teal); color: white; }
+
+/* TABS */
+.tabs-nav { background: var(--navy); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 24px; }
+.tabs-nav .tabs-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 14px; }
+.tabs-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+.tab-btn { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius); padding: 14px 10px; cursor: pointer; text-align: left; transition: all 0.2s; }
+.tab-btn:hover { background: rgba(255,255,255,0.12); }
+.tab-btn.active { background: var(--teal); border-color: var(--teal); }
+.tab-btn .tb-num { font-size: 22px; font-weight: 700; font-family: var(--font-display); color: rgba(255,255,255,0.4); display: block; line-height: 1; }
+.tab-btn.active .tb-num { color: rgba(255,255,255,0.7); }
+.tab-btn .tb-label { font-size: 13px; font-weight: 600; color: white; display: block; margin-top: 4px; }
+.tab-btn .tb-sub { font-size: 10px; color: rgba(255,255,255,0.5); display: block; margin-top: 2px; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* DIAGNÓSTICO HERO */
+.diag-hero { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+.hero-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; text-align: center; }
+.hero-card .hc-score { font-size: 32px; font-weight: 700; font-family: var(--font-display); }
+.hero-card .hc-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+.hero-card .hc-sub { font-size: 10px; color: var(--gray-dark); margin-top: 2px; }
+.hero-card.EX .hc-score { color: var(--EX-color); }
+.hero-card.IN .hc-score { color: var(--IN-color); }
+.hero-card.RE .hc-score { color: var(--RE-color); }
+.hero-card.PE .hc-score { color: var(--PE-color); }
+
+/* RADAR */
+.radar-wrap { display: flex; justify-content: center; padding: 10px 0 20px; }
+
+/* TOP TALENTS */
+.top5-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 20px; }
+.top-talent-chip { border-radius: var(--radius); padding: 14px 12px; text-align: center; }
+.top-talent-chip .ttc-rank { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; margin-bottom: 4px; }
+.top-talent-chip .ttc-name { font-size: 12px; font-weight: 700; }
+.top-talent-chip .ttc-domain { font-size: 10px; opacity: 0.7; margin-top: 3px; }
+.top-talent-chip.EX { background: var(--EX-light); color: var(--EX-color); }
+.top-talent-chip.IN { background: var(--IN-light); color: var(--IN-color); }
+.top-talent-chip.RE { background: var(--RE-light); color: var(--RE-color); }
+.top-talent-chip.PE { background: var(--PE-light); color: var(--PE-color); }
+
+/* PERFIL */
+.perfil-block { background: var(--navy); color: white; border-radius: var(--radius); padding: 28px; margin-bottom: 20px; }
+.perfil-block .perfil-name { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+.perfil-block .perfil-desc { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.7; }
+
+/* NARRATIVE */
+.narrative { font-size: 14px; color: var(--slate); line-height: 1.8; }
+.narrative p { margin-bottom: 12px; }
+.narrative strong { color: var(--navy); }
+
+/* ALERT */
+.alert-coral { background: var(--coral-light); border-left: 3px solid var(--coral); border-radius: var(--radius); padding: 12px 16px; font-size: 13px; color: var(--slate); margin-bottom: 16px; }
+
+/* EFICACIA RESULT */
+.eficacia-result { background: var(--teal-light); border-left: 3px solid var(--teal); border-radius: var(--radius); padding: 16px 20px; margin-top: 16px; }
+.ef-res-score { font-size: 28px; font-weight: 700; font-family: var(--font-display); color: var(--teal); }
+.ef-res-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 6px; }
+.ef-res-text { font-size: 13px; color: var(--slate); line-height: 1.6; }
+
+/* FAZ HOJE TABLE */
+.fhfd-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.fhfd-table th { background: var(--navy); color: white; padding: 10px 14px; text-align: left; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+.fhfd-table td { padding: 10px; border-bottom: 1px solid var(--gray-mid); vertical-align: top; }
+.fhfd-table textarea { width: 100%; border: none; background: transparent; font-family: var(--font-body); font-size: 13px; color: var(--text); resize: vertical; min-height: 56px; outline: none; line-height: 1.5; }
+.col-hoje { width: 33%; }
+.col-dif { width: 34%; }
+.col-imp { width: 33%; }
+
+/* PDI */
+.pdi-header-info { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+.pdi-info-item.full { grid-column: 1 / -1; }
+.pdi-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray-dark); margin-bottom: 5px; }
+.pdi-header-info input, .pdi-header-info textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--gray-mid); border-radius: var(--radius); font-family: var(--font-body); font-size: 13px; color: var(--text); outline: none; }
+.pdi-header-info input:focus, .pdi-header-info textarea:focus { border-color: var(--teal); }
+.pdi-header-info textarea { resize: vertical; min-height: 60px; }
+.pdi-comp { border: 1px solid var(--gray-mid); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
+.pdi-comp-header { padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+.pdi-comp-header.EX { background: var(--EX-light); }
+.pdi-comp-header.IN { background: var(--IN-light); }
+.pdi-comp-header.RE { background: var(--RE-light); }
+.pdi-comp-header.PE { background: var(--PE-light); }
+.pdi-comp-num { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); }
+.pdi-comp-name { font-size: 14px; font-weight: 700; color: var(--navy); }
+.pdi-comp-body { padding: 18px; background: white; }
+.pdi-comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.pdi-field-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); margin-bottom: 4px; }
+.pdi-comp-body input, .pdi-comp-body textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-mid); border-radius: var(--radius); font-family: var(--font-body); font-size: 13px; color: var(--text); outline: none; }
+.pdi-comp-body input:focus, .pdi-comp-body textarea:focus { border-color: var(--teal); }
+.pdi-comp-body textarea { resize: vertical; min-height: 52px; }
+.progress-slider-wrap { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.progress-slider-wrap span { font-size: 11px; color: var(--gray-dark); min-width: 36px; }
+.slider-track { flex: 1; height: 6px; background: var(--gray-mid); border-radius: 3px; position: relative; }
+.slider-fill { height: 100%; background: var(--teal); border-radius: 3px; transition: width 0.3s; }
+
+/* ABA 4 COMPLEMENTARIDADE */
+.comp-row { background: var(--white); border: 1px solid var(--gray-mid); border-radius: var(--radius); padding: 18px; margin-bottom: 12px; }
+.comp-row-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.comp-domain-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 2px; }
+.comp-domain-badge.EX { background: var(--EX-light); color: var(--EX-color); }
+.comp-domain-badge.IN { background: var(--IN-light); color: var(--IN-color); }
+.comp-domain-badge.RE { background: var(--RE-light); color: var(--RE-color); }
+.comp-domain-badge.PE { background: var(--PE-light); color: var(--PE-color); }
+.comp-row-title { font-size: 14px; font-weight: 600; color: var(--navy); }
+.comp-row-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.comp-field label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); display: block; margin-bottom: 4px; }
+.comp-field input, .comp-field textarea { width: 100%; padding: 8px 12px; border: 1px solid var(--gray-mid); border-radius: var(--radius); font-family: var(--font-body); font-size: 13px; color: var(--text); outline: none; }
+.comp-field input:focus, .comp-field textarea:focus { border-color: var(--teal); }
+.comp-field textarea { resize: vertical; min-height: 52px; }
+
+/* EXPORT PANEL */
+.export-panel { background: var(--navy); border-radius: var(--radius); padding: 24px 28px; margin-top: 24px; }
+.export-panel h3 { font-family: var(--font-display); font-size: 16px; color: white; margin-bottom: 14px; }
+.export-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.export-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: var(--radius); font-family: var(--font-body); font-size: 12px; cursor: pointer; transition: all 0.2s; }
+.export-btn:hover { background: rgba(255,255,255,0.2); }
+.export-btn.primary-export { background: var(--teal); border-color: var(--teal); font-weight: 600; }
+.print-note { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+/* FOOTER */
+.tool-footer { text-align: center; font-size: 11px; color: var(--gray-dark); padding: 24px 0 0; border-top: 1px solid var(--gray-mid); margin-top: 40px; }
+
+/* STEPS INDICATOR */
+.steps-indicator { display: flex; align-items: center; gap: 0; margin-bottom: 24px; }
+.step-item { display: flex; align-items: center; gap: 0; }
+.step-circle { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border: 2px solid var(--gray-mid); color: var(--gray-dark); background: white; transition: all 0.3s; }
+.step-circle.active { border-color: var(--teal); color: var(--teal); }
+.step-circle.done { border-color: var(--teal); background: var(--teal); color: white; }
+.step-line { width: 40px; height: 2px; background: var(--gray-mid); transition: background 0.3s; }
+.step-line.done { background: var(--teal); }
+.step-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-dark); margin-top: 4px; }
+.step-wrap { display: flex; flex-direction: column; align-items: center; }
+
+@media (max-width: 640px) {
+  .info-grid, .form-grid, .form-grid-3, .talents-grid, .top5-grid, .diag-hero, .tabs-grid, .pdi-comp-grid, .comp-row-grid, .pdi-header-info { grid-template-columns: 1fr; }
+  .tool-header { padding: 28px 24px; }
+  .tool-header h1 { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+<div class="app-wrap">
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 1: IDENTIFICAÇÃO -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page active" id="page-id">
+
+  <div class="tool-header">
+    <div class="badge">Ferramenta 6.1 · Gestão de Pessoas</div>
+    <h1>Autoavaliação de Pontos Fortes</h1>
+    <p>Identifique seus talentos naturais, mapeie seus domínios de excelência e construa um plano de desenvolvimento ancorado no que você tem de melhor — não no que está errado.</p>
+    <div class="pilar-tag">Pilar 3 — Gestão de Pessoas · Metodologia Recriar a Gestão Comercial</div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Sobre esta ferramenta</div>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="ic-label">Para que serve</div>
+        <p class="ic-text">Mapear seus 5 talentos dominantes dentre os 34 identificados por Donald Clifton, identificar seus domínios de maior força (Execução, Influência, Relacionamento, Pensamento Estratégico) e gerar um PDI baseado na potencialização — não na correção de fraquezas.</p>
+      </div>
+      <div class="info-card">
+        <div class="ic-label">Como funciona</div>
+        <p class="ic-text">Três etapas de autoavaliação: (1) diagnóstico dos seus 4 domínios via questionário, (2) seleção dos seus top 5 talentos entre os 34 de Clifton, (3) medição de autoeficácia. Os resultados geram diagnóstico, Faz Hoje/Fazer Diferente, PDI e Matriz de Complementaridade da sua equipe.</p>
+      </div>
+    </div>
+    <div class="section-label" style="margin-top:12px;">Escala de avaliação utilizada na Etapa 1</div>
+    <div class="scale-preview">
+      <div class="scale-col" style="border-top:3px solid #94a3b8;"><span class="sc-num" style="color:#94a3b8;">1</span><div class="sc-label">Nunca me identifico</div></div>
+      <div class="scale-col" style="border-top:3px solid #f59e0b;"><span class="sc-num" style="color:#f59e0b;">2</span><div class="sc-label">Raramente</div></div>
+      <div class="scale-col" style="border-top:3px solid #fb923c;"><span class="sc-num" style="color:#fb923c;">3</span><div class="sc-label">Às vezes</div></div>
+      <div class="scale-col" style="border-top:3px solid var(--teal);"><span class="sc-num" style="color:var(--teal);">4</span><div class="sc-label">Com frequência</div></div>
+      <div class="scale-col" style="border-top:3px solid var(--navy); background:#e8f0fa;"><span class="sc-num" style="color:var(--navy);">5</span><div class="sc-label">Sempre me identifico</div></div>
+    </div>
+  </div>
+
+  <div class="card card-sm">
+    <div class="section-label">Identificação</div>
+    <div class="form-grid" style="margin-bottom:16px;">
+      <div class="field"><label>Nome completo</label><input type="text" id="f-nome" placeholder="Seu nome"></div>
+      <div class="field"><label>Empresa</label><input type="text" id="f-empresa" placeholder="Nome da empresa"></div>
+      <div class="field"><label>Cargo / Função</label><input type="text" id="f-cargo" placeholder="Ex: Gerente Comercial"></div>
+      <div class="field"><label>Setor de atuação</label><input type="text" id="f-setor" placeholder="Ex: Tecnologia B2B, Indústria..."></div>
+    </div>
+    <div class="form-grid-3">
+      <div class="field"><label>Tamanho da equipe</label>
+        <select id="f-equipe">
+          <option value="">Selecione</option>
+          <option>1 a 3 pessoas</option>
+          <option>4 a 8 pessoas</option>
+          <option>9 a 15 pessoas</option>
+          <option>Mais de 15</option>
+        </select>
+      </div>
+      <div class="field"><label>Tempo na função</label>
+        <select id="f-tempo">
+          <option value="">Selecione</option>
+          <option>Menos de 1 ano</option>
+          <option>1 a 3 anos</option>
+          <option>3 a 7 anos</option>
+          <option>Mais de 7 anos</option>
+        </select>
+      </div>
+      <div class="field"><label>Data de referência</label><input type="text" id="f-data" placeholder="MM/AAAA"></div>
+    </div>
+    <div class="important-note">
+      <strong>Orientação fundamental:</strong> Esta ferramenta foca no que você tem de melhor — não no que precisa corrigir. Responda com base nos seus padrões naturais: como você realmente pensa, sente e age, não como gostaria de ser percebido. Quanto mais honesta for a autoavaliação, mais preciso e útil será o plano de desenvolvimento gerado.
+    </div>
+  </div>
+
+  <div class="btn-row right">
+    <button class="btn btn-teal" onclick="iniciarQuestionario()">Iniciar Avaliação →</button>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 2: QUESTIONÁRIO DE DOMÍNIOS -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" id="page-quest">
+
+  <div class="tool-header">
+    <div class="badge">Etapa 1 de 3</div>
+    <h1>Diagnóstico dos Domínios de Talento</h1>
+    <p>Avalie com que frequência cada comportamento descreve sua atuação natural como gestor comercial.</p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span class="section-name" id="prog-section-name">Seção 1 de 5</span>
+      <span class="step-count" id="prog-step">Questões 1–6</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+  </div>
+
+  <div class="card">
+    <div class="section-label" id="section-header-label"></div>
+    <div id="questions-container"></div>
+    <div class="btn-row between">
+      <button class="btn btn-outline btn-sm" id="btn-prev" onclick="prevSection()">← Anterior</button>
+      <button class="btn btn-teal" id="btn-next" onclick="nextSection()">Próxima Seção →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 2B: SELEÇÃO DE TALENTOS -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" id="page-talents">
+
+  <div class="tool-header">
+    <div class="badge">Etapa 2 de 3</div>
+    <h1>Seus 5 Talentos Dominantes</h1>
+    <p>Selecione exatamente 5 talentos que mais descrevem como você naturalmente pensa e age. Os talentos com destaque azul têm maior relevância para a gestão comercial.</p>
+  </div>
+
+  <div class="card" style="padding:20px 28px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:13px;color:var(--slate);">Selecione exatamente <strong>5 talentos</strong> que mais representam você</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:13px;color:var(--slate);">Selecionados:</span>
+        <span id="talent-count" style="font-size:26px;font-weight:700;font-family:var(--font-display);color:var(--teal);">0</span>
+        <span style="font-size:13px;color:var(--slate);">/ 5</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="talents-container"></div>
+
+  <div class="btn-row between">
+    <button class="btn btn-outline btn-sm" onclick="goToPage('page-quest')">← Rever Domínios</button>
+    <button class="btn btn-teal" id="btn-talents-next" onclick="avancarParaEficacia()" disabled>Próxima Etapa →</button>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 2C: AUTOEFICÁCIA E BALDE -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" id="page-eficacia">
+
+  <div class="tool-header">
+    <div class="badge">Etapa 3 de 3</div>
+    <h1>Autoeficácia e Reconhecimento</h1>
+    <p>Duas perguntas finais para completar seu perfil de pontos fortes com base nos conceitos de Albert Bandura e Donald Clifton.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Escala de Autoeficácia — Albert Bandura</div>
+    <p style="font-size:14px;color:var(--slate);margin-bottom:20px;">A autoeficácia é a crença na sua capacidade de organizar e executar as ações necessárias para alcançar seus objetivos. Não é sobre o que você sabe fazer — é sobre o quanto acredita que conseguirá fazer acontecer.</p>
+    <div style="background:var(--gray-light);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
+      <p style="font-size:14px;font-weight:600;color:var(--navy);margin-bottom:16px;">Em uma escala de 1 a 10, o quanto você acredita na sua capacidade de entregar seus objetivos comerciais atuais usando seus talentos naturais?</p>
+      <div class="eficacia-scale" id="ef-scale"></div>
+      <div id="ef-interp" style="font-size:13px;color:var(--slate);margin-top:12px;min-height:40px;font-style:italic;"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Seu Balde Emocional — Don Clifton &amp; Tom Rath</div>
+    <p style="font-size:14px;color:var(--slate);margin-bottom:20px;">Cada gestor carrega um balde invisível — sua saúde emocional e energia para liderar. Quando você reconhece os pontos fortes da sua equipe, enche o balde deles e o seu próprio. Quando foca apenas em erros e correções, esvazia todos os baldes ao redor.</p>
+    <div style="background:var(--gray-light);border-radius:var(--radius);padding:20px;">
+      <p style="font-size:14px;font-weight:600;color:var(--navy);margin-bottom:16px;">Em que medida você reconhece e nomeia os pontos fortes da sua equipe de vendas no dia a dia?</p>
+      <div class="q-scale" id="balde-scale">
+        <div class="q-opt" onclick="selecionarBalde(1,this)"><span class="opt-num">1</span><span class="opt-label">Quase nunca reconheço</span></div>
+        <div class="q-opt" onclick="selecionarBalde(2,this)"><span class="opt-num">2</span><span class="opt-label">Raramente</span></div>
+        <div class="q-opt" onclick="selecionarBalde(3,this)"><span class="opt-num">3</span><span class="opt-label">Às vezes</span></div>
+        <div class="q-opt" onclick="selecionarBalde(4,this)"><span class="opt-num">4</span><span class="opt-label">Com frequência</span></div>
+        <div class="q-opt" onclick="selecionarBalde(5,this)"><span class="opt-num">5</span><span class="opt-label">Faço isso sistematicamente</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row between">
+    <button class="btn btn-outline btn-sm" onclick="goToPage('page-talents')">← Rever Talentos</button>
+    <button class="btn btn-teal" onclick="gerarResultados()">Ver Resultados →</button>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 3: RESULTADOS -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" id="page-results">
+
+  <div class="tabs-nav">
+    <div class="tabs-label">Navegue pelas saídas da avaliação</div>
+    <div class="tabs-grid">
+      <button class="tab-btn active" onclick="switchTab('diagnostico')" id="mtab-diagnostico">
+        <span class="tb-num">01</span>
+        <span class="tb-label">Diagnóstico</span>
+        <span class="tb-sub">Perfil + Radar + Top 5</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('fazdiferente')" id="mtab-fazdiferente">
+        <span class="tb-num">02</span>
+        <span class="tb-label">Faz Hoje</span>
+        <span class="tb-sub">Fazer Diferente</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('pdi')" id="mtab-pdi">
+        <span class="tb-num">03</span>
+        <span class="tb-label">PDI</span>
+        <span class="tb-sub">Plano de Desenvolvimento</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('complementaridade')" id="mtab-complementaridade">
+        <span class="tb-num">04</span>
+        <span class="tb-label">Equipe</span>
+        <span class="tb-sub">Matriz de Complementaridade</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB 01: DIAGNÓSTICO -->
+  <div class="tab-content active" id="tab-diagnostico">
+    <div class="diag-hero" id="diag-hero"></div>
+    <div id="alert-desequil"></div>
+    <div class="card">
+      <div class="section-label">Seus 5 Talentos Dominantes</div>
+      <div class="top5-grid" id="top5-chips"></div>
+    </div>
+    <div id="perfil-block-wrap"></div>
+    <div class="card">
+      <div class="section-label">Radar dos Domínios de Talento</div>
+      <div class="radar-wrap"><canvas id="radar-chart" width="420" height="360"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="section-label">Análise e Orientação Estratégica</div>
+      <div id="narrative-content"></div>
+      <div id="eficacia-result-block" style="margin-top:16px;"></div>
+    </div>
+  </div>
+
+  <!-- TAB 02: FAZ HOJE -->
+  <div class="tab-content" id="tab-fazdiferente">
+    <div class="card">
+      <div class="section-label">Faz Hoje / Fazer Diferente</div>
+      <p style="font-size:13px;color:var(--slate);margin-bottom:16px;">Com base nos seus domínios de menor expressão e nos seus pontos fortes identificados, veja o que você faz hoje que pode estar indo contra seus talentos naturais — e o que fazer de diferente para potencializar sua atuação.</p>
+      <div id="fhfd-nome-row" style="margin-bottom:14px;">
+        <span style="font-size:12px;font-weight:600;color:var(--slate);">Gestor: </span>
+        <span id="fhfd-nome" style="font-size:14px;font-weight:600;color:var(--navy);"></span>
+      </div>
+      <table class="fhfd-table">
+        <thead><tr><th class="col-hoje">Faz Hoje</th><th class="col-dif">Fazer Diferente</th><th class="col-imp">Impacto Esperado</th></tr></thead>
+        <tbody id="fhfd-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 03: PDI -->
+  <div class="tab-content" id="tab-pdi">
+    <div class="card">
+      <div class="section-label">PDI — Plano de Desenvolvimento Individual</div>
+      <div class="pdi-header-info">
+        <div class="pdi-info-item"><div class="pdi-label">Gestor</div><input type="text" id="pdi-nome"></div>
+        <div class="pdi-info-item"><div class="pdi-label">Período</div><input type="text" id="pdi-periodo" placeholder="Ex: 90 dias · Maio–Julho 2025"></div>
+        <div class="pdi-info-item full"><div class="pdi-label">Objetivo geral do PDI</div><textarea id="pdi-objetivo"></textarea></div>
+        <div class="pdi-info-item full"><div class="pdi-label">Orientação estratégica</div><textarea id="pdi-estrategia"></textarea></div>
+      </div>
+      <div id="pdi-comps"></div>
+    </div>
+  </div>
+
+  <!-- TAB 04: COMPLEMENTARIDADE -->
+  <div class="tab-content" id="tab-complementaridade">
+    <div class="card">
+      <div class="section-label">Matriz de Complementaridade da Equipe</div>
+      <p style="font-size:13px;color:var(--slate);margin-bottom:20px;">Líderes de alto impacto não buscam clones — buscam complementaridade. Para cada domínio em que você é menos presente, identifique quem na sua equipe cobre esse gap e defina uma ação de colaboração para esta semana.</p>
+      <div id="comp-rows"></div>
+    </div>
+  </div>
+
+  <!-- EXPORT -->
+  <div class="export-panel">
+    <h3>Exportar como PDF</h3>
+    <div class="export-buttons">
+      <button class="export-btn" onclick="exportSection('diagnostico')">Diagnóstico</button>
+      <button class="export-btn" onclick="exportSection('fazdiferente')">Faz Hoje / Fazer Diferente</button>
+      <button class="export-btn" onclick="exportSection('pdi')">PDI</button>
+      <button class="export-btn" onclick="exportSection('complementaridade')">Matriz de Equipe</button>
+      <button class="export-btn primary-export" onclick="exportSection('todos')">Exportar Tudo</button>
+    </div>
+    <p class="print-note">Ao clicar, o documento abrirá em nova aba. Use Ctrl+P (ou Cmd+P) → Destino: Salvar como PDF → Margens: Nenhuma → Ativar "Gráficos de fundo".</p>
+  </div>
+
+  <div class="btn-row" style="margin-top:20px;">
+    <button class="btn btn-outline btn-sm" onclick="goToPage('page-eficacia')">← Rever Avaliação</button>
+  </div>
+
+</div>
+
+<div class="tool-footer">
+  Elaborado por Prof. Paulo H. Donassolo · Metodologia Recriar a Gestão Comercial · Ferramenta 6.1
+</div>
+
+</div><!-- app-wrap -->
+
+<script>
+// ══════════════════════════════════════════════
+// DADOS: QUESTIONÁRIO DOS DOMÍNIOS (30 questões, 5 seções)
+// ══════════════════════════════════════════════
+const SECOES = [
+  {
+    id: 'EX', nome: 'Domínio Execução', desc: 'Como você transforma planos em resultados concretos',
+    questoes: [
+      { id:'ex1', tag:'EX', txt:'Quando defino uma meta, mobilizo energia e disciplina para alcançá-la até o fim, mesmo diante de obstáculos.' },
+      { id:'ex2', tag:'EX', txt:'Organizo minhas tarefas, as da equipe e os recursos disponíveis de forma a maximizar a entrega de resultados.' },
+      { id:'ex3', tag:'EX', txt:'Sinto satisfação genuína ao ver tarefas e projetos sendo concluídos com qualidade e dentro do prazo.' },
+      { id:'ex4', tag:'EX', txt:'Quando algo não está funcionando, identifico o problema e busco ativamente a solução até corrigir o curso.' },
+      { id:'ex5', tag:'EX', txt:'Mantenho foco nas prioridades mesmo quando surgem demandas inesperadas que poderiam me desviar do objetivo.' },
+      { id:'ex6', tag:'EX', txt:'Assumo responsabilidade pessoal pelos resultados da equipe — não transfiro culpa quando as metas não são atingidas.' }
+    ]
+  },
+  {
+    id: 'IN', nome: 'Domínio Influência', desc: 'Como você lidera, convence e gera impacto nas pessoas ao redor',
+    questoes: [
+      { id:'in1', tag:'IN', txt:'Consigo tomar decisões e assumir posição com clareza, mesmo em situações de pressão ou incerteza.' },
+      { id:'in2', tag:'IN', txt:'Tenho facilidade em comunicar ideias de forma clara e persuasiva, tanto em conversas individuais quanto em apresentações.' },
+      { id:'in3', tag:'IN', txt:'Inspiro e motivo minha equipe de vendas a superar suas próprias expectativas de desempenho.' },
+      { id:'in4', tag:'IN', txt:'Sinto-me confortável em ambientes de competição — uso a rivalidade saudável como combustível para a equipe.' },
+      { id:'in5', tag:'IN', txt:'Construo credibilidade e confiança com clientes e com a equipe pela consistência entre o que digo e o que faço.' },
+      { id:'in6', tag:'IN', txt:'Tenho facilidade em estabelecer novos relacionamentos e criar conexões rápidas com pessoas que ainda não me conhecem.' }
+    ]
+  },
+  {
+    id: 'RE', nome: 'Domínio Relacionamento', desc: 'Como você cria vínculos e mantém a coesão das pessoas',
+    questoes: [
+      { id:'re1', tag:'RE', txt:'Percebo e compreendo as emoções e necessidades da minha equipe antes que elas sejam expressas explicitamente.' },
+      { id:'re2', tag:'RE', txt:'Reconheço as qualidades individuais de cada vendedor e adapto minha liderança às características de cada pessoa.' },
+      { id:'re3', tag:'RE', txt:'Invisto na construção de relacionamentos de longo prazo com clientes estratégicos, além do ciclo de venda imediato.' },
+      { id:'re4', tag:'RE', txt:'Atuo como elemento de coesão — busco pontos de convergência quando surgem conflitos dentro da equipe.' },
+      { id:'re5', tag:'RE', txt:'Crio um ambiente onde as pessoas se sentem incluídas, ouvidas e seguras para compartilhar ideias e dificuldades.' },
+      { id:'re6', tag:'RE', txt:'Dedico tempo ao desenvolvimento individual de cada membro da equipe, acreditando no potencial de crescimento de cada um.' }
+    ]
+  },
+  {
+    id: 'PE', nome: 'Domínio Pensamento Estratégico', desc: 'Como você analisa, planeja e antecipa o futuro',
+    questoes: [
+      { id:'pe1', tag:'PE', txt:'Tenho facilidade em identificar padrões e tendências nos dados comerciais para antecipar movimentos do mercado.' },
+      { id:'pe2', tag:'PE', txt:'Consigo enxergar conexões entre situações aparentemente desconexas e usar esse insight na estratégia comercial.' },
+      { id:'pe3', tag:'PE', txt:'Gosto de explorar novas ideias, abordagens e modelos — minha curiosidade intelectual alimenta minha estratégia.' },
+      { id:'pe4', tag:'PE', txt:'Analiso os resultados comerciais com profundidade antes de tomar decisões sobre direcionamento da equipe.' },
+      { id:'pe5', tag:'PE', txt:'Consigo visualizar cenários futuros para a área comercial e transformar essa visão em planos concretos de ação.' },
+      { id:'pe6', tag:'PE', txt:'Busco continuamente aprender sobre novos mercados, metodologias de vendas e práticas de gestão comercial.' }
+    ]
+  },
+  {
+    id: 'GC', nome: 'Autoconhecimento Comercial', desc: 'Como você percebe e aplica seus talentos no contexto comercial',
+    questoes: [
+      { id:'gc1', tag:'EX', txt:'Tenho clareza sobre o que me energiza e o que me drena na gestão comercial — conheço meu padrão de alta performance.' },
+      { id:'gc2', tag:'IN', txt:'Sei identificar quais situações comerciais (negociações, apresentações, coaching) me permitem operar no meu ponto forte.' },
+      { id:'gc3', tag:'RE', txt:'Minha equipe reconhece em mim um líder que potencializa suas forças — não apenas cobra resultados e corrige erros.' },
+      { id:'gc4', tag:'PE', txt:'Tomo decisões estratégicas com base em análise consistente, não apenas em intuição ou pressão do momento.' },
+      { id:'gc5', tag:'EX', txt:'Consigo delegar com confiança as tarefas que não estão no meu domínio de excelência, sem precisar controlar tudo.' },
+      { id:'gc6', tag:'IN', txt:'Quando percebo que um talento meu está sendo subutilizado, tomo iniciativa para reposicioná-lo na estratégia da equipe.' }
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════
+// DADOS: 34 TALENTOS CLIFTON
+// ══════════════════════════════════════════════
+const TALENTOS = [
+  // EXECUÇÃO
+  { id:'achiever', en:'Achiever', pt:'Realização', domain:'EX', commercial:true, desc:'Você tem uma alta necessidade de conquista. Na gestão comercial, define metas ambiciosas e persiste até alcançá-las, servindo de referência de entrega para a equipe.' },
+  { id:'arranger', en:'Arranger', pt:'Organização', domain:'EX', commercial:false, desc:'Organiza recursos, pessoas e tarefas de forma eficiente. Ideal para gestores que lidam com múltiplas contas, territórios e ciclos simultâneos.' },
+  { id:'belief', en:'Belief', pt:'Crença', domain:'EX', commercial:false, desc:'Possui valores sólidos que guiam suas decisões. Em vendas, isso se traduz em consistência e autenticidade que geram confiança nos clientes.' },
+  { id:'consistency', en:'Consistency', pt:'Imparcialidade', domain:'EX', commercial:false, desc:'Trata todos com justiça e equidade. Essencial para gestores que precisam manter regras claras e percepção de justiça na equipe.' },
+  { id:'deliberative', en:'Deliberative', pt:'Prudência', domain:'EX', commercial:false, desc:'Pensa antes de agir e identifica riscos com antecedência. Importante em negociações complexas onde uma decisão precipitada pode perder o negócio.' },
+  { id:'discipline', en:'Discipline', pt:'Disciplina', domain:'EX', commercial:true, desc:'Cria rotinas e processos eficientes. Na gestão comercial, estrutura o funil, as cadências de prospecção e os rituais de gestão de equipe.' },
+  { id:'focus', en:'Focus', pt:'Foco', domain:'EX', commercial:true, desc:'Mantém o norte claro e evita dispersão. Em mercados B2B complexos, saber priorizar clientes e oportunidades é diferencial competitivo.' },
+  { id:'responsibility', en:'Responsibility', pt:'Responsabilidade', domain:'EX', commercial:true, desc:'Assume compromissos e os honra. Um gestor com este talento cria uma cultura de accountability na equipe de vendas.' },
+  { id:'restorative', en:'Restorative', pt:'Restauração', domain:'EX', commercial:false, desc:'Energiza-se ao resolver problemas. Excelente para situações de recuperação de contas, renegociação e crise com clientes.' },
+  // INFLUÊNCIA
+  { id:'activator', en:'Activator', pt:'Ativação', domain:'IN', commercial:true, desc:'Transforma decisões em ação imediata. Em vendas, evita a paralisia e impulsiona a equipe a sair do campo das ideias para a execução.' },
+  { id:'command', en:'Command', pt:'Comando', domain:'IN', commercial:true, desc:'Assume posição com clareza e convicção. Vital em negociações difíceis, apresentações executivas e momentos de decisão sob pressão.' },
+  { id:'communication', en:'Communication', pt:'Comunicação', domain:'IN', commercial:true, desc:'Transforma ideias em histórias que conectam e persuadem. Em vendas B2B, a comunicação eficaz com diferentes interlocutores é diferencial.' },
+  { id:'competition', en:'Competition', pt:'Competição', domain:'IN', commercial:true, desc:'Usa a comparação com outros como motivação. Gera ambientes de alta performance quando bem gerenciado pelo gestor.' },
+  { id:'maximizer', en:'Maximizer', pt:'Excelência', domain:'IN', commercial:true, desc:'Eleva o bom para excelente — foca nos pontos fortes para criar diferenciais. O talento mais alinhado com a filosofia CliftonStrengths.' },
+  { id:'selfassurance', en:'Self-Assurance', pt:'Autoafirmação', domain:'IN', commercial:false, desc:'Confia no próprio julgamento mesmo sem validação externa. Importante para gestores que precisam tomar decisões sob incerteza.' },
+  { id:'significance', en:'Significance', pt:'Significância', domain:'IN', commercial:false, desc:'Deseja impactar e ser reconhecido. Impulsiona gestores a buscar clientes estratégicos e projetos de grande visibilidade.' },
+  { id:'woo', en:'Woo', pt:'Carisma', domain:'IN', commercial:true, desc:'Facilidade natural em conquistar novas pessoas. Essencial na abertura de novos mercados, eventos e primeiras reuniões com prospects.' },
+  // RELACIONAMENTO
+  { id:'adaptability', en:'Adaptability', pt:'Adaptabilidade', domain:'RE', commercial:true, desc:'Flui bem com mudanças e incertezas. Em cenários de venda consultiva, adapta o discurso e a abordagem conforme o cliente e o momento.' },
+  { id:'connectedness', en:'Connectedness', pt:'Conexão', domain:'RE', commercial:false, desc:'Enxerga o propósito por trás de cada ação. Conecta o trabalho da equipe a algo maior, gerando senso de missão nas vendas.' },
+  { id:'developer', en:'Developer', pt:'Desenvolvimento', domain:'RE', commercial:true, desc:'Enxerga e cultiva o potencial dos outros. O talento mais poderoso para gestores que desejam desenvolver vendedores medianos em high performers.' },
+  { id:'empathy', en:'Empathy', pt:'Empatia', domain:'RE', commercial:true, desc:'Sente o que os outros sentem. Fundamental na compreensão das dores reais dos clientes e na leitura do estado emocional da equipe.' },
+  { id:'harmony', en:'Harmony', pt:'Harmonia', domain:'RE', commercial:false, desc:'Busca consenso e evita conflitos desnecessários. Útil na gestão de equipes diversas e no alinhamento com outras áreas da empresa.' },
+  { id:'includer', en:'Includer', pt:'Inclusão', domain:'RE', commercial:false, desc:'Garante que todos se sintam pertencentes. Constrói equipes coesas onde cada vendedor sente que tem um papel relevante.' },
+  { id:'individualization', en:'Individualization', pt:'Individualização', domain:'RE', commercial:true, desc:'Percebe o que é único em cada pessoa. Permite ao gestor personalizar o coaching e a gestão para o perfil de cada vendedor.' },
+  { id:'positivity', en:'Positivity', pt:'Positividade', domain:'RE', commercial:false, desc:'Irradia entusiasmo e otimismo. Em equipes de vendas, o gestor com este talento mantém a moral alta mesmo em períodos difíceis.' },
+  { id:'relator', en:'Relator', pt:'Relacionamento', domain:'RE', commercial:true, desc:'Investe em relacionamentos profundos e de longo prazo. Essencial para gestão de contas estratégicas e fidelização de clientes B2B.' },
+  // PENSAMENTO ESTRATÉGICO
+  { id:'analytical', en:'Analytical', pt:'Analítico', domain:'PE', commercial:true, desc:'Busca as razões por trás dos dados. Fundamental para análise de pipeline, diagnóstico de desempenho e decisões baseadas em evidências.' },
+  { id:'context', en:'Context', pt:'Contexto', domain:'PE', commercial:false, desc:'Aprende com o passado para tomar decisões melhores. Em vendas, usa histórico de negociações e padrões para antecipar o futuro.' },
+  { id:'futuristic', en:'Futuristic', pt:'Futurista', domain:'PE', commercial:false, desc:'Inspira outros com visão do que pode ser. Essencial para gestores que precisam alinhar a equipe em torno de um futuro ambicioso.' },
+  { id:'ideation', en:'Ideation', pt:'Ideativo', domain:'PE', commercial:false, desc:'Fascina-se por novas ideias e conexões inusitadas. Gera soluções criativas para problemas comerciais complexos.' },
+  { id:'input', en:'Input', pt:'Coleta', domain:'PE', commercial:false, desc:'Coleciona informações e recursos. Em vendas, traduz-se em vasto conhecimento do mercado, concorrentes e clientes.' },
+  { id:'intellection', en:'Intellection', pt:'Intelecção', domain:'PE', commercial:false, desc:'Pensa profundamente antes de agir. Evita decisões precipitadas e constrói estratégias comerciais sólidas.' },
+  { id:'learner', en:'Learner', pt:'Estudioso', domain:'PE', commercial:false, desc:'Ama aprender continuamente. Mantém o gestor atualizado sobre mercado, novas abordagens e práticas de gestão comercial.' },
+  { id:'strategic', en:'Strategic', pt:'Estratégico', domain:'PE', commercial:true, desc:'Enxerga padrões onde outros veem complexidade. Escolhe o melhor caminho entre alternativas — talento central do gestor comercial.' }
+];
+
+// ══════════════════════════════════════════════
+// BASE DE RECOMENDAÇÕES
+// ══════════════════════════════════════════════
+const RECOM = {
+  EX: {
+    nome: 'Execução',
+    fazHoje: 'Você tende a se dispersar entre múltiplas frentes sem concluir as mais importantes. As metas são definidas, mas o acompanhamento sistemático e a cobrança estruturada ainda ficam em segundo plano.',
+    fazerDif: 'Implemente rituais de gestão semanais com a equipe focados em resultado: pipeline review de 30 minutos toda segunda, com responsabilização individual. Use um quadro visual das metas x realizado.',
+    impacto: 'Equipe mais orientada a resultado, redução de desculpas e aumento do percentual de vendedores que batem a meta mensalmente.',
+    pdiComp: 'Gestão por Resultados e Accountability',
+    pdiAcao: 'Implante uma reunião semanal de pipeline (30 min) com registro dos compromissos individuais e revisão na semana seguinte. Adote um CRM ou planilha de acompanhamento compartilhada.',
+    pdiAferir: 'Percentual de metas individuais atingidas mensalmente. Número de reuniões de pipeline realizadas vs. planejadas.',
+    pdiPrazo: '30 dias para implementar a rotina. Avaliação de resultado em 60 dias.',
+    aba4Acao: 'Identifique na equipe quem tem o talento Disciplina ou Responsabilidade mais desenvolvido e delegue a ele a condução dos registros e acompanhamento do pipeline.',
+    aba4Quando: 'Esta semana — reunião de alinhamento para definir o novo ritual.'
+  },
+  IN: {
+    nome: 'Influência',
+    fazHoje: 'A comunicação com a equipe tende a ser mais informativa do que inspiracional. Você passa as informações, mas raramente usa histórias, narrativas e referências que engajem emocionalmente os vendedores.',
+    fazerDif: 'Prepare uma mensagem de abertura inspiradora para as reuniões de equipe. Use histórias de vitórias recentes para reforçar comportamentos que deseja ver repetidos. Seja mais vocal sobre sua visão.',
+    impacto: 'Aumento do engajamento e da motivação da equipe. Vendedores mais conectados ao propósito e menos dependentes de incentivos financeiros externos.',
+    pdiComp: 'Comunicação Inspiracional e Liderança Influente',
+    pdiAcao: 'Estude técnicas de storytelling aplicadas à liderança comercial. Pratique abrir cada reunião de equipe com uma história curta que ilustre o comportamento que deseja reforçar.',
+    pdiAferir: 'Feedback da equipe sobre qualidade das reuniões. NPS interno (satisfação com a liderança). Observação do nível de participação e energia nas reuniões.',
+    pdiPrazo: '45 dias para desenvolver e praticar. Avaliação em 90 dias.',
+    aba4Acao: 'Identifique o membro da equipe com maior talento de Comunicação ou Carisma e co-conduza com ele a próxima reunião de equipe, observando como ele conecta as pessoas.',
+    aba4Quando: 'Na próxima reunião de equipe.'
+  },
+  RE: {
+    nome: 'Relacionamento',
+    fazHoje: 'O foco na gestão está mais nos resultados e nos números do que nas pessoas. O desenvolvimento individual dos vendedores recebe menos atenção do que a cobrança por metas.',
+    fazerDif: 'Reserve 30 minutos semanais para um one-on-one com um membro diferente da equipe — não para cobrar resultado, mas para entender o que o energiza, o que o trava e como você pode ajudá-lo.',
+    impacto: 'Redução de turnover, aumento do engajamento e melhoria do desempenho sustentável dos vendedores que se sentem vistos e desenvolvidos.',
+    pdiComp: 'Desenvolvimento de Pessoas e Gestão Humanizada',
+    pdiAcao: 'Implante one-on-ones quinzenais com cada membro da equipe. Use o modelo CHA (Conhecimento, Habilidade, Atitude) para estruturar o PDI de cada vendedor. Leia "Descubra Seus Pontos Fortes" de Clifton.',
+    pdiAferir: 'Número de one-on-ones realizados. Satisfação da equipe medida por pesquisa interna. Evolução dos PDIs dos vendedores.',
+    pdiPrazo: '60 dias para estabelecer a rotina e os primeiros PDIs da equipe.',
+    aba4Acao: 'Identifique o vendedor com mais talento de Desenvolvimento ou Empatia e peça que compartilhe como ele percebe o estado emocional da equipe. Use esse input para ajustar sua gestão.',
+    aba4Quando: 'Nos próximos 7 dias.'
+  },
+  PE: {
+    nome: 'Pensamento Estratégico',
+    fazHoje: 'As decisões comerciais tendem a ser mais táticas e reativas do que estratégicas. Há mais resposta ao urgente do que antecipação do importante.',
+    fazerDif: 'Reserve 2 horas semanais de "tempo estratégico" — sem reuniões ou interrupções — para analisar dados, tendências e avaliar se a estratégia comercial atual ainda está correta.',
+    impacto: 'Decisões mais embasadas, menos retrabalho e maior capacidade de antecipar movimentos de mercado antes dos concorrentes.',
+    pdiComp: 'Análise Comercial e Tomada de Decisão Estratégica',
+    pdiAcao: 'Implante um painel de indicadores (dashboard) com os KPIs comerciais mais relevantes. Crie o hábito de revisão semanal dos dados antes das reuniões de pipeline. Aprenda análise de cohort e LTV.',
+    pdiAferir: 'Qualidade e precisão das previsões de vendas. Número de decisões estratégicas tomadas com base em dados vs. intuição.',
+    pdiPrazo: '30 dias para montar o dashboard. 60 dias para estabelecer o hábito.',
+    aba4Acao: 'Identifique o membro da equipe com talento Analítico ou Estratégico mais desenvolvido e delegue a ele a compilação semanal dos dados comerciais para a reunião de pipeline.',
+    aba4Quando: 'Na próxima semana.'
+  }
+};
+
+// ══════════════════════════════════════════════
+// ESTADO DA APLICAÇÃO
+// ══════════════════════════════════════════════
+let estado = {
+  perfil: { nome:'', empresa:'', cargo:'', setor:'', equipe:'', tempo:'', data:'' },
+  respostas: {},
+  scores: { EX:0, IN:0, RE:0, PE:0 },
+  talentosSelected: [],
+  eficacia: 0,
+  balde: 0,
+  secaoAtual: 0
+};
+
+const STORAGE_KEY = 'rgc_f61';
+
+function salvarEstado() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(estado)); } catch(e){}
+}
+
+function carregarEstado() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    if (s) { const d = JSON.parse(s); if(d) Object.assign(estado, d); }
+  } catch(e){}
+}
+
+// ══════════════════════════════════════════════
+// NAVEGAÇÃO
+// ══════════════════════════════════════════════
+function goToPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('mtab-'+id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════════
+// PÁGINA 1 → 2
+// ══════════════════════════════════════════════
+function iniciarQuestionario() {
+  estado.perfil = {
+    nome: document.getElementById('f-nome').value.trim(),
+    empresa: document.getElementById('f-empresa').value.trim(),
+    cargo: document.getElementById('f-cargo').value.trim(),
+    setor: document.getElementById('f-setor').value.trim(),
+    equipe: document.getElementById('f-equipe').value,
+    tempo: document.getElementById('f-tempo').value,
+    data: document.getElementById('f-data').value.trim()
+  };
+  if (!estado.perfil.nome) { alert('Por favor, informe seu nome antes de iniciar.'); return; }
+  estado.secaoAtual = 0;
+  renderSecao();
+  goToPage('page-quest');
+}
+
+// ══════════════════════════════════════════════
+// QUESTIONÁRIO
+// ══════════════════════════════════════════════
+const LABELS = ['Nunca me identifico','Raramente','Às vezes','Com frequência','Sempre me identifico'];
+
+function renderSecao() {
+  const sec = SECOES[estado.secaoAtual];
+  const total = SECOES.length;
+  document.getElementById('prog-section-name').textContent = `${sec.nome} — Seção ${estado.secaoAtual+1} de ${total}`;
+  document.getElementById('prog-step').textContent = `${sec.questoes.length} questões`;
+  document.getElementById('progress-fill').style.width = `${((estado.secaoAtual+1)/total)*100}%`;
+  const tagClasses = { EX:'tag-EX', IN:'tag-IN', RE:'tag-RE', PE:'tag-PE', GC:'tag-EX' };
+
+  let hdr = `<span class="q-tag ${tagClasses[sec.id] || 'tag-EX'}">${sec.id}</span> ${sec.nome}`;
+  if(sec.desc) hdr += `<span style="font-size:12px;color:var(--gray-dark);font-weight:400;"> — ${sec.desc}</span>`;
+  document.getElementById('section-header-label').innerHTML = hdr;
+
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  sec.questoes.forEach((q, qi) => {
+    const val = estado.respostas[q.id] || 0;
+    const opts = [1,2,3,4,5].map(n => `<div class="q-opt ${val===n?'selected':''}" onclick="selecionarResposta('${q.id}',${n},this)"><span class="opt-num">${n}</span><span class="opt-label">${LABELS[n-1]}</span></div>`).join('');
+    container.innerHTML += `<div class="question-block"><span class="q-tag ${tagClasses[sec.id] || 'tag-EX'}">${q.tag}</span><div class="q-text"><strong>${estado.secaoAtual*6+qi+1}.</strong> ${q.txt}</div><div class="q-scale">${opts}</div></div>`;
+  });
+  document.getElementById('btn-prev').style.visibility = estado.secaoAtual === 0 ? 'hidden' : 'visible';
+  document.getElementById('btn-next').textContent = estado.secaoAtual === SECOES.length-1 ? 'Ver Talentos →' : 'Próxima Seção →';
+}
+
+function selecionarResposta(id, val, el) {
+  estado.respostas[id] = val;
+  el.closest('.q-scale').querySelectorAll('.q-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  salvarEstado();
+}
+
+function nextSection() {
+  const sec = SECOES[estado.secaoAtual];
+  const unanswered = sec.questoes.filter(q => !estado.respostas[q.id]);
+  if (unanswered.length > 0) { alert(`Por favor, responda todas as ${unanswered.length} questão(ões) desta seção antes de avançar.`); return; }
+  if (estado.secaoAtual < SECOES.length - 1) {
+    estado.secaoAtual++; renderSecao();
+  } else {
+    calcularScores(); renderTalentos(); goToPage('page-talents');
+  }
+}
+
+function prevSection() {
+  if (estado.secaoAtual > 0) { estado.secaoAtual--; renderSecao(); }
+}
+
+function calcularScores() {
+  const totais = { EX:0, IN:0, RE:0, PE:0 };
+  const counts = { EX:0, IN:0, RE:0, PE:0 };
+  SECOES.forEach(sec => {
+    sec.questoes.forEach(q => {
+      const v = estado.respostas[q.id] || 0;
+      const dom = q.tag === 'GC' ? (sec.id === 'GC' ? null : sec.id) : q.tag;
+      if(dom && totais[dom] !== undefined) { totais[dom] += v; counts[dom]++; }
+    });
+  });
+  // Questões GC distribuídas por tag
+  SECOES[4].questoes.forEach(q => {
+    const v = estado.respostas[q.id] || 0;
+    if(totais[q.tag] !== undefined) { totais[q.tag] += v; counts[q.tag]++; }
+  });
+  Object.keys(totais).forEach(k => { estado.scores[k] = counts[k] > 0 ? totais[k] / counts[k] : 0; });
+}
+
+// ══════════════════════════════════════════════
+// PÁGINA 2B: TALENTOS
+// ══════════════════════════════════════════════
+function renderTalentos() {
+  const container = document.getElementById('talents-container');
+  const domains = [
+    { id:'EX', nome:'Execução', desc:'Transformar planos em resultados concretos' },
+    { id:'IN', nome:'Influência', desc:'Liderar, convencer e gerar impacto' },
+    { id:'RE', nome:'Relacionamento', desc:'Criar vínculos e manter coesão' },
+    { id:'PE', nome:'Pensamento Estratégico', desc:'Analisar, planejar e antecipar' }
+  ];
+  container.innerHTML = '';
+  domains.forEach(dom => {
+    const talentos = TALENTOS.filter(t => t.domain === dom.id);
+    const cards = talentos.map(t => {
+      const sel = estado.talentosSelected.includes(t.id);
+      const comm = t.commercial ? `<div class="commercial-badge">Relevância Comercial</div>` : '';
+      return `<div class="talent-card ${t.commercial?'commercial':''} ${sel?'selected':''}" id="tc-${t.id}" onclick="toggleTalento('${t.id}',this)">${comm}<div class="tc-name">${t.pt}</div><div class="tc-pt">${t.en}</div><div class="tc-desc">${t.desc}</div></div>`;
+    }).join('');
+    container.innerHTML += `<div class="domain-section"><div class="domain-header ${dom.id}"><span class="domain-badge ${dom.id}">${dom.id}</span><span class="domain-title">${dom.nome}</span><span class="domain-desc">${dom.desc}</span></div><div class="talents-grid">${cards}</div></div>`;
+  });
+}
+
+function toggleTalento(id, el) {
+  const idx = estado.talentosSelected.indexOf(id);
+  if (idx > -1) {
+    estado.talentosSelected.splice(idx, 1);
+    el.classList.remove('selected');
+  } else {
+    if (estado.talentosSelected.length >= 5) { alert('Selecione no máximo 5 talentos. Desmarque um antes de selecionar outro.'); return; }
+    estado.talentosSelected.push(id);
+    el.classList.add('selected');
+  }
+  document.getElementById('talent-count').textContent = estado.talentosSelected.length;
+  document.getElementById('btn-talents-next').disabled = estado.talentosSelected.length !== 5;
+  salvarEstado();
+}
+
+function avancarParaEficacia() {
+  if (estado.talentosSelected.length !== 5) { alert('Selecione exatamente 5 talentos para continuar.'); return; }
+  renderEficacia();
+  goToPage('page-eficacia');
+}
+
+// ══════════════════════════════════════════════
+// PÁGINA 2C: AUTOEFICÁCIA
+// ══════════════════════════════════════════════
+function renderEficacia() {
+  const scale = document.getElementById('ef-scale');
+  scale.innerHTML = '';
+  for(let i=1;i<=10;i++) {
+    const sel = estado.eficacia === i;
+    scale.innerHTML += `<div class="ef-opt ${sel?'selected':''}" onclick="selecionarEficacia(${i},this)">${i}</div>`;
+  }
+  atualizarInterpEficacia();
+  // Restaurar balde
+  if(estado.balde > 0) {
+    document.querySelectorAll('#balde-scale .q-opt').forEach((el, idx) => {
+      if(idx+1 === estado.balde) el.classList.add('selected');
+    });
+  }
+}
+
+function selecionarEficacia(val, el) {
+  estado.eficacia = val;
+  document.querySelectorAll('.ef-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  atualizarInterpEficacia();
+  salvarEstado();
+}
+
+function atualizarInterpEficacia() {
+  const v = estado.eficacia;
+  const el = document.getElementById('ef-interp');
+  if(!v) { el.textContent = ''; return; }
+  if(v <= 4) el.textContent = 'Sua atenção está excessivamente voltada para corrigir lacunas. Você pode estar tentando ser quem não é — em vez de potencializar quem você já é.';
+  else if(v <= 6) el.textContent = 'Há clareza parcial sobre seus talentos. O desenvolvimento focado nos seus pontos fortes vai ampliar significativamente sua confiança na entrega.';
+  else if(v <= 8) el.textContent = 'Você está alinhado com seus talentos naturais. Seu próximo passo é blindar essa estratégia e delegar sistematicamente o que está fora do seu domínio de excelência.';
+  else el.textContent = 'Você opera em alta autoeficácia — ciente dos seus pontos fortes e confiante na sua capacidade de entrega. Mantenha o foco e invista em lapidação contínua.';
+}
+
+function selecionarBalde(val, el) {
+  estado.balde = val;
+  document.querySelectorAll('#balde-scale .q-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  salvarEstado();
+}
+
+// ══════════════════════════════════════════════
+// PÁGINA 3: RESULTADOS
+// ══════════════════════════════════════════════
+function gerarResultados() {
+  if (!estado.eficacia) { alert('Por favor, indique sua autoeficácia antes de continuar.'); return; }
+  if (!estado.balde) { alert('Por favor, responda a questão sobre reconhecimento da equipe.'); return; }
+  goToPage('page-results');
+  renderDiagnostico();
+  renderFazHoje();
+  renderPDI();
+  renderComplementaridade();
+  salvarEstado();
+}
+
+function renderDiagnostico() {
+  const s = estado.scores;
+  const domOrder = ['EX','IN','RE','PE'];
+  const domNomes = { EX:'Execução', IN:'Influência', RE:'Relacionamento', PE:'Pensamento Estratégico' };
+  const niveis = (v) => v >= 4.5 ? 'Excelente' : v >= 3.5 ? 'Desenvolvido' : v >= 2.5 ? 'Regular' : 'A potencializar';
+
+  // Hero cards
+  const hero = document.getElementById('diag-hero');
+  hero.innerHTML = domOrder.map(d => `<div class="hero-card ${d}"><div class="hc-score">${s[d].toFixed(1)}</div><div class="hc-label">${domNomes[d]}</div><div class="hc-sub">${niveis(s[d])}</div></div>`).join('');
+
+  // Alerta desequilíbrio
+  const vals = domOrder.map(d => s[d]);
+  const max = Math.max(...vals); const min = Math.min(...vals);
+  const alertEl = document.getElementById('alert-desequil');
+  if(max - min > 0.8) {
+    const domMax = domOrder[vals.indexOf(max)]; const domMin = domOrder[vals.indexOf(min)];
+    alertEl.innerHTML = `<div class="alert-coral">Desequilíbrio identificado entre seus domínios: <strong>${domNomes[domMax]} (${max.toFixed(1)})</strong> vs. <strong>${domNomes[domMin]} (${min.toFixed(1)})</strong>. Estratégia recomendada: amplifique ${domNomes[domMax]} e construa parcerias de complementaridade para ${domNomes[domMin]}.</div>`;
+  } else { alertEl.innerHTML = ''; }
+
+  // Top 5 chips
+  const top5 = document.getElementById('top5-chips');
+  top5.innerHTML = estado.talentosSelected.map((id, i) => {
+    const t = TALENTOS.find(x => x.id === id);
+    return `<div class="top-talent-chip ${t.domain}"><div class="ttc-rank">Talento ${i+1}</div><div class="ttc-name">${t.pt}</div><div class="ttc-domain">${domNomes[t.domain]}</div></div>`;
+  }).join('');
+
+  // Perfil interpretativo
+  const perfil = definirPerfil(s, estado.talentosSelected);
+  document.getElementById('perfil-block-wrap').innerHTML = `<div class="perfil-block"><div class="perfil-name">${perfil.nome}</div><div class="perfil-desc">${perfil.desc}</div></div>`;
+
+  // Radar
+  setTimeout(() => drawRadar(), 100);
+
+  // Narrativa
+  const domSorted = [...domOrder].sort((a,b) => s[b]-s[a]);
+  const domFraco = domSorted[domSorted.length-1];
+  const top5Nomes = estado.talentosSelected.map(id => TALENTOS.find(x=>x.id===id).pt).join(', ');
+  document.getElementById('narrative-content').innerHTML = `<div class="narrative">
+    <p>Seus domínios mais fortes são <strong>${domNomes[domSorted[0]]}</strong> (${s[domSorted[0]].toFixed(1)}) e <strong>${domNomes[domSorted[1]]}</strong> (${s[domSorted[1]].toFixed(1)}), indicando onde você naturalmente entrega mais valor como gestor comercial. São nesses domínios que você deve investir para alcançar a excelência — não gastar energia tentando nivelar o que é mais fraco.</p>
+    <p>Seus 5 talentos dominantes identificados — <strong>${top5Nomes}</strong> — formam seu perfil de excelência. A equação de Clifton é clara: <strong>Talento × (Conhecimento + Habilidade) = Ponto Forte</strong>. O PDI desta ferramenta foi construído para lapidá-los, não para corrigi-los.</p>
+    <p>Seu domínio com menor expressão é <strong>${domNomes[domFraco]}</strong> (${s[domFraco].toFixed(1)}). A estratégia não é corrigi-lo obsessivamente — é construir parcerias de complementaridade com membros da equipe que têm talentos dominantes nessa área, conforme detalhado na Aba 04.</p>
+    ${gerarOrientacaoEstrategica(s, domSorted)}
+  </div>`;
+
+  // Autoeficácia
+  const efTexto = estado.eficacia >= 8 ? 'alta autoeficácia — você está alinhado com seus talentos e confiante na entrega' : estado.eficacia >= 6 ? 'autoeficácia em desenvolvimento — há clareza crescente sobre seus pontos fortes' : 'oportunidade de ampliar a confiança — foco nos pontos fortes vai acelerar esse processo';
+  const baldeTexto = estado.balde >= 4 ? 'Você reconhece sistematicamente os pontos fortes da equipe — um ciclo virtuoso de alta performance está em construção.' : estado.balde === 3 ? 'O reconhecimento existe, mas ainda de forma inconsistente. Torná-lo sistemático multiplica o engajamento.' : 'Há oportunidade de ampliar o reconhecimento dos pontos fortes da equipe — o impacto na motivação e no resultado é imediato.';
+  document.getElementById('eficacia-result-block').innerHTML = `<div class="eficacia-result"><div class="ef-res-label">Autoeficácia · Score ${estado.eficacia}/10</div><div class="ef-res-score">${estado.eficacia}/10</div><div class="ef-res-text">Você demonstra ${efTexto}. ${baldeTexto}</div></div>`;
+}
+
+function gerarOrientacaoEstrategica(s, domSorted) {
+  const domNomes = { EX:'Execução', IN:'Influência', RE:'Relacionamento', PE:'Pensamento Estratégico' };
+  const d1 = domSorted[0]; const d2 = domSorted[domSorted.length-1];
+  const combos = {
+    'EX-IN': 'Sua combinação de Execução e Influência é a espinha dorsal do gestor comercial de resultado. Você lidera pelo exemplo e faz acontecer. O risco está em subestimar o impacto do lado relacional e estratégico — equilibre a pressão por resultado com espaço para desenvolvimento das pessoas.',
+    'EX-RE': 'Você entrega resultados e mantém a equipe coesa. Mas cuidado para não se perder nos vínculos a ponto de evitar conversas difíceis sobre performance.',
+    'EX-PE': 'Você pensa antes de agir e executa com precisão. Uma das combinações mais valiosas para gestores de ciclos longos e negociações complexas.',
+    'IN-RE': 'Você inspira e conecta — um perfil de liderança humanizada de alto impacto. Fortaleça a disciplina de execução para que a energia gerada se converta em resultado concreto.',
+    'IN-PE': 'Você visiona e convence. O desafio é transformar estratégia e influência em processo estruturado que a equipe consiga replicar.',
+    'RE-PE': 'Você pensa fundo e cuida das pessoas. Amplie sua presença e assertividade nos momentos de liderança — sua força silenciosa precisa ganhar voz.'
+  };
+  const key = [d1,domSorted[1]].sort().join('-');
+  const texto = combos[key] || `Seus domínios dominantes — ${domNomes[d1]} e ${domNomes[domSorted[1]]} — definem onde você cria mais valor. Invista em desenvolvê-los ainda mais, construindo parcerias para complementar ${domNomes[d2]}.`;
+  return `<p><strong>Orientação estratégica:</strong> ${texto}</p>`;
+}
+
+function definirPerfil(s, talentos) {
+  const domOrder = ['EX','IN','RE','PE'];
+  const sorted = [...domOrder].sort((a,b) => s[b]-s[a]);
+  const d1 = sorted[0]; const d2 = sorted[1];
+  const perfis = {
+    'EX-IN': { nome:'Executor Influente', desc:'Você combina a capacidade de fazer acontecer com a força de mobilizar pessoas em direção ao resultado. É o gestor que define o ritmo e o padrão de desempenho da equipe comercial — pelo exemplo na entrega e pela clareza na comunicação do que é esperado. Sua gestão é direta, orientada a resultado e dotada de uma presença que energiza.' },
+    'EX-RE': { nome:'Executor Relacional', desc:'Você entrega resultado sem abrir mão das pessoas. Combina disciplina e foco com uma gestão empática que mantém a equipe coesa e motivada. É o gestor que cobra com cuidado — que sabe que resultado sustentável passa pelo desenvolvimento genuíno de cada vendedor.' },
+    'EX-PE': { nome:'Executor Estratégico', desc:'Você planeja com profundidade e executa com precisão. Antes de tomar uma decisão, analisa. Depois de analisar, age. Esta combinação é especialmente poderosa em ciclos de vendas longos e complexos, onde a consistência do processo faz toda a diferença.' },
+    'IN-RE': { nome:'Líder Humanizador', desc:'Você inspira e conecta. Tem a capacidade rara de elevar o nível de confiança e engajamento da equipe enquanto comunica a visão com clareza. Sua liderança cria ambientes de alta performance porque as pessoas acreditam em você e se sentem vistas.' },
+    'IN-EX': { nome:'Executor Influente', desc:'Você combina a capacidade de fazer acontecer com a força de mobilizar pessoas em direção ao resultado. É o gestor que define o ritmo e o padrão de desempenho da equipe comercial — pelo exemplo na entrega e pela clareza na comunicação do que é esperado.' },
+    'IN-PE': { nome:'Estrategista Influente', desc:'Você visiona o futuro e convence as pessoas a persegui-lo. Traduz cenários complexos em narrativas inspiradoras e mobiliza a equipe em torno de uma direção clara. Sua liderança é intelectualmente rica e emocionalmente envolvente.' },
+    'RE-PE': { nome:'Estrategista Relacional', desc:'Você pensa profundamente e cuida das pessoas com igual profundidade. Sua liderança é reflexiva, empática e de longo prazo — constrói equipes que se mantêm coesas mesmo sob pressão porque foram desenvolvidas com intencionalidade.' },
+    'RE-EX': { nome:'Executor Relacional', desc:'Você entrega resultado sem abrir mão das pessoas. Combina disciplina e foco com uma gestão empática que mantém a equipe coesa e motivada.' },
+    'RE-IN': { nome:'Líder Humanizador', desc:'Você inspira e conecta. Tem a capacidade rara de elevar o nível de confiança e engajamento da equipe enquanto comunica a visão com clareza.' },
+    'PE-EX': { nome:'Executor Estratégico', desc:'Você planeja com profundidade e executa com precisão. Esta combinação é especialmente poderosa em ciclos de vendas longos e complexos.' },
+    'PE-IN': { nome:'Estrategista Influente', desc:'Você visiona o futuro e convence as pessoas a persegui-lo. Traduz cenários complexos em narrativas inspiradoras e mobiliza a equipe em torno de uma direção clara.' },
+    'PE-RE': { nome:'Estrategista Relacional', desc:'Você pensa profundamente e cuida das pessoas com igual profundidade. Sua liderança é reflexiva, empática e de longo prazo.' }
+  };
+  return perfis[`${d1}-${d2}`] || { nome:'Gestor de Alta Performance', desc:'Seu perfil de talentos revela um gestor comercial com múltiplas forças distribuídas. Invista na lapidação intencional dos seus talentos dominantes e construa parcerias estratégicas para os domínios de menor expressão.' };
+}
+
+function drawRadar() {
+  const canvas = document.getElementById('radar-chart');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const s = estado.scores;
+  const W = canvas.width; const H = canvas.height;
+  const cx = W/2; const cy = H/2; const R = Math.min(W,H)/2 - 60;
+  const labels = ['Execução','Influência','Relacionamento','Pensamento\nEstratégico'];
+  const values = [s.EX, s.IN, s.RE, s.PE];
+  const colors = ['#2563a8','#e05c3a','#1d9e8f','#7c3aed'];
+  const n = 4;
+  ctx.clearRect(0,0,W,H);
+  const angles = labels.map((_,i) => (i/n)*2*Math.PI - Math.PI/2);
+
+  // Grid
+  for(let lv=1;lv<=5;lv++) {
+    ctx.beginPath();
+    angles.forEach((a,i) => {
+      const r = (lv/5)*R; const x = cx+r*Math.cos(a); const y = cy+r*Math.sin(a);
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.closePath();
+    ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; ctx.stroke();
+  }
+  // Axes
+  angles.forEach(a => {
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+R*Math.cos(a), cy+R*Math.sin(a));
+    ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; ctx.stroke();
+  });
+  // Data
+  ctx.beginPath();
+  angles.forEach((a,i) => {
+    const r = (values[i]/5)*R; const x = cx+r*Math.cos(a); const y = cy+r*Math.sin(a);
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(29,158,143,0.15)'; ctx.fill();
+  ctx.strokeStyle = '#1d9e8f'; ctx.lineWidth = 2.5; ctx.stroke();
+  // Points
+  angles.forEach((a,i) => {
+    const r = (values[i]/5)*R; const x = cx+r*Math.cos(a); const y = cy+r*Math.sin(a);
+    ctx.beginPath(); ctx.arc(x,y,5,0,2*Math.PI);
+    ctx.fillStyle = colors[i]; ctx.fill();
+    ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+  });
+  // Labels
+  ctx.font = '12px Source Sans 3, sans-serif'; ctx.fillStyle = '#1a2744'; ctx.textAlign = 'center';
+  angles.forEach((a,i) => {
+    const r = R + 36; let x = cx+r*Math.cos(a); let y = cy+r*Math.sin(a);
+    const lines = labels[i].split('\n');
+    lines.forEach((line,li) => { ctx.fillText(line, x, y + li*16); });
+    // Value
+    const rv = (values[i]/5)*R; const vx = cx+rv*Math.cos(a)+16*Math.sign(Math.cos(a)||0.01); const vy = cy+rv*Math.sin(a)+16*Math.sign(Math.sin(a)||0.01);
+    ctx.font = 'bold 11px Source Sans 3, sans-serif'; ctx.fillStyle = colors[i];
+    ctx.fillText(values[i].toFixed(1), vx, vy);
+    ctx.font = '12px Source Sans 3, sans-serif'; ctx.fillStyle = '#1a2744';
+  });
+}
+
+// ══════════════════════════════════════════════
+// ABA 02: FAZ HOJE
+// ══════════════════════════════════════════════
+function renderFazHoje() {
+  document.getElementById('fhfd-nome').textContent = estado.perfil.nome;
+  const s = estado.scores;
+  const domOrder = ['EX','IN','RE','PE'];
+  const sorted = [...domOrder].sort((a,b) => s[a]-s[b]);
+  const fracos = sorted.slice(0,2);
+  const body = document.getElementById('fhfd-body');
+  body.innerHTML = '';
+  fracos.forEach(d => {
+    const r = RECOM[d];
+    body.innerHTML += `<tr><td><textarea rows="3">${r.fazHoje}</textarea></td><td><textarea rows="3">${r.fazerDif}</textarea></td><td><textarea rows="3">${r.impacto}</textarea></td></tr>`;
+  });
+  // Linha sobre talentos subutilizados
+  const top5Nomes = estado.talentosSelected.map(id => TALENTOS.find(x=>x.id===id).pt).slice(0,3).join(', ');
+  body.innerHTML += `<tr><td><textarea rows="3">Talentos como ${top5Nomes} são usados de forma reativa — aparecem quando o contexto exige, não como estratégia consciente de gestão.</textarea></td><td><textarea rows="3">Mapeie quais situações do seu dia a dia permitem que seus talentos dominantes operem com mais liberdade. Reposicione sua agenda para ampliar esses momentos.</textarea></td><td><textarea rows="3">Gestão mais fluída, com menos esforço e mais resultado — porque você estará operando na sua zona de talento natural.</textarea></td></tr>`;
+}
+
+// ══════════════════════════════════════════════
+// ABA 03: PDI
+// ══════════════════════════════════════════════
+function renderPDI() {
+  document.getElementById('pdi-nome').value = estado.perfil.nome;
+  document.getElementById('pdi-periodo').value = '90 dias';
+  const s = estado.scores;
+  const domOrder = ['EX','IN','RE','PE'];
+  const sorted = [...domOrder].sort((a,b) => s[b]-s[a]);
+  const domNomes = { EX:'Execução', IN:'Influência', RE:'Relacionamento', PE:'Pensamento Estratégico' };
+  const top5Nomes = estado.talentosSelected.map(id => TALENTOS.find(x=>x.id===id).pt).join(', ');
+
+  document.getElementById('pdi-objetivo').value = `Potencializar os talentos dominantes identificados — ${top5Nomes} — transformando-os em pontos fortes consolidados através do investimento em conhecimento e habilidade. Não corrigir fraquezas, mas lapidá-las através de parcerias estratégicas na equipe.`;
+  document.getElementById('pdi-estrategia').value = `Priorizar o desenvolvimento nos domínios de ${domNomes[sorted[0]]} e ${domNomes[sorted[1]]}, onde há maior potencial de excelência. Para ${domNomes[sorted[sorted.length-1]]}, construir complementaridade com a equipe conforme mapeado na Aba 04.`;
+
+  const fracos = [...sorted].reverse().slice(0,2);
+  const comps = document.getElementById('pdi-comps');
+  comps.innerHTML = '';
+  fracos.forEach((d, i) => {
+    const r = RECOM[d];
+    comps.innerHTML += `<div class="pdi-comp">
+      <div class="pdi-comp-header ${d}"><span class="pdi-comp-num">Competência ${i+1}</span><span class="pdi-comp-name">${r.pdiComp}</span><span class="q-tag tag-${d}" style="margin-left:auto;font-size:9px;">${d}</span></div>
+      <div class="pdi-comp-body">
+        <div class="pdi-comp-grid">
+          <div><div class="pdi-field-label">O que desenvolver</div><textarea rows="3">${r.pdiComp}</textarea></div>
+          <div><div class="pdi-field-label">Como desenvolver</div><textarea rows="3">${r.pdiAcao}</textarea></div>
+          <div><div class="pdi-field-label">Como aferir o progresso</div><textarea rows="3">${r.pdiAferir}</textarea></div>
+          <div><div class="pdi-field-label">Prazo</div><input type="text" value="${r.pdiPrazo}"></div>
+        </div>
+        <div>
+          <div class="pdi-field-label">Nível atual → Nível alvo</div>
+          <div class="progress-slider-wrap">
+            <span>Agora: ${s[d].toFixed(1)}</span>
+            <div class="slider-track"><div class="slider-fill" style="width:${(s[d]/5)*100}%"></div></div>
+            <span>Alvo: 4,0</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+  // 3ª competência — potencializar domínio mais forte
+  const domForte = sorted[0]; const r = RECOM[domForte];
+  comps.innerHTML += `<div class="pdi-comp">
+    <div class="pdi-comp-header ${domForte}"><span class="pdi-comp-num">Competência 3</span><span class="pdi-comp-name">Lapidação do Domínio de Excelência — ${domNomes[domForte]}</span><span class="q-tag tag-${domForte}" style="margin-left:auto;font-size:9px;">${domForte}</span></div>
+    <div class="pdi-comp-body">
+      <div class="pdi-comp-grid">
+        <div><div class="pdi-field-label">O que desenvolver</div><textarea rows="3">Levar seu domínio de ${domNomes[domForte]} do nível Bom para Excelente — transformá-lo em vantagem competitiva reconhecida pela equipe, clientes e liderança.</textarea></div>
+        <div><div class="pdi-field-label">Como desenvolver</div><textarea rows="3">Busque projetos, situações e desafios que exijam ao máximo seus talentos em ${domNomes[domForte]}. Compartilhe sua forma de pensar com a equipe. Torne-se referência nesse domínio.</textarea></div>
+        <div><div class="pdi-field-label">Como aferir o progresso</div><textarea rows="3">Reconhecimento da equipe e da liderança. Qualidade dos resultados nos projetos onde você aplicou seu talento dominante. Autoavaliação trimestral.</textarea></div>
+        <div><div class="pdi-field-label">Prazo</div><input type="text" value="Contínuo — revisão a cada 90 dias."></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+// ABA 04: COMPLEMENTARIDADE
+// ══════════════════════════════════════════════
+function renderComplementaridade() {
+  const s = estado.scores;
+  const domOrder = ['EX','IN','RE','PE'];
+  const sorted = [...domOrder].sort((a,b) => s[a]-s[b]);
+  const fracos = sorted.slice(0,2);
+  const domNomes = { EX:'Execução', IN:'Influência', RE:'Relacionamento', PE:'Pensamento Estratégico' };
+  const container = document.getElementById('comp-rows');
+  container.innerHTML = '';
+  fracos.forEach((d, i) => {
+    const r = RECOM[d];
+    const talentosDom = TALENTOS.filter(t => t.domain === d && t.commercial).map(t => t.pt).slice(0,4).join(', ');
+    container.innerHTML += `<div class="comp-row">
+      <div class="comp-row-header">
+        <span class="comp-domain-badge ${d}">${d}</span>
+        <span class="comp-row-title">Gap: ${domNomes[d]}</span>
+      </div>
+      <p style="font-size:12px;color:var(--slate);margin-bottom:12px;">Talentos relevantes deste domínio: <strong>${talentosDom}</strong></p>
+      <div class="comp-row-grid">
+        <div class="comp-field"><label>Membro da equipe com força neste domínio</label><input type="text" placeholder="Nome do colaborador" value=""></div>
+        <div class="comp-field"><label>Talento(s) dominante(s) identificado(s)</label><input type="text" placeholder="Ex: Analítico, Estratégico..." value=""></div>
+        <div class="comp-field"><label>Ação de colaboração esta semana</label><textarea placeholder="${r.aba4Acao}" rows="3"></textarea></div>
+      </div>
+      <div style="margin-top:12px;">
+        <div class="comp-field"><label>Quando e como</label><input type="text" value="${r.aba4Quando}"></div>
+      </div>
+    </div>`;
+  });
+  // Linha de síntese
+  container.innerHTML += `<div class="comp-row" style="background:var(--teal-light);border-color:var(--teal);">
+    <div class="comp-row-header"><span class="comp-row-title" style="color:var(--teal);font-weight:700;">Reflexão de Liderança — A Equação da Complementaridade</span></div>
+    <div class="comp-row-grid">
+      <div class="comp-field"><label>O que você delega conscientemente</label><textarea rows="3" placeholder="Liste as tarefas que estão fora do seu domínio de excelência e que podem ser melhor executadas por outros."></textarea></div>
+      <div class="comp-field"><label>O que você potencializa nos outros</label><textarea rows="3" placeholder="Liste como você ativamente identifica e usa os pontos fortes dos membros da equipe no dia a dia comercial."></textarea></div>
+      <div class="comp-field"><label>Próximo passo concreto</label><textarea rows="3" placeholder="Uma ação específica para construir uma equipe mais complementar nos próximos 30 dias."></textarea></div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+// EXPORTAÇÃO PDF
+// ══════════════════════════════════════════════
+function exportSection(tipo) {
+  const s = estado.scores;
+  const p = estado.perfil;
+  const domOrder = ['EX','IN','RE','PE'];
+  const domNomes = { EX:'Execução', IN:'Influência', RE:'Relacionamento', PE:'Pensamento Estratégico' };
+  const sorted = [...domOrder].sort((a,b) => s[b]-s[a]);
+  const fracos = [...domOrder].sort((a,b) => s[a]-s[b]).slice(0,2);
+
+  function header(titulo) {
+    return `<div style="background:#1a2744;color:white;padding:14px 24px;border-radius:4px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+      <div><div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#1d9e8f;margin-bottom:4px;">FERRAMENTA 6.1 · RECRIAR A GESTÃO COMERCIAL</div><div style="font-size:16px;font-weight:700;">${titulo}</div></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);text-align:right;">${p.nome}<br>${p.empresa}<br>${p.data||''}</div>
+    </div>`;
+  }
+
+  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:'Source Sans 3',sans-serif;color:#1a2744;margin:0;padding:0;font-size:13px;line-height:1.6;}
+    .page-wrap{width:210mm;min-height:297mm;padding:18mm 18mm 22mm;margin:0 auto;box-sizing:border-box;}
+    table{width:100%;border-collapse:collapse;}th{background:#1a2744;color:white;padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;}td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top;}
+    .chip{display:inline-block;padding:2px 8px;border-radius:2px;font-size:10px;font-weight:700;}
+    .chip-EX{background:#eff6ff;color:#2563a8;}.chip-IN{background:#fdf1ee;color:#e05c3a;}.chip-RE{background:#e8f7f5;color:#1d9e8f;}.chip-PE{background:#f5f3ff;color:#7c3aed;}
+    @media print{@page{margin:0;size:A4 portrait;}.no-print{display:none;}}
+  </style></head><body>
+  <div style="background:#1a2744;color:white;padding:10px 20px;font-size:12px;text-align:center;" class="no-print">
+    Para salvar como PDF: Ctrl+P → Destino: Salvar como PDF → Margens: Nenhuma → Ativar "Gráficos de fundo"
+  </div><div class="page-wrap">`;
+
+  if(tipo === 'diagnostico' || tipo === 'todos') {
+    html += header('Diagnóstico — Perfil de Pontos Fortes');
+    html += `<h3 style="font-family:'Playfair Display',serif;margin-bottom:12px;">Scores por Domínio</h3>
+    <table><thead><tr><th>Domínio</th><th>Score</th><th>Nível</th></tr></thead><tbody>
+    ${domOrder.map(d => {
+      const v = s[d]; const niv = v>=4.5?'Excelente':v>=3.5?'Desenvolvido':v>=2.5?'Regular':'A potencializar';
+      return `<tr><td><span class="chip chip-${d}">${d}</span> ${domNomes[d]}</td><td><strong>${v.toFixed(1)}</strong>/5,0</td><td>${niv}</td></tr>`;
+    }).join('')}
+    </tbody></table>
+    <br><h3 style="font-family:'Playfair Display',serif;margin-bottom:12px;">5 Talentos Dominantes</h3>
+    <table><thead><tr><th>#</th><th>Talento</th><th>Domínio</th><th>Relevância Comercial</th></tr></thead><tbody>
+    ${estado.talentosSelected.map((id,i) => {
+      const t = TALENTOS.find(x=>x.id===id);
+      return `<tr><td>${i+1}</td><td><strong>${t.pt}</strong> (${t.en})</td><td><span class="chip chip-${t.domain}">${t.domain}</span></td><td>${t.commercial?'Alta':'Moderada'}</td></tr>`;
+    }).join('')}
+    </tbody></table>
+    <br><p><strong>Autoeficácia:</strong> ${estado.eficacia}/10 · <strong>Reconhecimento da equipe:</strong> ${estado.balde}/5</p>`;
+  }
+
+  if(tipo === 'fazdiferente' || tipo === 'todos') {
+    if(tipo==='todos') html += `<div style="page-break-before:always;"></div>`;
+    html += header('Faz Hoje / Fazer Diferente');
+    html += `<table><thead><tr><th>Faz Hoje</th><th>Fazer Diferente</th><th>Impacto Esperado</th></tr></thead><tbody>
+    ${fracos.map(d => { const r=RECOM[d]; return `<tr><td>${r.fazHoje}</td><td>${r.fazerDif}</td><td>${r.impacto}</td></tr>`; }).join('')}
+    </tbody></table>`;
+  }
+
+  if(tipo === 'pdi' || tipo === 'todos') {
+    if(tipo==='todos') html += `<div style="page-break-before:always;"></div>`;
+    html += header('PDI — Plano de Desenvolvimento Individual');
+    html += `<p><strong>Período:</strong> 90 dias &nbsp;|&nbsp; <strong>Gestor:</strong> ${p.nome}</p><br>
+    <table><thead><tr><th>Competência</th><th>Ação de Desenvolvimento</th><th>Como Aferir</th><th>Prazo</th></tr></thead><tbody>
+    ${fracos.map((d,i) => { const r=RECOM[d]; return `<tr><td><span class="chip chip-${d}">${d}</span><br><strong>${r.pdiComp}</strong></td><td>${r.pdiAcao}</td><td>${r.pdiAferir}</td><td>${r.pdiPrazo}</td></tr>`; }).join('')}
+    </tbody></table>`;
+  }
+
+  if(tipo === 'complementaridade' || tipo === 'todos') {
+    if(tipo==='todos') html += `<div style="page-break-before:always;"></div>`;
+    html += header('Matriz de Complementaridade da Equipe');
+    html += `<table><thead><tr><th>Domínio Gap</th><th>Parceiro Estratégico</th><th>Ação de Colaboração</th><th>Quando</th></tr></thead><tbody>
+    ${fracos.map(d => { const r=RECOM[d]; return `<tr><td><span class="chip chip-${d}">${d} — ${domNomes[d]}</span></td><td>(a preencher)</td><td>${r.aba4Acao}</td><td>${r.aba4Quando}</td></tr>`; }).join('')}
+    </tbody></table>`;
+  }
+
+  html += `<br><div style="font-size:10px;color:#718096;border-top:1px solid #e2e8f0;padding-top:8px;display:flex;justify-content:space-between;">
+    <span>Prof. Paulo H. Donassolo · Recriar a Gestão Comercial</span><span>Ferramenta 6.1 — Autoavaliação de Pontos Fortes</span></div>
+  </div></body></html>`;
+
+  const w = window.open('','_blank'); w.document.write(html); w.document.close();
+}
+
+// ══════════════════════════════════════════════
+// INICIALIZAÇÃO
+// ══════════════════════════════════════════════
+window.onload = function() {
+  carregarEstado();
+  // Restaurar campos de identificação
+  if(estado.perfil.nome) {
+    document.getElementById('f-nome').value = estado.perfil.nome;
+    document.getElementById('f-empresa').value = estado.perfil.empresa;
+    document.getElementById('f-cargo').value = estado.perfil.cargo;
+    document.getElementById('f-setor').value = estado.perfil.setor || '';
+    document.getElementById('f-equipe').value = estado.perfil.equipe;
+    document.getElementById('f-tempo').value = estado.perfil.tempo;
+    document.getElementById('f-data').value = estado.perfil.data;
+  }
+  // Restaurar talentos selecionados
+  if(estado.talentosSelected.length > 0) {
+    document.getElementById('talent-count').textContent = estado.talentosSelected.length;
+    document.getElementById('btn-talents-next').disabled = estado.talentosSelected.length !== 5;
+  }
+};
+</script>
+</body>
+</html>
