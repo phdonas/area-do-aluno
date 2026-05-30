@@ -127,21 +127,70 @@ export default function ResumoPedidoPage() {
     }
 
     setCheckingOut(true)
+    
+    // Ativação automática e grátis se o valor final for zero (cupons de 100% ou cursos grátis)
+    if (precoFinal === 0) {
+      try {
+        const result = await simularCompraMatricula(
+          id as string, 
+          couponStatus.valid ? couponCode : undefined,
+          ofertaSelecionada?.plano_id
+        )
+        
+        if (result.success) {
+          router.push(`/checkout/sucesso?curso_id=${id}`)
+        } else {
+          alert(result.error || 'Falha ao processar ativação de matrícula')
+        }
+      } catch (err) {
+        alert('Ocorreu um erro ao ativar o acesso gratuito.')
+      } finally {
+        setCheckingOut(false)
+      }
+      return
+    }
+
+    // Fluxo de Pagamento Automático Real via Gateways
     try {
-      const result = await simularCompraMatricula(
-        id as string, 
-        couponStatus.valid ? couponCode : undefined,
-        ofertaSelecionada?.plano_id
-      )
-      
-      if (result.success) {
-        const successUrl = `/checkout/sucesso?curso_id=${id}`
-        router.push(successUrl)
+      if (region === 'BR') {
+        // Mercado Pago (Reais - BRL)
+        const res = await fetch('/api/pagamentos/criar-preferencia', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cursoId: produto.id,
+            cupomCodigo: couponStatus.valid ? couponCode : undefined
+          })
+        })
+        const data = await res.json()
+        
+        if (res.ok && data.init_point) {
+          window.location.href = data.init_point
+        } else {
+          alert(data.error || 'Erro ao iniciar pagamento com Mercado Pago.')
+        }
       } else {
-        alert(result.error || 'Falha ao processar simulação de checkout')
+        // Stripe Checkout (Euros ou Dólares - EUR / USD)
+        const res = await fetch('/api/pagamentos/stripe/criar-sessao', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cursoId: produto.id,
+            planoId: ofertaSelecionada?.plano_id,
+            cupomCodigo: couponStatus.valid ? couponCode : undefined,
+            moeda: region === 'PT' ? 'EUR' : 'USD'
+          })
+        })
+        const data = await res.json()
+        
+        if (res.ok && data.url) {
+          window.location.href = data.url
+        } else {
+          alert(data.error || 'Erro ao iniciar pagamento internacional.')
+        }
       }
     } catch (err) {
-      alert('Ocorreu um erro na simulação de compra.')
+      alert('Erro de comunicação com o servidor de pagamentos.')
     } finally {
       setCheckingOut(false)
     }

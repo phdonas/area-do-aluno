@@ -111,4 +111,30 @@ Criar uma aba ou página no Backoffice (`/admin/pagamentos-manuais`) que permita
 2. Botão **"Aprovar Matrícula"**: Dispara uma Server Action que cria o registro em `assinaturas` e envia o e-mail de confirmação.
 
 ---
-*Documento atualizado em 30/05/2026 para refletir o real progresso da arquitetura e as ações pendentes.*
+
+### Guia Prático para Homologação e Configuração de Gateways (Lembrete do Administrador)
+
+#### 1. Coexistência de Gateways (Mercado Pago + Stripe)
+* A plataforma opera simultaneamente com os dois gateways de forma inteligente baseada na geolocalização / região selecionada pelo aluno:
+  * **Região BR (Brasil):** Processamento em **BRL (Reais)** via **Mercado Pago** (PIX e cartões nacionais com taxas competitivas).
+  * **Região PT (Portugal) / INTL (Global):** Processamento em **EUR (Euros)** ou **USD (Dólares)** via **Stripe Checkout** (cartões internacionais, Apple Pay, Google Pay e métodos locais de débito).
+
+#### 2. O que Cadastrar no Mercado Pago (Homologação)
+1. Acesse o [Mercado Pago Developers](https://www.mercadopago.com.br/developers/).
+2. Em **Suas Aplicações**, copie as **Credenciais de Teste** (Access Token que começa com `APP_USR-...` ou `TEST-...`).
+3. Para testar compras simuladas, utilize os cartões de testes disponibilizados na documentação do Mercado Pago.
+
+#### 3. O que Cadastrar no Stripe (Homologação)
+1. Acesse o painel da sua conta no [Stripe](https://stripe.com/) e ative o **"Test Mode"** no topo superior direito.
+2. **API Keys:** Em **Developers -> API Keys**, copie a `Secret key` (`sk_test_...`) e a `Publishable key` (`pk_test_...`).
+3. **Price IDs:** No menu **Product Catalog**, cadastre seu curso/produto e crie opções de preços recorrentes ou únicos em **EUR** e **USD**. Copie o **`Price ID`** gerado de cada moeda (ex: `price_1Pxxxx...`) e cadastre na tabela `planos_cursos` do Supabase nas colunas `stripe_price_id_eur` e `stripe_price_id_usd`.
+4. **Webhook:** Em **Developers -> Webhooks**, adicione o endpoint de escuta `https://aluno.phdonassolo.com/api/webhooks/stripe` e assine o evento `checkout.session.completed`. Copie o segredo de assinatura gerado (`whsec_...`).
+
+#### 4. Fluxo de Deploy e Configuração
+* A implementação de todo o código e lógica pode ser feita primeiro por nossa equipe, usando mocks/simulações.
+* Após realizarmos o deploy do código, você pode criar e configurar com total calma as credenciais no painel do Stripe e do Mercado Pago, além dos Price IDs no Supabase.
+* Assim que as chaves reais de teste forem salvas nas variáveis de ambiente da sua hospedagem (Vercel) e Supabase, as cobranças reais e testes automatizados começarão a funcionar de imediato sem alterar mais nenhuma linha de código!
+
+---
+*Documento atualizado em 30/05/2026 para refletir o real progresso da arquitetura e as diretrizes de multimoedas.*
+
