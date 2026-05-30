@@ -18,7 +18,7 @@ export default async function SimuladoresPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="max-w-6xl mx-auto space-y-12">
+    <div id="tutorial-simuladores-conhecimento" className="max-w-6xl mx-auto space-y-12">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-text-primary tracking-tight">Simuladores de IA</h1>

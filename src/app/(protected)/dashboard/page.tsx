@@ -224,7 +224,7 @@ export default async function DashboardPage() {
     <div className="max-w-7xl mx-auto space-y-20 pb-20 animate-in fade-in slide-in-from-bottom-5 duration-1000">
       
       {/* SEÇÃO 1: HUB DE INTELIGÊNCIA */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-dark to-[#040814] rounded-xl p-8 md:p-16 text-white shadow-2xl border border-white/10">
+      <section id="tutorial-boasvindas" className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-dark to-[#040814] rounded-xl p-8 md:p-16 text-white shadow-2xl border border-white/10">
          <div className="absolute top-[-30%] left-[-10%] w-[60%] h-[60%] bg-white/5 blur-[130px] rounded-full" />
          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12 relative z-10">
             <div className="space-y-10 max-w-2xl">
@@ -232,7 +232,7 @@ export default async function DashboardPage() {
                   Foque em <br/><span className="text-secondary uppercase drop-shadow-sm">{pilarMaisFraco.subject}.</span>
                </h1>
 
-               <div className="flex flex-wrap gap-6 pt-4">
+               <div id="tutorial-streak" className="flex flex-wrap gap-6 pt-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center">
                       <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
@@ -277,6 +277,7 @@ export default async function DashboardPage() {
                           )}
                         </div>
                     <Link 
+                      id="tutorial-continuar"
                       href={(!recomendacaoHasFluxo && recomendacaoHasActivity && aulaRecomendadaObj) ? `/player/${recomendacaoItem.id}/${aulaRecomendadaObj.id}` : `/player/${recomendacaoItem.id}`} 
                       className="mt-8 w-full flex items-center justify-center gap-4 py-5 bg-secondary text-white rounded-xl font-black text-xs hover:bg-secondary/80 transition-all shadow-lg active:scale-95 uppercase tracking-widest font-sans"
                     > 

@@ -248,7 +248,7 @@ export default async function PlayerPage({
           ) : (
             <>
               {hasVideo ? (
-                <div className="rounded-[24px] md:rounded-[48px] overflow-hidden shadow-[0_32px_80px_-20px_rgba(0,0,0,0.6)] bg-black border border-white/5 ring-1 ring-white/10">
+                <div id="tutorial-video" className="rounded-[24px] md:rounded-[48px] overflow-hidden shadow-[0_32px_80px_-20px_rgba(0,0,0,0.6)] bg-black border border-white/5 ring-1 ring-white/10">
                   <VideoPlayer 
                       url={aula.video_url} 
                       aulaId={aulaId}
@@ -286,7 +286,7 @@ export default async function PlayerPage({
             </>
           )}
 
-         <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 bg-surface/40 backdrop-blur-sm border border-border-custom p-6 md:p-8 rounded-[32px] md:rounded-[40px]">
+         <div id="tutorial-conclusao" className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 bg-surface/40 backdrop-blur-sm border border-border-custom p-6 md:p-8 rounded-[32px] md:rounded-[40px]">
             {aula.tipo_conteudo !== 'ferramenta' && (
               <CompleteLessonButton 
                 aulaId={aulaId} 
@@ -311,7 +311,7 @@ export default async function PlayerPage({
          <div className="space-y-12 md:space-y-20">
             {/* 1. ÁREA DE DOWNLOAD (MATERIAIS DE APOIO) */}
             <div className="space-y-8">
-                <div className="bg-amber-500/10 dark:bg-amber-50/90 backdrop-blur-sm border border-amber-500/20 dark:border-amber-200 rounded-[48px] p-8 md:p-12 relative overflow-hidden">
+                <div id="tutorial-ferramentas" className="bg-amber-500/10 dark:bg-amber-50/90 backdrop-blur-sm border border-amber-500/20 dark:border-amber-200 rounded-[48px] p-8 md:p-12 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 dark:bg-amber-100/50 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2" />
                     <div className="flex flex-col md:flex-row gap-8 relative z-10">
                         <div className="w-16 h-16 shrink-0 rounded-3xl bg-white/40 dark:bg-amber-200/50 flex items-center justify-center text-amber-600 dark:text-amber-900 font-black text-2xl shadow-sm border border-amber-500/20">
@@ -441,7 +441,7 @@ export default async function PlayerPage({
             </div>
 
             {/* 5. ANOTAÇÕES E INSIGHTS DA AULA */}
-            <div className="space-y-6">
+            <div id="tutorial-insights" className="space-y-6">
                <InsightEditor 
                  usuarioId={user.id}
                  aulaId={aulaId}

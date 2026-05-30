@@ -62,7 +62,7 @@ export default async function VitrinePage() {
           <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[150px] rounded-full" />
         </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto text-center space-y-8">
+        <div id="tutorial-hero" className="relative z-10 max-w-5xl mx-auto text-center space-y-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-surface/80 backdrop-blur-md rounded-full border border-border-custom mb-4 shadow-xl">
             <Sparkles className="w-4 h-4 text-primary" />
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-text-primary">Metodologia Exclusiva</span>
@@ -134,7 +134,7 @@ export default async function VitrinePage() {
       </section>
 
       {/* SECTION 3: CURSOS EM DESTAQUE */}
-      <section className="py-32 px-6 bg-background">
+      <section id="tutorial-cursos" className="py-32 px-6 bg-background">
         <div className="max-w-7xl mx-auto space-y-16">
           <div className="flex flex-col md:flex-row justify-between items-end gap-8 border-b border-border-custom pb-8">
             <div className="space-y-4">

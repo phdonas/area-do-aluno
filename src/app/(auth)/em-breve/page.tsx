@@ -42,7 +42,7 @@ export default function ComingSoonPage() {
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
             Estamos preparando uma experiência de aprendizado transformadora. 
-            A liberação oficial ocorrerá na <span className="text-foreground font-bold underline decoration-secondary/30">primeira semana de maio de 2026</span>.
+            A liberação oficial ocorrerá no <span className="text-foreground font-bold underline decoration-secondary/30">mês de junho</span>.
           </p>
         </div>
 

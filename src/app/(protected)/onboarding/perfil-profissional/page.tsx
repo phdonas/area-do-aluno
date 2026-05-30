@@ -118,13 +118,13 @@ export default function OnboardingPerfilProfissional() {
               Quase lá. <br/>
               <span className="text-text-secondary opacity-50">Queremos te conhecer.</span>
             </h1>
-            <p className="text-sm text-text-secondary font-medium leading-relaxed max-w-md">
+            <p id="tutorial-onboarding-seguranca" className="text-sm text-text-secondary font-medium leading-relaxed max-w-md">
               Para personalizar sua trilha de evolução e os diagnósticos de IA, precisamos entender seu momento profissional.
             </p>
           </div>
 
           {/* Form */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div id="tutorial-onboarding-campos" className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Dados Pessoais - Destaque */}
             <div className="col-span-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-border-custom/30">
                <div className="space-y-2 group">

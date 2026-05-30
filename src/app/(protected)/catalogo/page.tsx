@@ -58,7 +58,7 @@ export default async function UnifiedCatalogoPage() {
     <div className="max-w-7xl mx-auto space-y-16 pb-32 animate-in fade-in duration-1000">
       
       {/* HERO SECTION - Respeitando o tema via CSS Variables */}
-      <section className="relative overflow-hidden rounded-[3rem] bg-surface p-12 md:p-20 shadow-xl border border-border-custom">
+      <section id="tutorial-hero" className="relative overflow-hidden rounded-[3rem] bg-surface p-12 md:p-20 shadow-xl border border-border-custom">
         <div className="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-primary/10 to-transparent z-0" />
         
         <div className="relative z-10 max-w-2xl space-y-6">
@@ -78,12 +78,14 @@ export default async function UnifiedCatalogoPage() {
       </section>
 
       {/* CLIENT-SIDE CATALOG (Filtering & Search) */}
-      <CatalogClient 
-        cursos={cursos || []} 
-        pacotes={pacotes || []} 
-        pilares={pilares || []} 
-        idsAcessos={idsAcessos}
-      />
+      <div id="tutorial-cursos">
+        <CatalogClient 
+          cursos={cursos || []} 
+          pacotes={pacotes || []} 
+          pilares={pilares || []} 
+          idsAcessos={idsAcessos}
+        />
+      </div>
 
     </div>
   )
