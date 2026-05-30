@@ -74,7 +74,7 @@ export default async function VitrinePage() {
           </h1>
           
           <p className="max-w-2xl mx-auto text-xl text-text-secondary font-medium leading-relaxed italic opacity-80">
-            PHDonassolo Academy: A plataforma definitiva para dominar Vendas, Negociação e Liderança sob uma perspectiva científica e prática.
+            PHD Academy: A plataforma definitiva para dominar Vendas, Negociação e Liderança sob uma perspectiva científica e prática.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
@@ -257,7 +257,7 @@ export default async function VitrinePage() {
                     </div>
                     
                     <div className="space-y-6 text-slate-400 font-medium text-lg leading-relaxed italic">
-                       <p>Paulo H. Donassolo é especialista em desenvolvimento de alta performance, transformando times executivos em grandes corporações há mais de duas décadas.</p>
+                       <p>Paulo Donassolo é especialista em desenvolvimento de alta performance, transformando times executivos em grandes corporações há mais de duas décadas.</p>
                        <p>Fundador da metodologia que integra comportamento humano e dados para resultados exponenciais em ecoinovação e estratégia.</p>
                     </div>
 

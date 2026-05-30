@@ -53,7 +53,7 @@ export default function FerramentasPage() {
             </div>
             <div>
                <h1 className="text-4xl font-black text-text-primary tracking-tighter">Central de Ferramentas</h1>
-               <p className="text-sm text-text-secondary font-black uppercase tracking-[0.2em]">Prof. Paulo H. Donassolo</p>
+               <p className="text-sm text-text-secondary font-black uppercase tracking-[0.2em]">Prof. Paulo Donassolo — Formação que Gera Resultados</p>
             </div>
          </div>
          <p className="text-lg text-text-secondary/60 max-w-2xl font-medium leading-relaxed">

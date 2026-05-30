@@ -83,7 +83,7 @@ export default function NovoFerramentaPage() {
            </Link>
            <div>
               <h1 className="text-2xl font-black text-text-primary tracking-tighter uppercase">Nova Ferramenta Premium</h1>
-              <p className="text-xs font-black text-text-muted uppercase tracking-widest">Prof. Paulo H. Donassolo</p>
+              <p className="text-xs font-black text-text-muted uppercase tracking-widest">Prof. Paulo Donassolo — Formação que Gera Resultados</p>
            </div>
         </div>
       </div>
