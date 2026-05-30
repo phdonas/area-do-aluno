@@ -1,6 +1,6 @@
 # Dicionário de Dados e Orientações de Schema Total (Área do Aluno)
 
-Este documento representa o **Schema Total** da aplicação "Área do Aluno PHDonassolo", incluindo dicionário de dados de todas as tabelas, funções (RPC), gatilhos (Triggers) e políticas de segurança (RLS). Serve como a fonte de verdade para a estrutura de dados atual (V6).
+Este documento representa o **Schema Total** da aplicação "PHD Academy", incluindo dicionário de dados de todas as tabelas, funções (RPC), gatilhos (Triggers) e políticas de segurança (RLS). Serve como a fonte de verdade para a estrutura de dados atual (V6).
 
 ## 1. Visão Geral da Arquitetura de Dados
 O banco de dados (PostgreSQL hospedado no Supabase) é composto por **44 tabelas** organizadas em grandes domínios:

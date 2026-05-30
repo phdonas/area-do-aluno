@@ -93,10 +93,10 @@ const handleCheckout = async () => {
    MP_ACCESS_TOKEN=APP_USR-xxxxxxxxx-xxxxxxxx-xxxxxx
    
    # Site URL (utilizado nas Back URLs e Webhooks)
-   NEXT_PUBLIC_SITE_URL=https://area.phdonassolo.com
+   NEXT_PUBLIC_SITE_URL=https://aluno.phdonassolo.com
    ```
 2. Configurar o endpoint de webhook no painel de desenvolvedores do Mercado Pago apontando para:
-   `https://area.phdonassolo.com/api/webhooks/mercadopago`
+   `https://aluno.phdonassolo.com/api/webhooks/mercadopago`
    *(Assinar os eventos de "Pagamentos" / `payment`)*
 
 ### Passo 3: Implementação da Fase Stripe (Multimoedas)
