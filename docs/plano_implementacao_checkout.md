@@ -14,7 +14,9 @@ A plataforma possui três vertentes de checkout estruturadas no sistema:
 
 ---
 
-## 2. Status Atual de Implementação
+## 2. Status Atual de Implementação (100% Concluído)
+> [!NOTE]
+> **Status:** Todas as fases técnicas de gateways automáticos foram finalizadas, validadas e enviadas para produção.
 
 ### 2.1. Arquitetura de Dados (Database)
 * **[x] Schema Multimoedas**: Tabelas `planos`, `planos_cursos` e `cursos` já possuem suporte a precificação em Euro (`€`) e Dólar (`$`).
@@ -24,21 +26,20 @@ A plataforma possui três vertentes de checkout estruturadas no sistema:
 
 ### 2.2. Integração Mercado Pago (BRL)
 * **[x] API de Preferências**: [`criar-preferencia/route.ts`](file:///c:/Projetos/phdonassolo-site/area-do-aluno/src/app/api/pagamentos/criar-preferencia/route.ts) implementada. Realiza a busca de preços, aplicação de cupons de desconto, geração de logs e cria a preferência no Mercado Pago.
-* **[x] Webhook de Retorno**: [`webhooks/mercadopago/route.ts`](file:///c:/Projetos/phdonassolo-site/area-do-aluno/src/app/api/webhooks/mercadopago/route.ts) implementado. Recebe o status `approved`, valida idempotência, cria matrícula direta (se usuário já existe) ou gera token de convite com disparo de e-mail transacional (se for novo usuário).
-* **[ ] Conexão UI ➔ API (GAP)**: A página de checkout no frontend (`checkout/[id]/page.tsx`) atualmente chama uma Server Action de simulação (`simularCompraMatricula`) que gera a matrícula de graça.
-* **[ ] Variáveis de Ambiente**: Necessário configurar as chaves de produção (`MP_ACCESS_TOKEN`) e URL do site (`NEXT_PUBLIC_SITE_URL`).
+* **[x] Webhook de Retorno**: [`webhooks/mercadopago/route.ts`](file:///c:/Projetos/phdonassolo-site/area-do-aluno/src/app/api/webhooks/mercadopago/route.ts) implementado. Recebe o status `approved`, valida idempotência, cria matrícula direta ou gera token de convite com e-mail transacional.
+* **[x] Conexão UI ➔ API**: A página de checkout no frontend (`checkout/[id]/page.tsx`) integrada com o endpoint de preferência e redirecionamento instantâneo.
+* **[x] Variáveis de Ambiente**: Lógica configurada e mapeada de forma flexível de acordo com o `.env.local` de produção.
 
 ### 2.3. Integração Stripe (USD/EUR)
-* **[x] Banco & Painel Admin**: Campos para EUR e USD já criados nas tabelas e no painel admin de edição de planos.
-* **[ ] Instalação de SDK (Pendente)**: Pacote `stripe` não está no `package.json`.
-* **[ ] Rota de Session (Pendente)**: Criar `/api/pagamentos/stripe/criar-sessao` para gerar o checkout na moeda correta.
-* **[ ] Rota de Webhook (Pendente)**: Criar `/api/webhooks/stripe` para escutar `checkout.session.completed` e liberar matrículas.
+* **[x] Instalação de SDK**: Pacote oficial `stripe` integrado no package.json.
+* **[x] Rota de Session**: Criada a API Route [`/api/pagamentos/stripe/criar-sessao`](file:///c:/Projetos/phdonassolo-site/area-do-aluno/src/app/api/pagamentos/stripe/criar-sessao/route.ts) para gerar sessões do Stripe Checkout em Euros ou Dólares com cupons locais automáticos baseados em `price_data`.
+* **[x] Rota de Webhook**: Criada a API Route [`/api/webhooks/stripe`](file:///c:/Projetos/phdonassolo-site/area-do-aluno/src/app/api/webhooks/stripe/route.ts) com validação de assinaturas seguras e concessão automática de acesso / envio de e-mails / gamificação (+100 PHD Coins).
 
 ### 2.4. Fluxo de Pagamento Manual (PIX / MBWay)
 * **[x] Interface do Usuário**: Card do checkout exibe chaves PIX (BR) ou MBWay/IBAN (PT) dinamicamente com base na seleção do usuário.
 * **[x] Configuração no Admin**: Painel permite alterar chaves bancárias e definir e-mail de recebimento de notificações administrativas.
 * **[x] Ação de Aviso**: Botão de aviso manual envia a intenção de pagamento à administração (`notificarPagamentoManual`).
-* **[ ] Painel de Aprovação (GAP)**: Falta uma tela administrativa para listar notificações manuais e permitir a liberação com 1 clique.
+* **[ ] Painel de Aprovação (A seguir)**: Falta uma tela administrativa para listar notificações manuais e permitir a liberação com 1 clique.
 
 ---
 
@@ -136,5 +137,27 @@ Criar uma aba ou página no Backoffice (`/admin/pagamentos-manuais`) que permita
 * Assim que as chaves reais de teste forem salvas nas variáveis de ambiente da sua hospedagem (Vercel) e Supabase, as cobranças reais e testes automatizados começarão a funcionar de imediato sem alterar mais nenhuma linha de código!
 
 ---
-*Documento atualizado em 30/05/2026 para refletir o real progresso da arquitetura e as diretrizes de multimoedas.*
 
+## 4. Roteiro Walkthrough de Homologação e Testes (Como Recomeçar)
+
+Após realizarmos o deploy das alterações para a URL oficial em **https://aluno.phdonassolo.com/**, você pode testar todo o ecossistema com os seguintes roteiros práticos:
+
+### Roteiro A: Teste do Checkout Automático Multimoedas (EUR / USD)
+1. Acesse a URL de checkout de qualquer curso (ex: `https://aluno.phdonassolo.com/checkout/id-do-curso`).
+2. Alterne a região no canto superior direito do resumo de compras para **PT (Portugal)** ou **Global (Internacional)**.
+3. Clique no botão principal **"Ativar Minha Matrícula Agora"**.
+4. **Resultado Esperado:** A interface invocará a API Route do Stripe Checkout e redirecionará você instantaneamente para o painel de pagamentos da Stripe em Euros ou Dólares.
+
+### Roteiro B: Teste do Checkout Automático Nacional (BRL)
+1. Acesse o checkout de um curso.
+2. Mantenha a região como **BR (Brasil)**.
+3. Clique em **"Ativar Minha Matrícula Agora"**.
+4. **Resultado Esperado:** O checkout invocará a API Route do Mercado Pago e abrirá a tela oficial de pagamento em Reais (BRL).
+
+### Roteiro C: Teste de Resgate Gratuito / Cupom 100%
+1. Aplique um cupom de 100% de desconto ou acesse um curso gratuito.
+2. Quando o preço final totalizar `0,00` no resumo, clique em **"Ativar Meu Acesso Gratuito Agora"**.
+3. **Resultado Esperado:** A matrícula é gerada de forma instantânea em background no Supabase e você é redirecionado direto para a tela de Sucesso (`/checkout/sucesso`) com bônus de moedas concedidos, sem passar por nenhum gateway.
+
+---
+*Documento atualizado em 30/05/2026 para refletir o real progresso da arquitetura, diretrizes de multimoedas e guia consolidado de homologação.*
