@@ -14,6 +14,10 @@ export async function OPTIONS(request: Request) {
 
 export async function POST(request: Request) {
   const corsH = getCorsHeaders(request)
+  // --- LOG DIAGNÓSTICO TEMPORÁRIO ---
+  console.log('STRIPE_SECRET_KEY presente:', !!process.env.STRIPE_SECRET_KEY)
+  console.log('Primeiros 10 chars:', process.env.STRIPE_SECRET_KEY?.substring(0, 10))
+  // ----------------------------------
   try {
     const { cursoId, planoId, cupomCodigo, emailFinal, moeda = 'EUR' } = await request.json()
     
