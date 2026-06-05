@@ -3,17 +3,23 @@ import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { validarCupom, calcularDesconto } from '@/lib/cupons'
 import { registrarLogSistema } from '@/lib/logs'
+import { getCorsHeaders, corsOptionsResponse } from '@/lib/cors'
 
-const client = new MercadoPagoConfig({ 
-  accessToken: process.env.MP_ACCESS_TOKEN || 'TEST-MOCK-TOKEN-PH' 
+const client = new MercadoPagoConfig({
+  accessToken: process.env.MP_ACCESS_TOKEN || 'TEST-MOCK-TOKEN-PH'
 })
 
+export async function OPTIONS(request: Request) {
+  return corsOptionsResponse(request)
+}
+
 export async function POST(request: Request) {
+  const corsH = getCorsHeaders(request)
   try {
     const { cursoId, cupomCodigo, emailFinal } = await request.json()
     
     if (!cursoId) {
-      return NextResponse.json({ error: 'ID do curso é obrigatório' }, { status: 400 })
+      return NextResponse.json({ error: 'ID do curso é obrigatório' }, { status: 400, headers: corsH })
     }
 
     const supabase = await createClient()
@@ -23,7 +29,7 @@ export async function POST(request: Request) {
     const emailCalculado = (emailFinal || user?.email)?.toLowerCase()
 
     if (!emailCalculado) {
-      return NextResponse.json({ error: 'E-mail do comprador não identificado' }, { status: 401 })
+      return NextResponse.json({ error: 'E-mail do comprador não identificado' }, { status: 401, headers: corsH })
     }
 
     // 1. Busca detalhes do curso/plano
@@ -34,7 +40,7 @@ export async function POST(request: Request) {
       .single()
 
     if (cursoError || !curso) {
-      return NextResponse.json({ error: 'Curso não encontrado' }, { status: 404 })
+      return NextResponse.json({ error: 'Curso não encontrado' }, { status: 404, headers: corsH })
     }
 
     const plano = curso.planos_cursos?.[0]?.planos as any
@@ -59,7 +65,7 @@ export async function POST(request: Request) {
           origem: 'CRIAR_PREFERENCIA',
           detalhes: { codigo: cupomCodigo, erro: error, curso_id: cursoId }
         })
-        return NextResponse.json({ error: error || 'Cupom inválido' }, { status: 400 })
+        return NextResponse.json({ error: error || 'Cupom inválido' }, { status: 400, headers: corsH })
       }
     }
 
@@ -103,11 +109,11 @@ export async function POST(request: Request) {
         detalhes: { curso_id: cursoId, precoFinal, appliedCupomId }
       })
 
-      return NextResponse.json({ 
+      return NextResponse.json({
         id: response.id,
         init_point: response.init_point,
-        precoFinal 
-      })
+        precoFinal
+      }, { headers: corsH })
 
   } catch (error: any) {
     console.error('Erro Checkout:', error)
@@ -118,9 +124,9 @@ export async function POST(request: Request) {
       origem: 'CRIAR_PREFERENCIA',
       detalhes: { erro: error.message }
     })
-    return NextResponse.json({ 
-      error: 'Falha ao processar checkout', 
-      details: error.message 
-    }, { status: 500 })
+    return NextResponse.json({
+      error: 'Falha ao processar checkout',
+      details: error.message
+    }, { status: 500, headers: corsH })
   }
 }

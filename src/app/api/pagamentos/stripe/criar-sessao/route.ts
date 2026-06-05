@@ -3,16 +3,22 @@ import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { validarCupom, calcularDesconto } from '@/lib/cupons'
 import { registrarLogSistema } from '@/lib/logs'
+import { getCorsHeaders, corsOptionsResponse } from '@/lib/cors'
 
 // Inicializa o Stripe com a chave secreta do .env
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock_secret_key_ph')
 
+export async function OPTIONS(request: Request) {
+  return corsOptionsResponse(request)
+}
+
 export async function POST(request: Request) {
+  const corsH = getCorsHeaders(request)
   try {
     const { cursoId, planoId, cupomCodigo, emailFinal, moeda = 'EUR' } = await request.json()
     
     if (!cursoId) {
-      return NextResponse.json({ error: 'ID do curso é obrigatório' }, { status: 400 })
+      return NextResponse.json({ error: 'ID do curso é obrigatório' }, { status: 400, headers: corsH })
     }
 
     const targetCurrency = (moeda === 'USD' || moeda === 'EUR') ? moeda : 'EUR'
@@ -24,7 +30,7 @@ export async function POST(request: Request) {
     const emailCalculado = (emailFinal || user?.email)?.toLowerCase()
 
     if (!emailCalculado) {
-      return NextResponse.json({ error: 'E-mail do comprador não identificado' }, { status: 401 })
+      return NextResponse.json({ error: 'E-mail do comprador não identificado' }, { status: 401, headers: corsH })
     }
 
     // 1. Busca detalhes do curso e plano
@@ -35,7 +41,7 @@ export async function POST(request: Request) {
       .single()
 
     if (cursoError || !curso) {
-      return NextResponse.json({ error: 'Curso não encontrado' }, { status: 404 })
+      return NextResponse.json({ error: 'Curso não encontrado' }, { status: 404, headers: corsH })
     }
 
     // Resolve a oferta selecionada (plano)
@@ -79,7 +85,7 @@ export async function POST(request: Request) {
           origem: 'STRIPE_CRIAR_SESSAO',
           detalhes: { codigo: cupomCodigo, erro: error, curso_id: cursoId }
         })
-        return NextResponse.json({ error: error || 'Cupom inválido' }, { status: 400 })
+        return NextResponse.json({ error: error || 'Cupom inválido' }, { status: 400, headers: corsH })
       }
     }
 
@@ -124,11 +130,11 @@ export async function POST(request: Request) {
       detalhes: { curso_id: cursoId, precoFinal, moeda: targetCurrency, session_id: session.id }
     })
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       id: session.id,
       url: session.url,
-      precoFinal 
-    })
+      precoFinal
+    }, { headers: corsH })
 
   } catch (error: any) {
     console.error('Erro Stripe Checkout:', error)
@@ -139,9 +145,9 @@ export async function POST(request: Request) {
       origem: 'STRIPE_CRIAR_SESSAO',
       detalhes: { erro: error.message }
     })
-    return NextResponse.json({ 
-      error: 'Falha ao processar checkout internacional', 
-      details: error.message 
-    }, { status: 500 })
+    return NextResponse.json({
+      error: 'Falha ao processar checkout internacional',
+      details: error.message
+    }, { status: 500, headers: corsH })
   }
 }
