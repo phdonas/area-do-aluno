@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Save, LayoutTemplate, Plus, Trash2, Video, ShieldCheck, HelpCircle, ListChecks, Target, CreditCard, Sparkles } from 'lucide-react'
+import { Save, LayoutTemplate, Plus, Trash2, Video, ShieldCheck, HelpCircle, ListChecks, Target, CreditCard, Sparkles, Globe, Link as LinkIcon } from 'lucide-react'
 import { PrecoInternacional } from './PrecoInternacional'
 
 interface CursoBasicsFormProps {
@@ -13,6 +13,7 @@ interface CursoBasicsFormProps {
 export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormProps) {
   const [precoEur, setPrecoEur] = useState(curso.preco_eur || '')
   const [destaque, setDestaque] = useState(curso.destaque_vitrine || false)
+  const [visivelSite, setVisivelSite] = useState(curso.visivel_no_site || false)
   const [faqs, setFaqs] = useState<{pergunta: string, resposta: string}[]>(
     Array.isArray(curso.faq) ? curso.faq : []
   )
@@ -181,6 +182,89 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
                 <option key={p.id} value={p.id}>{p.nome}</option>
               ))}
             </select>
+          </div>
+        </div>
+      </div>
+
+      {/* INTEGRAÇÃO COM SITE E HOTMART */}
+      <div className="space-y-6 pt-6 border-t border-border-custom">
+        <div className="flex items-center gap-2 mb-4">
+          <Globe className="w-5 h-5 text-primary" />
+          <h3 className="text-sm font-black uppercase tracking-widest text-text-primary italic">Integração com Site e Hotmart</h3>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div 
+            onClick={() => setVisivelSite(!visivelSite)}
+            className={`p-6 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between group ${
+              visivelSite 
+                ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10' 
+                : 'border-border-custom bg-background opacity-70 hover:opacity-100'
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div>
+                <p className="text-xs font-black uppercase tracking-widest italic text-text-primary">Visível no Site</p>
+                <p className="text-[10px] text-text-secondary font-medium">Se ativo, aparece no catálogo público.</p>
+              </div>
+            </div>
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${visivelSite ? 'border-primary bg-primary' : 'border-border-custom'}`}>
+               {visivelSite && <div className="w-2 h-2 bg-white rounded-full" />}
+            </div>
+            <input type="checkbox" name="visivel_no_site" checked={visivelSite} onChange={() => {}} className="hidden" />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="tipo" className="block text-[10px] font-black text-text-primary uppercase tracking-widest">Plataforma (Tipo)</label>
+            <select 
+              id="tipo" name="tipo" defaultValue={curso.tipo || 'LMS'}
+              className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm appearance-none"
+            >
+              <option value="LMS">LMS (Área do Aluno)</option>
+              <option value="Udemy">Udemy</option>
+              <option value="ESPM">ESPM</option>
+            </select>
+            <p className="text-[10px] text-text-muted mt-1">Onde o curso é consumido. LMS = aqui na plataforma.</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label htmlFor="nivel" className="block text-[10px] font-black text-text-primary uppercase tracking-widest">Nível de Dificuldade</label>
+            <select 
+              id="nivel" name="nivel" defaultValue={curso.nivel || 'Iniciante'}
+              className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm appearance-none"
+            >
+              <option value="Iniciante">Iniciante</option>
+              <option value="Intermediário">Intermediário</option>
+              <option value="Avançado">Avançado</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="categoria" className="block text-[10px] font-black text-text-primary uppercase tracking-widest">Categoria no Site</label>
+            <input 
+              type="text" id="categoria" name="categoria" defaultValue={curso.categoria || ''}
+              placeholder="Ex: Gestão, Vendas, Tecnologia"
+              className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2 pt-4">
+          <label htmlFor="url_checkout" className="block text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-2 italic">
+            <LinkIcon className="w-3 h-3 text-primary" /> Link de Checkout (Hotmart)
+          </label>
+          <input 
+            type="url" id="url_checkout" name="url_checkout" defaultValue={curso.url_checkout || ''}
+            placeholder="Cole o link da página de pagamento da Hotmart"
+            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm"
+          />
+          <div className="mt-2 p-4 bg-primary/5 border border-primary/20 rounded-xl">
+             <p className="text-[10px] text-text-primary font-bold uppercase mb-1">Como preencher este link?</p>
+             <p className="text-xs text-text-secondary leading-relaxed">
+               Este é o link direto de pagamento. Vá na Hotmart: <b>Produtos &gt; Meus Produtos &gt; Links de Divulgação (HotLinks)</b> e copie a URL da <i>"Página de Pagamento"</i>. O sistema irá anexar o e-mail do aluno automaticamente neste link.
+             </p>
           </div>
         </div>
       </div>

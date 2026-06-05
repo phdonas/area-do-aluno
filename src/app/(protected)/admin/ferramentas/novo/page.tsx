@@ -15,7 +15,8 @@ import {
   Image as ImageIcon,
   CheckCircle2,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  Globe
 } from 'lucide-react'
 import * as LucideIcons from 'lucide-react'
 
@@ -33,7 +34,12 @@ export default function NovoFerramentaPage() {
     url_externa: '',
     capa_url: '',
     label_botao: 'Abrir Ferramenta',
-    status: 'ativo'
+    status: 'ativo',
+    visivel_no_site: false,
+    categoria: '',
+    url_checkout: '',
+    tipo_entrega: '',
+    url_entrega: ''
   })
 
   // Gerar slug automaticamente baseado no nome
@@ -161,6 +167,89 @@ export default function NovoFerramentaPage() {
                       onChange={e => setFormData(prev => ({ ...prev, label_botao: e.target.value }))}
                       className="w-full px-4 py-3 bg-background border border-border-custom rounded-xl text-xs font-bold focus:border-primary outline-none"
                     />
+                  </div>
+               </div>
+
+               {/* INTEGRAÇÃO COM SITE PÚBLICO E VENDAS */}
+               <div className="pt-6 border-t border-border-custom space-y-6">
+                  <div className="flex items-center gap-2 mb-4">
+                     <Globe className="w-5 h-5 text-primary" />
+                     <h3 className="text-sm font-black uppercase tracking-widest text-text-primary italic">Venda e Exibição no Site</h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div 
+                        onClick={() => setFormData(prev => ({ ...prev, visivel_no_site: !prev.visivel_no_site }))}
+                        className={`p-6 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between group ${
+                           formData.visivel_no_site 
+                           ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10' 
+                           : 'border-border-custom bg-background opacity-70 hover:opacity-100'
+                        }`}
+                     >
+                        <div className="flex items-center gap-4">
+                           <div>
+                              <p className="text-xs font-black uppercase tracking-widest italic text-text-primary">Visível no Site</p>
+                              <p className="text-[10px] text-text-secondary font-medium">Ative para aparecer no catálogo.</p>
+                           </div>
+                        </div>
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${formData.visivel_no_site ? 'border-primary bg-primary' : 'border-border-custom'}`}>
+                           {formData.visivel_no_site && <div className="w-2 h-2 bg-white rounded-full" />}
+                        </div>
+                     </div>
+
+                     <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Categoria no Site</label>
+                        <input 
+                           type="text" 
+                           placeholder="Ex: Produtividade"
+                           value={formData.categoria || ''}
+                           onChange={e => setFormData(prev => ({ ...prev, categoria: e.target.value }))}
+                           className="w-full px-4 py-3 bg-background border border-border-custom rounded-xl text-xs font-bold focus:border-primary outline-none"
+                        />
+                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Tipo de Entrega</label>
+                        <select 
+                           value={formData.tipo_entrega || ''}
+                           onChange={e => setFormData(prev => ({ ...prev, tipo_entrega: e.target.value }))}
+                           className="w-full px-4 py-3 bg-background border border-border-custom rounded-xl text-xs font-bold focus:border-primary outline-none appearance-none"
+                        >
+                           <option value="">Selecione...</option>
+                           <option value="Acesso Interno">Acesso Interno / Redirecionamento</option>
+                           <option value="Download de Arquivo">Download de Arquivo</option>
+                           <option value="Acesso Externo">Acesso Externo</option>
+                        </select>
+                     </div>
+                     <div className="space-y-4">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-text-muted flex items-center gap-2"><LinkIcon className="w-3 h-3"/> URL de Entrega</label>
+                        <input 
+                           type="url" 
+                           placeholder="Ex: Link do PDF ou Rota Interna"
+                           value={formData.url_entrega || ''}
+                           onChange={e => setFormData(prev => ({ ...prev, url_entrega: e.target.value }))}
+                           className="w-full px-4 py-3 bg-background border border-border-custom rounded-xl text-xs font-bold focus:border-primary outline-none"
+                        />
+                     </div>
+                  </div>
+
+                  <div className="space-y-4 pt-4">
+                     <label className="text-xs font-black uppercase tracking-widest text-text-primary flex items-center gap-2 italic"><LinkIcon className="w-3 h-3 text-primary"/> Link de Checkout (Hotmart)</label>
+                     <input 
+                        type="url" 
+                        placeholder="Cole o link da página de pagamento"
+                        value={formData.url_checkout || ''}
+                        onChange={e => setFormData(prev => ({ ...prev, url_checkout: e.target.value }))}
+                        className="w-full px-6 py-4 bg-background border border-border-custom rounded-xl text-sm font-bold focus:border-primary outline-none"
+                     />
+                     <div className="mt-2 p-4 bg-primary/5 border border-primary/20 rounded-xl">
+                        <p className="text-[10px] text-text-primary font-bold uppercase mb-1">Como preencher este link?</p>
+                        <p className="text-xs text-text-secondary leading-relaxed">
+                           Acesse a Hotmart: <b>Produtos &gt; Meus Produtos &gt; Links de Divulgação</b> e copie a URL da <i>Página de Pagamento</i>. O e-mail do aluno é anexado automaticamente.
+                        </p>
+                     </div>
                   </div>
                </div>
             </div>

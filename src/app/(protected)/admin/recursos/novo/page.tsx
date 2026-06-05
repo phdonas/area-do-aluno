@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ChevronLeft, Save, Zap, Video } from 'lucide-react'
+import { ChevronLeft, Save, Zap, Video, Globe, Link as LinkIcon } from 'lucide-react'
 import { createRecurso } from '../actions'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
@@ -146,6 +146,72 @@ export default async function NovoRecursoPage() {
                     </label>
                   </div>
                   <p className="text-[10px] text-text-muted font-bold uppercase mt-2">Ative para exibir este material na seção "Materiais Gratuitos" da área do aluno.</p>
+               </div>
+
+               <div className="space-y-6 md:col-span-2 pt-10 border-t border-border-custom">
+                  <div className="flex items-center gap-2 mb-4">
+                     <Globe className="w-5 h-5 text-primary" />
+                     <h3 className="text-sm font-black uppercase tracking-[0.2em] text-text-primary italic">Integração Comercial e Vendas</h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                     <div className="flex flex-col justify-center bg-background border border-border-custom p-6 rounded-2xl">
+                        <label className="relative inline-flex items-center cursor-pointer">
+                           <input type="checkbox" name="visivel_no_site" className="sr-only peer" />
+                           <div className="w-11 h-6 bg-border-custom peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                           <span className="ms-3 text-xs font-black uppercase tracking-widest text-text-primary italic">Visível no Site</span>
+                        </label>
+                        <p className="text-[10px] text-text-muted mt-2 ml-14">Ative para exibir no catálogo.</p>
+                     </div>
+
+                     <div className="space-y-2">
+                        <label htmlFor="categoria" className="block text-xs font-black uppercase tracking-widest text-text-primary">Categoria no Site</label>
+                        <input 
+                           type="text" id="categoria" name="categoria"
+                           placeholder="Ex: Produtividade"
+                           className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-sm text-text-primary focus:outline-none focus:border-primary transition-all font-medium"
+                        />
+                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+                     <div className="space-y-2">
+                        <label htmlFor="tipo_entrega" className="block text-xs font-black uppercase tracking-widest text-text-primary">Tipo de Entrega</label>
+                        <select 
+                           id="tipo_entrega" name="tipo_entrega"
+                           className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-sm text-text-primary focus:outline-none focus:border-primary transition-all font-bold appearance-none"
+                        >
+                           <option value="">Selecione...</option>
+                           <option value="Acesso Interno">Acesso Interno / Redirecionamento</option>
+                           <option value="Download de Arquivo">Download de Arquivo</option>
+                           <option value="Acesso Externo">Acesso Externo</option>
+                        </select>
+                     </div>
+
+                     <div className="space-y-2">
+                        <label htmlFor="url_entrega" className="block text-xs font-black uppercase tracking-widest text-text-primary flex items-center gap-2"><LinkIcon className="w-3 h-3"/> URL de Entrega</label>
+                        <input 
+                           type="url" id="url_entrega" name="url_entrega"
+                           placeholder="Ex: Link do PDF ou Rota Interna"
+                           className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-sm text-text-primary focus:outline-none focus:border-primary transition-all font-medium"
+                        />
+                     </div>
+                  </div>
+
+                  <div className="space-y-2 mt-4">
+                     <label htmlFor="url_checkout" className="block text-xs font-black uppercase tracking-widest text-text-primary flex items-center gap-2 italic"><LinkIcon className="w-3 h-3 text-primary"/> Link de Checkout (Hotmart)</label>
+                     <input 
+                        type="url" id="url_checkout" name="url_checkout"
+                        placeholder="Cole o link da página de pagamento"
+                        className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-sm text-text-primary focus:outline-none focus:border-primary transition-all font-medium"
+                     />
+                     <div className="mt-2 p-4 bg-primary/5 border border-primary/20 rounded-xl">
+                        <p className="text-[10px] text-text-primary font-bold uppercase mb-1">Como preencher este link?</p>
+                        <p className="text-xs text-text-secondary leading-relaxed">
+                           Acesse a Hotmart: <b>Produtos &gt; Meus Produtos &gt; Links de Divulgação</b> e copie a URL da <i>Página de Pagamento</i>. O e-mail do aluno é anexado automaticamente.
+                        </p>
+                     </div>
+                  </div>
                </div>
 
                 <div className="space-y-4 md:col-span-2 pt-10 border-t border-border-custom">

@@ -57,6 +57,7 @@ export async function createCurso(formData: FormData) {
   const thumb_url = formData.get('thumb_url') as string
   const status = formData.get('status') as string || 'rascunho'
   const destaque_vitrine = formData.get('destaque_vitrine') === 'on'
+  const visivel_no_site = formData.get('visivel_no_site') === 'on'
   
   const objetivos = formData.get('objetivos') as string
   const publico_alvo = formData.get('publico_alvo') as string
@@ -72,6 +73,11 @@ export async function createCurso(formData: FormData) {
     thumb_url,
     status,
     destaque_vitrine,
+    visivel_no_site,
+    tipo: formData.get('tipo') as string || null,
+    nivel: formData.get('nivel') as string || null,
+    categoria: formData.get('categoria') as string || null,
+    url_checkout: formData.get('url_checkout') as string || null,
     objetivos: formData.get('objetivos') as string,
     publico_alvo: formData.get('publico_alvo') as string,
     resultados_esperados: formData.get('resultados_esperados') as string,
@@ -110,6 +116,7 @@ export async function updateCursoBasics(id: string, formData: FormData) {
   const thumb_url = formData.get('thumb_url') as string
   const status = formData.get('status') as string
   const destaque_vitrine = formData.get('destaque_vitrine') === 'on'
+  const visivel_no_site = formData.get('visivel_no_site') === 'on'
 
   const objetivos = formData.get('objetivos') as string
   const publico_alvo = formData.get('publico_alvo') as string
@@ -125,6 +132,11 @@ export async function updateCursoBasics(id: string, formData: FormData) {
     thumb_url,
     status,
     destaque_vitrine,
+    visivel_no_site,
+    tipo: formData.get('tipo') as string || null,
+    nivel: formData.get('nivel') as string || null,
+    categoria: formData.get('categoria') as string || null,
+    url_checkout: formData.get('url_checkout') as string || null,
     objetivos: formData.get('objetivos') as string,
     publico_alvo: formData.get('publico_alvo') as string,
     resultados_esperados: formData.get('resultados_esperados') as string,

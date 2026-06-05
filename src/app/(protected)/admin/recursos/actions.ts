@@ -31,6 +31,7 @@ export async function createRecurso(formData: FormData) {
   const abertura_tipo = formData.get('abertura_tipo') as string || 'modal'
   const status = formData.get('status') === 'on' || formData.get('status') === 'true' ? 'ativo' : 'inativo'
   const destaque_vitrine = formData.get('destaque_vitrine') === 'on'
+  const visivel_no_site = formData.get('visivel_no_site') === 'on'
   
   let thumb_url = null
   const arquivo_capa = formData.get('capa_image') as File | null
@@ -65,6 +66,11 @@ export async function createRecurso(formData: FormData) {
     abertura_tipo,
     status,
     destaque_vitrine,
+    visivel_no_site,
+    categoria: formData.get('categoria') as string || null,
+    tipo_entrega: formData.get('tipo_entrega') as string || null,
+    url_entrega: formData.get('url_entrega') as string || null,
+    url_checkout: formData.get('url_checkout') as string || null,
     objetivo,
     quando_usar,
     como_usar,
@@ -93,6 +99,7 @@ export async function updateRecurso(id: string, formData: FormData) {
   const abertura_tipo = formData.get('abertura_tipo') as string || 'modal'
   const status = formData.get('status') === 'on' || formData.get('status') === 'true' ? 'ativo' : 'inativo'
   const destaque_vitrine = formData.get('destaque_vitrine') === 'on'
+  const visivel_no_site = formData.get('visivel_no_site') === 'on'
 
   let dataObj: any = {
     titulo,
@@ -102,6 +109,11 @@ export async function updateRecurso(id: string, formData: FormData) {
     abertura_tipo,
     status,
     destaque_vitrine,
+    visivel_no_site,
+    categoria: formData.get('categoria') as string || null,
+    tipo_entrega: formData.get('tipo_entrega') as string || null,
+    url_entrega: formData.get('url_entrega') as string || null,
+    url_checkout: formData.get('url_checkout') as string || null,
     objetivo: formData.get('objetivo') as string,
     quando_usar: formData.get('quando_usar') as string,
     como_usar: formData.get('como_usar') as string,
