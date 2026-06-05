@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qual é o seu Estilo de Negociador?</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0f0e0c; --bg2:#1c1b18; --bg3:#272520; --card:#1e1d1a;
+  --border:rgba(255,255,255,0.10); --border2:rgba(255,255,255,0.22);
+  --text:#ffffff;          /* branco puro — máximo contraste */
+  --text2:#d4d0c8;         /* cinza claro — texto secundário legível */
+  --text3:#9a9690;         /* cinza médio — apenas para labels discretos */
+  --ctrl:#e05444; --anal:#4a9fd4; --cata:#e8782a; --apoi:#2db868;
+  --gold:#c9a84c; --r:10px;
+}
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:16px; line-height:1.65; }
+
+/* ── FS BAR ── */
+#fs-bar { position:sticky; top:0; z-index:999; background:var(--bg2); border-bottom:0.5px solid var(--border); padding:8px 20px; display:flex; align-items:center; justify-content:space-between; font-size:12px; color:var(--text2); }
+#fs-bar span { font-weight:500; letter-spacing:.02em; }
+#fs-bar button { font-size:12px; padding:5px 14px; border:0.5px solid var(--border2); border-radius:var(--r); background:transparent; color:var(--text2); cursor:pointer; display:flex; align-items:center; gap:5px; transition:all .15s; }
+#fs-bar button:hover { background:var(--bg3); color:var(--text); }
+
+/* ── HEADER ── */
+.header { text-align:center; padding:48px 24px 32px; border-bottom:0.5px solid var(--border); position:relative; overflow:hidden; }
+.header::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 50% -10%,rgba(201,168,76,0.09) 0%,transparent 70%); pointer-events:none; }
+.header-eyebrow { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; font-weight:500; }
+.header h1 { font-family:'Playfair Display',serif; font-size:clamp(28px,4vw,46px); font-weight:900; line-height:1.15; margin-bottom:14px; color:var(--text); }
+.header p { font-size:15px; color:var(--text2); max-width:580px; margin:0 auto; line-height:1.75; }
+
+/* ── PROGRESS ── */
+.progress-wrap { max-width:720px; margin:0 auto; padding:20px 24px 0; }
+.progress-bar-bg { height:4px; border-radius:2px; background:var(--bg3); overflow:hidden; }
+.progress-bar-fill { height:100%; border-radius:2px; background:var(--gold); transition:width .4s cubic-bezier(.4,0,.2,1); }
+.progress-label { font-size:12px; color:var(--text3); margin-top:7px; text-align:right; letter-spacing:.03em; }
+
+/* ── MAIN ── */
+main { max-width:720px; margin:0 auto; padding:32px 24px 60px; }
+
+.section-divider { display:flex; align-items:center; gap:12px; margin:32px 0 20px; }
+.section-divider-line { flex:1; height:0.5px; background:var(--border); }
+.section-divider-label { font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--text2); white-space:nowrap; font-weight:500; }
+
+/* ── QUESTION CARDS ── */
+.q-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:20px 22px; margin-bottom:12px; transition:border-color .2s; }
+.q-card.answered { border-color:rgba(201,168,76,0.35); }
+.q-card.error { border-color:rgba(224,84,68,0.7); animation:shake .3s; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+.q-num { font-size:12px; color:var(--text3); letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px; font-weight:500; }
+
+.q-options { display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:center; }
+.q-opt {
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:8px;
+  padding:13px 18px;
+  cursor:pointer;
+  transition:all .15s;
+  font-size:15px;          /* fonte maior para legibilidade */
+  font-weight:500;
+  line-height:1.45;
+  color:var(--text);       /* branco — máximo contraste */
+  user-select:none;
+}
+.q-opt:hover { border-color:var(--gold); background:var(--bg3); color:var(--text); }
+.q-opt.left  { text-align:right; }
+.q-opt.right { text-align:left; }
+.q-opt.sel   { background:rgba(201,168,76,0.18); border-color:var(--gold); color:#ffffff; font-weight:600; }
+
+.q-vs { font-size:11px; color:var(--text3); letter-spacing:.06em; text-align:center; font-weight:600; padding:0 2px; }
+
+/* ── BUTTONS ── */
+.btn-wrap { text-align:center; margin-top:30px; }
+.btn-calc { background:var(--gold); color:#0f0e0c; border:none; border-radius:9px; padding:15px 44px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.03em; transition:all .15s; }
+.btn-calc:hover { filter:brightness(1.1); transform:translateY(-1px); }
+.btn-reset { background:transparent; color:var(--text2); border:1px solid var(--border2); border-radius:9px; padding:10px 26px; font-family:'DM Sans',sans-serif; font-size:14px; cursor:pointer; margin-top:12px; transition:all .15s; }
+.btn-reset:hover { color:var(--text); border-color:var(--text3); }
+.error-msg { font-size:13px; color:#ff6b5b; margin-top:12px; display:none; font-weight:500; }
+
+/* ── RESULTADO ── */
+#resultado { display:none; animation:fadeUp .5s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+.result-hero { border-radius:var(--r); padding:32px 28px; margin-bottom:20px; border:1px solid; position:relative; overflow:hidden; }
+.result-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 80% 60% at 0% 0%,rgba(255,255,255,0.05) 0%,transparent 60%); pointer-events:none; }
+.result-eyebrow { font-size:12px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px; font-weight:600; }
+.result-name { font-family:'Playfair Display',serif; font-size:clamp(30px,5vw,44px); font-weight:900; line-height:1.1; margin-bottom:6px; color:#ffffff; }
+.result-alias { font-size:15px; color:var(--text2); margin-bottom:18px; }
+.result-desc { font-size:15px; line-height:1.8; color:var(--text); max-width:530px; }
+.result-medo { display:inline-flex; align-items:center; gap:8px; margin-top:16px; background:rgba(0,0,0,0.25); border-radius:7px; padding:9px 16px; font-size:14px; color:var(--text); font-weight:500; }
+
+/* ── PERFIL COMPLETO ── */
+.perfil-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+.perfil-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:16px 18px; }
+.perfil-card-title { font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px; }
+.perfil-list { list-style:none; }
+.perfil-list li { font-size:14px; color:var(--text); padding:5px 0; border-bottom:0.5px solid var(--border); line-height:1.5; display:flex; gap:8px; align-items:flex-start; }
+.perfil-list li:last-child { border-bottom:none; }
+.perfil-list li .pi { flex-shrink:0; font-size:13px; margin-top:1px; }
+
+/* ── SCORE ── */
+.score-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+.score-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:16px; }
+.score-card-title { font-size:12px; color:var(--text2); letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px; font-weight:600; }
+.axis-row { display:flex; align-items:center; gap:10px; font-size:14px; margin-bottom:9px; }
+.axis-label { color:var(--text); min-width:110px; font-weight:500; }
+.axis-bar { flex:1; height:6px; border-radius:3px; background:var(--bg3); overflow:hidden; }
+.axis-fill { height:100%; border-radius:3px; transition:width .6s .2s; }
+.axis-val { min-width:32px; text-align:right; font-weight:700; font-size:14px; color:var(--text); }
+
+/* ── MAPA DE QUADRANTES ── */
+.quadrant-map { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:20px 20px 28px; margin-bottom:16px; }
+.quad-title { font-size:12px; color:var(--text2); letter-spacing:.06em; text-transform:uppercase; margin-bottom:14px; font-weight:600; }
+.quad-outer { position:relative; padding:0 28px 24px 28px; }
+
+/* eixo labels exteriores */
+.quad-axis-top    { text-align:center; font-size:12px; font-weight:700; color:var(--text); letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px; }
+.quad-axis-bottom { text-align:center; font-size:12px; font-weight:700; color:var(--text); letter-spacing:.08em; text-transform:uppercase; margin-top:8px; }
+.quad-axis-left   { position:absolute; left:0; top:50%; transform:translateY(-50%) rotate(-90deg); font-size:12px; font-weight:700; color:var(--text); letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; }
+.quad-axis-right  { position:absolute; right:0; top:50%; transform:translateY(-50%) rotate(90deg); font-size:12px; font-weight:700; color:var(--text); letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; }
+
+/* numeração dos eixos */
+.quad-numbers-h { display:flex; justify-content:space-between; font-size:11px; color:var(--text3); padding:0 2px; margin-bottom:4px; font-weight:600; }
+.quad-numbers-v-wrap { position:absolute; left:-18px; top:0; bottom:0; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none; align-items:flex-end; }
+.quad-numbers-v { font-size:11px; color:var(--text3); font-weight:600; }
+
+.quad-grid { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:6px; }
+.quad-cell { border-radius:8px; padding:14px 16px; border:1px solid transparent; transition:all .3s; opacity:.25; }
+.quad-cell.active { opacity:1; border-color:currentColor; box-shadow:0 0 0 1px currentColor; }
+.quad-cell.tendency { opacity:.6; border-style:dashed; }
+.quad-cell-name { font-size:14px; font-weight:700; color:var(--text); }
+.quad-cell-sub { font-size:11px; color:var(--text2); margin-top:3px; }
+.quad-legend { font-size:11px; color:var(--text3); margin-top:10px; }
+
+/* ── FAZER / EVITAR ── */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+.action-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:16px 18px; }
+.action-title { font-size:12px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:7px; }
+.action-list { list-style:none; }
+.action-list li { font-size:14px; color:var(--text); padding:7px 0; border-bottom:0.5px solid var(--border); line-height:1.55; display:flex; gap:9px; align-items:flex-start; }
+.action-list li:last-child { border-bottom:none; }
+.action-list li::before { flex-shrink:0; margin-top:2px; font-size:13px; }
+.action-list.do   li::before { content:'✓'; color:#2ecc71; font-weight:700; }
+.action-list.dont li::before { content:'✕'; color:#ff6b5b; font-weight:700; }
+
+/* ── DISCLAIMER ── */
+.disclaimer { background:var(--bg2); border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:0 var(--r) var(--r) 0; padding:16px 20px; font-size:14px; color:var(--text); line-height:1.75; margin-bottom:16px; }
+.disclaimer strong { color:var(--gold); }
+
+/* ── EMPATE ── */
+.tie-note { background:rgba(201,168,76,0.08); border:1px solid rgba(201,168,76,0.3); border-radius:var(--r); padding:14px 18px; font-size:14px; color:var(--text); margin-bottom:16px; line-height:1.7; }
+.tie-note strong { color:var(--gold); }
+
+/* ── OUTROS ESTILOS ── */
+.others-title { font-size:12px; color:var(--text2); letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px; font-weight:600; }
+.other-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:16px 20px; margin-bottom:10px; cursor:pointer; transition:border-color .15s; }
+.other-card:hover { border-color:var(--border2); }
+.other-card-header { display:flex; justify-content:space-between; align-items:center; }
+.other-card-name { font-size:15px; font-weight:700; }
+.other-card-sub { font-size:12px; color:var(--text2); margin-top:2px; }
+.other-card-chevron { font-size:13px; color:var(--text3); transition:transform .2s; flex-shrink:0; margin-left:10px; }
+.other-card.open .other-card-chevron { transform:rotate(180deg); }
+.other-card-body { display:none; margin-top:14px; padding-top:14px; border-top:0.5px solid var(--border); font-size:14px; color:var(--text); line-height:1.7; }
+.other-card.open .other-card-body { display:block; }
+.other-mini-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+.other-mini-title { font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--text3); margin-bottom:6px; font-weight:700; }
+.other-mini ul { list-style:none; }
+.other-mini ul li { font-size:13px; color:var(--text); padding:3px 0; display:flex; gap:7px; line-height:1.5; }
+.other-mini ul li::before { font-size:12px; flex-shrink:0; margin-top:2px; font-weight:700; }
+.other-mini ul.do   li::before { content:'✓'; color:#2ecc71; }
+.other-mini ul.dont li::before { content:'✕'; color:#ff6b5b; }
+
+/* ── FOOTER ── */
+.footer { text-align:center; padding:28px 24px 40px; border-top:0.5px solid var(--border); font-size:13px; color:var(--text3); }
+.footer a { color:var(--gold); text-decoration:none; }
+
+@media(max-width:560px){
+  .q-options{grid-template-columns:1fr} .q-vs{display:none}
+  .two-col,.score-grid,.perfil-grid,.other-mini-grid{grid-template-columns:1fr}
+  .quad-axis-left,.quad-axis-right{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="fs-bar">
+  <span>Qual é o seu Estilo de Negociador?</span>
+  <button onclick="goFS()">⛶ Ecrã completo</button>
+</div>
+
+<div class="header">
+  <div class="header-eyebrow">Qual é o seu Estilo de Negociador?</div>
+  <h1>Qual é o seu Estilo<br>de Negociador?</h1>
+  <p>Marque a opção que melhor descreve o seu comportamento habitual em situações de negociação. Escolha apenas <strong>uma opção por linha</strong> — a sua primeira reação costuma ser a mais reveladora.</p>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="progress-label" id="prog-label">0 de 20 respondidas</div>
+</div>
+
+<main>
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label">Bloco 1 de 2 — Assertividade</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <div id="bloco1"></div>
+
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label">Bloco 2 de 2 — Expressividade</div>
+    <div class="section-divider-line"></div>
+  </div>
+  <div id="bloco2"></div>
+
+  <div class="btn-wrap">
+    <div><button class="btn-calc" onclick="calcular()">Ver meu resultado →</button></div>
+    <div><button class="btn-reset" onclick="resetar()">Recomeçar</button></div>
+    <div class="error-msg" id="error-msg">⚠ Responda todas as perguntas antes de continuar.</div>
+  </div>
+
+  <!-- ═══ RESULTADO ═══ -->
+  <div id="resultado">
+    <div class="section-divider" style="margin-top:44px;">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-label">O seu resultado</div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <!-- Hero -->
+    <div class="result-hero" id="res-hero">
+      <div class="result-eyebrow" id="res-eyebrow">Estilo predominante</div>
+      <div class="result-name" id="res-name">—</div>
+      <div class="result-alias" id="res-alias">—</div>
+      <div class="result-desc" id="res-desc">—</div>
+      <div class="result-medo" id="res-medo">—</div>
+    </div>
+
+    <!-- Empate -->
+    <div class="tie-note" id="tie-note" style="display:none;"></div>
+
+    <!-- Perfil completo (4 quadrantes de info) -->
+    <div class="perfil-grid" id="res-perfil"></div>
+
+    <!-- Scores -->
+    <div class="score-grid">
+      <div class="score-card">
+        <div class="score-card-title">Eixo Assertividade — Bloco 1</div>
+        <div class="axis-row">
+          <div class="axis-label">Dominante</div>
+          <div class="axis-bar"><div class="axis-fill" id="ax-dom" style="background:#e05444;width:0%"></div></div>
+          <div class="axis-val" id="ax-dom-val">—</div>
+        </div>
+        <div class="axis-row">
+          <div class="axis-label">Condescendente</div>
+          <div class="axis-bar"><div class="axis-fill" id="ax-cond" style="background:#4a9fd4;width:0%"></div></div>
+          <div class="axis-val" id="ax-cond-val">—</div>
+        </div>
+      </div>
+      <div class="score-card">
+        <div class="score-card-title">Eixo Expressividade — Bloco 2</div>
+        <div class="axis-row">
+          <div class="axis-label">Informal</div>
+          <div class="axis-bar"><div class="axis-fill" id="ax-inf" style="background:#e8782a;width:0%"></div></div>
+          <div class="axis-val" id="ax-inf-val">—</div>
+        </div>
+        <div class="axis-row">
+          <div class="axis-label">Formal</div>
+          <div class="axis-bar"><div class="axis-fill" id="ax-form" style="background:#2db868;width:0%"></div></div>
+          <div class="axis-val" id="ax-form-val">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mapa de quadrantes com numeração nos eixos -->
+    <div class="quadrant-map">
+      <div class="quad-title">Posição no mapa de estilos</div>
+      <div class="quad-outer">
+        <div class="quad-axis-top">INFORMAL</div>
+        <div class="quad-axis-left">DOMINANTE</div>
+        <div class="quad-axis-right">CONDESCENDENTE</div>
+
+        <!-- numeração eixo horizontal (0–10) -->
+        <div class="quad-numbers-h" id="q-num-h"></div>
+
+        <div id="quad-grid-wrap" style="position:relative;">
+          <!-- numeração eixo vertical (10 topo = Informal, 0 base = Formal) -->
+          <div class="quad-numbers-v-wrap" id="q-num-v"></div>
+
+          <div class="quad-grid" id="quad-grid">
+            <!-- linha 1 topo = INFORMAL -->
+            <div class="quad-cell" id="q-cata" style="background:rgba(232,120,42,0.12);color:#e8782a;">
+              <div class="quad-cell-name">Catalisador</div>
+              <div class="quad-cell-sub">Expressivo · Informal + Dominante</div>
+            </div>
+            <div class="quad-cell" id="q-apoi" style="background:rgba(45,184,104,0.12);color:#2db868;">
+              <div class="quad-cell-name">Apoiador</div>
+              <div class="quad-cell-sub">Amigável · Informal + Condescendente</div>
+            </div>
+            <!-- linha 2 base = FORMAL -->
+            <div class="quad-cell" id="q-ctrl" style="background:rgba(224,84,68,0.12);color:#e05444;">
+              <div class="quad-cell-name">Controlador</div>
+              <div class="quad-cell-sub">Condutor · Formal + Dominante</div>
+            </div>
+            <div class="quad-cell" id="q-anal" style="background:rgba(74,159,212,0.12);color:#4a9fd4;">
+              <div class="quad-cell-name">Analítico</div>
+              <div class="quad-cell-sub">Analítico · Formal + Condescendente</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quad-axis-bottom">FORMAL</div>
+        <div class="quad-legend">⬛ Estilo predominante &nbsp;|&nbsp; ▪ Tendência secundária (tracejado) &nbsp;|&nbsp; 🟢 Posição do avaliado &nbsp;|&nbsp; Eixos: 0→10 (H: Dom→Cond · V: Form→Inf)</div>
+      </div>
+    </div>
+
+    <!-- Fazer / Evitar -->
+    <div class="two-col" id="res-actions"></div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <strong>Lembre-se:</strong> este resultado indica uma <strong>tendência comportamental</strong>, não um rótulo fixo. Não existe estilo certo ou errado — cada um tem forças e pontos de atenção. As pessoas podem usar <strong>diferentes estilos ao longo de uma mesma negociação</strong>, adaptando-se conforme o contexto evolui.<br><br>
+      <strong>Experimente repetir o teste</strong> pensando em situações distintas — uma negociação com um cliente exigente, uma com um parceiro de confiança, uma sob pressão de prazo. Os resultados revelam como o seu estilo se adapta (ou se rigidifica) conforme o contexto muda.
+    </div>
+
+    <!-- Outros estilos -->
+    <div class="others-title" style="margin-top:8px;">Os outros três estilos — como reconhecê-los e negociar com eles</div>
+    <div id="other-cards"></div>
+  </div><!-- fim #resultado -->
+</main>
+
+<div class="footer">
+  Prof. Paulo H. Donassolo · <a href="mailto:contato@phdonassolo.com">contato@phdonassolo.com</a> 
+</div>
+
+<script>
+/* ════════════════════════════════════════
+   PERGUNTAS
+════════════════════════════════════════ */
+const B1=[
+  ["Tomo a iniciativa","Prefiro que me solicitem"],
+  ["Sou eloquente, falador","Sou mais quieto"],
+  ["Comunico-me com rapidez","Comunico-me com ponderação"],
+  ["Sou desafiador","Sou encorajador"],
+  ["Sou direto","Gosto de ser sutil"],
+  ["Faço afirmações","Faço perguntas"],
+  ["Demonstro confiança","Demonstro minhas dúvidas"],
+  ["Sou Ativo","Sou Reativo"],
+  ["Tomo decisões rápidas","Minhas decisões são analisadas"],
+  ["Tenho o sentido de urgência","Tenho paciência"],
+];
+const B2=[
+  ["Sou Espontâneo","Tenho autocontrole"],
+  ["Sou Impulsivo","Sou autodisciplinado"],
+  ["Expresso meus sentimentos","Oculto meus sentimentos"],
+  ["Sou brincalhão e divertido","Sou mais retraído"],
+  ["Sou acessível","Aparento ser inacessível"],
+  ["Sou orientado para relacionamentos","Sou orientado para resultados"],
+  ["Sou caloroso","Sou reservado"],
+  ["Sou orientado para o macro","Sou orientado para o micro"],
+  ["Gosto da improvisação","Gosto de organização e planejamento"],
+  ["Gosto de me aproximar das pessoas","Gosto de manter distância das pessoas"],
+];
+
+/* ════════════════════════════════════════
+   DADOS DOS ESTILOS (enriquecidos)
+════════════════════════════════════════ */
+const E={
+  ctrl:{
+    id:'ctrl', nome:'Controlador', alias:'Condutor · Formal + Dominante',
+    cor:'#e05444', corL:'rgba(224,84,68,0.14)',
+    keywords:'Entregas · metas · vencer · dever · independência · autonomia',
+    desc:'Decidido, eficiente, rápido, objetivo e assume riscos. Precisa de resultados, valoriza a eficiência, as metas e a autonomia. Toma decisões com rapidez e espera o mesmo dos outros. Comunica de forma directa, vai ao ponto e não tolera desperdício de tempo.',
+    medo:'😰 Maior medo: perder tempo ou o controlo da situação',
+    pontos_fortes:['Decidido, eficiente e rápido','Objetivo e orientado para resultados','Assume riscos com convicção','Independente e autónomo'],
+    pontos_fracos:['Exigente, crítico e impaciente','Insensível e mandão por vezes','Dificuldade em ouvir os outros','Pode ignorar o lado humano'],
+    obter_apoio:'Confia na sua eficiência e nos resultados que entrega.',
+    sob_tensao:'Geralmente impõe e torna-se autoritário.',
+    valoriza:'Resultados e cumprimento de metas.',
+    precisa_aprender:'A escutar os outros e a ter humildade.',
+    fazer:['Seja direto e objetivo — comece pelo resultado, não pela introdução','Respeite o tempo dele e apresente-lhe opções para ele decidir','Use dados, factos e benefícios concretos e mensuráveis','Responda às objeções com factos, não com emoção'],
+    evitar:['Não desperdice tempo com conversa social no início','Não seja submisso nem indeciso — ele perde o respeito','Não use argumentos emocionais como principal persuasão','Não improvise — chegue sempre preparado'],
+  },
+  anal:{
+    id:'anal', nome:'Analítico', alias:'Analítico · Formal + Condescendente',
+    cor:'#4a9fd4', corL:'rgba(74,159,212,0.14)',
+    keywords:'Informações · segurança · alternativas · organizar-se · organização',
+    desc:'Sério, organizado, paciente, cuidadoso e controlado. Precisa de segurança antes de decidir. Valoriza dados, lógica, processos e organização. Analisa cada detalhe com cuidado e tende a demorar na decisão — não por indecisão, mas por rigor.',
+    medo:'😰 Maior medo: tomar uma decisão errada por falta de informação',
+    pontos_fortes:['Sério, organizado e cuidadoso','Paciente e metódico','Controlado e preciso','Busca sempre a especialização'],
+    pontos_fracos:['Indeciso, teimoso e perfeccionista','Procrastinador sob pressão','Evita conflitos retirando-se','Pode travar o processo com excesso de análise'],
+    obter_apoio:'Mantém-se a par do que acontece, conhece a função e busca sempre a especialização.',
+    sob_tensao:'Cala-se, retira-se ou evita o conflito.',
+    valoriza:'Segurança e maior garantia nas decisões.',
+    precisa_aprender:'A tomar decisões mais rápidas e a ser mais arrojado.',
+    fazer:['Chegue preparado com dados, relatórios e evidências concretas','Seja estruturado — use sequências lógicas e claras','Dê-lhe tempo para analisar; não apresse a decisão','Ofereça garantias, alternativas e respostas a riscos previsíveis'],
+    evitar:['Não pressione com urgência artificial','Não use argumentos emocionais como substituto da lógica','Não seja vago ou impreciso nos detalhes','Evite surpresas de última hora — ele precisa de previsibilidade'],
+  },
+  cata:{
+    id:'cata', nome:'Catalisador', alias:'Expressivo · Informal + Dominante',
+    cor:'#e8782a', corL:'rgba(232,120,42,0.14)',
+    keywords:'Inovação · "o cara" · visão macro · exclusividade',
+    desc:'Criativo, empreendedor, entusiasmado, estimulante e persuasivo. Precisa de reconhecimento e visibilidade. Valoriza inovação, exclusividade e visão de futuro. É entusiasta e motiva-se com o que é novo e com potencial de impacto.',
+    medo:'😰 Maior medo: ser irrelevante, comum ou ignorado',
+    pontos_fortes:['Criativo, empreendedor e entusiasmado','Estimulante e persuasivo','Usa habilidades sociais para obter apoio','Visão de futuro e orientado para o macro'],
+    pontos_fracos:['Superficial, exclusivista e impulsivo','Inconstante — muda de ideia com facilidade','Sob tensão: fala alto, agita-se e pode explodir','Dificuldade com autodisciplina e moderação'],
+    obter_apoio:'Usa habilidades sociais, novas ideias e a sua habilidade de persuasão.',
+    sob_tensao:'Fala alto e rápido, agita-se com frequência e geralmente explode.',
+    valoriza:'Cumprimentos recebidos e reconhecimento.',
+    precisa_aprender:'Autodisciplina e moderação.',
+    fazer:['Fale sobre o impacto, a visão e o que há de novo e exclusivo','Destaque o que o diferencia — use histórias de sucesso','Seja rápido, energético e deixe-o brilhar na conversa','Mostre como a solução o posiciona como pioneiro ou referência'],
+    evitar:['Não seja monótono, excessivamente técnico ou focado em problemas','Não ignore as suas ideias — ouça e valorize o que ele propõe','Não entre em pormenores técnicos excessivos na primeira reunião','Não seja lento ou burocrático no processo'],
+  },
+  apoi:{
+    id:'apoi', nome:'Apoiador', alias:'Amigável · Informal + Condescendente',
+    cor:'#2db868', corL:'rgba(45,184,104,0.14)',
+    keywords:'Harmonia · bons sentimentos · trabalho em equipe · pessoas e grupo',
+    desc:'Amável, compreensivo, joga para o time, bom ouvinte e prestativo. Precisa de harmonia e de relações de confiança. Valoriza o grupo e o bem coletivo. É empático e leal — tende a evitar conflitos e pode adiar decisões que envolvam risco para as relações.',
+    medo:'😰 Maior medo: criar conflitos ou prejudicar o grupo',
+    pontos_fortes:['Amável, compreensivo e prestativo','Bom ouvinte e joga para o time','Faz amizades com facilidade','Busca sempre a harmonia do grupo'],
+    pontos_fracos:['Geralmente perde tempo e evita conflito','Pode ser levado na conversa','Sob tensão: finge concordar ou não se manifesta','Dificuldade em fixar metas e em auto-determinação'],
+    obter_apoio:'Faz amizades, trabalha para o grupo e busca harmonia.',
+    sob_tensao:'Finge concordar ou simplesmente não se manifesta.',
+    valoriza:'A atenção que recebe e o fato de ser aceito pelas pessoas.',
+    precisa_aprender:'Auto-determinação e como fixar metas.',
+    fazer:['Invista tempo na relação pessoal antes de falar de negócio','Mostre que se importa com ele e com a equipa dele','Dê garantias de suporte, seja paciente e consistente','Envolva a equipa dele no processo — ele precisa do grupo'],
+    evitar:['Não pressione nem crie situações de confronto','Não seja impessoal, frio ou excessivamente transacional','Não use táticas agressivas — ele recua e perde a confiança','Respeite as suas preocupações, mesmo as não ditas'],
+  },
+};
+
+/* ════════════════════════════════════════
+   ESTADO
+════════════════════════════════════════ */
+const resp={b1:Array(10).fill(null),b2:Array(10).fill(null)};
+
+/* ════════════════════════════════════════
+   BUILD PERGUNTAS
+════════════════════════════════════════ */
+function buildBloco(pars,bloco,cont){
+  pars.forEach((par,i)=>{
+    const d=document.createElement('div');
+    d.className='q-card'; d.id=`qc-${bloco}-${i}`;
+    d.innerHTML=`<div class="q-num">${bloco==='b1'?i+1:i+11} de 20</div>
+    <div class="q-options">
+      <div class="q-opt left" id="o-${bloco}-${i}-L" onclick="sel('${bloco}',${i},'L')">${par[0]}</div>
+      <div class="q-vs">ou</div>
+      <div class="q-opt right" id="o-${bloco}-${i}-R" onclick="sel('${bloco}',${i},'R')">${par[1]}</div>
+    </div>`;
+    cont.appendChild(d);
+  });
+}
+
+function sel(bl,idx,lado){
+  resp[bl][idx]=lado;
+  ['L','R'].forEach(s=>{
+    const el=document.getElementById(`o-${bl}-${idx}-${s}`);
+    el.className='q-opt '+(s==='L'?'left':'right')+(lado===s?' sel':'');
+  });
+  const card=document.getElementById(`qc-${bl}-${idx}`);
+  card.classList.add('answered'); card.classList.remove('error');
+  prog();
+}
+
+function prog(){
+  const t=resp.b1.filter(x=>x).length+resp.b2.filter(x=>x).length;
+  document.getElementById('prog-fill').style.width=(t/20*100)+'%';
+  document.getElementById('prog-label').textContent=`${t} de 20 respondidas`;
+}
+
+/* ════════════════════════════════════════
+   CÁLCULO
+════════════════════════════════════════ */
+function calcular(){
+  let err=false;
+  ['b1','b2'].forEach(bl=>resp[bl].forEach((_,i)=>{
+    if(!resp[bl][i]){document.getElementById(`qc-${bl}-${i}`).classList.add('error');err=true;}
+  }));
+  if(err){
+    document.getElementById('error-msg').style.display='block';
+    document.querySelector('.q-card.error').scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  document.getElementById('error-msg').style.display='none';
+
+  const domS  = resp.b1.filter(r=>r==='L').length;
+  const condS = resp.b1.filter(r=>r==='R').length;
+  const infS  = resp.b2.filter(r=>r==='L').length;
+  const formS = resp.b2.filter(r=>r==='R').length;
+
+  const tieDom = domS===condS;
+  const tieInf = infS===formS;
+  const isDom  = domS > condS;
+  const isInf  = infS > formS;
+
+  let estilo, altId=null, tieMsg='';
+
+  if(tieDom && tieInf){
+    estilo=E.cata;
+    tieMsg=`<strong>Empate em ambos os eixos (${domS}–${condS} e ${infS}–${formS}):</strong> Os seus dois eixos estão em equilíbrio perfeito. O resultado indicado é uma tendência para o <strong>Catalisador (Expressivo)</strong> — mas significa que você transita com facilidade entre os quatro estilos conforme o contexto. Isso é uma competência, não uma indefinição. Repita o teste pensando em situações específicas para afinar o auto-conhecimento.`;
+  } else if(tieDom){
+    estilo=isInf?E.cata:E.ctrl;
+    altId =isInf?'q-apoi':'q-anal';
+    tieMsg=`<strong>Eixo de assertividade empatado (${domS}–${condS}):</strong> O estilo apresentado é o mais provável dado o seu eixo de expressividade. O quadrante a tracejado no mapa representa a sua tendência secundária.`;
+  } else if(tieInf){
+    estilo=isDom?E.ctrl:E.anal;
+    altId =isDom?'q-cata':'q-apoi';
+    tieMsg=`<strong>Eixo de expressividade empatado (${infS}–${formS}):</strong> O estilo apresentado é o mais provável dado o seu eixo de assertividade. O quadrante a tracejado representa a sua tendência secundária.`;
+  } else {
+    if( isDom && !isInf) estilo=E.ctrl;
+    if(!isDom && !isInf) estilo=E.anal;
+    if( isDom &&  isInf) estilo=E.cata;
+    if(!isDom &&  isInf) estilo=E.apoi;
+  }
+
+  mostrar(estilo,domS,condS,infS,formS,altId,tieMsg);
+}
+
+/* ════════════════════════════════════════
+   MOSTRAR RESULTADO
+════════════════════════════════════════ */
+function mostrar(e,dS,cS,iS,fS,altId,tieMsg){
+  /* hero */
+  const hero=document.getElementById('res-hero');
+  hero.style.background=e.corL; hero.style.borderColor=e.cor;
+  document.getElementById('res-eyebrow').style.color=e.cor;
+  document.getElementById('res-name').textContent=e.nome;
+  document.getElementById('res-alias').textContent=e.alias;
+  document.getElementById('res-desc').textContent=e.desc;
+  document.getElementById('res-medo').textContent=e.medo;
+
+  /* perfil completo */
+  document.getElementById('res-perfil').innerHTML=`
+    <div class="perfil-card">
+      <div class="perfil-card-title" style="color:#2ecc71;">✦ Pontos Fortes</div>
+      <ul class="perfil-list">${e.pontos_fortes.map(p=>`<li><span class="pi" style="color:#2ecc71;">+</span>${p}</li>`).join('')}</ul>
+    </div>
+    <div class="perfil-card">
+      <div class="perfil-card-title" style="color:#ff6b5b;">✦ Pontos de Atenção</div>
+      <ul class="perfil-list">${e.pontos_fracos.map(p=>`<li><span class="pi" style="color:#ff6b5b;">!</span>${p}</li>`).join('')}</ul>
+    </div>
+    <div class="perfil-card">
+      <div class="perfil-card-title" style="color:var(--gold);">✦ Comportamento Típico</div>
+      <ul class="perfil-list">
+        <li><span class="pi">🤝</span><span><strong>Para obter apoio:</strong> ${e.obter_apoio}</span></li>
+        <li><span class="pi">⚡</span><span><strong>Sob tensão:</strong> ${e.sob_tensao}</span></li>
+        <li><span class="pi">💡</span><span><strong>Valoriza:</strong> ${e.valoriza}</span></li>
+      </ul>
+    </div>
+    <div class="perfil-card">
+      <div class="perfil-card-title" style="color:#4a9fd4;">✦ Desenvolvimento</div>
+      <ul class="perfil-list">
+        <li><span class="pi">📈</span><span><strong>Precisa aprender:</strong> ${e.precisa_aprender}</span></li>
+        <li><span class="pi" style="color:var(--gold);">🏷</span><span><strong>Palavras-chave:</strong> ${e.keywords}</span></li>
+      </ul>
+    </div>`;
+
+  /* scores */
+  document.getElementById('ax-dom').style.width =(dS/10*100)+'%';
+  document.getElementById('ax-cond').style.width=(cS/10*100)+'%';
+  document.getElementById('ax-inf').style.width =(iS/10*100)+'%';
+  document.getElementById('ax-form').style.width=(fS/10*100)+'%';
+  document.getElementById('ax-dom-val').textContent =dS+'/10';
+  document.getElementById('ax-cond-val').textContent=cS+'/10';
+  document.getElementById('ax-inf-val').textContent =iS+'/10';
+  document.getElementById('ax-form-val').textContent=fS+'/10';
+
+  /* mapa de quadrantes */
+  const qMap={ctrl:'q-ctrl',anal:'q-anal',cata:'q-cata',apoi:'q-apoi'};
+  Object.values(qMap).forEach(id=>document.getElementById(id).className='quad-cell');
+  document.getElementById(qMap[e.id]).classList.add('active');
+  if(altId) document.getElementById(altId).classList.add('tendency');
+
+  /* ── numeração eixo horizontal: 0 (esq=Dominante) … 10 (dir=Condescendente) ── */
+  const nh=document.getElementById('q-num-h');
+  nh.innerHTML='';
+  for(let i=0;i<=10;i+=2){
+    const s=document.createElement('span');
+    s.textContent=i;
+    s.style.cssText='flex:1;text-align:'+(i===0?'left':i===10?'right':'center');
+    nh.appendChild(s);
+  }
+
+  /* ── numeração eixo vertical: 10 no topo (Informal) → 0 na base (Formal) ── */
+  const nv=document.getElementById('q-num-v');
+  nv.innerHTML='';
+  [10,8,6,4,2,0].forEach(n=>{   /* invertido: 10 topo, 0 base */
+    const s=document.createElement('span');
+    s.className='quad-numbers-v'; s.textContent=n;
+    nv.appendChild(s);
+  });
+
+  /* ── bolinha verde no ponto de cruzamento ──
+     X = condS  (0=Dominante esq … 10=Condescendente dir)
+     Y = infS   (0=Formal/base … 10=Informal/topo)
+     O grid ocupa toda a área após os números; usamos % para posicionar.
+     left% = condS/10*100   top% = (10-infS)/10*100  (Y invertido: topo=10)
+  */
+  // remove bolinha anterior se existir
+  const oldDot=document.getElementById('quad-dot');
+  if(oldDot) oldDot.remove();
+
+  const gridWrap=document.getElementById('quad-grid-wrap');
+  const dot=document.createElement('div');
+  dot.id='quad-dot';
+  const xPct = cS/10*100;          // cS = condS
+  const yPct = (10-iS)/10*100;     // iS = infS; inverte porque topo=10
+  dot.style.cssText=`
+    position:absolute;
+    left:${xPct}%; top:${yPct}%;
+    transform:translate(-50%,-50%);
+    width:14px; height:14px;
+    border-radius:50%;
+    background:#2ecc71;
+    border:2px solid #fff;
+    box-shadow:0 0 0 3px rgba(46,204,113,0.35), 0 0 10px rgba(46,204,113,0.6);
+    z-index:10;
+    pointer-events:none;
+    transition:all .4s .3s;
+  `;
+  // tooltip com coordenadas
+  dot.title=`Dom/Cond: ${cS} · Inf/Form: ${iS}`;
+  gridWrap.style.position='relative';
+  gridWrap.appendChild(dot);
+
+  /* empate */
+  const tn=document.getElementById('tie-note');
+  if(tieMsg){tn.innerHTML=tieMsg;tn.style.display='block';}
+  else{tn.style.display='none';}
+
+  /* fazer / evitar */
+  document.getElementById('res-actions').innerHTML=`
+    <div class="action-card">
+      <div class="action-title" style="color:#2ecc71;">✅ Negociar COM o ${e.nome} — Fazer</div>
+      <ul class="action-list do">${e.fazer.map(f=>`<li>${f}</li>`).join('')}</ul>
+    </div>
+    <div class="action-card">
+      <div class="action-title" style="color:#ff6b5b;">🚫 Negociar COM o ${e.nome} — Evitar</div>
+      <ul class="action-list dont">${e.evitar.map(f=>`<li>${f}</li>`).join('')}</ul>
+    </div>`;
+
+  /* outros estilos */
+  const outros=Object.values(E).filter(s=>s.id!==e.id);
+  document.getElementById('other-cards').innerHTML=outros.map(o=>`
+    <div class="other-card" id="oc-${o.id}" onclick="tog('${o.id}')">
+      <div class="other-card-header">
+        <div>
+          <div class="other-card-name" style="color:${o.cor};">${o.nome} <span style="color:var(--text3);font-weight:400;font-size:12px;">(${o.alias})</span></div>
+          <div class="other-card-sub">${o.medo}</div>
+        </div>
+        <div class="other-card-chevron">▼</div>
+      </div>
+      <div class="other-card-body">
+        <p style="margin-bottom:10px;color:var(--text);">${o.desc}</p>
+        <div style="font-size:13px;margin-bottom:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;">
+          <span style="color:var(--text3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Comportamento · </span>
+          <span>Sob tensão: <strong>${o.sob_tensao}</strong> &nbsp;|&nbsp; Valoriza: <strong>${o.valoriza}</strong></span>
+        </div>
+        <div class="other-mini-grid">
+          <div class="other-mini">
+            <div class="other-mini-title">O que fazer</div>
+            <ul class="do">${o.fazer.map(f=>`<li>${f}</li>`).join('')}</ul>
+          </div>
+          <div class="other-mini">
+            <div class="other-mini-title">O que evitar</div>
+            <ul class="dont">${o.evitar.map(f=>`<li>${f}</li>`).join('')}</ul>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('resultado').style.display='block';
+  document.getElementById('resultado').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function tog(id){ document.getElementById('oc-'+id).classList.toggle('open'); }
+
+function resetar(){
+  resp.b1.fill(null); resp.b2.fill(null);
+  document.querySelectorAll('.q-card').forEach(c=>c.classList.remove('answered','error'));
+  document.querySelectorAll('.q-opt').forEach(o=>o.classList.remove('sel'));
+  document.getElementById('resultado').style.display='none';
+  document.getElementById('error-msg').style.display='none';
+  prog();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ════════════════════════════════════════
+   FULLSCREEN
+════════════════════════════════════════ */
+function goFS(){
+  const el=document.documentElement;
+  if(el.requestFullscreen) el.requestFullscreen();
+  else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  else if(el.mozRequestFullScreen) el.mozRequestFullScreen();
+}
+['fullscreenchange','webkitfullscreenchange','mozfullscreenchange'].forEach(ev=>
+  document.addEventListener(ev,()=>{
+    const full=!!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement);
+    document.getElementById('fs-bar').style.display=full?'none':'flex';
+  })
+);
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+buildBloco(B1,'b1',document.getElementById('bloco1'));
+buildBloco(B2,'b2',document.getElementById('bloco2'));
+prog();
+</script>
+</body>
+</html>
