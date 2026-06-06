@@ -6,25 +6,15 @@ import { ConfirmarSenhaForm } from '@/components/auth/ConfirmarSenhaForm'
 export default async function ConfirmarSenhaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ code?: string; error?: string; error_code?: string; [key: string]: string | string[] | undefined }>
+  searchParams: Promise<{ error?: string; error_code?: string; [key: string]: string | string[] | undefined }>
 }) {
   const params = await searchParams
-  const code = params.code
   const errorParam = params.error
   const errorCode = params.error_code
-  
+
   let isLinkExpired = errorCode === 'otp_expired' || errorParam === 'access_denied'
 
-  // Troca o código por sessão no SERVIDOR (evita erro de PKCE)
-  if (code && !isLinkExpired) {
-    const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (error) {
-      console.error('Erro ao validar código no servidor:', error.message)
-      isLinkExpired = true
-    }
-  } else if (!code && !isLinkExpired) {
-    // Se não tem código, verifica se já existe sessão ativa
+  if (!isLinkExpired) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
