@@ -106,7 +106,7 @@ export default function ResumoPedidoPage() {
         metodo: region === 'BR' ? 'pix_direto' : (region === 'PT' ? 'mbway_direto' : 'transferencia'),
         pais: region,
         valor: precoFinal,
-        moeda: region === 'BR' ? 'R$' : '€'
+        moeda: region === 'BR' ? 'R$' : region === 'PT' ? '€' : '$'
       })
 
       if (res.success) {
@@ -150,44 +150,25 @@ export default function ResumoPedidoPage() {
       return
     }
 
-    // Fluxo de Pagamento Automático Real via Gateways
+    // Fluxo de Pagamento via Stripe
     try {
-      if (region === 'BR') {
-        // Mercado Pago (Reais - BRL)
-        const res = await fetch('/api/pagamentos/criar-preferencia', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            cursoId: produto.id,
-            cupomCodigo: couponStatus.valid ? couponCode : undefined
-          })
+      const moeda = region === 'BR' ? 'BRL' : region === 'PT' ? 'EUR' : 'USD'
+      const res = await fetch('/api/pagamentos/stripe/criar-sessao', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cursoId: produto.id,
+          planoId: ofertaSelecionada?.plano_id,
+          cupomCodigo: couponStatus.valid ? couponCode : undefined,
+          moeda
         })
-        const data = await res.json()
-        
-        if (res.ok && data.init_point) {
-          window.location.href = data.init_point
-        } else {
-          alert(data.error || 'Erro ao iniciar pagamento com Mercado Pago.')
-        }
+      })
+      const data = await res.json()
+
+      if (res.ok && data.url) {
+        window.location.href = data.url
       } else {
-        // Stripe Checkout (Euros ou Dólares - EUR / USD)
-        const res = await fetch('/api/pagamentos/stripe/criar-sessao', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            cursoId: produto.id,
-            planoId: ofertaSelecionada?.plano_id,
-            cupomCodigo: couponStatus.valid ? couponCode : undefined,
-            moeda: region === 'PT' ? 'EUR' : 'USD'
-          })
-        })
-        const data = await res.json()
-        
-        if (res.ok && data.url) {
-          window.location.href = data.url
-        } else {
-          alert(data.error || 'Erro ao iniciar pagamento internacional.')
-        }
+        alert(data.error || 'Erro ao iniciar pagamento.')
       }
     } catch (err) {
       alert('Erro de comunicação com o servidor de pagamentos.')
@@ -349,7 +330,7 @@ export default function ResumoPedidoPage() {
                              )}
                           </div>
                           <span className="text-base font-black text-text-primary italic">
-                             {region === 'BR' ? 'R$' : '€'} {precoOriginal.toLocaleString(region === 'BR' ? 'pt-BR' : 'pt-PT', { minimumFractionDigits: 2 })}
+                             {region === 'BR' ? 'R$' : region === 'PT' ? '€' : '$'} {precoOriginal.toLocaleString(region === 'BR' ? 'pt-BR' : region === 'PT' ? 'pt-PT' : 'en-US', { minimumFractionDigits: 2 })}
                           </span>
                        </div>
                       
@@ -361,7 +342,7 @@ export default function ResumoPedidoPage() {
                                className="flex justify-between items-center p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-emerald-400"
                             >
                                <span className="flex items-center gap-2 font-black"><Tag className="w-3.5 h-3.5" /> Cupom Ativado</span>
-                               <span>- {region === 'BR' ? 'R$' : '€'} {couponStatus.discount?.toLocaleString(region === 'BR' ? 'pt-BR' : 'pt-PT', { minimumFractionDigits: 2 })}</span>
+                               <span>- {region === 'BR' ? 'R$' : region === 'PT' ? '€' : '$'} {couponStatus.discount?.toLocaleString(region === 'BR' ? 'pt-BR' : region === 'PT' ? 'pt-PT' : 'en-US', { minimumFractionDigits: 2 })}</span>
                             </motion.div>
                          )}
                       </AnimatePresence>
@@ -375,7 +356,7 @@ export default function ResumoPedidoPage() {
                                      <span className="text-primary">GRÁTIS</span>
                                    ) : (
                                      <>
-                                       {region === 'BR' ? 'R$' : '€'} {precoFinal.toLocaleString(region === 'BR' ? 'pt-BR' : 'pt-PT', { minimumFractionDigits: 2 })}
+                                       {region === 'BR' ? 'R$' : region === 'PT' ? '€' : '$'} {precoFinal.toLocaleString(region === 'BR' ? 'pt-BR' : region === 'PT' ? 'pt-PT' : 'en-US', { minimumFractionDigits: 2 })}
                                      </>
                                    )}
                                 </span>

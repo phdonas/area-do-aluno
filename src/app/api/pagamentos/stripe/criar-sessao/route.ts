@@ -5,8 +5,7 @@ import { validarCupom, calcularDesconto } from '@/lib/cupons'
 import { registrarLogSistema } from '@/lib/logs'
 import { getCorsHeaders, corsOptionsResponse } from '@/lib/cors'
 
-// Inicializa o Stripe com a chave secreta do .env
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock_secret_key_ph')
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export async function OPTIONS(request: Request) {
   return corsOptionsResponse(request)
@@ -14,18 +13,14 @@ export async function OPTIONS(request: Request) {
 
 export async function POST(request: Request) {
   const corsH = getCorsHeaders(request)
-  // --- LOG DIAGNÓSTICO TEMPORÁRIO ---
-  console.log('STRIPE_SECRET_KEY presente:', !!process.env.STRIPE_SECRET_KEY)
-  console.log('Primeiros 10 chars:', process.env.STRIPE_SECRET_KEY?.substring(0, 10))
-  // ----------------------------------
   try {
     const { cursoId, planoId, cupomCodigo, emailFinal, moeda = 'EUR' } = await request.json()
-    
+
     if (!cursoId) {
       return NextResponse.json({ error: 'ID do curso é obrigatório' }, { status: 400, headers: corsH })
     }
 
-    const targetCurrency = (moeda === 'USD' || moeda === 'EUR') ? moeda : 'EUR'
+    const targetCurrency = (moeda === 'BRL' || moeda === 'USD' || moeda === 'EUR') ? moeda : 'EUR'
 
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -56,19 +51,18 @@ export async function POST(request: Request) {
     const plano = oferta?.planos as any
 
     // Determina o preço base na moeda de destino
+    const precoBRL = Number(oferta?.valor_venda || curso.preco || 0)
     let precoBase = 0
-    if (targetCurrency === 'EUR') {
+    if (targetCurrency === 'BRL') {
+      precoBase = precoBRL
+    } else if (targetCurrency === 'EUR') {
       precoBase = Number(oferta?.valor_venda_eur || 0)
+      if (precoBase <= 0) precoBase = Math.round(precoBRL / 6)
     } else {
       precoBase = Number(oferta?.valor_venda_usd || 0)
+      if (precoBase <= 0) precoBase = Math.round(precoBRL / 5.5)
     }
-
-    // Fallback inteligente caso a moeda estrangeira não esteja preenchida no banco
-    if (precoBase <= 0) {
-      const precoBRL = Number(oferta?.valor_venda || curso.preco || 0)
-      precoBase = Math.round(precoBRL / 6) // Conversão estimada simples de segurança
-      if (precoBase <= 0) precoBase = 49 // Preço mínimo fallback de segurança
-    }
+    if (precoBase <= 0) precoBase = targetCurrency === 'BRL' ? 97 : 19
     
     let precoFinal = precoBase
     let appliedCupomId = null
