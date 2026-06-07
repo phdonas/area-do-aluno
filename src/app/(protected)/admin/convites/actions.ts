@@ -50,7 +50,8 @@ export async function criarConvite(data: { email: string; curso_id?: string; pla
     email,
     token,
     cursoNome,
-    tipo: 'convite'
+    tipo: 'convite',
+    contexto: 'convite_admin'
   })
 
   // 5. Log
@@ -116,7 +117,8 @@ export async function criarLoteConvites(data: { emails: string[]; curso_id?: str
       email,
       token,
       cursoNome,
-      tipo: 'convite'
+      tipo: 'convite',
+      contexto: 'convite_admin'
     })
 
     if (mailError) {

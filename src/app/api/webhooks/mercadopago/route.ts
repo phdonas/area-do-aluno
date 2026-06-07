@@ -118,7 +118,7 @@ export async function POST(request: Request) {
         usado: false
       })
 
-      await enviarEmailComunicacao({ email, token, cursoNome, tipo: 'convite' })
+      await enviarEmailComunicacao({ email, token, cursoNome, tipo: 'convite', contexto: 'pos_pagamento' })
 
       await registrarLogSistema({
         email,

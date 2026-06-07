@@ -8,23 +8,26 @@ interface SendInviteEmailParams {
   token?: string
   cursoNome?: string
   tipo: 'boas_vindas' | 'matricula_direta' | 'convite' | 'expiracao_aviso' | 'expiracao_hoje'
+  /** Para tipo 'convite': diferencia o texto entre liberação manual (admin) e pós-pagamento */
+  contexto?: 'convite_admin' | 'pos_pagamento'
 }
 
 /**
  * Função Genérica para envio de e-mails customizados
  */
-export async function enviarEmailSuporte({ to, subject, html }: { to: string, subject: string, html: string }) {
+export async function enviarEmailSuporte({ to, subject, html, headers }: { to: string, subject: string, html: string, headers?: Record<string, string> }) {
   // Alias para compatibilidade e cache
-  return sendEmail({ to, subject, html })
+  return sendEmail({ to, subject, html, headers })
 }
 
-export async function sendEmail({ to, subject, html }: { to: string, subject: string, html: string }) {
+export async function sendEmail({ to, subject, html, headers }: { to: string, subject: string, html: string, headers?: Record<string, string> }) {
   try {
     const { data, error } = await resend.emails.send({
       from: 'Prof. Paulo Donassolo <contato@phdonassolo.com>',
       to: [to],
       subject,
-      html
+      html,
+      ...(headers ? { headers } : {})
     })
     
     if (error) {
@@ -41,15 +44,30 @@ export async function sendEmail({ to, subject, html }: { to: string, subject: st
 /**
  * Função de Comunicação com Templates Pré-definidos
  */
-export async function enviarEmailComunicacao({ email, password, token, cursoNome, tipo }: SendInviteEmailParams) {
+export async function enviarEmailComunicacao({ email, password, token, cursoNome, tipo, contexto }: SendInviteEmailParams) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const loginLink = `${siteUrl}/login`
   const activationLink = `${siteUrl}/cadastro?token=${token}`
-  
+
+  // Convite manual (liberado pelo admin) tem texto distinto do convite pós-pagamento
+  const isConviteAdmin = tipo === 'convite' && contexto === 'convite_admin'
+
+  const conviteTitulo = isConviteAdmin ? 'Seu acesso está liberado.' : 'Sua jornada começa aqui!'
+  const conviteCorpo = isConviteAdmin
+    ? 'O Prof. Paulo H. Donassolo liberou seu acesso à plataforma PHD Academy.<br/>Clique no botão abaixo para criar sua senha e começar.'
+    : 'Seu pagamento foi confirmado e sua vaga na PHD Academy está garantida. Clique no botão abaixo para definir sua senha e liberar seu acesso.'
+  const conviteCtaTexto = isConviteAdmin ? 'CRIAR SENHA E ACESSAR' : 'DEFINIR SENHA E ACESSAR'
+  const conviteCursoLabel = isConviteAdmin ? 'CURSO LIBERADO' : 'Treinamento Liberado'
+  const conviteRodapeHtml = isConviteAdmin
+    ? 'Este acesso foi liberado manualmente pelo Prof. Paulo H. Donassolo.<br/>Dúvidas? Entre em contato: contato@phdonassolo.com'
+    : 'PHD Academy · phdonassolo.com'
+
   const subjects = {
     boas_vindas: 'Boas Vindas ao Ecossistema do Prof. Paulo Donassolo. Seus acessos estão liberados!',
     matricula_direta: cursoNome ? `Matrícula Confirmada: ${cursoNome}` : 'Novo Treinamento Liberado - PH Donassolo',
-    convite: 'Seu acesso à PHD Academy está pronto! Ative sua conta agora.',
+    convite: isConviteAdmin
+      ? 'Você recebeu acesso à PHD Academy'
+      : 'Seu acesso à PHD Academy está pronto! Ative sua conta agora.',
     expiracao_aviso: cursoNome ? `⚠️ Seu acesso ao curso ${cursoNome} expira em breve` : 'Atenção: Seu acesso expira em breve',
     expiracao_hoje: cursoNome ? `🚨 ÚLTIMO DIA: Seu acesso ao curso ${cursoNome} vence hoje` : 'Último dia de acesso'
   }
@@ -63,13 +81,13 @@ export async function enviarEmailComunicacao({ email, password, token, cursoNome
 
        <div style="background: #f8fafc; border-radius: 24px; padding: 32px; margin-bottom: 32px; border: 1px solid #f1f5f9;">
           <h2 style="color: #1e293b; font-size: 20px; font-weight: 800; margin: 0 0 16px 0;">
-             ${tipo === 'boas_vindas' ? 'Seja muito bem-vindo(a)!' : tipo === 'convite' ? 'Sua jornada começa aqui!' : tipo.startsWith('expiracao') ? 'Aviso Importante' : 'Nova Etapa Liberada!'}
+             ${tipo === 'boas_vindas' ? 'Seja muito bem-vindo(a)!' : tipo === 'convite' ? conviteTitulo : tipo.startsWith('expiracao') ? 'Aviso Importante' : 'Nova Etapa Liberada!'}
           </h2>
           <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0;">
-             ${tipo === 'boas_vindas' 
+             ${tipo === 'boas_vindas'
                 ? 'O Prof. Paulo Donassolo acabou de configurar seus acessos no ecossistema e seu treinamento já está disponível na plataforma.'
                 : tipo === 'convite'
-                ? 'Seu pagamento foi confirmado e sua vaga na PHD Academy está garantida. Clique no botão abaixo para definir sua senha e liberar seu acesso.'
+                ? conviteCorpo
                 : tipo === 'expiracao_aviso'
                 ? 'Identificamos que seu acesso ao ecossistema está próximo do vencimento. Não perca o progresso conquistado até aqui.'
                 : tipo === 'expiracao_hoje'
@@ -80,7 +98,7 @@ export async function enviarEmailComunicacao({ email, password, token, cursoNome
        
        ${cursoNome ? `
        <div style="margin-bottom: 32px; padding: 24px; border-left: 4px solid #4f46e5; background: #eff6ff; border-radius: 0 16px 16px 0;">
-          <p style="margin: 0; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #3b82f6; letter-spacing: 0.05em;">Treinamento Liberado</p>
+          <p style="margin: 0; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #3b82f6; letter-spacing: 0.05em;">${tipo === 'convite' ? conviteCursoLabel : 'Treinamento Liberado'}</p>
           <h3 style="margin: 4px 0 0 0; font-size: 18px; font-weight: 900; color: #1e3a8a;">${cursoNome}</h3>
        </div>
        ` : ''}
@@ -103,7 +121,7 @@ export async function enviarEmailComunicacao({ email, password, token, cursoNome
        <div style="text-align: center;">
           ${tipo === 'convite' ? `
             <a href="${activationLink}" style="display: inline-block; background: #059669; color: #ffffff; padding: 20px 48px; border-radius: 16px; text-decoration: none; font-weight: 800; font-size: 16px; transition: all 0.2s ease; box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.4);">
-               DEFINIR SENHA E ACESSAR
+               ${conviteCtaTexto}
             </a>
           ` : tipo.startsWith('expiracao') ? `
             <a href="${siteUrl}/catalogo" style="display: inline-block; background: #d97706; color: #ffffff; padding: 20px 48px; border-radius: 16px; text-decoration: none; font-weight: 800; font-size: 16px; transition: all 0.2s ease; box-shadow: 0 10px 15px -3px rgba(217, 119, 6, 0.4);">
@@ -117,6 +135,11 @@ export async function enviarEmailComunicacao({ email, password, token, cursoNome
        </div>
 
        <div style="margin-top: 48px; pt-32; border-top: 1px solid #f1f5f9; text-align: center;">
+          ${tipo === 'convite' ? `
+          <p style="color: #94a3b8; font-size: 12px; line-height: 1.6; margin: 24px 0 0 0;">
+             ${conviteRodapeHtml}
+          </p>
+          ` : `
           <p style="color: #94a3b8; font-size: 12px; line-height: 1.6; margin: 24px 0 0 0;">
              Este é um e-mail automático enviado pela plataforma Vortex da PH Donassolo.<br/>
              Dúvidas? Entre em contato com nosso suporte exclusivo.
@@ -124,13 +147,21 @@ export async function enviarEmailComunicacao({ email, password, token, cursoNome
           <p style="color: #cbd5e1; font-size: 10px; margin-top: 16px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.1em;">
              PH DONASSOLO • ALTA PERFORMANCE
           </p>
+          `}
        </div>
     </div>
   `
 
+  // Headers de deliverability para o e-mail de convite (evita duplicatas e habilita unsubscribe)
+  const headers = tipo === 'convite' && token ? {
+    'X-Entity-Ref-ID': token,
+    'List-Unsubscribe': `<mailto:contato@phdonassolo.com?subject=unsubscribe>`,
+  } : undefined
+
   return enviarEmailSuporte({
     to: email,
     subject: subjects[tipo],
-    html: htmlBody
+    html: htmlBody,
+    headers
   })
 }

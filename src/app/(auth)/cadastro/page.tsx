@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { RegisterForm } from '@/components/auth/RegisterForm'
 import { Metadata } from 'next'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, LogIn } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Cadastro | Área do Aluno',
@@ -18,6 +19,7 @@ export default async function CadastroPage({ searchParams }: CadastroPageProps) 
 
   let initialEmail = ''
   let errorMsg = ''
+  let contaExistente = false
 
   // Validação de Token de Convite (v5.2 - Ajustado para convites_matricula)
   if (token) {
@@ -40,6 +42,11 @@ export default async function CadastroPage({ searchParams }: CadastroPageProps) 
         errorMsg = 'Este link de convite expirou (validade de 7 dias).'
       } else {
         initialEmail = convite.email
+
+        // Verifica se já existe uma conta no Supabase Auth com este e-mail
+        const supabaseAdmin = createAdminClient()
+        const { data: { users } } = await supabaseAdmin.auth.admin.listUsers()
+        contaExistente = users.some(u => u.email?.toLowerCase() === convite.email.toLowerCase())
       }
     }
   }
@@ -71,6 +78,23 @@ export default async function CadastroPage({ searchParams }: CadastroPageProps) 
                 <h3 className="font-bold text-red-900 text-lg">Convite Inválido</h3>
                 <p className="text-red-700 text-sm mt-1">{errorMsg}</p>
                 <a href="/login" className="mt-4 block text-primary font-bold hover:underline">Voltar para o Login</a>
+              </div>
+            </div>
+          ) : contaExistente ? (
+            <div className="flex flex-col items-center gap-4 text-center p-6 bg-blue-50/50 rounded-2xl border border-blue-100">
+              <LogIn className="w-12 h-12 text-primary" />
+              <div>
+                <h3 className="font-bold text-text-primary text-lg">Você já tem uma conta</h3>
+                <p className="text-text-secondary text-sm mt-1">
+                  O e-mail <strong>{initialEmail}</strong> já possui cadastro na plataforma.
+                  Faça login para ativar seu novo acesso automaticamente.
+                </p>
+                <a
+                  href={`/login?token=${token}`}
+                  className="mt-4 inline-block py-3 px-6 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all"
+                >
+                  Fazer login e ativar acesso
+                </a>
               </div>
             </div>
           ) : (

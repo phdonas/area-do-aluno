@@ -157,7 +157,7 @@ export async function POST(request: Request) {
       }
 
       // Envia o e-mail com o link de ativação da nova conta
-      await enviarEmailComunicacao({ email, token, cursoNome, tipo: 'convite' })
+      await enviarEmailComunicacao({ email, token, cursoNome, tipo: 'convite', contexto: 'pos_pagamento' })
 
       // Registra o log administrativo
       await supabase.from('logs_matriculas').insert({

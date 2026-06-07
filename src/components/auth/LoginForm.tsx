@@ -11,15 +11,24 @@ export function LoginForm() {
   const [state, formAction, isPending] = useActionState(login, null)
   const searchParams = useSearchParams()
   const message = searchParams.get('message')
+  const token = searchParams.get('token')
 
   return (
     <form action={formAction} className="space-y-6 w-full max-w-sm mx-auto">
+      {token && <input type="hidden" name="token" value={token} />}
+
       {message && (
         <div className="p-3 text-sm text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-xl text-center font-medium">
           {message}
         </div>
       )}
-      
+
+      {token && (
+        <div className="p-3 text-sm text-primary bg-primary/5 border border-primary/10 rounded-xl text-center font-medium">
+          Você tem um convite pendente. Faça login para ativar seu acesso automaticamente.
+        </div>
+      )}
+
       {state?.error && (
         <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl text-center font-medium">
           {state.error}
