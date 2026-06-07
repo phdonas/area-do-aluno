@@ -33,6 +33,8 @@ export default async function CadastroPage({ searchParams }: CadastroPageProps) 
 
     if (error || !convite) {
       errorMsg = 'Este link de convite é inválido ou já foi utilizado.'
+    } else if (convite.revogado) {
+      errorMsg = 'Este convite foi revogado.'
     } else {
       // Verifica se expirou
       const dataCriacao = new Date(convite.created_at)

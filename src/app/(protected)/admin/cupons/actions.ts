@@ -51,6 +51,39 @@ export async function criarCupom(data: {
   return { success: true }
 }
 
+export async function editarCupom(id: string, dados: {
+  codigo?: string
+  tipo?: 'porcentagem' | 'valor_fixo'
+  valor?: number
+  data_inicio?: string
+  data_fim?: string
+  limite_uso?: number
+  ativo?: boolean
+  apenas_para_alunos?: boolean
+}) {
+  const supabase = createAdminClient()
+
+  const updates: Record<string, unknown> = {}
+  if (dados.codigo !== undefined) updates.codigo = dados.codigo.toUpperCase().trim()
+  if (dados.tipo !== undefined) updates.tipo = dados.tipo
+  if (dados.valor !== undefined) updates.valor = dados.valor
+  if (dados.data_inicio !== undefined) updates.validade_inicio = dados.data_inicio
+  if (dados.data_fim !== undefined) updates.validade_fim = dados.data_fim || null
+  if (dados.limite_uso !== undefined) updates.limite_uso = dados.limite_uso || null
+  if (dados.ativo !== undefined) updates.ativo = dados.ativo
+  if (dados.apenas_para_alunos !== undefined) updates.apenas_para_alunos = dados.apenas_para_alunos
+
+  const { error } = await supabase.from('cupons').update(updates).eq('id', id)
+
+  if (error) {
+    console.error('Erro ao editar cupom:', error)
+    return { error: 'Erro ao atualizar o código promocional: ' + error.message }
+  }
+
+  revalidatePath('/admin/cupons')
+  return { success: true }
+}
+
 export async function deletarCupom(id: string) {
   const supabase = createAdminClient()
   const { error } = await supabase.from('cupons').delete().eq('id', id)

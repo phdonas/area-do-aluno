@@ -19,6 +19,10 @@ export async function processarConvitePosLogin(token: string, userId: string) {
     return { error: 'Este convite é inválido ou já foi utilizado.' }
   }
 
+  if (convite.revogado) {
+    return { error: 'Este convite foi revogado.' }
+  }
+
   const dataExpiracao = new Date(convite.created_at)
   dataExpiracao.setDate(dataExpiracao.getDate() + CONVITE_EXPIRACAO_DIAS)
   if (dataExpiracao < new Date()) {

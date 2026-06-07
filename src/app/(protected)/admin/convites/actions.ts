@@ -140,6 +140,42 @@ export async function criarLoteConvites(data: { emails: string[]; curso_id?: str
   return { success: true, successCount, errors }
 }
 
+export async function revogarConvite(id: string) {
+  const supabase = createAdminClient()
+
+  const { error } = await supabase
+    .from('convites_matricula')
+    .update({ revogado: true, revogado_em: new Date().toISOString() })
+    .eq('id', id)
+    .eq('usado', false)
+
+  if (error) {
+    console.error('Erro ao revogar convite:', error)
+    return { error: 'Falha ao revogar convite.' }
+  }
+
+  revalidatePath('/admin/convites')
+  return { success: true }
+}
+
+export async function excluirConvite(id: string) {
+  const supabase = createAdminClient()
+
+  const { error } = await supabase
+    .from('convites_matricula')
+    .delete()
+    .eq('id', id)
+    .eq('usado', false)
+
+  if (error) {
+    console.error('Erro ao excluir convite:', error)
+    return { error: 'Falha ao excluir convite.' }
+  }
+
+  revalidatePath('/admin/convites')
+  return { success: true }
+}
+
 export async function importarCSVContatos(formData: FormData) {
   const file = formData.get('file') as File
   if (!file) return { error: 'Arquivo CSV ausente.' }
