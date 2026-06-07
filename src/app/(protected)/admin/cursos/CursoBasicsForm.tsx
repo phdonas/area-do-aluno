@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Save, LayoutTemplate, Plus, Trash2, Video, ShieldCheck, HelpCircle, ListChecks, Target, CreditCard, Sparkles, Globe, Link as LinkIcon } from 'lucide-react'
 import { PrecoInternacional } from './PrecoInternacional'
+import { MediaGallery } from '@/components/ui/MediaGallery'
 
 interface CursoBasicsFormProps {
   curso: any
@@ -14,6 +15,7 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
   const [precoEur, setPrecoEur] = useState(curso.preco_eur || '')
   const [destaque, setDestaque] = useState(curso.destaque_vitrine || false)
   const [visivelSite, setVisivelSite] = useState(curso.visivel_no_site || false)
+  const [thumbUrl, setThumbUrl] = useState(curso.thumb_url || '')
   const [faqs, setFaqs] = useState<{pergunta: string, resposta: string}[]>(
     Array.isArray(curso.faq) ? curso.faq : []
   )
@@ -130,14 +132,10 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
 
       <div className="space-y-6 pt-6 border-t border-border-custom">
         <div className="space-y-2">
-          <label htmlFor="thumb_url" className="block text-xs font-black text-text-primary uppercase tracking-widest italic">
+          <label className="block text-xs font-black text-text-primary uppercase tracking-widest italic mb-4">
             Imagem da Capa do Curso <span className="text-primary-light">(Ideal: 1280x720px)</span>
           </label>
-          <input 
-            type="url" id="thumb_url" name="thumb_url" defaultValue={curso.thumb_url || ''}
-            placeholder="URL da imagem (Ex: https://...)"
-            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm"
-          />
+          <MediaGallery value={thumbUrl} onChange={setThumbUrl} name="thumb_url" />
         </div>
 
         <div className="space-y-2">
