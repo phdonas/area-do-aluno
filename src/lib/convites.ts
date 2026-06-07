@@ -1,4 +1,5 @@
 import { createAdminClient } from './supabase/admin'
+import { CONVITE_EXPIRACAO_DIAS } from './constants'
 
 /**
  * Processa um convite pendente após autenticação (cadastro novo ou login de aluno já existente):
@@ -19,9 +20,9 @@ export async function processarConvitePosLogin(token: string, userId: string) {
   }
 
   const dataExpiracao = new Date(convite.created_at)
-  dataExpiracao.setDate(dataExpiracao.getDate() + 7)
+  dataExpiracao.setDate(dataExpiracao.getDate() + CONVITE_EXPIRACAO_DIAS)
   if (dataExpiracao < new Date()) {
-    return { error: 'Este convite expirou (validade de 7 dias).' }
+    return { error: `Este convite expirou (validade de ${CONVITE_EXPIRACAO_DIAS} dias).` }
   }
 
   if (convite.curso_id) {

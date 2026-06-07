@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { RegisterForm } from '@/components/auth/RegisterForm'
 import { Metadata } from 'next'
 import { AlertCircle, LogIn } from 'lucide-react'
+import { CONVITE_EXPIRACAO_DIAS } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'Cadastro | Área do Aluno',
@@ -33,13 +34,13 @@ export default async function CadastroPage({ searchParams }: CadastroPageProps) 
     if (error || !convite) {
       errorMsg = 'Este link de convite é inválido ou já foi utilizado.'
     } else {
-      // Verifica se expirou (Padrão: 7 dias)
+      // Verifica se expirou
       const dataCriacao = new Date(convite.created_at)
       const dataExpiracao = new Date(dataCriacao)
-      dataExpiracao.setDate(dataExpiracao.getDate() + 7)
+      dataExpiracao.setDate(dataExpiracao.getDate() + CONVITE_EXPIRACAO_DIAS)
 
       if (dataExpiracao < new Date()) {
-        errorMsg = 'Este link de convite expirou (validade de 7 dias).'
+        errorMsg = `Este link de convite expirou (validade de ${CONVITE_EXPIRACAO_DIAS} dias).`
       } else {
         initialEmail = convite.email
 

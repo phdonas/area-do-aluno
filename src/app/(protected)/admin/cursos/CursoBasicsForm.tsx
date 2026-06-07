@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Save, LayoutTemplate, Plus, Trash2, Video, ShieldCheck, HelpCircle, ListChecks, Target, CreditCard, Sparkles, Globe, Link as LinkIcon } from 'lucide-react'
+import { Save, LayoutTemplate, Plus, Trash2, Video, ShieldCheck, HelpCircle, ListChecks, Target, CreditCard, Sparkles, Globe } from 'lucide-react'
 import { PrecoInternacional } from './PrecoInternacional'
 import { MediaGallery } from '@/components/ui/MediaGallery'
 
@@ -184,11 +184,11 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
         </div>
       </div>
 
-      {/* INTEGRAÇÃO COM SITE E HOTMART */}
+      {/* INTEGRAÇÃO COM SITE E STRIPE */}
       <div className="space-y-6 pt-6 border-t border-border-custom">
         <div className="flex items-center gap-2 mb-4">
           <Globe className="w-5 h-5 text-primary" />
-          <h3 className="text-sm font-black uppercase tracking-widest text-text-primary italic">Integração com Site e Hotmart</h3>
+          <h3 className="text-sm font-black uppercase tracking-widest text-text-primary italic">Integração com Site e Stripe</h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -215,12 +215,12 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
           <div className="space-y-2">
             <label htmlFor="tipo" className="block text-[10px] font-black text-text-primary uppercase tracking-widest">Plataforma (Tipo)</label>
             <select 
-              id="tipo" name="tipo" defaultValue={curso.tipo || 'LMS'}
+              id="tipo" name="tipo" defaultValue={curso.tipo?.toLowerCase() || 'lms'}
               className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm appearance-none"
             >
-              <option value="LMS">LMS (Área do Aluno)</option>
-              <option value="Udemy">Udemy</option>
-              <option value="ESPM">ESPM</option>
+              <option value="lms">LMS (Área do Aluno)</option>
+              <option value="udemy">Udemy</option>
+              <option value="espm">ESPM</option>
             </select>
             <p className="text-[10px] text-text-muted mt-1">Onde o curso é consumido. LMS = aqui na plataforma.</p>
           </div>
@@ -250,20 +250,37 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
         </div>
 
         <div className="space-y-2 pt-4">
-          <label htmlFor="url_checkout" className="block text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-2 italic">
-            <LinkIcon className="w-3 h-3 text-primary" /> Link de Checkout (Hotmart)
+          <label className="block text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-2 italic">
+            <CreditCard className="w-3 h-3 text-primary" /> Integração com Stripe
           </label>
-          <input 
-            type="url" id="url_checkout" name="url_checkout" defaultValue={curso.url_checkout || ''}
-            placeholder="Cole o link da página de pagamento da Hotmart"
-            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm"
-          />
-          <div className="mt-2 p-4 bg-primary/5 border border-primary/20 rounded-xl">
-             <p className="text-[10px] text-text-primary font-bold uppercase mb-1">Como preencher este link?</p>
-             <p className="text-xs text-text-secondary leading-relaxed">
-               Este é o link direto de pagamento. Vá na Hotmart: <b>Produtos &gt; Meus Produtos &gt; Links de Divulgação (HotLinks)</b> e copie a URL da <i>"Página de Pagamento"</i>. O sistema irá anexar o e-mail do aluno automaticamente neste link.
-             </p>
-          </div>
+          <details className="group bg-primary/5 border border-primary/20 rounded-xl overflow-hidden">
+            <summary className="cursor-pointer list-none p-4 flex items-center justify-between gap-4">
+              <span className="text-xs text-text-secondary leading-relaxed">
+                Os preços deste curso são vinculados via <b>Stripe</b> e configurados na tabela <code>planos_cursos</code> do Supabase — não há link de checkout a preencher aqui.
+              </span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary shrink-0 group-open:hidden">Ver tutorial</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary shrink-0 hidden group-open:inline">Ocultar</span>
+            </summary>
+            <div className="px-4 pb-4 space-y-3">
+              <p className="text-[10px] text-text-primary font-bold uppercase">Como vincular um preço ao curso:</p>
+              <ol className="text-xs text-text-secondary leading-relaxed list-decimal list-inside space-y-1">
+                <li>Acesse <code>dashboard.stripe.com</code> → <b>Products</b> → <b>Add product</b></li>
+                <li>Crie um preço para cada plano (Vitalício, Anual, Semestral) em EUR e BRL</li>
+                <li>Copie o Price ID gerado (formato: <code>price_xxxxxxxxxx</code>)</li>
+                <li>No Supabase → <b>Table Editor</b> → <code>planos_cursos</code></li>
+                <li>Preencha <code>stripe_price_id_eur</code> e <code>valor_venda_eur</code> para cada plano</li>
+              </ol>
+              <div>
+                <p className="text-[10px] text-text-primary font-bold uppercase mb-1">Verificar com SQL:</p>
+                <pre className="text-[10px] bg-background border border-border-custom rounded-lg p-3 overflow-x-auto text-text-secondary">
+{`SELECT p.nome, pc.stripe_price_id_eur, pc.valor_venda_eur
+FROM planos_cursos pc
+JOIN planos p ON p.id = pc.plano_id
+WHERE pc.curso_id = 'seu-curso-id';`}
+                </pre>
+              </div>
+            </div>
+          </details>
         </div>
       </div>
 

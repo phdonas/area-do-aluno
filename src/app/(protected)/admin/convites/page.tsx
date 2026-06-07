@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { CONVITE_EXPIRACAO_DIAS } from '@/lib/constants'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { 
@@ -130,7 +131,7 @@ export default async function ConvitesAdminPage() {
                         <td className="px-10 py-8">
                            <div className="space-y-1">
                               <p className="text-xs font-black text-text-primary">{new Date(convite.created_at).toLocaleDateString()}</p>
-                              <p className="text-[10px] text-text-muted font-medium italic">Expira em 7 dias</p>
+                              <p className="text-[10px] text-text-muted font-medium italic">Expira em {CONVITE_EXPIRACAO_DIAS} dias</p>
                            </div>
                         </td>
                         <td className="px-10 py-8 text-right">

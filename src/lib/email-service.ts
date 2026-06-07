@@ -76,7 +76,7 @@ export async function enviarEmailComunicacao({ email, password, token, cursoNome
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 48px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 32px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
        <div style="margin-bottom: 32px; text-align: center;">
           <h1 style="color: #0f172a; font-size: 28px; font-weight: 900; letter-spacing: -0.025em; line-height: 1.1; margin: 0;">PH DONASSOLO</h1>
-          <p style="color: #64748b; font-size: 14px; font-weight: 600; text-transform: uppercase; tracking: 0.1em; margin-top: 8px;">Área do Aluno • Vortex</p>
+          <p style="color: #64748b; font-size: 14px; font-weight: 600; text-transform: uppercase; tracking: 0.1em; margin-top: 8px;">PHD Academy · phdonassolo.com</p>
        </div>
 
        <div style="background: #f8fafc; border-radius: 24px; padding: 32px; margin-bottom: 32px; border: 1px solid #f1f5f9;">
@@ -120,6 +120,9 @@ export async function enviarEmailComunicacao({ email, password, token, cursoNome
 
        <div style="text-align: center;">
           ${tipo === 'convite' ? `
+            <p style="color: #92400e; font-size: 13px; line-height: 1.6; background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 12px 20px; margin: 0 0 24px 0;">
+               💡 Se este e-mail estiver na pasta spam, mova para a caixa de entrada e adicione <strong>contato@phdonassolo.com</strong> aos seus contatos.
+            </p>
             <a href="${activationLink}" style="display: inline-block; background: #059669; color: #ffffff; padding: 20px 48px; border-radius: 16px; text-decoration: none; font-weight: 800; font-size: 16px; transition: all 0.2s ease; box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.4);">
                ${conviteCtaTexto}
             </a>
@@ -141,11 +144,11 @@ export async function enviarEmailComunicacao({ email, password, token, cursoNome
           </p>
           ` : `
           <p style="color: #94a3b8; font-size: 12px; line-height: 1.6; margin: 24px 0 0 0;">
-             Este é um e-mail automático enviado pela plataforma Vortex da PH Donassolo.<br/>
+             Este é um e-mail automático enviado pela PHD Academy do Prof. Paulo Donassolo.<br/>
              Dúvidas? Entre em contato com nosso suporte exclusivo.
           </p>
           <p style="color: #cbd5e1; font-size: 10px; margin-top: 16px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.1em;">
-             PH DONASSOLO • ALTA PERFORMANCE
+             PHD Academy · phdonassolo.com
           </p>
           `}
        </div>
