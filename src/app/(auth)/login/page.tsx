@@ -34,16 +34,6 @@ export default function LoginPage() {
             <LoginForm />
           </Suspense>
 
-          <div className="mt-8 pt-8 border-t border-border-custom">
-            <div className="p-4 bg-secondary/10 border border-secondary/20 rounded-2xl">
-              <p className="text-xs font-bold text-secondary uppercase tracking-widest mb-1 text-center">Aviso Importante</p>
-              <p className="text-[11px] text-text-secondary text-center leading-tight">
-                A nova Área do Aluno será liberada em <b>maio/2026</b>. 
-                <a href="/em-breve" className="block mt-2 text-primary font-bold hover:underline">Clique aqui para saber mais e se cadastrar</a>
-              </p>
-            </div>
-          </div>
-          
         </div>
         
         {/* Footer info do form */}

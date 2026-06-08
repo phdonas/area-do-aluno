@@ -7,7 +7,7 @@ import {
   FileQuestion, Package, Wrench, Users, Eraser, Activity, TrendingUp, AlertTriangle, Clock, 
   BarChart3, Banknote, History, GraduationCap, ChevronRight, Eye, Play, Search, UserPlus,
   CalendarDays, Filter, ChevronDown, Target, Send, Tag, ShieldCheck, Zap, Award, Settings,
-  Columns3, MailCheck, History as HistoryIcon, Ticket, DollarSign
+  Columns3, MailCheck, History as HistoryIcon, Ticket, DollarSign, Globe
 } from 'lucide-react'
 
 import AnalyticsVisual from './AnalyticsVisual'
@@ -240,6 +240,7 @@ export default async function AdminDashboardPage({
         { label: 'Gestão de Equipe', href: '/admin/usuarios', icon: ShieldCheck, color: 'bg-indigo-600/50' },
         { label: 'Telemetria de Uso', href: '/admin/telemetria', icon: Activity, color: 'bg-blue-500/50' },
         { label: 'Auditoria & Logs', href: '/admin/auditoria', icon: HistoryIcon, color: 'bg-slate-600/50' },
+        { label: 'Acesso à Plataforma', href: '/admin/configuracoes/acesso', icon: Globe, color: 'bg-cyan-600/50' },
       ]
     },
     {
