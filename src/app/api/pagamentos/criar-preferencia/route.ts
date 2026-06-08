@@ -94,9 +94,9 @@ export async function POST(request: Request) {
           email_final: emailCalculado
         },
         back_urls: {
-          success: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/sucesso`,
-          failure: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/erro`,
-          pending: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/pendente`
+          success: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/sucesso?curso_id=${curso.id}`,
+          failure: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/${curso.slug || curso.id}?erro=pagamento_recusado`,
+          pending: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/sucesso?curso_id=${curso.id}&manual=true`
         },
         auto_return: 'approved',
         notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhooks/mercadopago`
