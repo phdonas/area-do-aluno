@@ -15,6 +15,8 @@ export async function OPTIONS(request: Request) {
 
 export async function POST(request: Request) {
   const corsH = getCorsHeaders(request)
+  console.log('MP_ACCESS_TOKEN presente:', !!process.env.MP_ACCESS_TOKEN)
+  console.log('MP_ACCESS_TOKEN prefixo:', process.env.MP_ACCESS_TOKEN?.substring(0, 10))
   try {
     const { cursoId, cupomCodigo, emailFinal } = await request.json()
     
