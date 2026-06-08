@@ -150,25 +150,45 @@ export default function ResumoPedidoPage() {
       return
     }
 
-    // Fluxo de Pagamento via Stripe
     try {
-      const moeda = region === 'BR' ? 'BRL' : region === 'PT' ? 'EUR' : 'USD'
-      const res = await fetch('/api/pagamentos/stripe/criar-sessao', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          cursoId: produto.id,
-          planoId: ofertaSelecionada?.plano_id,
-          cupomCodigo: couponStatus.valid ? couponCode : undefined,
-          moeda
+      if (region === 'BR') {
+        // Fluxo de Pagamento via Mercado Pago
+        const res = await fetch('/api/pagamentos/criar-preferencia', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cursoId: produto.id,
+            planoId: ofertaSelecionada?.plano_id,
+            cupomCodigo: couponStatus.valid ? couponCode : undefined
+          })
         })
-      })
-      const data = await res.json()
+        const data = await res.json()
 
-      if (res.ok && data.url) {
-        window.location.href = data.url
+        if (res.ok && data.init_point) {
+          window.location.href = data.init_point
+        } else {
+          alert(data.error || 'Erro ao iniciar pagamento.')
+        }
       } else {
-        alert(data.error || 'Erro ao iniciar pagamento.')
+        // Fluxo de Pagamento via Stripe (PT e INTL)
+        const moeda = region === 'PT' ? 'EUR' : 'USD'
+        const res = await fetch('/api/pagamentos/stripe/criar-sessao', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cursoId: produto.id,
+            planoId: ofertaSelecionada?.plano_id,
+            cupomCodigo: couponStatus.valid ? couponCode : undefined,
+            moeda
+          })
+        })
+        const data = await res.json()
+
+        if (res.ok && data.url) {
+          window.location.href = data.url
+        } else {
+          alert(data.error || 'Erro ao iniciar pagamento.')
+        }
       }
     } catch (err) {
       alert('Erro de comunicação com o servidor de pagamentos.')
