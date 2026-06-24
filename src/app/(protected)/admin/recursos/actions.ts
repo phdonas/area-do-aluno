@@ -26,7 +26,7 @@ export async function createRecurso(formData: FormData) {
 
   const titulo = formData.get('titulo') as string
   const descricao = formData.get('descricao') as string
-  const arquivo_url = formData.get('arquivo_url') as string
+  let arquivo_url = formData.get('arquivo_url') as string
   const tipo = formData.get('tipo') as string || 'simulador'
   const abertura_tipo = formData.get('abertura_tipo') as string || 'modal'
   const status = formData.get('status') === 'on' || formData.get('status') === 'true' ? 'ativo' : 'inativo'
@@ -52,6 +52,26 @@ export async function createRecurso(formData: FormData) {
     }
   }
 
+  let url_entrega = formData.get('url_entrega') as string || null
+
+  const arquivo_upload = formData.get('arquivo_upload') as File | null
+  if (arquivo_upload && arquivo_upload.size > 0) {
+    const fileExt = arquivo_upload.name.split('.').pop()
+    const fileName = `recursos/docs/${Date.now()}.${fileExt}`
+    
+    const { error: uploadError } = await supabase.storage
+      .from('aulas-arquivos')
+      .upload(fileName, arquivo_upload)
+
+    if (!uploadError) {
+      const { data: { publicUrl } } = supabase.storage
+        .from('aulas-arquivos')
+        .getPublicUrl(fileName)
+      arquivo_url = publicUrl
+      url_entrega = publicUrl
+    }
+  }
+
   const objetivo = formData.get('objetivo') as string
   const quando_usar = formData.get('quando_usar') as string
   const como_usar = formData.get('como_usar') as string
@@ -69,7 +89,7 @@ export async function createRecurso(formData: FormData) {
     visivel_no_site,
     categoria: formData.get('categoria') as string || null,
     tipo_entrega: formData.get('tipo_entrega') as string || null,
-    url_entrega: formData.get('url_entrega') as string || null,
+    url_entrega,
     url_checkout: formData.get('url_checkout') as string || null,
     objetivo,
     quando_usar,
@@ -94,12 +114,32 @@ export async function updateRecurso(id: string, formData: FormData) {
 
   const titulo = formData.get('titulo') as string
   const descricao = formData.get('descricao') as string
-  const arquivo_url = formData.get('arquivo_url') as string
+  let arquivo_url = formData.get('arquivo_url') as string
   const tipo = formData.get('tipo') as string || 'simulador'
   const abertura_tipo = formData.get('abertura_tipo') as string || 'modal'
   const status = formData.get('status') === 'on' || formData.get('status') === 'true' ? 'ativo' : 'inativo'
   const destaque_vitrine = formData.get('destaque_vitrine') === 'on'
   const visivel_no_site = formData.get('visivel_no_site') === 'on'
+
+  let url_entrega = formData.get('url_entrega') as string || null
+
+  const arquivo_upload = formData.get('arquivo_upload') as File | null
+  if (arquivo_upload && arquivo_upload.size > 0) {
+    const fileExt = arquivo_upload.name.split('.').pop()
+    const fileName = `recursos/docs/${Date.now()}.${fileExt}`
+    
+    const { error: uploadError } = await supabase.storage
+      .from('aulas-arquivos')
+      .upload(fileName, arquivo_upload)
+
+    if (!uploadError) {
+      const { data: { publicUrl } } = supabase.storage
+        .from('aulas-arquivos')
+        .getPublicUrl(fileName)
+      arquivo_url = publicUrl
+      url_entrega = publicUrl
+    }
+  }
 
   let dataObj: any = {
     titulo,
@@ -112,7 +152,7 @@ export async function updateRecurso(id: string, formData: FormData) {
     visivel_no_site,
     categoria: formData.get('categoria') as string || null,
     tipo_entrega: formData.get('tipo_entrega') as string || null,
-    url_entrega: formData.get('url_entrega') as string || null,
+    url_entrega,
     url_checkout: formData.get('url_checkout') as string || null,
     objetivo: formData.get('objetivo') as string,
     quando_usar: formData.get('quando_usar') as string,

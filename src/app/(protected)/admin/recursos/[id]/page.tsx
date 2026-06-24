@@ -87,11 +87,20 @@ export default async function EditarRecursoPage({ params }: { params: Promise<{ 
                 </div>
                 
                 <div className="space-y-2 md:col-span-2">
-                  <label htmlFor="arquivo_url" className="block text-xs font-black uppercase tracking-widest text-text-primary hover:text-primary transition-colors cursor-help">URL / Endereço do Arquivo *</label>
+                  <label htmlFor="arquivo_url" className="block text-xs font-black uppercase tracking-widest text-text-primary hover:text-primary transition-colors cursor-help">URL / Endereço do Arquivo</label>
                   <input 
-                    type="text" id="arquivo_url" name="arquivo_url" required defaultValue={recurso.arquivo_url}
-                    className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-text-primary focus:outline-none focus:border-primary transition-all font-mono text-xs"
+                    type="text" id="arquivo_url" name="arquivo_url" defaultValue={recurso.arquivo_url}
+                    placeholder="Ex: /ferramentas/avaliacao-lideranca/index.html ou cole um link externo"
+                    className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-text-primary focus:outline-none focus:border-primary transition-all font-mono text-xs mb-2"
                   />
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-background/50 border border-dashed border-border-custom p-4 rounded-xl">
+                    <span className="text-[10px] font-bold uppercase text-text-muted whitespace-nowrap">OU FAÇA O UPLOAD (PDF, XLSX):</span>
+                    <input 
+                      type="file" id="arquivo_upload" name="arquivo_upload"
+                      className="w-full text-xs text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
+                    />
+                  </div>
+                  <p className="text-[10px] text-text-muted font-bold uppercase">Se anexar um arquivo acima, ele substituirá o link colado manualmente.</p>
                 </div>
 
                 <div className="space-y-2">
@@ -213,20 +222,7 @@ export default async function EditarRecursoPage({ params }: { params: Promise<{ 
                      </div>
                   </div>
 
-                  <div className="space-y-2 mt-4">
-                     <label htmlFor="url_checkout" className="block text-xs font-black uppercase tracking-widest text-text-primary flex items-center gap-2 italic"><LinkIcon className="w-3 h-3 text-primary"/> Link de Checkout (Hotmart)</label>
-                     <input 
-                        type="url" id="url_checkout" name="url_checkout" defaultValue={recurso.url_checkout || ''}
-                        placeholder="Cole o link da página de pagamento"
-                        className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-sm text-text-primary focus:outline-none focus:border-primary transition-all font-medium"
-                     />
-                     <div className="mt-2 p-4 bg-primary/5 border border-primary/20 rounded-xl">
-                        <p className="text-[10px] text-text-primary font-bold uppercase mb-1">Como preencher este link?</p>
-                        <p className="text-xs text-text-secondary leading-relaxed">
-                           Acesse a Hotmart: <b>Produtos &gt; Meus Produtos &gt; Links de Divulgação</b> e copie a URL da <i>Página de Pagamento</i>. O e-mail do aluno é anexado automaticamente.
-                        </p>
-                     </div>
-                  </div>
+
                </div>
 
                 <div className="space-y-4 md:col-span-2 pt-10 border-t border-border-custom">
