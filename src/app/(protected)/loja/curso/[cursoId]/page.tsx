@@ -32,9 +32,9 @@ function FAQAccordion({ faq }: { faq: any | null }) {
   return (
     <div className="space-y-4">
       {faq.map((item: any, idx: number) => (
-        <details key={idx} className="group bg-surface border border-border-custom rounded-3xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+        <details key={idx} open className="group bg-surface border border-border-custom rounded-3xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
           <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-primary/5 transition-all outline-none">
-            <h4 className="text-sm font-black text-text-primary uppercase italic tracking-widest leading-none">
+            <h4 className="text-base font-bold text-text-primary leading-tight">
               {item.pergunta}
             </h4>
             <div className="p-2 transition-transform duration-300 group-open:-rotate-180 bg-background rounded-full border border-border-custom">
@@ -140,11 +140,11 @@ export default async function SalesPagePH({
                <div className="w-16 h-1 bg-primary rounded-full" />
             </div>
 
-            <h1 className="text-4xl md:text-[4.5rem] font-black text-text-primary tracking-tighter leading-[1] italic uppercase text-balance bg-gradient-to-br from-text-primary via-primary to-text-primary bg-clip-text text-transparent text-glow">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary tracking-tight leading-[1.1] text-balance bg-gradient-to-br from-text-primary via-primary to-text-primary bg-clip-text text-transparent">
               {curso.titulo}
             </h1>
             
-            <p className="text-lg md:text-xl text-text-secondary font-black uppercase italic tracking-tighter max-w-xl opacity-80 leading-relaxed">
+            <p className="text-lg md:text-xl text-text-secondary font-medium tracking-tight max-w-xl opacity-90 leading-relaxed">
               Desenvolva competências avançadas e prepare-se para os novos desafios do mercado sob orientação do Prof. Paulo.
             </p>
 
@@ -187,9 +187,9 @@ export default async function SalesPagePH({
           <div className="absolute -inset-x-20 -inset-y-32 bg-primary/[0.03] blur-[120px] rounded-full -z-10 animate-pulse pointer-events-none" />
           
           <div className="text-center space-y-6">
-            <h2 className="text-2xl md:text-4xl font-black text-text-primary uppercase tracking-tighter italic leading-[1.2]">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight leading-[1.2]">
               Entenda como este treinamento <br/> 
-              irá <span className="text-primary text-glow">alavancar sua carreira</span>
+              irá <span className="text-primary">alavancar sua carreira</span>
             </h2>
           </div>
 
@@ -213,8 +213,8 @@ export default async function SalesPagePH({
               ].map((s, i) => (
                 <div key={i} className="p-8 bg-background border border-border-custom rounded-[2.5rem] text-center space-y-2 hover:translate-y-[-4px] transition-all">
                   <s.icon className={`w-6 h-6 ${s.color} mx-auto`} />
-                  <div className="text-3xl font-black text-text-primary tracking-tighter italic">{s.val}</div>
-                  <div className="text-[9px] font-black uppercase tracking-widest text-text-muted italic">{s.label}</div>
+                  <div className="text-3xl font-extrabold text-text-primary tracking-tight">{s.val}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-text-muted">{s.label}</div>
                 </div>
               ))}
            </div>
@@ -222,7 +222,7 @@ export default async function SalesPagePH({
 
         {/* O QUE VOCÉ VAI APRENDER */}
         <section className="space-y-8">
-            <h2 className="text-3xl md:text-5xl font-black text-text-primary uppercase tracking-tighter italic leading-none max-w-2xl px-4">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight leading-none max-w-2xl px-4">
                O que você vai <span className="text-primary">aprender</span>
             </h2>
             <ExpandableContent 
@@ -237,7 +237,7 @@ export default async function SalesPagePH({
 
         {/* AO FINAL DO CURSO */}
         <section className="space-y-8">
-            <h2 className="text-3xl md:text-5xl font-black text-text-primary uppercase tracking-tighter italic leading-none px-4">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight leading-none px-4">
                Ao final você será <span className="text-emerald-500">capaz de</span>
             </h2>
             <ExpandableContent 
@@ -250,7 +250,7 @@ export default async function SalesPagePH({
 
         {/* EMENTA */}
         <section className="space-y-8">
-            <h2 className="text-3xl md:text-4xl font-black text-text-primary uppercase italic tracking-widest px-4">Ementa <span className="text-primary">Detalhada</span></h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight px-4">Ementa <span className="text-primary">Detalhada</span></h2>
             <ExpandableContent 
                title="Módulos e Aulas" 
                text={curso.ementa_resumida} 
@@ -263,12 +263,12 @@ export default async function SalesPagePH({
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <SoftCard className="flex flex-col h-full space-y-6">
                <div className="p-4 bg-primary/10 rounded-2xl w-fit text-primary shadow-sm"><Users className="w-8 h-8" /></div>
-               <h4 className="text-xl font-black text-text-primary uppercase italic tracking-widest">Para quem é este curso</h4>
+               <h4 className="text-xl font-bold text-text-primary tracking-tight">Para quem é este curso</h4>
                <div className="text-sm text-text-secondary font-medium flex-1"><FormattedText text={curso.publico_alvo} /></div>
             </SoftCard>
             <SoftCard className="flex flex-col h-full space-y-6">
                <div className="p-4 bg-amber-500/10 rounded-2xl w-fit text-amber-500 shadow-sm"><AlertCircle className="w-8 h-8" /></div>
-               <h4 className="text-xl font-black text-text-primary uppercase italic tracking-widest">Pré-requisitos</h4>
+               <h4 className="text-xl font-bold text-text-primary tracking-tight">Pré-requisitos</h4>
                <div className="text-sm text-text-secondary font-medium flex-1"><FormattedText text={curso.pre_requisitos} /></div>
             </SoftCard>
         </section>
@@ -279,8 +279,8 @@ export default async function SalesPagePH({
         {professor && (
           <section className="space-y-12">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-              <h2 className="text-4xl md:text-5xl font-black text-text-primary uppercase tracking-tighter italic leading-none">Quem vai te <br/><span className="text-primary">ensinar</span></h2>
-              <div className="hidden md:block text-[10px] font-black uppercase tracking-[0.4em] text-text-muted italic border-l-2 border-primary pl-4">Conheça sua nova <br/>autoridade no assunto</div>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight leading-none">Quem vai te <br/><span className="text-primary">ensinar</span></h2>
+              <div className="hidden md:block text-xs font-bold uppercase tracking-wider text-text-muted border-l-2 border-primary pl-4">Conheça sua nova <br/>autoridade no assunto</div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -297,7 +297,7 @@ export default async function SalesPagePH({
                     )}
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-3xl font-black text-text-primary uppercase italic tracking-tighter">{professor.nome}</h3>
+                    <h3 className="text-2xl font-extrabold text-text-primary tracking-tight">{professor.nome}</h3>
                     <div className="text-base text-text-secondary leading-relaxed max-w-2xl">
                       <FormattedText text={professor.biografia} />
                     </div>
@@ -369,15 +369,15 @@ export default async function SalesPagePH({
                 <div className={`w-14 h-14 ${item.bg} rounded-full flex items-center justify-center mx-auto mb-2`}>
                   <item.icon className={`w-7 h-7 ${item.color}`} />
                 </div>
-                <h5 className="font-black text-text-primary uppercase italic tracking-widest">{item.title}</h5>
-                <p className="text-[10px] text-text-muted font-bold tracking-tight uppercase leading-snug">{item.text}</p>
+                <h5 className="text-lg font-bold text-text-primary tracking-tight">{item.title}</h5>
+                <p className="text-sm text-text-muted font-medium tracking-tight leading-snug">{item.text}</p>
               </div>
             ))}
         </section>
 
         {/* FAQ */}
         <section className="space-y-12">
-            <h2 className="text-4xl md:text-5xl font-black text-text-primary uppercase tracking-tighter italic leading-none text-center">Perguntas <span className="text-primary">Frequentes</span></h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight leading-none text-center">Perguntas <span className="text-primary">Frequentes</span></h2>
             <div className="max-w-4xl mx-auto"><FAQAccordion faq={curso.faq} /></div>
         </section>
 

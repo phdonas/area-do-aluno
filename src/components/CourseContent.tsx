@@ -39,7 +39,7 @@ export function FormattedText({ text, className = "" }: { text: string | null, c
         if (line.startsWith('# ')) {
           return (
             <div key={idx} className="group/h mt-8 mb-4">
-              <h2 className="text-2xl md:text-3xl font-black text-text-primary uppercase italic tracking-tighter flex items-center gap-4">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-text-primary tracking-tight flex items-center gap-4">
                 <div className="w-1.5 h-8 bg-primary rounded-full transition-transform group-hover/h:scale-y-125" />
                 {line.replace('# ', '')}
               </h2>
@@ -48,7 +48,7 @@ export function FormattedText({ text, className = "" }: { text: string | null, c
         }
 
         if (line.startsWith('## ')) {
-          return <h3 key={idx} className="text-lg md:text-xl font-black text-primary uppercase italic tracking-tight mt-6 mb-2 border-b border-primary/10 pb-2">{line.replace('## ', '')}</h3>;
+          return <h3 key={idx} className="text-lg md:text-xl font-bold text-primary tracking-tight mt-6 mb-2 border-b border-primary/10 pb-2">{line.replace('## ', '')}</h3>;
         }
 
         // Listas Estilizadas (Bento Style)
@@ -107,7 +107,7 @@ export function ExpandableContent({
   iconName?: string, 
   color?: string 
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   if (!text) return null;
 
@@ -132,7 +132,7 @@ export function ExpandableContent({
            <div className={`p-4 rounded-[1.5rem] transition-transform group-hover:scale-110 ${selectedColor}`}>
               <Icon className="w-6 h-6" />
            </div>
-           <h3 className="text-xl md:text-2xl font-black text-text-primary uppercase italic tracking-widest text-left">{title}</h3>
+           <h3 className="text-xl md:text-2xl font-bold text-text-primary tracking-tight text-left">{title}</h3>
         </div>
         <div className={`p-2 rounded-full border border-foreground/10 transition-transform ${isOpen ? 'rotate-180 bg-primary/10 border-primary/20 text-primary' : 'text-text-muted'}`}>
            <ChevronDown className="w-5 h-5" />
