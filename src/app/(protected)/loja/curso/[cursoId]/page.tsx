@@ -19,13 +19,58 @@ import {
   ExternalLink,
   Zap,
   TrendingUp,
-  PlayCircle
+  PlayCircle,
+  Star,
+  Check
 } from 'lucide-react'
 import { PriceCard } from './PriceCard'
 import { VideoPlayer } from '@/components/video-player'
 import * as motion from 'framer-motion/client'
-import { FormattedText, ExpandableContent, SoftCard } from '@/components/CourseContent'
 import { getCursoLayout } from '../../../admin/cursos/actions'
+
+// Helper para formatar texto sem o "Bento Box"
+function SimpleCheckList({ text }: { text: string | null }) {
+  if (!text) return null;
+  const lines = text.split('\n').filter(l => l.trim().length > 0);
+  
+  return (
+    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+      {lines.map((line, idx) => {
+        let cleanLine = line.trim();
+        if (cleanLine.startsWith('- ')) cleanLine = cleanLine.substring(2);
+        
+        return (
+          <li key={idx} className="flex items-start gap-3 text-sm text-slate-700 leading-relaxed break-words">
+            <Check className="w-4 h-4 text-[#1C1D1F] shrink-0 mt-0.5" />
+            <span>{cleanLine}</span>
+          </li>
+        );
+      })}
+    </ul>
+  )
+}
+
+function SimpleFormattedText({ text }: { text: string | null }) {
+  if (!text) return null;
+  const lines = text.split('\n');
+  return (
+    <div className="space-y-4 text-sm text-slate-700 leading-relaxed break-words">
+      {lines.map((line, idx) => {
+        const trimmed = line.trim();
+        if (!trimmed) return <div key={idx} className="h-2" />;
+        if (trimmed.startsWith('- ')) {
+          return (
+            <div key={idx} className="flex items-start gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-2 shrink-0" />
+              <span>{trimmed.substring(2)}</span>
+            </div>
+          );
+        }
+        return <p key={idx}>{trimmed}</p>;
+      })}
+    </div>
+  )
+}
 
 function FAQAccordion({ faq }: { faq: any | null }) {
   if (!faq || !Array.isArray(faq)) return null;
@@ -33,17 +78,17 @@ function FAQAccordion({ faq }: { faq: any | null }) {
   return (
     <div className="space-y-4 w-full">
       {faq.map((item: any, idx: number) => (
-        <details key={idx} open className="group bg-white border border-border-custom rounded-3xl overflow-hidden [&_summary::-webkit-details-marker]:hidden shadow-sm">
-          <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-emerald-50 transition-all outline-none">
-            <h4 className="text-base font-bold text-[#022C22] leading-tight break-words pr-4">
+        <details key={idx} className="group bg-white border border-slate-200 rounded-lg overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+          <summary className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 transition-all outline-none">
+            <h4 className="text-base font-bold text-[#1C1D1F] leading-tight break-words pr-4">
               {item.pergunta}
             </h4>
-            <div className="p-2 shrink-0 transition-transform duration-300 group-open:-rotate-180 bg-[#F8FAFC] rounded-full border border-border-custom">
-              <ChevronDown className="w-4 h-4 text-[#10B981]" />
+            <div className="shrink-0 transition-transform duration-300 group-open:-rotate-180 text-slate-400">
+              <ChevronDown className="w-5 h-5" />
             </div>
           </summary>
-          <div className="p-6 pt-0 text-sm text-[#475569] leading-relaxed font-medium break-words">
-             <FormattedText text={item.resposta} />
+          <div className="p-5 pt-0 text-sm text-slate-600 leading-relaxed break-words">
+             <SimpleFormattedText text={item.resposta} />
           </div>
         </details>
       ))}
@@ -60,17 +105,17 @@ function DepoimentosCarousel() {
 
   return (
     <div className="space-y-6 w-full overflow-hidden">
-      <h3 className="text-2xl font-bold text-[#022C22]">O que dizem os alunos</h3>
+      <h3 className="text-2xl font-bold text-[#1C1D1F]">O que dizem os alunos</h3>
       <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory scrollbar-hide">
         {depoimentos.map((d, i) => (
-          <div key={i} className="min-w-[280px] w-[280px] snap-center bg-white p-6 rounded-[16px] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex flex-col justify-between shrink-0">
+          <div key={i} className="min-w-[280px] w-[280px] snap-center bg-white p-6 rounded-lg border border-slate-200 flex flex-col justify-between shrink-0">
             <p className="text-sm text-slate-600 italic mb-6 break-words">"{d.texto}"</p>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold shrink-0">
+              <div className="w-10 h-10 rounded-full bg-[#1C1D1F] flex items-center justify-center text-white font-bold shrink-0">
                 {d.nome.charAt(0)}
               </div>
               <div className="overflow-hidden">
-                <p className="text-sm font-bold text-[#022C22] truncate">{d.nome}</p>
+                <p className="text-sm font-bold text-[#1C1D1F] truncate">{d.nome}</p>
                 <p className="text-[10px] text-slate-500 uppercase font-semibold truncate">{d.cargo}</p>
               </div>
             </div>
@@ -134,231 +179,221 @@ export default async function SalesPagePH({
   const hasEditAccess = isAdmin || userData?.is_staff
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9] pb-32 font-sans selection:bg-[#10B981] selection:text-white w-full overflow-x-hidden">
+    <div className="min-h-screen bg-white pb-32 font-sans selection:bg-[#1C1D1F] selection:text-white w-full overflow-x-hidden">
       
-      {/* CABEÇALHO ORIGINAL RESTAURADO */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 flex flex-wrap items-center justify-between gap-4">
-        <Link 
-          href="/loja"
-          className="group flex items-center gap-3 text-[9px] font-black uppercase tracking-[0.4em] text-slate-500 hover:text-[#10B981] transition-all break-words"
-        >
-          <div className="p-2 bg-white border border-slate-200 rounded-xl transition-all shadow-sm group-hover:border-[#10B981]/30">
-            <ArrowLeft className="w-3 h-3" />
-          </div>
-          <span className="hidden sm:inline">Voltar para a Vitrine</span>
-          <span className="sm:hidden">Voltar</span>
-        </Link>
-
-        {hasEditAccess && (
+      {/* HEADER ESCURO TIPO UDEMY */}
+      <div className="bg-[#1C1D1F] text-white w-full">
+        {/* TOP NAV SIMPLES */}
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
           <Link 
-            href={`/admin/cursos/${curso.id}`}
-            className="text-[9px] font-black uppercase tracking-widest text-[#10B981] hover:underline underline-offset-4 break-words text-right"
+            href="/loja"
+            className="group flex items-center gap-2 text-sm font-semibold text-slate-300 hover:text-white transition-all break-words"
           >
-            Editar Configurações
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Voltar para a Vitrine</span>
+            <span className="sm:hidden">Voltar</span>
           </Link>
-        )}
-      </div>
 
-      <main className="space-y-16 md:space-y-24 w-full">
-        
-        {/* HERO */}
-        <section className="bg-[#022C22] pt-12 pb-32 md:pt-16 md:pb-40 px-4 md:px-6 relative w-full rounded-b-[2.5rem] md:rounded-none">
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-500 via-[#022C22] to-[#022C22]"></div>
-          
-          <div className="max-w-7xl mx-auto relative z-10 text-center space-y-6">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tight leading-tight max-w-4xl mx-auto break-words">
+          {hasEditAccess && (
+            <Link 
+              href={`/admin/cursos/${curso.id}`}
+              className="text-xs font-bold uppercase tracking-widest text-[#A435F0] hover:text-[#C024FD] break-words"
+            >
+              Editar Configurações
+            </Link>
+          )}
+        </div>
+
+        {/* HERO CONTENT */}
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12 lg:py-16 w-full flex flex-col lg:flex-row gap-8">
+          <div className="w-full lg:w-2/3 space-y-4">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white break-words">
               {curso.titulo}
             </h1>
             {curso.descricao && (
-              <p className="text-base sm:text-lg md:text-xl text-emerald-100/80 font-medium max-w-2xl mx-auto break-words line-clamp-3">
+              <p className="text-base md:text-lg text-slate-300 font-normal break-words line-clamp-3">
                 {curso.descricao}
               </p>
             )}
-          </div>
-        </section>
-
-        {/* DOUBLE COLUMN GRID */}
-        <section className="max-w-7xl mx-auto px-4 md:px-6 -mt-24 md:-mt-32 relative z-20 w-full">
-          <div className="flex flex-col lg:flex-row gap-8 items-start w-full">
             
-            {/* ESQUERDA: VÍDEO E DADOS GERAIS */}
-            <div className="w-full lg:flex-[2] bg-white rounded-[16px] p-4 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 flex flex-col gap-6 md:gap-8 overflow-hidden">
-              <div className="w-full aspect-video bg-black rounded-xl overflow-hidden relative shadow-inner">
+            {/* META INFO */}
+            <div className="flex flex-wrap items-center gap-4 pt-2 text-sm text-slate-300">
+               <div className="flex items-center gap-1 text-[#F3CA8C] font-bold">
+                 <span className="text-base">5,0</span>
+                 <Star className="w-4 h-4 fill-[#F3CA8C]" />
+                 <Star className="w-4 h-4 fill-[#F3CA8C]" />
+                 <Star className="w-4 h-4 fill-[#F3CA8C]" />
+                 <Star className="w-4 h-4 fill-[#F3CA8C]" />
+                 <Star className="w-4 h-4 fill-[#F3CA8C]" />
+               </div>
+               {professor && (
+                 <div>Criado por <span className="text-[#A435F0] underline decoration-[#A435F0]/30 underline-offset-4">{professor.nome}</span></div>
+               )}
+            </div>
+            <div className="flex flex-wrap items-center gap-4 text-sm text-slate-300">
+               <span className="flex items-center gap-2"><LayoutTemplate className="w-4 h-4" /> {moduleTotal} módulos</span>
+               <span className="flex items-center gap-2"><Video className="w-4 h-4" /> {lessonTotal} aulas</span>
+            </div>
+          </div>
+          
+          {/* Ocupa espaço na direita lg para alinhar */}
+          <div className="hidden lg:block lg:w-1/3"></div>
+        </div>
+      </div>
+
+      {/* MAIN LAYOUT WITH SIDEBAR */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 w-full flex flex-col lg:flex-row gap-8 relative">
+        
+        {/* COLUNA ESQUERDA (CONTEÚDO) */}
+        <div className="w-full lg:w-2/3 py-8 space-y-12">
+          
+          {/* OBJETIVOS (O que você aprenderá) */}
+          {curso.objetivos && (
+            <div className="w-full border border-slate-200 p-6 bg-white break-words">
+               <h2 className="text-2xl font-bold text-[#1C1D1F] mb-6">O que você aprenderá</h2>
+               <SimpleCheckList text={curso.objetivos} />
+            </div>
+          )}
+
+          {/* RESULTADOS ESPERADOS */}
+          {curso.resultados_esperados && (
+            <div className="w-full border border-slate-200 p-6 bg-white break-words">
+               <h2 className="text-2xl font-bold text-[#1C1D1F] mb-6">Resultados Esperados</h2>
+               <SimpleCheckList text={curso.resultados_esperados} />
+            </div>
+          )}
+
+          {/* EMENTA */}
+          {curso.ementa_resumida && (
+            <div className="w-full break-words">
+              <h2 className="text-2xl font-bold text-[#1C1D1F] mb-6">Conteúdo do curso</h2>
+              <div className="bg-white p-6 border border-slate-200">
+                <SimpleFormattedText text={curso.ementa_resumida} />
+              </div>
+            </div>
+          )}
+
+          {/* SEÇÕES EXTRAS (Público e Requisitos) */}
+          {(exibir_secoes_extras || curso.publico_alvo || curso.pre_requisitos) && (
+            <div className="space-y-8 w-full">
+              {curso.pre_requisitos && (
+                <div className="w-full break-words">
+                  <h2 className="text-2xl font-bold text-[#1C1D1F] mb-4">Requisitos</h2>
+                  <ul className="list-disc pl-5 text-sm text-slate-700 space-y-2">
+                    {curso.pre_requisitos.split('\n').filter((l: string) => l.trim().length > 0).map((l: string, i: number) => (
+                      <li key={i}>{l.replace('- ', '')}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {curso.publico_alvo && (
+                <div className="w-full break-words">
+                  <h2 className="text-2xl font-bold text-[#1C1D1F] mb-4">Para quem é este curso</h2>
+                  <ul className="list-disc pl-5 text-sm text-slate-700 space-y-2">
+                    {curso.publico_alvo.split('\n').filter((l: string) => l.trim().length > 0).map((l: string, i: number) => (
+                      <li key={i}>{l.replace('- ', '')}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* PROFESSOR */}
+          {professor && (
+            <div className="w-full break-words space-y-4 pt-8">
+               <h2 className="text-2xl font-bold text-[#1C1D1F]">Instrutor</h2>
+               <h3 className="text-lg font-bold text-[#A435F0] underline decoration-[#A435F0]/30 underline-offset-4">{professor.nome}</h3>
+               <div className="flex items-start gap-4">
+                  {professor.avatar_url ? (
+                    <img src={professor.avatar_url} alt={professor.nome} className="w-24 h-24 rounded-full object-cover shrink-0" />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                      <Users className="w-8 h-8 text-slate-300" />
+                    </div>
+                  )}
+                  <div className="text-sm text-slate-700 flex-1">
+                    <SimpleFormattedText text={professor.biografia} />
+                  </div>
+               </div>
+            </div>
+          )}
+
+          {/* DEPOIMENTOS (Condicional) */}
+          {exibir_depoimentos && (
+            <div className="w-full pt-8">
+              <DepoimentosCarousel />
+            </div>
+          )}
+
+          {/* FAQ */}
+          {curso.faq && Array.isArray(curso.faq) && curso.faq.length > 0 && (
+            <div className="w-full pt-8">
+                <h2 className="text-2xl font-bold text-[#1C1D1F] mb-6">Perguntas frequentes</h2>
+                <FAQAccordion faq={curso.faq} />
+            </div>
+          )}
+
+        </div>
+
+        {/* COLUNA DIREITA (STICKY CARD) */}
+        <div className="w-full lg:w-1/3 relative z-20 -mt-8 lg:-mt-64">
+           <div className="lg:sticky lg:top-8 bg-white shadow-[0_2px_4px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.08)] border border-white text-[#1C1D1F] flex flex-col w-full overflow-hidden">
+              
+              {/* VIDEO / THUMBNAIL (Ocupa o topo do card) */}
+              <div className="w-full aspect-video bg-[#1C1D1F] relative border-b border-slate-200">
                 {curso.video_vendas_url ? (
                   <VideoPlayer url={curso.video_vendas_url} />
                 ) : curso.thumb_url ? (
-                   <div className="w-full h-full relative group">
-                     <img src={curso.thumb_url} className="w-full h-full object-cover" />
-                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                       <PlayCircle className="w-16 h-16 text-white opacity-80 group-hover:scale-110 transition-transform" />
+                   <div className="w-full h-full relative group cursor-pointer flex items-center justify-center">
+                     <img src={curso.thumb_url} className="absolute inset-0 w-full h-full object-cover" />
+                     <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors" />
+                     <div className="relative w-16 h-16 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <PlayCircle className="w-10 h-10 text-[#1C1D1F] ml-1" />
                      </div>
                    </div>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-slate-900">
-                    <Video className="w-12 h-12 text-slate-700" />
+                  <div className="w-full h-full flex items-center justify-center bg-[#1C1D1F]">
+                    <Video className="w-12 h-12 text-slate-500" />
                   </div>
                 )}
               </div>
 
-              <div className="w-full space-y-4">
-                <h2 className="text-xl md:text-2xl font-bold text-[#022C22] leading-tight break-words">Apresentação do Conteúdo</h2>
+              {/* BUY INFO */}
+              <div className="p-6">
+                <h3 className="text-2xl font-bold mb-4">Assine e acesse</h3>
                 
-                <ul className="space-y-4 pt-2">
-                  <li className="flex items-center gap-3 text-sm font-semibold text-slate-700">
-                    <LayoutTemplate className="w-5 h-5 text-[#10B981] shrink-0" />
-                    <span className="break-words">{moduleTotal} Módulos Disponíveis</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-sm font-semibold text-slate-700">
-                    <Video className="w-5 h-5 text-[#10B981] shrink-0" />
-                    <span className="break-words">{lessonTotal} Aulas Gravadas</span>
-                  </li>
-                  {curso.garantia_dias > 0 && (
-                    <li className="flex items-center gap-3 text-sm font-semibold text-slate-700">
-                      <ShieldCheck className="w-5 h-5 text-[#10B981] shrink-0" />
-                      <span className="break-words">Garantia de {curso.garantia_dias} dias</span>
+                <div className="w-full mb-6">
+                  <PriceCard curso={curso} userEmail={user?.email || ''} />
+                </div>
+
+                <div className="space-y-3 mt-6">
+                  <p className="font-bold text-sm">Este curso inclui:</p>
+                  <ul className="text-sm text-slate-600 space-y-3">
+                    {lessonTotal > 0 && (
+                      <li className="flex items-center gap-3">
+                        <Video className="w-4 h-4 shrink-0" /> {lessonTotal} aulas de vídeo
+                      </li>
+                    )}
+                    <li className="flex items-center gap-3">
+                      <LayoutTemplate className="w-4 h-4 shrink-0" /> Acesso em dispositivos móveis e TV
                     </li>
-                  )}
-                </ul>
+                    <li className="flex items-center gap-3">
+                      <Award className="w-4 h-4 shrink-0" /> Certificado de conclusão
+                    </li>
+                    {curso.garantia_dias > 0 && (
+                       <li className="flex items-center gap-3 text-[#1C1D1F] font-semibold">
+                         <ShieldCheck className="w-4 h-4 shrink-0" /> Garantia de {curso.garantia_dias} dias
+                       </li>
+                    )}
+                  </ul>
+                </div>
               </div>
-            </div>
-
-            {/* DIREITA: CHECKOUT/GARANTIA (STICKY) */}
-            <div className="w-full lg:flex-[1] lg:sticky lg:top-8 bg-white rounded-[16px] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 text-center flex flex-col items-center overflow-hidden">
-              <h3 className="text-xl md:text-2xl font-bold text-[#022C22] mb-2 break-words">Garantir Vaga</h3>
-              <p className="text-xs md:text-sm text-slate-500 mb-6 font-medium break-words">Preço e condições de pagamento:</p>
               
-              <div className="mb-4 w-full">
-                <PriceCard curso={curso} userEmail={user?.email || ''} />
-              </div>
+           </div>
+        </div>
 
-              <p className="text-[10px] md:text-xs font-semibold text-slate-500 mt-4 flex items-center justify-center gap-2 break-words">
-                <ShieldCheck className="w-4 h-4 text-[#10B981] shrink-0" />
-                Compra 100% Segura
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* DETALHES COMPLETOS DO CURSO */}
-        <section className="max-w-7xl mx-auto px-4 md:px-6 w-full space-y-6">
-          <h3 className="text-xl md:text-2xl font-bold text-[#022C22] break-words">Detalhes do Curso</h3>
-          
-          <div className="bg-white rounded-[16px] p-4 md:p-8 shadow-sm border border-slate-100 space-y-8 w-full overflow-hidden">
-            
-            {/* DESCRIÇÃO COMPLETA */}
-            {curso.descricao && (
-              <div className="w-full break-words">
-                <ExpandableContent 
-                  title="Sobre este Treinamento" 
-                  text={curso.descricao} 
-                  iconName="Target" 
-                  color="primary"
-                />
-              </div>
-            )}
-
-            {/* OBJETIVOS */}
-            {curso.objetivos && (
-              <div className="w-full break-words">
-                <ExpandableContent 
-                  title="O que você vai aprender" 
-                  text={curso.objetivos} 
-                  iconName="Award" 
-                  color="amber"
-                />
-              </div>
-            )}
-
-            {/* RESULTADOS ESPERADOS */}
-            {curso.resultados_esperados && (
-              <div className="w-full break-words">
-                <ExpandableContent 
-                  title="Resultados Esperados" 
-                  text={curso.resultados_esperados} 
-                  iconName="ShieldCheck" 
-                  color="emerald"
-                />
-              </div>
-            )}
-
-            {/* EMENTA */}
-            {curso.ementa_resumida && (
-              <div className="w-full break-words">
-                <ExpandableContent 
-                  title="Ementa Detalhada" 
-                  text={curso.ementa_resumida} 
-                  iconName="ListChecks" 
-                  color="indigo"
-                />
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* DEPOIMENTOS (Condicional) */}
-        {exibir_depoimentos && (
-          <section className="max-w-7xl mx-auto px-4 md:px-6 w-full overflow-hidden">
-            <DepoimentosCarousel />
-          </section>
-        )}
-
-        {/* SEÇÕES EXTRAS (Sempre visíveis se tiverem conteúdo, organizadas) */}
-        <section className="max-w-7xl mx-auto px-4 md:px-6 space-y-8 md:space-y-16 w-full overflow-hidden">
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full">
-                {(exibir_secoes_extras || curso.publico_alvo) && (
-                  <div className="bg-white p-6 md:p-8 rounded-[16px] shadow-sm border border-slate-100 space-y-4 w-full break-words">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-emerald-50 rounded-full flex items-center justify-center text-[#10B981] mb-4 md:mb-6 shrink-0">
-                      <Users className="w-5 h-5 md:w-6 md:h-6" />
-                    </div>
-                    <h4 className="text-lg md:text-xl font-bold text-[#022C22]">Para quem é este curso</h4>
-                    <div className="text-xs md:text-sm text-slate-600 leading-relaxed break-words"><FormattedText text={curso.publico_alvo || 'Nenhuma informação.'} /></div>
-                  </div>
-                )}
-
-                {(exibir_secoes_extras || curso.pre_requisitos) && (
-                  <div className="bg-white p-6 md:p-8 rounded-[16px] shadow-sm border border-slate-100 space-y-4 w-full break-words">
-                    <div className="w-10 h-10 md:w-12 md:h-12 bg-amber-50 rounded-full flex items-center justify-center text-amber-500 mb-4 md:mb-6 shrink-0">
-                      <AlertCircle className="w-5 h-5 md:w-6 md:h-6" />
-                    </div>
-                    <h4 className="text-lg md:text-xl font-bold text-[#022C22]">Pré-requisitos</h4>
-                    <div className="text-xs md:text-sm text-slate-600 leading-relaxed break-words"><FormattedText text={curso.pre_requisitos || 'Nenhum pré-requisito obrigatório.'} /></div>
-                  </div>
-                )}
-            </div>
-
-            {/* PROFESSOR */}
-            {professor && (
-              <div className="bg-white rounded-[16px] p-6 md:p-12 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start w-full overflow-hidden">
-                <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-48 md:h-48 rounded-[2rem] overflow-hidden shrink-0 border-4 border-emerald-50 shadow-lg relative bg-white">
-                  {professor.avatar_url ? (
-                    <img src={professor.avatar_url} alt={professor.nome} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full bg-slate-100 flex items-center justify-center">
-                      <Users className="w-8 h-8 md:w-12 md:h-12 text-slate-300" />
-                    </div>
-                  )}
-                </div>
-                <div className="space-y-4 text-center md:text-left break-words w-full">
-                  <div className="inline-block px-3 py-1 bg-emerald-50 text-[#10B981] text-[10px] md:text-xs font-bold uppercase rounded-full tracking-widest mb-2">Especialista / Professor</div>
-                  <h3 className="text-2xl md:text-3xl font-extrabold text-[#022C22] break-words">{professor.nome}</h3>
-                  <div className="text-xs md:text-sm text-slate-600 leading-relaxed max-w-2xl mx-auto md:mx-0 break-words">
-                    <FormattedText text={professor.biografia} />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* FAQ */}
-            {curso.faq && Array.isArray(curso.faq) && curso.faq.length > 0 && (
-              <div className="max-w-4xl mx-auto space-y-6 md:space-y-8 w-full overflow-hidden">
-                  <h2 className="text-2xl md:text-3xl font-bold text-[#022C22] text-center break-words">Perguntas Frequentes</h2>
-                  <FAQAccordion faq={curso.faq} />
-              </div>
-            )}
-
-        </section>
-      </main>
+      </div>
 
       {/* WHATSAPP WIDGET */}
       <a href={`https://wa.me/5551981816000?text=Olá Paulo, dúvida sobre curso: ${curso.titulo}`} target="_blank" className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 bg-[#10B981] text-white p-3 md:p-4 rounded-full shadow-lg hover:scale-110 hover:bg-[#059669] transition-all">
