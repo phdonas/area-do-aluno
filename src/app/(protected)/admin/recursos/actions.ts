@@ -57,7 +57,8 @@ export async function createRecurso(formData: FormData) {
   const arquivo_upload = formData.get('arquivo_upload') as File | null
   if (arquivo_upload && arquivo_upload.size > 0) {
     const fileExt = arquivo_upload.name.split('.').pop()
-    const fileName = `recursos/docs/${Date.now()}.${fileExt}`
+    const safeTitle = titulo ? titulo.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'recurso'
+    const fileName = `recursos/docs/${safeTitle}-${Date.now()}.${fileExt}`
     
     const { error: uploadError } = await supabase.storage
       .from('aulas-arquivos')
@@ -126,7 +127,8 @@ export async function updateRecurso(id: string, formData: FormData) {
   const arquivo_upload = formData.get('arquivo_upload') as File | null
   if (arquivo_upload && arquivo_upload.size > 0) {
     const fileExt = arquivo_upload.name.split('.').pop()
-    const fileName = `recursos/docs/${Date.now()}.${fileExt}`
+    const safeTitle = titulo ? titulo.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'recurso'
+    const fileName = `recursos/docs/${safeTitle}-${Date.now()}.${fileExt}`
     
     const { error: uploadError } = await supabase.storage
       .from('aulas-arquivos')
