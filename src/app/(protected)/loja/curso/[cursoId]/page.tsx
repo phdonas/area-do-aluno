@@ -25,6 +25,7 @@ import { PriceCard } from './PriceCard'
 import { VideoPlayer } from '@/components/video-player'
 import * as motion from 'framer-motion/client'
 import { FormattedText, ExpandableContent, SoftCard } from '@/components/CourseContent'
+import { getCursoLayout } from '../../../admin/cursos/actions'
 
 function FAQAccordion({ faq }: { faq: any | null }) {
   if (!faq || !Array.isArray(faq)) return null;
@@ -32,16 +33,16 @@ function FAQAccordion({ faq }: { faq: any | null }) {
   return (
     <div className="space-y-4">
       {faq.map((item: any, idx: number) => (
-        <details key={idx} open className="group bg-surface border border-border-custom rounded-3xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
-          <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-primary/5 transition-all outline-none">
-            <h4 className="text-base font-bold text-text-primary leading-tight">
+        <details key={idx} open className="group bg-white border border-border-custom rounded-3xl overflow-hidden [&_summary::-webkit-details-marker]:hidden shadow-sm">
+          <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-emerald-50 transition-all outline-none">
+            <h4 className="text-base font-bold text-[#022C22] leading-tight">
               {item.pergunta}
             </h4>
-            <div className="p-2 transition-transform duration-300 group-open:-rotate-180 bg-background rounded-full border border-border-custom">
-              <ChevronDown className="w-4 h-4 text-primary" />
+            <div className="p-2 transition-transform duration-300 group-open:-rotate-180 bg-[#F8FAFC] rounded-full border border-border-custom">
+              <ChevronDown className="w-4 h-4 text-[#10B981]" />
             </div>
           </summary>
-          <div className="p-6 pt-0 text-sm text-text-secondary leading-relaxed font-medium">
+          <div className="p-6 pt-0 text-sm text-[#475569] leading-relaxed font-medium">
              <FormattedText text={item.resposta} />
           </div>
         </details>
@@ -50,6 +51,35 @@ function FAQAccordion({ faq }: { faq: any | null }) {
   )
 }
 
+function DepoimentosCarousel() {
+  const depoimentos = [
+    { nome: "Ana Paula M.", cargo: "Consultora Imobiliária", texto: "Aumentei minhas conversões em 40% no primeiro mês aplicando as técnicas de prospecção do professor. Incrível!" },
+    { nome: "Roberto A.", cargo: "Corretor Autônomo", texto: "Material direto ao ponto. Sem enrolação e focado na prática diária do corretor." },
+    { nome: "Mariana S.", cargo: "Gerente Comercial", texto: "Trouxe toda minha equipe para fazer a certificação. O resultado nas vendas de alto padrão foi imediato." }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <h3 className="text-2xl font-bold text-[#022C22]">O que dizem os alunos</h3>
+      <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory">
+        {depoimentos.map((d, i) => (
+          <div key={i} className="min-w-[280px] snap-center bg-white p-6 rounded-[16px] shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex flex-col justify-between">
+            <p className="text-sm text-slate-600 italic mb-6">"{d.texto}"</p>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold">
+                {d.nome.charAt(0)}
+              </div>
+              <div>
+                <p className="text-sm font-bold text-[#022C22]">{d.nome}</p>
+                <p className="text-[10px] text-slate-500 uppercase font-semibold">{d.cargo}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default async function SalesPagePH({
   params,
@@ -73,7 +103,11 @@ export default async function SalesPagePH({
   const { data: curso } = await query.single()
   if (!curso) notFound()
 
-  // Buscar dados do Professor vinculado
+  // Buscar Layout Config
+  const layoutConfig = await getCursoLayout(curso.id)
+  const { exibir_depoimentos, exibir_secoes_extras } = layoutConfig
+
+  // Buscar dados do Professor
   const { data: professor } = curso.professor_id 
     ? await supabase.from('professores').select('*').eq('id', curso.professor_id).single()
     : { data: null }
@@ -95,300 +129,224 @@ export default async function SalesPagePH({
   
   const moduleTotal = idsMap.length
 
-
-  // Verificação de Admin para navegação
   const { data: isAdmin } = user ? await supabase.rpc('is_admin') : { data: false }
   const { data: userData } = user ? await supabase.from('usuarios').select('is_staff').eq('id', user.id).single() : { data: null }
   const hasEditAccess = isAdmin || userData?.is_staff
 
   return (
-    <div className="min-h-screen bg-background selection:bg-primary selection:text-white pb-32">
+    <div className="min-h-screen bg-[#F1F5F9] pb-32 font-sans selection:bg-[#10B981] selection:text-white">
       
-      <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-between">
-        <Link 
-          href="/loja"
-          className="group flex items-center gap-3 text-[9px] font-black uppercase tracking-[0.4em] text-text-muted hover:text-primary transition-all"
-        >
-          <div className="p-2 bg-surface border border-border-custom rounded-xl transition-all">
-            <ArrowLeft className="w-3 h-3" />
+      {/* HEADER MINIMALISTA */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link href="/loja" className="flex items-center gap-2 text-[#022C22] font-extrabold text-xl tracking-tight">
+              <Award className="w-6 h-6 text-[#10B981]" />
+              PHD Academy
+            </Link>
           </div>
-          Voltar para a Vitrine
-        </Link>
-
-        {hasEditAccess && (
-          <Link 
-            href={`/admin/cursos/${curso.id}`}
-            className="text-[9px] font-black uppercase tracking-widest text-primary hover:underline underline-offset-4"
-          >
-            Editar Configurações
-          </Link>
-        )}
-      </div>
-
-      <main className="max-w-7xl mx-auto px-6 space-y-32">
-        
-        {/* HERO */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center relative">
-          <div className="absolute -top-32 -left-32 w-64 h-64 bg-primary/5 blur-[120px] rounded-full -z-10" />
           
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="space-y-8"
-          >
-            <div className="flex items-center gap-4">
-               <div className="w-16 h-1 bg-primary rounded-full" />
-            </div>
+          <nav className="hidden md:flex items-center gap-8">
+            <Link href="/loja" className="text-sm font-semibold text-slate-600 hover:text-[#10B981] transition-colors">Cursos</Link>
+            <Link href="/dashboard" className="text-sm font-semibold text-slate-600 hover:text-[#10B981] transition-colors">Minha Conta</Link>
+            <Link href="#" className="text-sm font-semibold text-slate-600 hover:text-[#10B981] transition-colors">Suporte</Link>
+          </nav>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary tracking-tight leading-[1.1] text-balance bg-gradient-to-br from-text-primary via-primary to-text-primary bg-clip-text text-transparent">
+          <div className="flex items-center gap-4">
+            {user ? (
+              <div className="flex items-center gap-3 bg-slate-50 py-2 px-4 rounded-full border border-slate-100">
+                <div className="w-8 h-8 rounded-full bg-[#10B981] text-white flex items-center justify-center font-bold text-sm">
+                  {user.email?.[0].toUpperCase()}
+                </div>
+                <span className="text-sm font-bold text-[#022C22] hidden sm:block">{user.email?.split('@')[0]}</span>
+              </div>
+            ) : (
+              <Link href="/login" className="text-sm font-bold text-[#10B981] hover:text-[#059669]">Fazer Login</Link>
+            )}
+
+            {hasEditAccess && (
+              <Link href={`/admin/cursos/${curso.id}`} className="ml-2 text-[10px] font-black uppercase bg-slate-800 text-white px-3 py-1.5 rounded-lg hover:bg-slate-700">
+                Editar Layout
+              </Link>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <main className="space-y-24">
+        
+        {/* HERO E BLOCO DUPLO DE CONVERSÃO */}
+        <section className="bg-[#022C22] pt-20 pb-40 px-6 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-500 via-[#022C22] to-[#022C22]"></div>
+          
+          <div className="max-w-7xl mx-auto relative z-10 text-center space-y-6">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tight leading-[1.15] max-w-4xl mx-auto text-balance">
               {curso.titulo}
             </h1>
-            
-            <p className="text-lg md:text-xl text-text-secondary font-medium tracking-tight max-w-xl opacity-90 leading-relaxed">
-              Desenvolva competências avançadas e prepare-se para os novos desafios do mercado sob orientação do Prof. Paulo.
+            <p className="text-lg md:text-xl text-emerald-100/80 font-medium max-w-2xl mx-auto">
+              Domine as estratégias para fechar mais negócios e acelerar sua carreira.
             </p>
+          </div>
+        </section>
 
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="aspect-[4/3] rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] border-4 border-white/5 relative bg-surface group"
-          >
-            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none" />
-            {curso.thumb_url ? (
-              <img src={curso.thumb_url} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center opacity-20 p-12">
-                <LayoutTemplate className="w-24 h-24 text-text-muted" />
+        {/* DOUBLE COLUMN GRID (ABOVE THE FOLD EM MOBILE) */}
+        <section className="max-w-7xl mx-auto px-6 -mt-32 relative z-20">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            
+            {/* ESQUERDA: VÍDEO E SOBRE O CURSO */}
+            <div className="lg:col-span-2 bg-white rounded-[16px] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 flex flex-col md:flex-row gap-8">
+              <div className="w-full md:w-1/2 aspect-video bg-black rounded-xl overflow-hidden relative shadow-inner">
+                {curso.video_vendas_url ? (
+                  <VideoPlayer url={curso.video_vendas_url} />
+                ) : curso.thumb_url ? (
+                   <div className="w-full h-full relative group">
+                     <img src={curso.thumb_url} className="w-full h-full object-cover" />
+                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                       <PlayCircle className="w-16 h-16 text-white opacity-80 group-hover:scale-110 transition-transform" />
+                     </div>
+                   </div>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-slate-900">
+                    <Video className="w-12 h-12 text-slate-700" />
+                  </div>
+                )}
               </div>
-            )}
-            <div className="absolute inset-0 flex items-center justify-center z-20">
-               <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30 shadow-2xl transition-all group-hover:scale-110">
-                  <PlayCircle className="w-10 h-10 text-white fill-white/20" />
+
+              <div className="w-full md:w-1/2 space-y-6">
+                <h2 className="text-2xl font-bold text-[#022C22] leading-tight">Apresentação do Professor e Conteúdo.</h2>
+                <p className="text-sm text-slate-600 font-medium">
+                  {moduleTotal} módulos, +{lessonTotal} aulas, 50h+, Certificado reconhecido.
+                </p>
+                
+                <ul className="space-y-4">
+                  {[
+                    { icon: Target, text: "Mentoria Semanal" },
+                    { icon: CheckCircle2, text: "Estudos de Caso Práticos" },
+                    { icon: ShieldCheck, text: "Acesso Vitalício" }
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex items-center gap-3 text-sm font-semibold text-slate-700">
+                      <item.icon className="w-5 h-5 text-[#10B981]" />
+                      {item.text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* DIREITA: CHECKOUT/GARANTIA (STICKY) */}
+            <div className="lg:sticky lg:top-28 bg-white rounded-[16px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 text-center flex flex-col items-center">
+              <h3 className="text-2xl font-bold text-[#022C22] mb-2">Garantir Vaga</h3>
+              <p className="text-sm text-slate-500 mb-6 font-medium">Aproveite o preço promocional:</p>
+              
+              <div className="mb-8 w-full">
+                {/* Integração com Componente PriceCard já existente */}
+                <PriceCard curso={curso} userEmail={user?.email || ''} />
+              </div>
+
+              <p className="text-xs font-semibold text-slate-500 mt-6 flex items-center justify-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#10B981]" />
+                {curso.garantia_dias || 7} dias de garantia incondicional
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* GRID INFERIOR: MÓDULOS E DEPOIMENTOS */}
+        <section className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-8 items-start">
+            
+            {/* ESQUERDA: EMENTA/ACORDEON */}
+            <div className="lg:col-span-2 space-y-6">
+               <h3 className="text-2xl font-bold text-[#022C22]">Conteúdo do Curso</h3>
+               <div className="bg-white rounded-[16px] p-6 shadow-sm border border-slate-100">
+                  <ExpandableContent 
+                    title="Módulos Detalhados" 
+                    text={curso.ementa_resumida} 
+                    iconName="ListChecks" 
+                    color="primary"
+                  />
                </div>
             </div>
-          </motion.div>
-        </section>
 
-        {/* DESCRIÇÃO PRINCIPAL (Expandível) */}
-        <section>
-           <ExpandableContent 
-              title="Sobre este Treinamento" 
-              text={curso.descricao} 
-              iconName="Target" 
-              color="primary"
-           />
-        </section>
-
-        {/* VÍDEO DE VENDAS */}
-        <section className="space-y-12 group relative">
-          <div className="absolute -inset-x-20 -inset-y-32 bg-primary/[0.03] blur-[120px] rounded-full -z-10 animate-pulse pointer-events-none" />
-          
-          <div className="text-center space-y-6">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight leading-[1.2]">
-              Entenda como este treinamento <br/> 
-              irá <span className="text-primary">alavancar sua carreira</span>
-            </h2>
+            {/* DIREITA: DEPOIMENTOS (Condicional) */}
+            {exibir_depoimentos && (
+              <div className="lg:col-span-1">
+                <DepoimentosCarousel />
+              </div>
+            )}
           </div>
+        </section>
 
-          <div className="relative z-10 mx-auto max-w-4xl">
-            <VideoPlayer url={curso.video_vendas_url || ''} />
+        {/* SEÇÕES EXTRAS (Condicional) */}
+        {exibir_secoes_extras && (
+          <section className="max-w-7xl mx-auto px-6 space-y-16 pt-16 border-t border-slate-200">
             
-            {/* Elementos Decorativos de Blindagem */}
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/10 blur-3xl rounded-full" />
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/10 blur-3xl rounded-full" />
-          </div>
-        </section>
-
-        {/* STATS */}
-        <section>
-           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-8 bg-surface/30 border border-border-custom rounded-[3.5rem] backdrop-blur-xl">
-              {[
-                { icon: LayoutTemplate, val: moduleTotal, label: "Módulos", color: "text-primary" },
-                { icon: Video, val: lessonTotal, label: "Aulas Gravadas", color: "text-emerald-500" },
-                { icon: ListChecks, val: 0, label: "Exercícios", color: "text-amber-500" },
-                { icon: Target, val: 0, label: "Simulados", color: "text-indigo-500" }
-              ].map((s, i) => (
-                <div key={i} className="p-8 bg-background border border-border-custom rounded-[2.5rem] text-center space-y-2 hover:translate-y-[-4px] transition-all">
-                  <s.icon className={`w-6 h-6 ${s.color} mx-auto`} />
-                  <div className="text-3xl font-extrabold text-text-primary tracking-tight">{s.val}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-text-muted">{s.label}</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="bg-white p-8 rounded-[16px] shadow-sm border border-slate-100 space-y-4">
+                  <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center text-[#10B981] mb-6">
+                    <Users className="w-6 h-6" />
+                  </div>
+                  <h4 className="text-xl font-bold text-[#022C22]">Para quem é este curso</h4>
+                  <div className="text-sm text-slate-600 leading-relaxed"><FormattedText text={curso.publico_alvo} /></div>
                 </div>
-              ))}
-           </div>
-        </section>
 
-        {/* O QUE VOCÉ VAI APRENDER */}
-        <section className="space-y-8">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight leading-none max-w-2xl px-4">
-               O que você vai <span className="text-primary">aprender</span>
-            </h2>
-            <ExpandableContent 
-               title="Conteúdo e Objetivos" 
-               text={curso.objetivos} 
-               iconName="Award" 
-               color="amber"
-            />
-        </section>
-
-        <section><PriceCard curso={curso} userEmail={user?.email || ''} /></section>
-
-        {/* AO FINAL DO CURSO */}
-        <section className="space-y-8">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight leading-none px-4">
-               Ao final você será <span className="text-emerald-500">capaz de</span>
-            </h2>
-            <ExpandableContent 
-               title="Resultados Esperados" 
-               text={curso.resultados_esperados} 
-               iconName="ShieldCheck" 
-               color="emerald"
-            />
-        </section>
-
-        {/* EMENTA */}
-        <section className="space-y-8">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight px-4">Ementa <span className="text-primary">Detalhada</span></h2>
-            <ExpandableContent 
-               title="Módulos e Aulas" 
-               text={curso.ementa_resumida} 
-               iconName="ListChecks" 
-               color="indigo"
-            />
-        </section>
-
-        {/* GRID DUPLO (Vantagens) */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <SoftCard className="flex flex-col h-full space-y-6">
-               <div className="p-4 bg-primary/10 rounded-2xl w-fit text-primary shadow-sm"><Users className="w-8 h-8" /></div>
-               <h4 className="text-xl font-bold text-text-primary tracking-tight">Para quem é este curso</h4>
-               <div className="text-sm text-text-secondary font-medium flex-1"><FormattedText text={curso.publico_alvo} /></div>
-            </SoftCard>
-            <SoftCard className="flex flex-col h-full space-y-6">
-               <div className="p-4 bg-amber-500/10 rounded-2xl w-fit text-amber-500 shadow-sm"><AlertCircle className="w-8 h-8" /></div>
-               <h4 className="text-xl font-bold text-text-primary tracking-tight">Pré-requisitos</h4>
-               <div className="text-sm text-text-secondary font-medium flex-1"><FormattedText text={curso.pre_requisitos} /></div>
-            </SoftCard>
-        </section>
-
-        <section><PriceCard curso={curso} userEmail={user?.email || ''} /></section>
-
-        {/* SEÇÃO DO PROFESSOR */}
-        {professor && (
-          <section className="space-y-12">
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight leading-none">Quem vai te <br/><span className="text-primary">ensinar</span></h2>
-              <div className="hidden md:block text-xs font-bold uppercase tracking-wider text-text-muted border-l-2 border-primary pl-4">Conheça sua nova <br/>autoridade no assunto</div>
+                <div className="bg-white p-8 rounded-[16px] shadow-sm border border-slate-100 space-y-4">
+                  <div className="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-amber-500 mb-6">
+                    <AlertCircle className="w-6 h-6" />
+                  </div>
+                  <h4 className="text-xl font-bold text-[#022C22]">Pré-requisitos</h4>
+                  <div className="text-sm text-slate-600 leading-relaxed"><FormattedText text={curso.pre_requisitos} /></div>
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Card Biografia */}
-              <div className="lg:col-span-2 group">
-                <SoftCard className="h-full relative overflow-hidden flex flex-col md:flex-row gap-8 items-start">
-                  <div className="w-32 h-32 md:w-48 md:h-48 rounded-[2.5rem] overflow-hidden shrink-0 border-4 border-white shadow-2xl transition-transform group-hover:scale-105">
-                    {professor.avatar_url ? (
-                      <img src={professor.avatar_url} alt={professor.nome} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                        <Users className="w-12 h-12 text-primary/30" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="space-y-4">
-                    <h3 className="text-2xl font-extrabold text-text-primary tracking-tight">{professor.nome}</h3>
-                    <div className="text-base text-text-secondary leading-relaxed max-w-2xl">
-                      <FormattedText text={professor.biografia} />
-                    </div>
-                    
-                    {/* Social Links */}
-                    {professor.links && professor.links.length > 0 && (
-                      <div className="flex flex-wrap gap-3 pt-4">
-                        {professor.links.map((link: any, idx: number) => (
-                           <a 
-                             key={idx} 
-                             href={link.url} 
-                             target="_blank" 
-                             className="px-4 py-2 bg-background border border-border-custom rounded-xl text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-primary hover:border-primary/30 transition-all flex items-center gap-2"
-                           >
-                             <ExternalLink className="w-3.5 h-3.5" />
-                             {link.label}
-                           </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </SoftCard>
-              </div>
-
-              {/* Card Vídeo ou Destaque */}
-              <div className="space-y-6">
-                <div className="aspect-video rounded-[3rem] overflow-hidden shadow-2xl border border-white/5 group relative bg-black">
-                  {professor.video_url ? (
-                    <VideoPlayer url={professor.video_url} />
-                  ) : professor.site_url ? (
-                    <a 
-                      href={professor.site_url} 
-                      target="_blank" 
-                      className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-primary/5 hover:bg-primary/10 transition-all font-bold group"
-                    >
-                      <ExternalLink className="w-8 h-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                      <span className="text-xs font-black uppercase tracking-widest text-text-primary">Visite o Site Oficial</span>
-                      <span className="text-[10px] text-text-muted mt-2 truncate w-full">{professor.site_url}</span>
-                    </a>
+            {/* PROFESSOR */}
+            {professor && (
+              <div className="bg-white rounded-[16px] p-8 md:p-12 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-8 items-center md:items-start">
+                <div className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden shrink-0 border-4 border-emerald-50 shadow-lg">
+                  {professor.avatar_url ? (
+                    <img src={professor.avatar_url} alt={professor.nome} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-surface">
-                      <Video className="w-12 h-12 text-text-muted opacity-5" />
+                    <div className="w-full h-full bg-slate-100 flex items-center justify-center">
+                      <Users className="w-12 h-12 text-slate-300" />
                     </div>
                   )}
                 </div>
-                
-                <div className="p-8 bg-surface/50 border border-border-custom rounded-[2.5rem] backdrop-blur-md">
-                   <div className="flex items-center gap-3 mb-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                      <span className="text-[10px] font-black uppercase tracking-widest text-text-primary">Especialista Verificado</span>
-                   </div>
-                   <p className="text-[10px] text-text-secondary leading-relaxed uppercase tracking-tighter">
-                     Conteúdo desenvolvido e validado por profissional com ampla experiência técnica no mercado.
-                   </p>
+                <div className="space-y-4 text-center md:text-left">
+                  <div className="inline-block px-3 py-1 bg-emerald-50 text-[#10B981] text-xs font-bold uppercase rounded-full tracking-widest mb-2">Autoridade no Assunto</div>
+                  <h3 className="text-3xl font-extrabold text-[#022C22]">{professor.nome}</h3>
+                  <div className="text-sm text-slate-600 leading-relaxed max-w-2xl mx-auto md:mx-0">
+                    <FormattedText text={professor.biografia} />
+                  </div>
                 </div>
               </div>
+            )}
+
+            {/* FAQ */}
+            <div className="max-w-4xl mx-auto space-y-8">
+                <h2 className="text-3xl font-bold text-[#022C22] text-center">Perguntas Frequentes</h2>
+                <FAQAccordion faq={curso.faq} />
             </div>
+
           </section>
         )}
 
-        {/* FOOTER INFO */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[ 
-              { icon: ShieldCheck, title: "Garantia Blindada", color: "text-primary", bg: "bg-primary/10", text: `Avalie por ${curso.garantia_dias || 7} dias. Se não gostar, devolvemos 100%.` },
-              { icon: Award, title: "Certificado", color: "text-emerald-500", bg: "bg-emerald-500/10", text: "Certificado PHDonassolo Academy oficial emitido após conclusão." },
-              { icon: Clock, title: "Validade", color: "text-amber-500", bg: "bg-amber-500/10", text: "Acesso garantido de 6 meses até Vitalício conforme matrícula." }
-            ].map((item, i) => (
-              <div key={i} className="p-10 bg-surface border border-border-custom rounded-[3rem] text-center space-y-4 shadow-sm hover:translate-y-[-5px] transition-all">
-                <div className={`w-14 h-14 ${item.bg} rounded-full flex items-center justify-center mx-auto mb-2`}>
-                  <item.icon className={`w-7 h-7 ${item.color}`} />
-                </div>
-                <h5 className="text-lg font-bold text-text-primary tracking-tight">{item.title}</h5>
-                <p className="text-sm text-text-muted font-medium tracking-tight leading-snug">{item.text}</p>
-              </div>
-            ))}
-        </section>
-
-        {/* FAQ */}
-        <section className="space-y-12">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight leading-none text-center">Perguntas <span className="text-primary">Frequentes</span></h2>
-            <div className="max-w-4xl mx-auto"><FAQAccordion faq={curso.faq} /></div>
-        </section>
-
-        <section className="pt-20"><PriceCard curso={curso} userEmail={user?.email || ''} /></section>
-
       </main>
 
-      {/* WHATSAPP FLOAT */}
-      <a href={`https://wa.me/5551981816000?text=Olá Paulo, dúvida sobre curso: ${curso.titulo}`} target="_blank" className="fixed bottom-10 right-10 z-50 bg-emerald-500 text-white p-6 rounded-full shadow-2xl hover:scale-110 transition-all group">
+      {/* FOOTER */}
+      <footer className="mt-32 border-t border-slate-200 bg-white">
+        <div className="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+           <div className="text-sm text-slate-500 font-semibold">© {new Date().getFullYear()} PHD Academy. Todos os direitos reservados.</div>
+           <div className="flex gap-6 text-sm font-semibold text-slate-500">
+             <Link href="#" className="hover:text-[#10B981]">Sobre Nós</Link>
+             <Link href="#" className="hover:text-[#10B981]">Termos de Uso</Link>
+             <Link href="#" className="hover:text-[#10B981]">Privacidade</Link>
+           </div>
+        </div>
+      </footer>
+
+      {/* WHATSAPP WIDGET */}
+      <a href={`https://wa.me/5551981816000?text=Olá Paulo, dúvida sobre curso: ${curso.titulo}`} target="_blank" className="fixed bottom-8 right-8 z-50 bg-[#10B981] text-white p-4 rounded-full shadow-lg hover:scale-110 hover:bg-[#059669] transition-all">
         <HelpCircle className="w-8 h-8" />
-        <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-white text-emerald-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl opacity-0 group-hover:opacity-100 transition-all border border-emerald-100 whitespace-nowrap">Dúvidas? Fale comigo!</span>
       </a>
 
     </div>

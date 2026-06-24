@@ -6,7 +6,8 @@ import { registrarLogSistema } from '@/lib/logs'
 import { getCorsHeaders, corsOptionsResponse } from '@/lib/cors'
 
 const client = new MercadoPagoConfig({
-  accessToken: process.env.MP_ACCESS_TOKEN || 'TEST-MOCK-TOKEN-PH'
+  accessToken: process.env.MP_ACCESS_TOKEN || 'dummy_token',
+  options: { timeout: 5000 }
 })
 
 export async function OPTIONS(request: Request) {

@@ -156,9 +156,28 @@ export async function updateCursoBasics(id: string, formData: FormData) {
     throw new Error('Erro na Base de Dados: ' + error.message)
   }
 
+  // Save layout config
+  const exibir_depoimentos = formData.get('exibir_depoimentos') === 'on'
+  const exibir_secoes_extras = formData.get('exibir_secoes_extras') === 'on'
+  
+  const payload = {
+    exibir_depoimentos,
+    exibir_secoes_extras
+  }
+  
+  const chave = `curso_layout_${id}`
+  const { data: existing } = await supabase.from('configuracoes_sistema').select('chave').eq('chave', chave).single()
+  
+  if (existing) {
+    await supabase.from('configuracoes_sistema').update({ valor: JSON.stringify(payload) }).eq('chave', chave)
+  } else {
+    await supabase.from('configuracoes_sistema').insert({ chave, valor: JSON.stringify(payload) })
+  }
+
   revalidatePath('/admin/cursos')
   revalidatePath(`/admin/cursos/${id}`)
   revalidatePath('/vitrine')
+  revalidatePath(`/loja/curso/${id}`)
 }
 
 export async function deleteCurso(id: string) {
@@ -189,6 +208,9 @@ export async function deleteCurso(id: string) {
   await supabase.from('cursos_pilares').delete().eq('curso_id', id)
   await supabase.from('planos_cursos').delete().eq('curso_id', id)
   
+  // Limpa também as configurações de layout
+  await supabase.from('configuracoes_sistema').delete().eq('chave', `curso_layout_${id}`)
+
   // 4. Finalmente, deletar o curso
   const { error } = await supabase.from('cursos').delete().eq('id', id)
 
@@ -200,6 +222,48 @@ export async function deleteCurso(id: string) {
   revalidatePath('/admin/cursos')
   revalidatePath('/vitrine')
   return { success: true }
+}
+
+export async function getCursoLayout(cursoId: string) {
+  const supabase = createAdminClient()
+  const { data } = await supabase.from('configuracoes_sistema').select('valor').eq('chave', `curso_layout_${cursoId}`).single()
+  
+  // Padrão
+  if (!data?.valor) {
+    return { exibir_depoimentos: false, exibir_secoes_extras: true }
+  }
+  
+  try {
+    return JSON.parse(data.valor)
+  } catch (e) {
+    return { exibir_depoimentos: false, exibir_secoes_extras: true }
+  }
+}
+
+export async function updateCursoLayout(cursoId: string, formData: FormData) {
+  await ensureAdmin()
+  const supabase = createAdminClient()
+  
+  const exibir_depoimentos = formData.get('exibir_depoimentos') === 'on'
+  const exibir_secoes_extras = formData.get('exibir_secoes_extras') === 'on'
+  
+  const payload = {
+    exibir_depoimentos,
+    exibir_secoes_extras
+  }
+  
+  const chave = `curso_layout_${cursoId}`
+  
+  const { data: existing } = await supabase.from('configuracoes_sistema').select('chave').eq('chave', chave).single()
+  
+  if (existing) {
+    await supabase.from('configuracoes_sistema').update({ valor: JSON.stringify(payload) }).eq('chave', chave)
+  } else {
+    await supabase.from('configuracoes_sistema').insert({ chave, valor: JSON.stringify(payload) })
+  }
+  
+  revalidatePath(`/admin/cursos/${cursoId}`)
+  revalidatePath(`/loja/curso/${cursoId}`)
 }
 
 // Action para associar pilar

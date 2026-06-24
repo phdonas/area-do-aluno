@@ -7,14 +7,17 @@ import { MediaGallery } from '@/components/ui/MediaGallery'
 
 interface CursoBasicsFormProps {
   curso: any
+  layoutConfig?: any
   professores: any[]
   action: (formData: FormData) => Promise<void>
 }
 
-export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormProps) {
+export function CursoBasicsForm({ curso, layoutConfig, professores, action }: CursoBasicsFormProps) {
   const [precoEur, setPrecoEur] = useState(curso.preco_eur || '')
   const [destaque, setDestaque] = useState(curso.destaque_vitrine || false)
   const [visivelSite, setVisivelSite] = useState(curso.visivel_no_site || false)
+  const [exibirDepoimentos, setExibirDepoimentos] = useState(layoutConfig?.exibir_depoimentos || false)
+  const [exibirSecoesExtras, setExibirSecoesExtras] = useState(layoutConfig?.exibir_secoes_extras ?? true)
   const [thumbUrl, setThumbUrl] = useState(curso.thumb_url || '')
   const [faqs, setFaqs] = useState<{pergunta: string, resposta: string}[]>(
     Array.isArray(curso.faq) ? curso.faq : []
@@ -32,6 +35,65 @@ export function CursoBasicsForm({ curso, professores, action }: CursoBasicsFormP
     <form action={action} className="space-y-8">
       {/* FAQ Hidden Input to send JSON via FormData */}
       <input type="hidden" name="faq" value={JSON.stringify(faqs)} />
+
+      {/* Configuração de Layout */}
+      <div className="p-8 bg-surface border border-border-custom rounded-3xl space-y-6">
+        <h3 className="text-xl font-black text-text-primary uppercase italic tracking-widest flex items-center gap-3">
+          <LayoutTemplate className="w-5 h-5 text-primary" /> Configurações de Layout (Página de Vendas)
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div 
+            onClick={() => setExibirDepoimentos(!exibirDepoimentos)}
+            className={`p-6 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between group ${
+              exibirDepoimentos 
+                ? 'border-emerald-500 bg-emerald-500/5 shadow-lg shadow-emerald-500/10' 
+                : 'border-border-custom bg-background opacity-60 hover:opacity-100'
+            }`}
+          >
+            <div className="flex items-center gap-4">
+               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${exibirDepoimentos ? 'bg-emerald-500 text-white scale-110' : 'bg-surface text-text-muted'}`}>
+                  <Award className="w-6 h-6" />
+               </div>
+               <div>
+                 <h4 className={`text-sm font-black uppercase tracking-widest italic ${exibirDepoimentos ? 'text-emerald-500' : 'text-text-primary'}`}>Depoimentos</h4>
+                 <p className="text-[10px] text-text-muted font-bold tracking-wider mt-1 uppercase">Exibir na página</p>
+               </div>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className={`text-xs font-black uppercase tracking-widest ${exibirDepoimentos ? 'text-emerald-500' : 'text-text-muted'}`}>
+                {exibirDepoimentos ? 'Sim' : 'Não'}
+              </span>
+              <input type="checkbox" name="exibir_depoimentos" checked={exibirDepoimentos} readOnly className="sr-only" />
+            </div>
+          </div>
+
+          <div 
+            onClick={() => setExibirSecoesExtras(!exibirSecoesExtras)}
+            className={`p-6 rounded-3xl border-2 transition-all cursor-pointer flex items-center justify-between group ${
+              exibirSecoesExtras 
+                ? 'border-amber-500 bg-amber-500/5 shadow-lg shadow-amber-500/10' 
+                : 'border-border-custom bg-background opacity-60 hover:opacity-100'
+            }`}
+          >
+            <div className="flex items-center gap-4">
+               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${exibirSecoesExtras ? 'bg-amber-500 text-white scale-110' : 'bg-surface text-text-muted'}`}>
+                  <ListChecks className="w-6 h-6" />
+               </div>
+               <div>
+                 <h4 className={`text-sm font-black uppercase tracking-widest italic ${exibirSecoesExtras ? 'text-amber-500' : 'text-text-primary'}`}>Seções Extras</h4>
+                 <p className="text-[10px] text-text-muted font-bold tracking-wider mt-1 uppercase">Para quem é, FAQ, etc.</p>
+               </div>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className={`text-xs font-black uppercase tracking-widest ${exibirSecoesExtras ? 'text-amber-500' : 'text-text-muted'}`}>
+                {exibirSecoesExtras ? 'Sim' : 'Não'}
+              </span>
+              <input type="checkbox" name="exibir_secoes_extras" checked={exibirSecoesExtras} readOnly className="sr-only" />
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Seção Superior: Destaque e Status */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">

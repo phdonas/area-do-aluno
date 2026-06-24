@@ -5,7 +5,7 @@ import { CourseEditorTabs } from '../CourseEditorTabs'
 import { CursoBasicsForm } from '../CursoBasicsForm'
 import { PilarAssociator } from '../PilarAssociator'
 import { ModuloAssociator } from '../ModuloAssociator'
-import { updateCursoBasics } from '../actions'
+import { updateCursoBasics, getCursoLayout } from '../actions'
 import { Eye, Video } from 'lucide-react'
 import Link from 'next/link'
 import { AdminTutorialCard } from '@/components/admin/AdminTutorialCard'
@@ -39,7 +39,10 @@ export default async function EditarCursoPage({ params }: { params: Promise<{ id
     return notFound()
   }
 
-  // 2. Buscar Professores para o select
+  // 2. Buscar Layout do Curso
+  const layoutConfig = await getCursoLayout(id)
+
+  // 3. Buscar Professores para o select
   const { data: professores } = await supabaseAdmin.from('professores').select('id, nome')
 
   // 3. Buscar Todos os Pilares e Pilares do Curso
@@ -154,6 +157,7 @@ export default async function EditarCursoPage({ params }: { params: Promise<{ id
                 <CursoBasicsForm 
                   key={`form-${id}-${curso.updated_at}`}
                   curso={curso} 
+                  layoutConfig={layoutConfig}
                   professores={professores || []} 
                   action={updateAction} 
                 />

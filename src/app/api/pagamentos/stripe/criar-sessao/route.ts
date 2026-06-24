@@ -5,7 +5,7 @@ import { validarCupom, calcularDesconto } from '@/lib/cupons'
 import { registrarLogSistema } from '@/lib/logs'
 import { getCorsHeaders, corsOptionsResponse } from '@/lib/cors'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy')
 
 export async function OPTIONS(request: Request) {
   return corsOptionsResponse(request)
