@@ -64,11 +64,11 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
         </div>
       )}
 
-      <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 p-6 md:p-16 bg-background border-2 border-border-custom rounded-[3rem] md:rounded-[4rem] shadow-2xl relative group">
+      <div className="flex flex-col items-center gap-6 p-6 md:p-8 bg-background border-2 border-border-custom rounded-3xl shadow-xl relative group overflow-hidden w-full">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl transition-all group-hover:scale-150" />
         
-        <div className="flex-1 space-y-6">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col w-full space-y-6 relative z-10 items-center text-center">
+          <div className="flex items-center justify-center gap-3 w-full">
             <div className={`w-2 h-2 rounded-full animate-pulse ${isFree ? 'bg-primary' : 'bg-emerald-500'}`} />
             <span className={`text-xs font-black uppercase tracking-[0.5em] ${isFree ? 'text-primary' : 'text-emerald-500'}`}>
               {isFree ? 'Oferta Exclusiva: Acesso Gratuito' : `Plano: ${currentOffer.planos?.nome}`}
@@ -108,7 +108,7 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
             )}
           </div>
 
-          <div className="flex flex-wrap gap-4 items-center pt-2">
+          <div className="flex flex-col items-center justify-center gap-4 pt-2 w-full">
             {!isFree && (
               <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] flex items-center gap-3 italic">
                 <CreditCard className="w-4 h-4 text-primary" /> {curso.formas_pagamento || 'Cartão ou Pix em até 12x'}
@@ -121,7 +121,7 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
           </div>
         </div>
 
-        <div className="flex flex-col gap-5 w-full md:w-fit min-w-[340px] relative z-10">
+        <div className="flex flex-col gap-4 w-full relative z-10 mt-4">
           <Link 
             href={`/checkout/${curso.id}?plano=${currentOffer.plano_id}`}
             className="w-full py-5 px-8 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-[1.5rem] flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-emerald-600/30 relative z-10 group uppercase tracking-widest text-[11px] overflow-hidden text-center"

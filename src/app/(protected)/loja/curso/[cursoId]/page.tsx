@@ -31,12 +31,12 @@ import { FormattedText } from '@/components/CourseContent'
 
 function ContentAccordion({ title, children, defaultOpen = false }: { title: string, children: React.ReactNode, defaultOpen?: boolean }) {
   return (
-    <details open={defaultOpen} className="group bg-white border border-slate-200 rounded-lg overflow-hidden [&_summary::-webkit-details-marker]:hidden mb-4">
-      <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-slate-50 transition-all outline-none">
-        <h2 className="text-xl font-bold text-[#1C1D1F] leading-tight break-words pr-4">
+    <details open={defaultOpen} className="group border border-slate-200 rounded-lg overflow-hidden [&_summary::-webkit-details-marker]:hidden mb-4 bg-white open:bg-[#F1F5F9]/50">
+      <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-slate-50 group-open:hover:bg-transparent transition-all outline-none">
+        <h2 className="text-xl font-bold text-[#022C22] leading-tight break-words pr-4">
           {title}
         </h2>
-        <div className="shrink-0 transition-transform duration-300 group-open:-rotate-180 text-[#1C1D1F]">
+        <div className="shrink-0 transition-transform duration-300 group-open:-rotate-180 text-[#10B981]">
           <ChevronDown className="w-5 h-5" />
         </div>
       </summary>
@@ -112,20 +112,40 @@ export default async function SalesPagePH({
   const idsMap = modulosRel?.map(m => m.modulo_id) || []
   
   let lessonTotal = 0
+  let totalDuracao = 0
   if (idsMap.length > 0) {
-    const { data: directLessons } = await supabase.from('aulas').select('id').in('modulo_id', idsMap)
-    const { data: pivotLessons } = await supabase.from('modulos_aulas').select('aula_id').in('modulo_id', idsMap)
+    const { data: directLessons } = await supabase.from('aulas').select('id, duracao').in('modulo_id', idsMap)
+    const { data: pivotLessons } = await supabase.from('modulos_aulas').select('aula_id, aulas(id, duracao)').in('modulo_id', idsMap)
     
-    const uniqueIds = new Set([
-       ...(directLessons?.map(a => a.id) || []),
-       ...(pivotLessons?.map(a => a.aula_id) || [])
-    ])
+    const uniqueIds = new Set()
+    
+    directLessons?.forEach(a => {
+       if (!uniqueIds.has(a.id)) {
+          uniqueIds.add(a.id)
+          totalDuracao += a.duracao || 0
+       }
+    })
+    
+    pivotLessons?.forEach(p => {
+       const a = p.aulas as any
+       if (a && !uniqueIds.has(a.id)) {
+          uniqueIds.add(a.id)
+          totalDuracao += a.duracao || 0
+       }
+    })
+    
     lessonTotal = uniqueIds.size
   }
   
   const moduleTotal = idsMap.length
-  // Estimativa de horas (15 mins por aula em média)
-  const estimativaHoras = Math.ceil(lessonTotal * 0.25)
+  
+  let duracaoFormatada = null
+  if (totalDuracao > 0) {
+    const h = Math.floor(totalDuracao / 3600)
+    const m = Math.floor((totalDuracao % 3600) / 60)
+    if (h > 0) duracaoFormatada = `Aprox. ${h}h ${m}m`
+    else duracaoFormatada = `Aprox. ${m}m`
+  }
 
   const { data: isAdmin } = user ? await supabase.rpc('is_admin') : { data: false }
   const { data: userData } = user ? await supabase.from('usuarios').select('is_staff').eq('id', user.id).single() : { data: null }
@@ -189,8 +209,8 @@ export default async function SalesPagePH({
             <div className="flex flex-wrap items-center gap-4 text-sm text-slate-300">
                <span className="flex items-center gap-2"><LayoutTemplate className="w-4 h-4" /> {moduleTotal} módulos</span>
                <span className="flex items-center gap-2"><Video className="w-4 h-4" /> {lessonTotal} aulas</span>
-               {estimativaHoras > 0 && (
-                 <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> ~ {estimativaHoras} horas no total</span>
+               {duracaoFormatada && (
+                 <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> {duracaoFormatada}</span>
                )}
             </div>
           </div>
