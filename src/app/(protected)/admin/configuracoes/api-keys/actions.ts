@@ -1,12 +1,14 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { ensureAdmin } from '@/lib/auth-check'
 import { revalidatePath } from 'next/cache'
 
-// Lista de chaves suportadas para facilitar a tipagem e segurança
 export type SupportedApiKeys = 'youtube_api_key' | 'gemini_api_key' | 'claude_api_key' | 'openai_api_key'
 
 export async function getApiKeys() {
+  await ensureAdmin()
   try {
     const supabase = await createClient()
     const { data, error } = await supabase
@@ -19,7 +21,6 @@ export async function getApiKeys() {
       return {}
     }
 
-    // Converter array de objetos em um dicionário
     const keysMap: Record<string, string> = {}
     data?.forEach((item) => {
       keysMap[item.chave] = item.valor
@@ -33,10 +34,12 @@ export async function getApiKeys() {
 }
 
 export async function saveApiKey(chave: SupportedApiKeys, valor: string) {
+  await ensureAdmin()
   try {
     const supabase = await createClient()
+    const supabaseAdmin = createAdminClient()
     
-    // Primeiro verificamos se a chave já existe
+    // Primeiro verificamos se a chave já existe (pode usar o client normal para leitura)
     const { data: existingData } = await supabase
       .from('configuracoes_sistema')
       .select('chave')
@@ -46,15 +49,15 @@ export async function saveApiKey(chave: SupportedApiKeys, valor: string) {
     let error;
 
     if (existingData) {
-      // Atualizar
-      const { error: updateError } = await supabase
+      // Atualizar - Usando Admin Client para burlar RLS se necessário
+      const { error: updateError } = await supabaseAdmin
         .from('configuracoes_sistema')
         .update({ valor, updated_at: new Date().toISOString() })
         .eq('chave', chave)
       error = updateError
     } else {
-      // Inserir
-      const { error: insertError } = await supabase
+      // Inserir - Usando Admin Client pois RLS pode bloquear INSERT na tabela de config
+      const { error: insertError } = await supabaseAdmin
         .from('configuracoes_sistema')
         .insert({ chave, valor, updated_at: new Date().toISOString() })
       error = insertError
