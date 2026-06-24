@@ -285,7 +285,14 @@ function parseISODuration(duration: string): string {
 }
 
 export async function fetchYoutubePlaylist(url: string) {
-  const apiKey = process.env.YOUTUBE_API_KEY
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('configuracoes_sistema')
+    .select('valor')
+    .eq('chave', 'youtube_api_key')
+    .single()
+    
+  const apiKey = data?.valor || process.env.YOUTUBE_API_KEY
   if (!apiKey) return { success: false, error: 'Chave do YouTube não configurada.' }
 
   // Extrair ID da playlist

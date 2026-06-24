@@ -7,7 +7,7 @@ import {
   FileQuestion, Package, Wrench, Users, Eraser, Activity, TrendingUp, AlertTriangle, Clock, 
   BarChart3, Banknote, History, GraduationCap, ChevronRight, Eye, Play, Search, UserPlus,
   CalendarDays, Filter, ChevronDown, Target, Send, Tag, ShieldCheck, Zap, Award, Settings,
-  Columns3, MailCheck, History as HistoryIcon, Ticket, DollarSign, Globe
+  Columns3, MailCheck, History as HistoryIcon, Ticket, DollarSign, Globe, KeyRound
 } from 'lucide-react'
 
 import AnalyticsVisual from './AnalyticsVisual'
@@ -199,6 +199,7 @@ export default async function AdminDashboardPage({
         { label: 'Recursos & Ferramentas', count: recursosCount, href: '/admin/recursos', icon: Wrench, color: 'bg-emerald-600/50' },
         { label: 'Questionários', count: questCount, href: '/admin/questionarios', icon: FileQuestion, color: 'bg-teal-600/50' },
         { label: 'Limpeza de Nomes', href: '/admin/configuracoes/prefixos', icon: Eraser, color: 'bg-slate-600/50' },
+        { label: 'Chaves de API', href: '/admin/configuracoes/api-keys', icon: KeyRound, color: 'bg-indigo-500/50', description: 'YouTube, IA, etc' },
       ]
     },
     {
