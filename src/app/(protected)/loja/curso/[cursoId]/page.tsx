@@ -27,72 +27,23 @@ import { PriceCard } from './PriceCard'
 import { VideoPlayer } from '@/components/video-player'
 import * as motion from 'framer-motion/client'
 import { getCursoLayout } from '../../../admin/cursos/actions'
+import { FormattedText } from '@/components/CourseContent'
 
-// Helper para formatar texto sem o "Bento Box"
-function SimpleCheckList({ text }: { text: string | null }) {
-  if (!text) return null;
-  const lines = text.split('\n').filter(l => l.trim().length > 0);
-  
+function ContentAccordion({ title, children, defaultOpen = false }: { title: string, children: React.ReactNode, defaultOpen?: boolean }) {
   return (
-    <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
-      {lines.map((line, idx) => {
-        let cleanLine = line.trim();
-        if (cleanLine.startsWith('- ')) cleanLine = cleanLine.substring(2);
-        
-        return (
-          <li key={idx} className="flex items-start gap-3 text-sm text-slate-700 leading-relaxed break-words">
-            <Check className="w-4 h-4 text-[#1C1D1F] shrink-0 mt-0.5" />
-            <span>{cleanLine}</span>
-          </li>
-        );
-      })}
-    </ul>
-  )
-}
-
-function SimpleFormattedText({ text }: { text: string | null }) {
-  if (!text) return null;
-  const lines = text.split('\n');
-  return (
-    <div className="space-y-4 text-sm text-slate-700 leading-relaxed break-words">
-      {lines.map((line, idx) => {
-        const trimmed = line.trim();
-        if (!trimmed) return <div key={idx} className="h-2" />;
-        if (trimmed.startsWith('- ')) {
-          return (
-            <div key={idx} className="flex items-start gap-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-2 shrink-0" />
-              <span>{trimmed.substring(2)}</span>
-            </div>
-          );
-        }
-        return <p key={idx}>{trimmed}</p>;
-      })}
-    </div>
-  )
-}
-
-function FAQAccordion({ faq }: { faq: any | null }) {
-  if (!faq || !Array.isArray(faq)) return null;
-
-  return (
-    <div className="space-y-4 w-full">
-      {faq.map((item: any, idx: number) => (
-        <details key={idx} className="group bg-white border border-slate-200 rounded-lg overflow-hidden [&_summary::-webkit-details-marker]:hidden">
-          <summary className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 transition-all outline-none">
-            <h4 className="text-base font-bold text-[#1C1D1F] leading-tight break-words pr-4">
-              {item.pergunta}
-            </h4>
-            <div className="shrink-0 transition-transform duration-300 group-open:-rotate-180 text-slate-400">
-              <ChevronDown className="w-5 h-5" />
-            </div>
-          </summary>
-          <div className="p-5 pt-0 text-sm text-slate-600 leading-relaxed break-words">
-             <SimpleFormattedText text={item.resposta} />
-          </div>
-        </details>
-      ))}
-    </div>
+    <details open={defaultOpen} className="group bg-white border border-slate-200 rounded-lg overflow-hidden [&_summary::-webkit-details-marker]:hidden mb-4">
+      <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-slate-50 transition-all outline-none">
+        <h2 className="text-xl font-bold text-[#1C1D1F] leading-tight break-words pr-4">
+          {title}
+        </h2>
+        <div className="shrink-0 transition-transform duration-300 group-open:-rotate-180 text-[#1C1D1F]">
+          <ChevronDown className="w-5 h-5" />
+        </div>
+      </summary>
+      <div className="p-6 pt-0 text-sm text-slate-700 leading-relaxed break-words">
+         {children}
+      </div>
+    </details>
   )
 }
 
@@ -104,7 +55,7 @@ function DepoimentosCarousel() {
   ];
 
   return (
-    <div className="space-y-6 w-full overflow-hidden">
+    <div className="space-y-6 w-full overflow-hidden mt-8 border-t border-slate-200 pt-8">
       <h3 className="text-2xl font-bold text-[#1C1D1F]">O que dizem os alunos</h3>
       <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory scrollbar-hide">
         {depoimentos.map((d, i) => (
@@ -173,13 +124,18 @@ export default async function SalesPagePH({
   }
   
   const moduleTotal = idsMap.length
+  // Estimativa de horas (15 mins por aula em média)
+  const estimativaHoras = Math.ceil(lessonTotal * 0.25)
 
   const { data: isAdmin } = user ? await supabase.rpc('is_admin') : { data: false }
   const { data: userData } = user ? await supabase.from('usuarios').select('is_staff').eq('id', user.id).single() : { data: null }
   const hasEditAccess = isAdmin || userData?.is_staff
 
+  // Checar se existe titulo_publico genérico no objeto, senao usar titulo
+  const tituloOficial = (curso as any).titulo_publico || curso.titulo
+
   return (
-    <div className="min-h-screen bg-white pb-32 font-sans selection:bg-[#1C1D1F] selection:text-white w-full overflow-x-hidden">
+    <div className="min-h-screen bg-white pb-32 font-sans selection:bg-[#1C1D1F] selection:text-white w-full">
       
       {/* HEADER ESCURO TIPO UDEMY */}
       <div className="bg-[#1C1D1F] text-white w-full">
@@ -208,7 +164,7 @@ export default async function SalesPagePH({
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12 lg:py-16 w-full flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-2/3 space-y-4">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white break-words">
-              {curso.titulo}
+              {tituloOficial}
             </h1>
             {curso.descricao && (
               <p className="text-base md:text-lg text-slate-300 font-normal break-words line-clamp-3">
@@ -233,6 +189,9 @@ export default async function SalesPagePH({
             <div className="flex flex-wrap items-center gap-4 text-sm text-slate-300">
                <span className="flex items-center gap-2"><LayoutTemplate className="w-4 h-4" /> {moduleTotal} módulos</span>
                <span className="flex items-center gap-2"><Video className="w-4 h-4" /> {lessonTotal} aulas</span>
+               {estimativaHoras > 0 && (
+                 <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> ~ {estimativaHoras} horas no total</span>
+               )}
             </div>
           </div>
           
@@ -242,66 +201,75 @@ export default async function SalesPagePH({
       </div>
 
       {/* MAIN LAYOUT WITH SIDEBAR */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 w-full flex flex-col lg:flex-row gap-8 relative">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 w-full flex flex-col lg:flex-row gap-8 relative items-start">
         
         {/* COLUNA ESQUERDA (CONTEÚDO) */}
-        <div className="w-full lg:w-2/3 py-8 space-y-12">
+        <div className="w-full lg:w-2/3 py-8 flex flex-col">
           
-          {/* OBJETIVOS (O que você aprenderá) */}
+          {/* ACORDEONS DE CONTEÚDO */}
+          
+          {curso.descricao && (
+            <ContentAccordion title="Descrição do Curso" defaultOpen={true}>
+              <FormattedText text={curso.descricao} />
+            </ContentAccordion>
+          )}
+
           {curso.objetivos && (
-            <div className="w-full border border-slate-200 p-6 bg-white break-words">
-               <h2 className="text-2xl font-bold text-[#1C1D1F] mb-6">O que você aprenderá</h2>
-               <SimpleCheckList text={curso.objetivos} />
-            </div>
+            <ContentAccordion title="O que você vai aprender" defaultOpen={true}>
+               <FormattedText text={curso.objetivos} />
+            </ContentAccordion>
           )}
 
-          {/* RESULTADOS ESPERADOS */}
-          {curso.resultados_esperados && (
-            <div className="w-full border border-slate-200 p-6 bg-white break-words">
-               <h2 className="text-2xl font-bold text-[#1C1D1F] mb-6">Resultados Esperados</h2>
-               <SimpleCheckList text={curso.resultados_esperados} />
-            </div>
-          )}
-
-          {/* EMENTA */}
           {curso.ementa_resumida && (
-            <div className="w-full break-words">
-              <h2 className="text-2xl font-bold text-[#1C1D1F] mb-6">Conteúdo do curso</h2>
-              <div className="bg-white p-6 border border-slate-200">
-                <SimpleFormattedText text={curso.ementa_resumida} />
-              </div>
-            </div>
+            <ContentAccordion title="Ementa Resumida" defaultOpen={false}>
+               <FormattedText text={curso.ementa_resumida} />
+            </ContentAccordion>
           )}
 
-          {/* SEÇÕES EXTRAS (Público e Requisitos) */}
-          {(exibir_secoes_extras || curso.publico_alvo || curso.pre_requisitos) && (
-            <div className="space-y-8 w-full">
-              {curso.pre_requisitos && (
-                <div className="w-full break-words">
-                  <h2 className="text-2xl font-bold text-[#1C1D1F] mb-4">Requisitos</h2>
-                  <ul className="list-disc pl-5 text-sm text-slate-700 space-y-2">
-                    {curso.pre_requisitos.split('\n').filter((l: string) => l.trim().length > 0).map((l: string, i: number) => (
-                      <li key={i}>{l.replace('- ', '')}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {curso.publico_alvo && (
-                <div className="w-full break-words">
-                  <h2 className="text-2xl font-bold text-[#1C1D1F] mb-4">Para quem é este curso</h2>
-                  <ul className="list-disc pl-5 text-sm text-slate-700 space-y-2">
-                    {curso.publico_alvo.split('\n').filter((l: string) => l.trim().length > 0).map((l: string, i: number) => (
-                      <li key={i}>{l.replace('- ', '')}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+          {curso.resultados_esperados && (
+            <ContentAccordion title="Resultados Esperados" defaultOpen={false}>
+               <FormattedText text={curso.resultados_esperados} />
+            </ContentAccordion>
+          )}
+
+          {(exibir_secoes_extras || curso.publico_alvo) && curso.publico_alvo && (
+            <ContentAccordion title="Para quem se destina" defaultOpen={false}>
+               <FormattedText text={curso.publico_alvo} />
+            </ContentAccordion>
+          )}
+
+          {(exibir_secoes_extras || curso.pre_requisitos) && curso.pre_requisitos && (
+            <ContentAccordion title="Pré-requisitos" defaultOpen={false}>
+               <FormattedText text={curso.pre_requisitos} />
+            </ContentAccordion>
+          )}
+
+          {curso.faq && Array.isArray(curso.faq) && curso.faq.length > 0 && (
+            <ContentAccordion title="Perguntas frequentes" defaultOpen={false}>
+              <div className="space-y-4">
+                {curso.faq.map((item: any, idx: number) => (
+                  <div key={idx} className="border-b border-slate-100 pb-4 last:border-0 last:pb-0">
+                    <h4 className="font-bold text-[#1C1D1F] mb-2">{item.pergunta}</h4>
+                    <FormattedText text={item.resposta} />
+                  </div>
+                ))}
+              </div>
+            </ContentAccordion>
+          )}
+
+          {/* PLAYER DE VÍDEO NO CONTEÚDO */}
+          {curso.video_vendas_url && (
+            <div className="w-full pt-8 mt-4 border-t border-slate-200">
+               <h2 className="text-2xl font-bold text-[#1C1D1F] mb-6">Apresentação em Vídeo</h2>
+               <div className="w-full aspect-video rounded-lg overflow-hidden bg-black shadow-lg">
+                 <VideoPlayer url={curso.video_vendas_url} />
+               </div>
             </div>
           )}
 
           {/* PROFESSOR */}
           {professor && (
-            <div className="w-full break-words space-y-4 pt-8">
+            <div className="w-full break-words space-y-4 pt-8 mt-4 border-t border-slate-200">
                <h2 className="text-2xl font-bold text-[#1C1D1F]">Instrutor</h2>
                <h3 className="text-lg font-bold text-[#A435F0] underline decoration-[#A435F0]/30 underline-offset-4">{professor.nome}</h3>
                <div className="flex items-start gap-4">
@@ -313,7 +281,7 @@ export default async function SalesPagePH({
                     </div>
                   )}
                   <div className="text-sm text-slate-700 flex-1">
-                    <SimpleFormattedText text={professor.biografia} />
+                    <FormattedText text={professor.biografia} />
                   </div>
                </div>
             </div>
@@ -321,37 +289,19 @@ export default async function SalesPagePH({
 
           {/* DEPOIMENTOS (Condicional) */}
           {exibir_depoimentos && (
-            <div className="w-full pt-8">
-              <DepoimentosCarousel />
-            </div>
-          )}
-
-          {/* FAQ */}
-          {curso.faq && Array.isArray(curso.faq) && curso.faq.length > 0 && (
-            <div className="w-full pt-8">
-                <h2 className="text-2xl font-bold text-[#1C1D1F] mb-6">Perguntas frequentes</h2>
-                <FAQAccordion faq={curso.faq} />
-            </div>
+             <DepoimentosCarousel />
           )}
 
         </div>
 
         {/* COLUNA DIREITA (STICKY CARD) */}
-        <div className="w-full lg:w-1/3 relative z-20 -mt-8 lg:-mt-64">
-           <div className="lg:sticky lg:top-8 bg-white shadow-[0_2px_4px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.08)] border border-white text-[#1C1D1F] flex flex-col w-full overflow-hidden">
+        <div className="w-full lg:w-1/3 relative z-20 lg:-mt-64 pb-12">
+           <div className="sticky top-8 bg-white shadow-[0_2px_4px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.08)] border border-white text-[#1C1D1F] flex flex-col w-full overflow-hidden">
               
-              {/* VIDEO / THUMBNAIL (Ocupa o topo do card) */}
+              {/* APENAS THUMBNAIL (Ocupa o topo do card) */}
               <div className="w-full aspect-video bg-[#1C1D1F] relative border-b border-slate-200">
-                {curso.video_vendas_url ? (
-                  <VideoPlayer url={curso.video_vendas_url} />
-                ) : curso.thumb_url ? (
-                   <div className="w-full h-full relative group cursor-pointer flex items-center justify-center">
-                     <img src={curso.thumb_url} className="absolute inset-0 w-full h-full object-cover" />
-                     <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors" />
-                     <div className="relative w-16 h-16 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <PlayCircle className="w-10 h-10 text-[#1C1D1F] ml-1" />
-                     </div>
-                   </div>
+                {curso.thumb_url ? (
+                  <img src={curso.thumb_url} className="absolute inset-0 w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-[#1C1D1F]">
                     <Video className="w-12 h-12 text-slate-500" />
