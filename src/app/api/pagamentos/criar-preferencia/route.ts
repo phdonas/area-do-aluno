@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   console.log('MP_ACCESS_TOKEN presente:', !!process.env.MP_ACCESS_TOKEN)
   console.log('MP_ACCESS_TOKEN prefixo:', process.env.MP_ACCESS_TOKEN?.substring(0, 10))
   try {
-    const { cursoId, cupomCodigo, emailFinal } = await request.json()
+    const { cursoId, planoId, cupomCodigo, emailFinal } = await request.json()
     
     if (!cursoId) {
       return NextResponse.json({ error: 'ID do curso é obrigatório' }, { status: 400, headers: corsH })
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     // 1. Busca detalhes do curso/plano
     const { data: curso, error: cursoError } = await supabase
       .from('cursos')
-      .select('*, planos_cursos(planos(*))')
+      .select('*, planos_cursos(planos(*), valor_venda)')
       .eq('id', cursoId)
       .single()
 
@@ -46,8 +46,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Curso não encontrado' }, { status: 404, headers: corsH })
     }
 
-    const plano = curso.planos_cursos?.[0]?.planos as any
-    const precoBase = Number(plano?.preco_mensal || plano?.preco_anual || curso.preco || 0)
+    // Resolve a oferta selecionada (plano)
+    const oferta = planoId 
+      ? curso.planos_cursos?.find((pc: any) => pc.planos?.id.toString() === planoId.toString())
+      : curso.planos_cursos?.[0]
+
+    const plano = oferta?.planos as any
+    const precoBase = Number(oferta?.valor_venda || plano?.preco_mensal || plano?.preco_anual || curso.preco || 0)
     
     let precoFinal = precoBase
     let appliedCupomId = null
