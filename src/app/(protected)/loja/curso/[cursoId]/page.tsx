@@ -113,16 +113,18 @@ export default async function SalesPagePH({
   
   let lessonTotal = 0
   let totalDuracao = 0
+  let exercisesTotal = 0
   if (idsMap.length > 0) {
-    const { data: directLessons } = await supabase.from('aulas').select('id, duracao').in('modulo_id', idsMap)
-    const { data: pivotLessons } = await supabase.from('modulos_aulas').select('aula_id, aulas(id, duracao)').in('modulo_id', idsMap)
+    const { data: directLessons } = await supabase.from('aulas').select('id, duracao_segundos, questionario_id').in('modulo_id', idsMap)
+    const { data: pivotLessons } = await supabase.from('modulos_aulas').select('aula_id, aulas(id, duracao_segundos, questionario_id)').in('modulo_id', idsMap)
     
     const uniqueIds = new Set()
     
     directLessons?.forEach(a => {
        if (!uniqueIds.has(a.id)) {
           uniqueIds.add(a.id)
-          totalDuracao += a.duracao || 0
+          totalDuracao += a.duracao_segundos || 0
+          if (a.questionario_id) exercisesTotal++
        }
     })
     
@@ -130,7 +132,8 @@ export default async function SalesPagePH({
        const a = p.aulas as any
        if (a && !uniqueIds.has(a.id)) {
           uniqueIds.add(a.id)
-          totalDuracao += a.duracao || 0
+          totalDuracao += a.duracao_segundos || 0
+          if (a.questionario_id) exercisesTotal++
        }
     })
     
@@ -183,12 +186,12 @@ export default async function SalesPagePH({
         {/* HERO CONTENT */}
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12 lg:py-16 w-full flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-2/3 space-y-4">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white break-words">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white break-words">
               {tituloOficial}
             </h1>
             {curso.descricao && (
               <p className="text-base md:text-lg text-slate-300 font-normal break-words line-clamp-3">
-                {curso.descricao}
+                {curso.descricao.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ')}
               </p>
             )}
             
@@ -211,6 +214,9 @@ export default async function SalesPagePH({
                <span className="flex items-center gap-2"><Video className="w-4 h-4" /> {lessonTotal} aulas</span>
                {duracaoFormatada && (
                  <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> {duracaoFormatada}</span>
+               )}
+               {exercisesTotal > 0 && (
+                 <span className="flex items-center gap-2"><ListChecks className="w-4 h-4" /> {exercisesTotal} testes/exercícios</span>
                )}
             </div>
           </div>

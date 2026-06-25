@@ -37,13 +37,13 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
       {/* SELETOR DE PLANOS (Se houver mais de um) */}
       {offers.length > 1 && (
         <div className="flex flex-col items-center gap-4">
-          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-text-muted">Escolha o seu plano</span>
+          <span className="text-xs md:text-sm font-black uppercase tracking-[0.3em] text-text-muted">Escolha o seu plano</span>
           <div className="flex flex-wrap gap-4 justify-center">
              {offers.map((off: any, idx: number) => (
                <button 
                  key={idx}
                  onClick={() => setSelectedPlanoIdx(idx)}
-                 className={`px-6 py-5 rounded-2xl text-[10px] font-black uppercase tracking-widest border-4 transition-all relative flex flex-col items-center gap-2 hover:scale-105 active:scale-95 ${
+                 className={`px-6 py-5 rounded-2xl text-xs md:text-sm font-black uppercase tracking-widest border-4 transition-all relative flex flex-col items-center gap-2 hover:scale-105 active:scale-95 ${
                    selectedPlanoIdx === idx 
                      ? 'bg-primary text-white border-primary shadow-[0_0_40px_rgba(59,130,246,0.6)] ring-4 ring-primary/30 scale-110 z-10' 
                      : 'bg-surface text-text-muted border-white/5 hover:border-white/20'
@@ -57,7 +57,7 @@ export function PriceCard({ curso, userEmail }: { curso: any, userEmail: string 
                     </span>
                   )}
                   <span>{off.planos?.nome}</span>
-                  <span className="opacity-60 text-[8px]">R$ {formatPreco(off.valor_venda)}</span>
+                  <span className="opacity-80 text-[10px] md:text-xs">R$ {formatPreco(off.valor_venda)}</span>
                </button>
              ))}
           </div>
