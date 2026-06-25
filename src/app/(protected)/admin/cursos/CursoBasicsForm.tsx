@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Save, LayoutTemplate, Plus, Trash2, Video, ShieldCheck, HelpCircle, ListChecks, Target, CreditCard, Sparkles, Globe, Award, AlertCircle } from 'lucide-react'
+import React, { useState, useTransition } from 'react'
+import { Save, LayoutTemplate, Plus, Trash2, Video, ShieldCheck, HelpCircle, ListChecks, Target, CreditCard, Sparkles, Globe, Award, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { PrecoInternacional } from './PrecoInternacional'
 import { MediaGallery } from '@/components/ui/MediaGallery'
 
@@ -13,6 +13,8 @@ interface CursoBasicsFormProps {
 }
 
 export function CursoBasicsForm({ curso, layoutConfig, professores, action }: CursoBasicsFormProps) {
+  const [isPending, startTransition] = useTransition()
+  const [showModal, setShowModal] = useState(false)
   const [precoEur, setPrecoEur] = useState(curso.preco_eur || '')
   const [destaque, setDestaque] = useState(curso.destaque_vitrine || false)
   const [visivelSite, setVisivelSite] = useState(curso.visivel_no_site || false)
@@ -31,8 +33,37 @@ export function CursoBasicsForm({ curso, layoutConfig, professores, action }: Cu
     setFaqs(newFaqs)
   }
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    startTransition(async () => {
+      try {
+        await action(formData)
+        setShowModal(true)
+        setTimeout(() => setShowModal(false), 3000)
+      } catch (err) {
+        console.error(err)
+        alert('Erro ao salvar as alterações!')
+      }
+    })
+  }
+
   return (
-    <form action={action} className="space-y-8">
+    <>
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4 animate-in zoom-in-95 duration-300">
+            <div className="w-16 h-16 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center">
+              <CheckCircle2 className="w-8 h-8" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-xl font-black text-slate-800 uppercase italic">Alterações Salvas</h3>
+              <p className="text-sm text-slate-500 font-medium mt-1">O curso foi atualizado com sucesso.</p>
+            </div>
+          </div>
+        </div>
+      )}
+      <form onSubmit={handleSubmit} className="space-y-8">
       {/* FAQ Hidden Input to send JSON via FormData */}
       <input type="hidden" name="faq" value={JSON.stringify(faqs)} />
 
@@ -433,5 +464,6 @@ WHERE pc.curso_id = 'seu-curso-id';`}
         </button>
       </div>
     </form>
+    </>
   )
 }
