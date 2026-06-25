@@ -478,3 +478,16 @@ export async function separarModuloCurso(cursoId: string, originalModuloId: stri
 
   revalidatePath(`/admin/cursos/${cursoId}`)
 }
+
+export async function updateCursosOrdem(orderedIds: string[]) {
+  await ensureAdmin()
+  const supabase = createAdminClient()
+  
+  // Como são poucos cursos (geralmente < 100), podemos fazer updates individuais
+  // Em um sistema maior, faríamos um upsert em massa
+  for (let i = 0; i < orderedIds.length; i++) {
+    await supabase.from('cursos').update({ ordem: i }).eq('id', orderedIds[i])
+  }
+  
+  revalidatePath('/admin/cursos')
+}
