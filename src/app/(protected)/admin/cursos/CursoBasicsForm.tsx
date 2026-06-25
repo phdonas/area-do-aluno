@@ -4,6 +4,9 @@ import React, { useState, useTransition } from 'react'
 import { Save, LayoutTemplate, Plus, Trash2, Video, ShieldCheck, HelpCircle, ListChecks, Target, CreditCard, Sparkles, Globe, Award, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { PrecoInternacional } from './PrecoInternacional'
 import { MediaGallery } from '@/components/ui/MediaGallery'
+import { updateCursoBasics } from './actions'
+import { useRouter } from 'next/navigation'
+import { RichTextEditor } from '@/components/ui/RichTextEditor'
 
 interface CursoBasicsFormProps {
   curso: any
@@ -193,66 +196,60 @@ export function CursoBasicsForm({ curso, layoutConfig, professores, action }: Cu
           <label htmlFor="descricao" className="block text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-2">
             <LayoutTemplate className="w-3 h-3 text-primary" /> Descrição Principal (Seu Pitch de Vendas)
           </label>
-          <textarea 
-            id="descricao" name="descricao" rows={6} defaultValue={curso.descricao || ''}
+          <RichTextEditor 
+            id="descricao" name="descricao" defaultValue={curso.descricao || ''}
             placeholder="Qual a proposta de valor do curso?"
-            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary placeholder:text-text-muted focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm resize-y"
-          ></textarea>
+          />
         </div>
 
         <div className="space-y-2">
           <label htmlFor="objetivos" className="block text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-2">
             <Target className="w-3 h-3 text-primary" /> O que você vai ensinar (Objetivo Principal)
           </label>
-          <textarea 
-            id="objetivos" name="objetivos" rows={4} defaultValue={curso.objetivos || ''}
+          <RichTextEditor 
+            id="objetivos" name="objetivos" defaultValue={curso.objetivos || ''}
             placeholder="Ex: Você vai aprender estratégias práticas para..."
-            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm resize-y"
-          ></textarea>
+          />
         </div>
 
         <div className="space-y-2">
           <label htmlFor="publico_alvo" className="block text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-2">
             <Plus className="w-3 h-3 text-primary" /> Para quem você criou este curso (Público-Alvo)
           </label>
-          <textarea 
-            id="publico_alvo" name="publico_alvo" rows={3} defaultValue={curso.publico_alvo || ''}
+          <RichTextEditor 
+            id="publico_alvo" name="publico_alvo" defaultValue={curso.publico_alvo || ''}
             placeholder="Ex: Para você que é empresário e deseja..."
-            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-primary transition-all text-sm resize-y"
-          ></textarea>
+          />
         </div>
 
         <div className="space-y-2">
           <label htmlFor="resultados_esperados" className="block text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-2">
             <ShieldCheck className="w-3 h-3 text-emerald-500" /> Resultados Esperados (Ao final do curso)
           </label>
-          <textarea 
-            id="resultados_esperados" name="resultados_esperados" rows={4} defaultValue={curso.resultados_esperados || ''}
+          <RichTextEditor 
+            id="resultados_esperados" name="resultados_esperados" defaultValue={curso.resultados_esperados || ''}
             placeholder="Ex: Ao final, você será capaz de aplicar técnicas financeiras..."
-            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-emerald-500 transition-all text-sm resize-y"
-          ></textarea>
+          />
         </div>
 
         <div className="space-y-2">
           <label htmlFor="ementa_resumida" className="block text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-2">
             <ListChecks className="w-3 h-3 text-indigo-500" /> Ementa Resumida (Módulos e Aulas)
           </label>
-          <textarea 
-            id="ementa_resumida" name="ementa_resumida" rows={5} defaultValue={curso.ementa_resumida || ''}
+          <RichTextEditor 
+            id="ementa_resumida" name="ementa_resumida" defaultValue={curso.ementa_resumida || ''}
             placeholder="Ex: Módulo 1: Introdução... Módulo 2: Aprofundamento..."
-            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-indigo-500 transition-all text-sm resize-y"
-          ></textarea>
+          />
         </div>
 
         <div className="space-y-2">
           <label htmlFor="pre_requisitos" className="block text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-2">
             <AlertCircle className="w-3 h-3 text-amber-500" /> Pré-requisitos
           </label>
-          <textarea 
-            id="pre_requisitos" name="pre_requisitos" rows={3} defaultValue={curso.pre_requisitos || ''}
+          <RichTextEditor 
+            id="pre_requisitos" name="pre_requisitos" defaultValue={curso.pre_requisitos || ''}
             placeholder="Ex: Conhecimento básico em Excel..."
-            className="w-full bg-background border border-border-custom rounded-xl px-4 py-3 text-text-primary focus:border-amber-500 transition-all text-sm resize-y"
-          ></textarea>
+          />
         </div>
       </div>
 

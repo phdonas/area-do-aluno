@@ -21,9 +21,22 @@ const iconMap: Record<string, LucideIcon> = {
   ListChecks
 };
 
-// Componente para Formatação de Texto (Markdown Lite)
+import DOMPurify from 'isomorphic-dompurify'
+
+// Componente para Formatação de Texto (Markdown Lite + HTML)
 export function FormattedText({ text, className = "" }: { text: string | null, className?: string }) {
   if (!text) return null;
+
+  // Se o texto parece conter HTML nativo (como o gerado pelo nosso novo editor WYSIWYG)
+  if (/<[a-z][\s\S]*>/i.test(text)) {
+    const cleanHtml = DOMPurify.sanitize(text);
+    return (
+      <div 
+        className={`rich-text-content flex flex-col gap-2 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:my-2 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:my-2 [&_a]:text-primary [&_a]:underline [&_h1]:text-3xl [&_h1]:font-black [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:text-xl [&_h3]:font-bold [&>p]:leading-relaxed [&_blockquote]:border-l-4 [&_blockquote]:border-emerald-500 [&_blockquote]:pl-4 [&_blockquote]:italic ${className}`}
+        dangerouslySetInnerHTML={{ __html: cleanHtml }}
+      />
+    )
+  }
 
   const lines = text.split('\n');
   
