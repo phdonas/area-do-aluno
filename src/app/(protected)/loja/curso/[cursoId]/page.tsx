@@ -221,7 +221,7 @@ export default async function SalesPagePH({
       </div>
 
       {/* MAIN LAYOUT WITH SIDEBAR */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 w-full flex flex-col lg:flex-row gap-8 relative items-start">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 w-full flex flex-col lg:flex-row gap-8 relative">
         
         {/* COLUNA ESQUERDA (CONTEÚDO) */}
         <div className="w-full lg:w-2/3 py-8 flex flex-col">
