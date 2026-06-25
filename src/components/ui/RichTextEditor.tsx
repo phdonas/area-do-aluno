@@ -15,7 +15,11 @@ interface RichTextEditorProps {
 }
 
 export function RichTextEditor({ id, name, defaultValue = '', placeholder }: RichTextEditorProps) {
-  const [value, setValue] = useState(defaultValue)
+  // Previne que textos antigos sem HTML percam a quebra de linha ao carregar no Quill
+  const isHtml = /<[a-z][\s\S]*>/i.test(defaultValue)
+  const initialValue = isHtml ? defaultValue : defaultValue.replace(/\n/g, '<br>')
+  
+  const [value, setValue] = useState(initialValue)
 
   const handleChange = (content: string) => {
     setValue(content)
@@ -23,10 +27,12 @@ export function RichTextEditor({ id, name, defaultValue = '', placeholder }: Ric
 
   const modules = {
     toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
+      [{ 'font': [] }],
+      [{ 'size': ['small', false, 'large', 'huge'] }],
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
       ['bold', 'italic', 'underline', 'strike'],
       [{ 'color': [] }, { 'background': [] }],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'align': [] }],
       ['clean']
     ],
   }
