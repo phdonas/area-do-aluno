@@ -67,7 +67,11 @@ function ExternalSimulatorContent() {
       {/* Área do Simulador */}
       <div className="flex-1 relative bg-[#0A0F1E]">
         <iframe 
-          src={url} 
+          src={
+            url?.includes('supabase.co/storage/v1/object/public/') 
+              ? `/api/proxy/${url.split('/object/public/')[1]}`
+              : url || undefined
+          } 
           className="absolute inset-0 w-full h-full border-none"
           title={titulo}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
