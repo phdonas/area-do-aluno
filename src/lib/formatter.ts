@@ -89,3 +89,20 @@ export function cleanTitle(title: string | null | undefined, knownPrefixes: stri
   
   return title.trim()
 }
+
+/**
+ * Cleans HTML tags, entity codes, and markdown syntax from text to render as plain text snippets.
+ */
+export function cleanHtmlText(text: string | null | undefined): string {
+  if (!text) return ''
+  return text
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/&nbsp;/g, ' ')  // Replace non-breaking spaces
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/[*#_~`\[\]]/g, '') // Remove markdown styling
+    .trim()
+}

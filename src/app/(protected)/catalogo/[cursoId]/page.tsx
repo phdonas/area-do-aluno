@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { PlayCircle, Lock, CheckCircle2, ArrowRight, Video, ExternalLink, Users, Clock, Calendar, Sparkles } from 'lucide-react'
-import { formatDuration, cleanTitle } from '@/lib/formatter'
+import { formatDuration, cleanTitle, cleanHtmlText } from '@/lib/formatter'
 import { getPrefixosLimpeza } from '@/lib/prefixes'
 import { ModuleListAccordion } from '@/components/module-list-accordion'
 import * as motion from 'framer-motion/client'
@@ -143,7 +143,7 @@ export default async function CursoDetaisPage({
                   </div>
                </div>
             ) : (
-               <p className="text-white/80 max-w-2xl text-lg font-medium line-clamp-2 italic leading-relaxed">{curso.descricao}</p>
+               <p className="text-white/80 max-w-2xl text-lg font-medium line-clamp-2 italic leading-relaxed">{cleanHtmlText(curso.descricao)}</p>
             )}
          </div>
       </motion.div>

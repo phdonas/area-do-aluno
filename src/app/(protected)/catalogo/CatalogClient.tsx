@@ -16,6 +16,7 @@ import {
   Award
 } from 'lucide-react'
 import Link from 'next/link'
+import { cleanHtmlText } from '@/lib/formatter'
 
 // Mapeamento de ícones do banco para componentes Lucide
 const IconMap: Record<string, any> = {
@@ -66,8 +67,7 @@ export function CatalogClient({ cursos, pacotes, pilares, idsAcessos }: CatalogC
   }
 
   const cleanDescription = (text: string) => {
-    if (!text) return ''
-    return text.replace(/[*#_~`\[\]]/g, '').trim()
+    return cleanHtmlText(text)
   }
 
   return (

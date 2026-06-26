@@ -13,6 +13,7 @@ import {
   Brain
 } from 'lucide-react'
 import Link from 'next/link'
+import { cleanHtmlText } from '@/lib/formatter'
 
 // Mapeamento de ícones para Lucide
 const IconMap: Record<string, any> = {
@@ -175,7 +176,7 @@ export default async function VitrinePage() {
                   </div>
                   <div className="p-8 space-y-4 flex-1 flex flex-col">
                      <h3 className="text-2xl font-black text-text-primary tracking-tight leading-tight group-hover:text-primary transition-colors italic uppercase">{curso.titulo}</h3>
-                     <p className="text-sm text-text-secondary font-medium line-clamp-2 opacity-80 flex-1">{curso.descricao}</p>
+                     <p className="text-sm text-text-secondary font-medium line-clamp-2 opacity-80 flex-1">{cleanHtmlText(curso.descricao)}</p>
                      
                      <div className="pt-6 border-t border-border-custom flex items-center justify-between">
                         <div className="flex flex-col">
