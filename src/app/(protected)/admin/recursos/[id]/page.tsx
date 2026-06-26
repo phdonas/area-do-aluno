@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { ChevronLeft, Save, Sparkles, Zap, HelpCircle, Video, Globe, Link as LinkIcon } from 'lucide-react'
 import { updateRecurso } from '../actions'
 import { AdminTutorialCard } from '@/components/admin/AdminTutorialCard'
+import { UrlUploadWrapper } from '@/components/admin/UrlUploadWrapper'
 import { redirect } from 'next/navigation'
 
 export default async function EditarRecursoPage({ params }: { params: Promise<{ id: string }> }) {
@@ -87,20 +88,7 @@ export default async function EditarRecursoPage({ params }: { params: Promise<{ 
                 </div>
                 
                 <div className="space-y-2 md:col-span-2">
-                  <label htmlFor="arquivo_url" className="block text-xs font-black uppercase tracking-widest text-text-primary hover:text-primary transition-colors cursor-help">URL / Endereço do Arquivo</label>
-                  <input 
-                    type="text" id="arquivo_url" name="arquivo_url" defaultValue={recurso.arquivo_url}
-                    placeholder="Ex: /ferramentas/avaliacao-lideranca/index.html ou cole um link externo"
-                    className="w-full bg-background border border-border-custom rounded-2xl px-5 py-4 text-text-primary focus:outline-none focus:border-primary transition-all font-mono text-xs mb-2"
-                  />
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-background/50 border border-dashed border-border-custom p-4 rounded-xl">
-                    <span className="text-[10px] font-bold uppercase text-text-muted whitespace-nowrap">OU FAÇA O UPLOAD (PDF, XLSX):</span>
-                    <input 
-                      type="file" id="arquivo_upload" name="arquivo_upload"
-                      className="w-full text-xs text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
-                    />
-                  </div>
-                  <p className="text-[10px] text-text-muted font-bold uppercase">Se anexar um arquivo acima, ele substituirá o link colado manualmente.</p>
+                  <UrlUploadWrapper defaultValue={recurso.arquivo_url} />
                 </div>
 
                 <div className="space-y-2">
