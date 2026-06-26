@@ -20,8 +20,10 @@ export async function GET(
     // Montar a URL pública do Storage
     const targetUrl = `${supabaseUrl}/storage/v1/object/public/${storagePath}`
 
-    // Fazer a requisição para o Supabase
-    const response = await fetch(targetUrl)
+    // Fazer a requisição para o Supabase com cache (Vercel Edge Cache)
+    const response = await fetch(targetUrl, {
+      next: { revalidate: 86400 } // Cache de 24 horas no servidor
+    })
 
     if (!response.ok) {
       return new NextResponse(`Erro ao buscar arquivo: ${response.statusText}`, { status: response.status })
@@ -43,6 +45,9 @@ export async function GET(
     } else if (storagePath.endsWith('.svg')) {
       headers.set('Content-Type', 'image/svg+xml')
     }
+
+    // OTIMIZAÇÃO DE VELOCIDADE: Adicionar cache agressivo no navegador do usuário
+    headers.set('Cache-Control', 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800')
 
     // Retornar a resposta com os headers modificados
     return new NextResponse(data, {
