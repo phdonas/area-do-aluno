@@ -50,6 +50,7 @@ export function PastaUploader({ onUploadComplete }: PastaUploaderProps) {
           .from(bucketName)
           .upload(storagePath, file, {
             cacheControl: '3600',
+            contentType: file.type || 'text/plain',
             upsert: true
           })
 
