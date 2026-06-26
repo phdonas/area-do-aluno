@@ -98,7 +98,11 @@ export default function SimuladorPlayerPage() {
         <p className="text-text-secondary text-sm mb-8 leading-relaxed">{recurso.descricao || 'Este recurso será aberto em uma ferramenta externa para melhor experiência.'}</p>
         
         <a 
-          href={recurso.arquivo_url} 
+          href={
+            recurso.abertura_tipo === 'nova_aba' && recurso.arquivo_url?.includes('supabase.co/storage/v1/object/public/') 
+              ? `/api/proxy/${recurso.arquivo_url.split('/object/public/')[1]}`
+              : recurso.arquivo_url
+          } 
           target="_blank" 
           rel="noopener noreferrer"
           className="inline-flex items-center gap-3 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl transition-all shadow-xl shadow-indigo-600/20 hover:scale-[1.02] active:scale-[0.98]"
