@@ -436,9 +436,8 @@ export function ModuloAssociator({
                                 {aula.is_gratis ? 'Degustação ON' : 'Tornar Grátis'}
                               </button>
                               <Link 
-                                href={`/admin/aulas/${aula.id}`}
+                                href={`/admin/aulas/${aula.id}?curso_return=${cursoId}`}
                                 className="text-xs font-bold text-text-muted hover:text-primary transition-colors truncate"
-                                target="_blank"
                               >
                                 {aula.titulo}
                               </Link>

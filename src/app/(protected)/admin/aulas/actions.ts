@@ -182,8 +182,14 @@ export async function updateAula(id: string, formData: FormData) {
     throw new Error('Falha ao atualizar aula')
   }
 
-  revalidatePath('/admin/aulas')
-  redirect('/admin/aulas')
+  const curso_return = formData.get('curso_return') as string
+  if (curso_return) {
+    revalidatePath(`/admin/cursos/${curso_return}`)
+    redirect(`/admin/cursos/${curso_return}`)
+  } else {
+    revalidatePath('/admin/aulas')
+    redirect('/admin/aulas')
+  }
 }
 
 export async function deleteAula(id: string) {

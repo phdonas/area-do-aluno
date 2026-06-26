@@ -8,8 +8,16 @@ import { AnexosGerenciador } from './AnexosGerenciador'
 import { formatDuration } from '@/lib/formatter'
 import { AdminTutorialCard } from '@/components/admin/AdminTutorialCard'
 
-export default async function EditarAulaPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditarAulaPage({ 
+  params,
+  searchParams
+}: { 
+  params: Promise<{ id: string }>,
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const { id } = await params
+  const sParams = await searchParams
+  const curso_return = sParams?.curso_return as string | undefined
   const supabaseAdmin = createAdminClient()
   const supabaseAuth = await createClient()
 
@@ -50,10 +58,10 @@ export default async function EditarAulaPage({ params }: { params: Promise<{ id:
     <div className="max-w-6xl mx-auto font-sans">
       <div className="mb-8">
         <Link 
-          href="/admin/aulas" 
+          href={curso_return ? `/admin/cursos/${curso_return}` : "/admin/aulas"} 
           className="text-text-muted hover:text-text-primary text-sm flex items-center gap-2 mb-4 w-fit transition-colors"
         >
-          <ChevronLeft className="w-4 h-4" /> Voltar para Aulas
+          <ChevronLeft className="w-4 h-4" /> Voltar
         </Link>
         <h1 className="text-3xl font-black text-text-primary italic uppercase tracking-tighter">Editar Aula</h1>
         <p className="text-text-secondary text-sm mt-1 uppercase tracking-widest font-bold opacity-60">Alterando informações e vídeo da aula atual.</p>
@@ -64,6 +72,7 @@ export default async function EditarAulaPage({ params }: { params: Promise<{ id:
         <div className="lg:col-span-2 space-y-8">
           <div className="bg-surface border border-border-custom p-8 rounded-[2rem] shadow-xl">
             <form action={updateAulaWithId} className="space-y-8">
+              {curso_return && <input type="hidden" name="curso_return" value={curso_return} />}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2">
                   <label htmlFor="titulo" className="block text-xs font-black uppercase tracking-widest text-text-primary">Título da Aula *</label>
