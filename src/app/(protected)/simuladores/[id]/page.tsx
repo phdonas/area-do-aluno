@@ -144,7 +144,11 @@ export default function SimuladorPlayerPage() {
       {/* Iframe Viewport */}
       <div className="flex-1 bg-black relative overflow-hidden">
          <iframe 
-            src={recurso.arquivo_url} 
+            src={
+              recurso.arquivo_url?.includes('supabase.co/storage/v1/object/public/') 
+                ? `/api/proxy/${recurso.arquivo_url.split('/object/public/')[1]}`
+                : recurso.arquivo_url
+            } 
             className="w-full h-full border-none"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
             allowFullScreen
