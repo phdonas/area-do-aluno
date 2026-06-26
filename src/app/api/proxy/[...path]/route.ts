@@ -30,11 +30,8 @@ export async function GET(
     // Obter o conteúdo
     const data = await response.arrayBuffer()
     
-    // Preparar os headers
-    const headers = new Headers(response.headers)
-    
-    // REMOVER o Content-Disposition para evitar o download automático (forçar renderização inline)
-    headers.delete('content-disposition')
+    // Preparar os headers LIMPOS
+    const headers = new Headers()
     
     // Garantir que HTML seja servido corretamente
     if (storagePath.endsWith('.html')) {
